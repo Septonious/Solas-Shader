@@ -17,4 +17,3 @@ vec3 getReflection(vec3 viewPos, vec3 normal, vec3 reflectionFade) {
 
     return mix(reflectionFade, reflection.rgb, reflection.a);
 }
-//among
