@@ -138,7 +138,7 @@ void main() {
 			vec3 oScreenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), oDepth);
 			vec3 oViewPos = ToNDC(oScreenPos);
 
-			vec4 waterFog = getWaterFog(viewPos.xyz - oViewPos) * lightmap.y;
+			vec4 waterFog = getWaterFog(viewPos.xyz - oViewPos);
 			albedo = mix(waterFog, vec4(albedo.rgb, 0.75), albedo.a);
 		}
 		#endif

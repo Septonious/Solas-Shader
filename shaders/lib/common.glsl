@@ -34,7 +34,7 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 
 //Bloom//
 #define BLOOM
-#define BLOOM_STRENGTH 0.75 //[0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00]
+#define BLOOM_STRENGTH 0.50 //[0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00]
 #define BLOOM_CONTRAST 8 //[-4 -3 -2 -1 0 1 2 3 4 5 6 7 8]
 #define BLOOM_RADIUS 5 //[1 2 3 4 5]
 
