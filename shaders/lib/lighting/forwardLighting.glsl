@@ -55,7 +55,7 @@ void GetLighting(inout vec3 albedo, vec3 viewPos, vec3 worldPos, vec2 lightmap, 
     if (subsurface > 0.0){
         float VoL = clamp(dot(normalize(viewPos.xyz), lightVec) * 0.5 + 0.5, 0.0, 1.0);
         scattering = pow8(VoL) * subsurface;
-        NoL = mix(NoL, 1.0, sqrt(subsurface));
+        NoL = mix(NoL, 1.0, subsurface);
         NoL = mix(NoL, 1.0, scattering);
     }
     
