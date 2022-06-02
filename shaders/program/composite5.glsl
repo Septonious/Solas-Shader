@@ -11,15 +11,13 @@ in vec2 texCoord;
 //Uniforms//
 #ifdef SSPT
 uniform float far, near;
-uniform float viewWidth, viewHeight, aspectRatio;
+uniform float viewWidth, viewHeight;
 
 uniform sampler2D colortex5, colortex6;
 uniform sampler2D depthtex0;
 
 uniform mat4 gbufferProjection;
 #endif
-
-uniform sampler2D colortex0;
 
 //Includes//
 #ifdef SSPT
@@ -29,16 +27,14 @@ uniform sampler2D colortex0;
 
 //Program//
 void main() {
-	vec3 color = texture2D(colortex0, texCoord).rgb;
 	vec3 sspt = vec3(0.0);
 
 	#ifdef SSPT
 	sspt = NormalAwareBlur();
-	color *= vec3(1.0) + sspt * 16.0;
 	#endif
 
-	/* DRAWBUFFERS:0 */
-	gl_FragData[0].rgb = color;
+	/* DRAWBUFFERS:6 */
+	gl_FragData[0].rgb = sspt;
 }
 
 #endif

@@ -98,7 +98,7 @@ void main() {
 
 	#ifdef VL
 	vl = getVolumetricLight(viewPos.xyz, newTexCoord, z0, z1, translucent, dither);
-	vl *= mix(0.5, pow2(VoL) * 2.0, timeBrightness) * (1.0 - rainStrength * 0.5) * (1.0 - blindFactor) * (0.5 + sunVisibility * 0.5);
+	vl *= mix(0.5, pow2(VoL), timeBrightness) * (1.0 - rainStrength * 0.5) * (1.0 - blindFactor) * (0.5 + sunVisibility * 0.5);
 
 	#if MC_VERSION >= 11900
 	vl *= 1.0 - darknessFactor;

@@ -21,7 +21,6 @@ void getBloom(inout vec3 color, vec2 coord) {
 	vec3 blur3 = GetBloomTile(3.0, coord, vec2(0.51  , 0.26  ), dither);
 	vec3 blur4 = GetBloomTile(4.0, coord, vec2(0.645 , 0.26  ), dither);
 	vec3 blur5 = GetBloomTile(5.0, coord, vec2(0.7175, 0.26  ), dither);
-	vec3 blur6 = GetBloomTile(6.0, coord, vec2(0.645 , 0.3325), dither);
 
 	#if BLOOM_RADIUS == 1
 	vec3 blur = blur1;
@@ -33,8 +32,6 @@ void getBloom(inout vec3 color, vec2 coord) {
 	vec3 blur = (blur1 + blur2 + blur3 + blur4) * 0.25;
 	#elif BLOOM_RADIUS == 5
 	vec3 blur = (blur1 + blur2 + blur3 + blur4 + blur5) * 0.2;
-	#elif BLOOM_RADIUS == 6
-	vec3 blur = (blur1 + blur2 + blur3 + blur4 + blur6) * 0.125;
 	#endif
 
 	float strength = BLOOM_STRENGTH;

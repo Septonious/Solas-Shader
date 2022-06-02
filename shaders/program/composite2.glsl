@@ -1,7 +1,7 @@
 //Settings//
 #include "/lib/common.glsl"
 
-#define COMPOSITE_2
+#define COMPOSITE_15
 
 #ifdef FSH
 
@@ -9,54 +9,45 @@
 in vec2 texCoord;
 
 //Uniforms//
-#ifdef DOF
-uniform float centerDepthSmooth;
-#endif
+#ifdef TAA
+uniform int frameCounter;
 
-#if defined DOF || defined DISTANT_BLUR
-uniform float viewHeight, aspectRatio;
-
-uniform mat4 gbufferProjection;
-
-uniform sampler2D depthtex1;
-#endif
-
-#ifdef DISTANT_BLUR
-uniform sampler2D depthtex0;
-
-uniform mat4 gbufferProjectionInverse;
+uniform float viewWidth, viewHeight, aspectRatio;
 #endif
 
 uniform sampler2D colortex0;
 
-//Optifine Constants//
-#if defined DOF || defined DISTANT_BLUR
-const bool colortex0MipmapEnabled = true;
+#ifdef TAA
+uniform vec3 cameraPosition, previousCameraPosition;
+
+uniform mat4 gbufferPreviousProjection, gbufferProjectionInverse;
+uniform mat4 gbufferPreviousModelView, gbufferModelViewInverse;
+
+uniform sampler2D colortex3;
+uniform sampler2D depthtex1;
 #endif
 
 //Includes//
-#if defined DOF || defined DISTANT_BLUR
-#include "/lib/post/dofBlur.glsl"
+#ifdef TAA
+#include "/lib/util/reprojection.glsl"
+#include "/lib/antialiasing/taa.glsl"
 #endif
 
-//Program//
 void main() {
 	vec3 color = texture2D(colortex0, texCoord).rgb;
-	vec4 viewPos = vec4(0.0);
 
-	#ifdef DISTANT_BLUR
-	float z0 = texture2D(depthtex0, texCoord).x;
-	vec4 screenPos = vec4(texCoord, z0, 1.0);
-	viewPos = gbufferProjectionInverse * (screenPos * 2.0 - 1.0);
-	viewPos /= viewPos.w;
+	#ifdef TAA
+    vec4 prev = vec4(texture2D(colortex3, texCoord).r, 0.0, 0.0, 0.0);
+	prev = TemporalAA(color, prev.r, colortex0, colortex3);
 	#endif
 
-	#if defined DOF || defined DISTANT_BLUR
-	color = getBlur(color, viewPos.xyz);
-	#endif
-
-	/*DRAWBUFFERS:0*/
+	/* DRAWBUFFERS:0 */
 	gl_FragData[0].rgb = color;
+
+	#ifdef TAA
+	/* DRAWBUFFERS:03 */
+	gl_FragData[1] = prev;
+	#endif
 }
 
 #endif
@@ -68,7 +59,6 @@ void main() {
 //Varyings//
 out vec2 texCoord;
 
-//Program//
 void main() {
 	texCoord = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;
 	
