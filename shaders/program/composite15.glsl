@@ -28,8 +28,10 @@ uniform sampler2D depthtex1;
 #endif
 
 //Includes//
+#ifdef TAA
 #include "/lib/util/reprojection.glsl"
 #include "/lib/antialiasing/taa.glsl"
+#endif
 
 void main() {
 	vec3 color = texture2D(colortex0, texCoord).rgb;

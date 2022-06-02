@@ -12,7 +12,7 @@ vec3 getAtmosphere(vec3 viewPos) {
 
     float timeBrightnessFactor = 1.0 - pow4(timeBrightness);
     float sunMix = (VoS * 0.75 + 0.25) * pow2(1.0 - VoUClamped);
-    float horizonMix = pow3(1.0 - VoUClamped) * 0.5 * timeBrightnessFactor;
+    float horizonMix = pow3(1.0 - VoUClamped) * 0.6 * timeBrightnessFactor;
     float lightMix = (1.0 - sunMix) * (1.0 - horizonMix);
     float skyDensity = exp(-(1.0 - (1.0 - VoUClamped)));
     float skyDensityInv = exp(-(1.0 - (1.0 + VoUClampedInv)));

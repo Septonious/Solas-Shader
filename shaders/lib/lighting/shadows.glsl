@@ -5,7 +5,7 @@ uniform sampler2DShadow shadowtex1;
 uniform sampler2D shadowcolor0;
 #endif
 
-vec2 shadowOffsets[9] = vec2[9](
+const vec2 shadowOffsets[9] = vec2[9](
     vec2( 0.0, 0.0),
     vec2( 0.0, 1.0),
     vec2( 0.7, 0.7),
