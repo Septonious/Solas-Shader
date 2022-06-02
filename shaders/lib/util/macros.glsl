@@ -5,6 +5,7 @@ float pow5(float x) {return x*x*x*x*x;}
 float pow6(float x) {return x*x*x*x*x*x;}
 float pow7(float x) {return x*x*x*x*x*x*x;}
 float pow8(float x) {return x*x*x*x*x*x*x*x;}
+float pow16(float x) {return x*x*x*x*x*x*x*x*x*x*x*x*x*x*x*x;}
 
 float sum2(float x) {return x+x;}
 float sum3(float x) {return x+x+x;}

@@ -107,7 +107,7 @@ void main() {
 
 	#ifdef VCLOUDS
 	clouds = getVolumetricCloud(viewPos.xyz, newTexCoord, z0, z1, translucent, dither);
-	clouds.rgb *= 1.0 + timeBrightness * 0.75 + pow8(VoL) * 0.25;
+	clouds.rgb *= 1.0 + timeBrightness + pow8(VoL) * 0.5;
 	clouds.a *= 1.0 - rainStrength * 0.1;
 
 	#if MC_VERSION >= 11900

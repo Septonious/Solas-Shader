@@ -13,7 +13,7 @@ void NormalFog(inout vec3 color, vec3 viewPos, in vec3 skyColor) {
 	
 	//Overworld Fog
 	#ifdef OVERWORLD
-	float density = FOG_DENSITY * (2.0 - timeBrightness) * (1.0 + pow4(rainStrength) * 7.0) * (8.0 - sunVisibility * 7.0);
+	float density = FOG_DENSITY * (2.0 - timeBrightness) * (1.0 + pow4(rainStrength) * 7.0) * (1.0 + pow4(moonVisibility) * 3.0);
 	float fog = lViewPos * density * 0.001;
 	fog = 1.0 - exp(-2.0 * fog);
 
@@ -28,7 +28,7 @@ void NormalFog(inout vec3 color, vec3 viewPos, in vec3 skyColor) {
 	//Distant Fade
 	#ifdef DISTANT_FADE
 	if (isEyeInWater == 0) {
-		float vanillaFog = pow8(lViewPos * FOG_DENSITY * 0.001) + pow8(lWorldPos / far);
+		float vanillaFog = pow8(lViewPos * FOG_DENSITY * 0.0025) + pow8(lWorldPos / far);
 		vanillaFog = clamp(vanillaFog, 0.0, 1.0);
 
 		fogColor *= fog;
