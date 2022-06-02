@@ -6,8 +6,8 @@
 #ifdef FSH
 
 //Varyings//
-varying vec2 texCoord, lmCoord;
-varying vec4 color;
+in vec2 texCoord, lmCoord;
+in vec4 color;
 
 //Uniforms//
 uniform float rainStrength;
@@ -48,8 +48,8 @@ void main() {
 #ifdef VSH
 
 //Varyings//
-varying vec2 texCoord, lmCoord;
-varying vec4 color;
+out vec2 texCoord, lmCoord;
+out vec4 color;
 
 //Program//
 void main() {

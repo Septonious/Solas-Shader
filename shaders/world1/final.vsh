@@ -1,4 +1,4 @@
-#version 130 compatibility
+#version 130
 
 #define END
 #define VSH

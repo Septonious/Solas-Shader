@@ -6,9 +6,9 @@
 #ifdef FSH
 
 //Varyings//
-varying vec2 texCoord, lmCoord;
-varying vec3 sunVec, upVec, eastVec, normal;
-varying vec4 color;
+in vec2 texCoord, lmCoord;
+in vec3 sunVec, upVec, eastVec, normal;
+in vec4 color;
 
 //Uniforms//
 uniform float nightVision;
@@ -63,9 +63,9 @@ void main() {
 #ifdef VSH
 
 //Varyings//
-varying vec2 texCoord, lmCoord;
-varying vec3 sunVec, upVec, eastVec, normal;
-varying vec4 color;
+out vec2 texCoord, lmCoord;
+out vec3 sunVec, upVec, eastVec, normal;
+out vec4 color;
 
 //Uniforms
 #ifdef TAA

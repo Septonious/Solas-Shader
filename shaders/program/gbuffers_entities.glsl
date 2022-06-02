@@ -6,11 +6,11 @@
 #ifdef FSH
 
 //Varyings//
-varying float mat;
+in float mat;
 
-varying vec2 texCoord, lmCoord;
-varying vec3 sunVec, upVec, eastVec, normal;
-varying vec4 color;
+in vec2 texCoord, lmCoord;
+in vec3 sunVec, upVec, eastVec, normal;
+in vec4 color;
 
 //Uniforms//
 uniform int entityId;
@@ -103,10 +103,10 @@ void main() {
 #ifdef VSH
 
 //Varyings//
-varying float mat;
-varying vec2 texCoord, lmCoord;
-varying vec3 sunVec, upVec, eastVec, normal;
-varying vec4 color;
+out float mat;
+out vec2 texCoord, lmCoord;
+out vec3 sunVec, upVec, eastVec, normal;
+out vec4 color;
 
 //Uniforms
 #if defined OVERWORLD || defined END

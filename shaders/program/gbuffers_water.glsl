@@ -6,16 +6,16 @@
 #ifdef FSH
 
 //Varyings//
-varying float mat;
-varying vec2 texCoord, lmCoord;
+in float mat;
+in vec2 texCoord, lmCoord;
 
 #ifdef WATER_NORMALS
-varying float viewDistance;
-varying vec3 viewVector, binormal, tangent;
+in float viewDistance;
+in vec3 viewVector, binormal, tangent;
 #endif
 
-varying vec3 sunVec, upVec, eastVec, normal;
-varying vec4 color;
+in vec3 sunVec, upVec, eastVec, normal;
+in vec4 color;
 
 //Uniforms//
 uniform int isEyeInWater;
@@ -168,16 +168,16 @@ void main() {
 #ifdef VSH
 
 //Varyings//
-varying float mat;
-varying vec2 texCoord, lmCoord;
+out float mat;
+out vec2 texCoord, lmCoord;
 
 #ifdef WATER_NORMALS
-varying float viewDistance;
-varying vec3 viewVector, binormal, tangent;
+out float viewDistance;
+out vec3 viewVector, binormal, tangent;
 #endif
 
-varying vec3 sunVec, upVec, eastVec, normal;
-varying vec4 color;
+out vec3 sunVec, upVec, eastVec, normal;
+out vec4 color;
 
 //Uniforms
 #ifdef TAA

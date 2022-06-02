@@ -6,10 +6,10 @@
 #ifdef FSH
 
 //Varyings//
-varying vec2 texCoord;
+in vec2 texCoord;
 
 #ifdef LENS_FLARE
-varying vec3 sunVec, upVec;
+in vec3 sunVec, upVec;
 #endif
 
 //Uniforms//
@@ -91,7 +91,7 @@ void main() {
     float visibility = float(texture2D(depthtex0, lightPos + 0.5).r >= 1.0);
 	visibility *= (1.0 - blindFactor) * (1.0 - rainStrength);
 
-	if (visibility > 0.01) LensFlare(color, lightPos, truePos, 0.75 * visibility);
+	if (visibility > 0.1) LensFlare(color, lightPos, truePos, 0.75 * visibility);
 	#endif
 
 	#ifdef TAA
@@ -114,10 +114,10 @@ void main() {
 #ifdef VSH
 
 //Varyings//
-varying vec2 texCoord;
+out vec2 texCoord;
 
 #ifdef LENS_FLARE
-varying vec3 sunVec, upVec;
+out vec3 sunVec, upVec;
 
 //Uniforms//
 uniform float timeAngle;
@@ -127,7 +127,7 @@ uniform mat4 gbufferModelView;
 
 //Program//
 void main() {
-	texCoord = gl_MultiTexCoord0.xy;
+	texCoord = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;
 	
 	gl_Position = ftransform();
 

@@ -6,10 +6,10 @@
 #ifdef FSH
 
 //Varyings//
-varying vec2 texCoord;
+in vec2 texCoord;
 
 #if defined VL || defined VCLOUDS
-varying vec3 sunVec, upVec;
+in vec3 sunVec, upVec;
 #endif
 
 //Uniforms//
@@ -127,10 +127,10 @@ void main() {
 #ifdef VSH
 
 //Varyings//
-varying vec2 texCoord;
+out vec2 texCoord;
 
 #if defined VL || defined VCLOUDS
-varying vec3 sunVec, upVec;
+out vec3 sunVec, upVec;
 #endif
 
 //Uniforms//
@@ -142,7 +142,7 @@ uniform mat4 gbufferModelView;
 
 //Program//
 void main() {
-	texCoord = gl_MultiTexCoord0.xy;
+	texCoord = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;
 	
 	#if defined VL || defined VCLOUDS
 	const vec2 sunRotationData = vec2(cos(sunPathRotation * 0.01745329251994), -sin(sunPathRotation * 0.01745329251994));

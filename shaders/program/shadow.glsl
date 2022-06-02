@@ -5,12 +5,12 @@
 #ifdef FSH
 
 //Varyings//
-varying float mat;
-varying vec2 texCoord;
-varying vec4 color;
+in float mat;
+in vec2 texCoord;
+in vec4 color;
 
 #ifdef WATER_CAUSTICS
-varying vec4 position;
+in vec4 position;
 #endif
 
 //Uniforms//
@@ -59,10 +59,10 @@ void main() {
 #ifdef VSH
 
 //Varyings//
-varying float mat;
-varying vec2 texCoord;
-varying vec4 color;
-varying vec4 position;
+out float mat;
+out vec2 texCoord;
+out vec4 color;
+out vec4 position;
 
 //Uniforms//
 uniform mat4 shadowProjection, shadowProjectionInverse;

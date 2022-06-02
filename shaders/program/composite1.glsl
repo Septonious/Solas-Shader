@@ -6,7 +6,7 @@
 #ifdef FSH
 
 //Varyings//
-varying vec2 texCoord;
+in vec2 texCoord;
 
 //Uniforms//
 #if defined VL || defined VCLOUDS
@@ -58,11 +58,11 @@ void main() {
 #ifdef VSH
 
 //Varyings//
-varying vec2 texCoord;
+out vec2 texCoord;
 
 //Program//
 void main() {
-	texCoord = gl_MultiTexCoord0.xy;
+	texCoord = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;
 
 	gl_Position = ftransform();
 }

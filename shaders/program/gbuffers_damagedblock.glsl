@@ -6,8 +6,8 @@
 #ifdef FSH
 
 //Varyings//
-varying vec4 color;
-varying vec2 texCoord;
+in vec4 color;
+in vec2 texCoord;
 
 //Uniforms//
 uniform sampler2D texture;
@@ -26,12 +26,14 @@ void main() {
 #ifdef VSH
 
 //Varyings//
-varying vec4 color;
-varying vec2 texCoord;
+out vec4 color;
+out vec2 texCoord;
 
 void main() {
+	//Coords
     texCoord = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;
 
+	//Color & Position
     color = gl_Color;
 
 	gl_Position = ftransform();
