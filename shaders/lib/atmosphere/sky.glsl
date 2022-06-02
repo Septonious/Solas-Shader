@@ -27,5 +27,5 @@ vec3 getAtmosphere(vec3 viewPos) {
     vec3 weatherSky = weatherCol * weatherCol * 0.05 * (1.0 + sunVisibility * 6.0);
 	sky = mix(sky, weatherSky, rainStrength);
 
-    return sky * mix(abs(skyDensity), 1.0, rainStrength);
+    return sky * mix(pow(abs(skyDensity), 1.5), 1.0, rainStrength);
 }
