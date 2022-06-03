@@ -18,8 +18,7 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 skyColor) {
 	fog = 1.0 - exp(-2.0 * fog);
 
 	//Fog Altitude
-	vec3 fogPosition = worldPos.xyz + cameraPosition;
-	float worldHeightFactor = clamp(fogPosition.y * 0.001 * FOG_HEIGHT, 0.0, 1.0);
+	float worldHeightFactor = clamp((worldPos.y + cameraPosition.y) * 0.001 * FOG_HEIGHT, 0.0, 1.0);
 	fog *= 1.0 - worldHeightFactor;
 
 	vec3 dayFogColor = vec3(SKY_R, SKY_G, SKY_B) / 255.0 * SKY_I;

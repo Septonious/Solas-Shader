@@ -38,8 +38,7 @@ vec3 getVolumetricLight(vec3 viewPos, vec2 coord, float z0, float z1, vec3 trans
 				shadow = mix(shadow, shadow * translucent, max(float(depth0 < currentStep) - float(isEyeInWater == 1), 0.0));
 
 				//Fog Altitude
-				vec3 fogPosition = worldPos.xyz + cameraPosition.xyz;
-				float worldHeightFactor = clamp(fogPosition.y * 0.001 * FOG_HEIGHT, 0.0, 1.0);
+				float worldHeightFactor = clamp((worldPos.y + cameraPosition.y) * 0.001 * FOG_HEIGHT, 0.0, 1.0);
 				shadow *= 1.0 - worldHeightFactor;
 
 				vl += shadow;
