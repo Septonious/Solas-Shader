@@ -16,7 +16,7 @@ vec3 getAtmosphere(vec3 viewPos) {
     float skyDensity = exp(-(1.0 - (1.0 - VoUClamped)));
 
     //Day & Night Sky
-    vec3 daySky = vec3(SKY_R, SKY_G, SKY_B) / 255.0 * SKY_I * max(timeBrightness, 0.75);
+    vec3 daySky = vec3(SKY_R, SKY_G, SKY_B) / 255.0 * SKY_I;
 
     daySky = mix(lightSun, daySky, lightMix);
 
