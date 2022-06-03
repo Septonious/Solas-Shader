@@ -49,6 +49,9 @@ float sunVisibility  = clamp((dot( sunVec, upVec) + 0.05) * 10.0, 0.0, 1.0);
 float moonVisibility = clamp((dot(-sunVec, upVec) + 0.05) * 10.0, 0.0, 1.0);
 #endif
 
+float pixelWidth = 1.0 / viewWidth;
+float pixelHeight = 1.0 / viewHeight;
+
 //Common Functions//
 float GetLuminance(vec3 color) {
 	return dot(color, vec3(0.299, 0.587, 0.114));
@@ -76,6 +79,8 @@ vec2 GetLightPos() {
 
 void main() {
 	vec3 color = texture2D(colortex0, texCoord).rgb;
+	vec3 temporalColor = vec3(0.0);
+	float temporalData = 0.0;
 
 	#ifdef BLOOM
 	getBloom(color, texCoord);
@@ -87,24 +92,23 @@ void main() {
 	#ifdef LENS_FLARE
 	vec2 lightPos = GetLightPos();
 	float truePos = sign(sunVec.z);
+	float tempVisibleSun = texture2D(colortex3, vec2(3.0 * pixelWidth, pixelHeight)).r;
 	      
-    float visibility = float(texture2D(depthtex0, lightPos + 0.5).r >= 1.0);
-	visibility *= (1.0 - blindFactor) * (1.0 - rainStrength);
+    float visibleSun = float(texture2D(depthtex0, lightPos + 0.5).r >= 1.0);
+	visibleSun *= (1.0 - blindFactor) * (1.0 - rainStrength);
 
-	if (visibility > 0.1) LensFlare(color, lightPos, truePos, 0.75 * visibility);
+	if (visibleSun > 0.001) LensFlare(color, lightPos, truePos, 0.65 * tempVisibleSun);
+	if (texCoord.x > 2.0 * pixelWidth && texCoord.x < 4.0 * pixelWidth && texCoord.y < 2.0 * pixelHeight)
+		temporalData = mix(tempVisibleSun, visibleSun, 0.125);
 	#endif
 
 	#ifdef TAA
-	vec3 temporalColor = texture2D(colortex3, texCoord).gba;
+	temporalColor = texture2D(colortex3, texCoord).gba;
 	#endif
 
-	/* DRAWBUFFERS:0 */
-	gl_FragData[0].rgb = color;
-
-	#ifdef TAA
 	/* DRAWBUFFERS:03 */
-	gl_FragData[1].gba = temporalColor;
-	#endif
+	gl_FragData[0].rgb = color;
+	gl_FragData[1] = vec4(temporalData, temporalColor);
 }
 
 #endif

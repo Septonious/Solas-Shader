@@ -11,7 +11,7 @@ void getIntegratedEmission(inout float emission, inout vec2 lightmap, in vec4 al
     }
 
     if (mat > 102.9 && mat < 103.1){ // Magma Cube
-        newEmissive = 0.75 + float(albedo.g > 0.5 && length(albedo.rgb) > 0.5) * 0.25;
+        newEmissive = 0.75 + float(albedo.g > 0.5 && length(albedo.rgb) > 0.5) * 0.1;
         lightmap.x *= newEmissive;
     }
 

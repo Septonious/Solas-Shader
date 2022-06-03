@@ -60,7 +60,7 @@ void getIntegratedEmission(inout float emissive, in vec2 lightmap, in vec4 albed
 	} else if (mat > 119.9 && mat < 120.1) { // Normal Campfire
 		newEmissive = float(albedo.r > 0.65 && albedo.b < 0.35) * 0.20;
 	} else if (mat > 121.9 && mat < 122.1) { // Glowstone
-		newEmissive = 0.25 + pow2(pow8(lengthAlbedo)) * 0.25;
+		newEmissive = (1.0 + pow16(lengthAlbedo)) * 0.05;
 	} else if (mat > 122.9 && mat < 123.1) { // Sculks
 		newEmissive = float(lengthAlbedo > 0.05 && albedo.r < 0.25) * 0.1;
 	} else if (mat > 123.9 && mat < 124.1) { // Redstone Lamp

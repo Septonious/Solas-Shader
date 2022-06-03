@@ -18,6 +18,10 @@ vec3 getAtmosphere(vec3 viewPos) {
     //Day & Night Sky
     vec3 daySky = vec3(SKY_R, SKY_G, SKY_B) / 255.0 * SKY_I;
 
+    #ifdef FOG_PERBIOME
+    daySky = getBiomeColor(daySky);
+    #endif
+
     daySky = mix(lightSun, daySky, lightMix);
 
     vec3 sky = mix(lightNight, daySky, pow2(sunVisibility));

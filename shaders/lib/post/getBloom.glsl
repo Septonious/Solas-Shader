@@ -1,6 +1,3 @@
-float pixelWidth = 1.0 / viewWidth;
-float pixelHeight = 1.0 / viewHeight;
-
 vec3 GetBloomTile(float lod, vec2 coord, vec2 offset, vec2 dither) {
 	float scale = exp2(lod);
 
@@ -35,6 +32,10 @@ void getBloom(inout vec3 color, vec2 coord) {
 	#endif
 
 	float strength = BLOOM_STRENGTH;
+
+	#ifdef NETHER
+	strength *= 1.5;
+	#endif
 
 	#if BLOOM_CONTRAST == 0
 	color = mix(color, blur, 0.2 * strength);

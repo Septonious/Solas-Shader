@@ -66,8 +66,9 @@ vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.
 
 #ifdef OVERWORLD
 #include "/lib/atmosphere/sky.glsl"
-#include "/lib/atmosphere/fog.glsl"
 #endif
+
+#include "/lib/atmosphere/fog.glsl"
 
 #ifdef WATER_REFLECTION
 #include "/lib/pbr/reflection.glsl"

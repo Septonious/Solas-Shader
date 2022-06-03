@@ -16,10 +16,10 @@ in vec3 sunVec, upVec;
 uniform int isEyeInWater;
 
 #if defined OVERWORLD || defined END
-uniform float timeBrightness, timeAngle, rainStrength, frameTimeCounter;
+uniform float timeBrightness, timeAngle, frameTimeCounter;
 #endif
 
-uniform float far;
+uniform float far, rainStrength;
 uniform float blindFactor;
 uniform float viewWidth, viewHeight;
 
