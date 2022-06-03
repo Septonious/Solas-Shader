@@ -61,14 +61,14 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 //Volumetric Light//
 #define VL
 #define VL_SAMPLES 10 //[6 7 8 9 10 11 12 13 14 15 16]
-#define VL_STRENGTH 0.4 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
+#define VL_STRENGTH 0.5 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
 
 //Volumetric Clouds
 #define VCLOUDS
 #define VC_SAMPLES 24 //[10 12 14 16 18 20 22 24 26 28 30]
 #define VC_AMOUNT 1.60 //[1.00 1.10 1.20 1.30 1.40 1.50 1.60 1.70 1.80 1.90 2.00]
 #define VC_STRETCHING 13.0 //[8.0 9.0 10.0 11.0 12.0 13.0 14.0 15.0 16.0]
-#define VC_DISTANCE 10.0 //[7.0 8.0 9.0 10.0 11.0 12.0 13.0 14.0]
+#define VC_DISTANCE 8.0 //[7.0 8.0 9.0 10.0 11.0 12.0 13.0 14.0]
 #define VC_HEIGHT 180.0 //[100.0 110.0 120.0 130.0 140.0 150.0 160.0 170.0 180.0 190.0 200.0 210.0 220.0 230.0 240.0 250.0]
 
 //Water//
