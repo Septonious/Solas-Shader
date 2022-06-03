@@ -1,4 +1,3 @@
 uniform vec3 fogColor;
-vec4 netherColSqrt = vec4(normalize(fogColor), length(fogColor));
-
-vec4 netherCol = netherColSqrt * netherColSqrt;
+vec3 netherColSqrt = normalize(fogColor);
+vec3 netherCol = netherColSqrt * netherColSqrt;

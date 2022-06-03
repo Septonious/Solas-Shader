@@ -10,13 +10,13 @@ vec3 getVolumetricLight(vec3 viewPos, vec2 coord, float z0, float z1, vec3 trans
 	//Resolution Control
 	if (clamp(texCoord, vec2(0.0), vec2(VOLUMETRICS_RESOLUTION + 1e-3)) == texCoord) {
 		for(int i = 0; i < VL_SAMPLES; i++) {
-			float minDist = (i + dither) * 16.0;
+			float currentStep = (i + dither) * 16.0;
 
-			if (depth1 < minDist || (depth0 < minDist && translucent == vec3(0.0))) {
+			if (depth1 < currentStep || (depth0 < currentStep && translucent == vec3(0.0))) {
 				break;
 			}
 
-			worldPos = getWorldSpace(getLogarithmicDepth(minDist), coord);
+			worldPos = getWorldSpace(getLogarithmicDepth(currentStep), coord);
 			shadowPos = getShadowSpace(worldPos);
 
 			//Circular Fade
@@ -35,7 +35,7 @@ vec3 getVolumetricLight(vec3 viewPos, vec2 coord, float z0, float z1, vec3 trans
 				#endif
 
 				vec3 shadow = clamp(shadowCol * (1.0 - shadow0) + shadow0, vec3(0.0), vec3(1.0));
-				shadow = mix(shadow, shadow * translucent, max(float(depth0 < minDist) - float(isEyeInWater == 1), 0.0));
+				shadow = mix(shadow, shadow * translucent, max(float(depth0 < currentStep) - float(isEyeInWater == 1), 0.0));
 
 				//Fog Altitude
 				vec3 fogPosition = worldPos.xyz + cameraPosition.xyz;

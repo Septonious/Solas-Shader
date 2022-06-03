@@ -136,7 +136,7 @@ vec2 blurOffsets[128] = vec2[128](
 
 vec3 NormalAwareBlur() {
     vec3 blur = vec3(0.0);
-    vec3 normal = normalize(DecodeNormal(texture2D(colortex5, texCoord).xy));
+    vec3 normal = normalize(DecodeNormal(texture2D(colortex6, texCoord).xy));
     vec2 pixelSize = 1.0 / vec2(viewWidth, viewHeight);
 
 	float z0 = texture2D(depthtex0, texCoord.xy).x;
@@ -146,9 +146,9 @@ vec3 NormalAwareBlur() {
 
     for(int i = 0; i < SSPT_DENOISE_QUALITY; i++){
         float weight = 1.0;
-        vec2 offset = blurOffsets[i] * pixelSize * SSPT_DENOISE_STRENGTH * float(z0 > 0.56);
+        vec2 offset = blurOffsets[i] * pixelSize * 150.0 * float(z0 > 0.56);
 
-		vec3 currentNormal = normalize(DecodeNormal(texture2D(colortex5, texCoord + offset).xy));
+		vec3 currentNormal = normalize(DecodeNormal(texture2D(colortex6, texCoord + offset).xy));
 
         float currentDepth = texture2D(depthtex0, texCoord.xy + offset).x;
         float currentDepthLinear = GetLinearDepth(currentDepth);
@@ -158,7 +158,7 @@ vec3 NormalAwareBlur() {
 
         weight *= pow8(clamp(depthDifference * normalDifference, 0.001, 1.0));
 
-        blur += weight * texture2D(colortex6, texCoord + offset).rgb;
+        blur += weight * texture2D(colortex7, texCoord + offset).rgb;
         totalWeight += weight;
     }
     

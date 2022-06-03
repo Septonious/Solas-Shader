@@ -13,7 +13,7 @@ in vec2 texCoord;
 uniform float far, near;
 uniform float viewWidth, viewHeight, aspectRatio;
 
-uniform sampler2D colortex5, colortex6;
+uniform sampler2D colortex6, colortex7;
 uniform sampler2D depthtex0;
 
 uniform mat4 gbufferProjection;

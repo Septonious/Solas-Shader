@@ -2,7 +2,7 @@
 uniform float darknessFactor;
 #endif
 
-void NormalFog(inout vec3 color, vec3 viewPos, in vec3 skyColor) {
+void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 skyColor) {
 	vec3 worldPos = mat3(gbufferModelViewInverse) * viewPos;
 
 	float lViewPos = length(viewPos);
@@ -43,7 +43,7 @@ void NormalFog(inout vec3 color, vec3 viewPos, in vec3 skyColor) {
 
 	//Nether Fog
 	#ifdef NETHER
-	vec3 fogColor = netherCol.rgb * 0.25;
+	vec3 fogColor = netherCol.rgb * 0.15;
 	float fog = pow(lViewPos * FOG_DENSITY * 0.0025, 1.5);
 
 	#ifdef DISTANT_FADE
@@ -61,7 +61,7 @@ void NormalFog(inout vec3 color, vec3 viewPos, in vec3 skyColor) {
 
 //Fog that appears when you have a darkness effect
 #if MC_VERSION >= 11900
-void DarknessFog(inout vec3 color, vec3 viewPos) {
+void getDarknessFog(inout vec3 color, vec3 viewPos) {
 	float fog = length(viewPos) * (darknessFactor * 0.05);
 	fog = (1.0 - exp(-pow3(fog))) * darknessFactor;
 	color = mix(color, vec3(0.0), fog);
@@ -69,7 +69,7 @@ void DarknessFog(inout vec3 color, vec3 viewPos) {
 #endif
 
 //Fog that appears when you have a blindness effect
-void BlindFog(inout vec3 color, vec3 viewPos) {
+void getBlindFog(inout vec3 color, vec3 viewPos) {
 	float fog = length(viewPos) * (blindFactor * 0.2);
 	fog = (1.0 - exp(-6.0 * pow3(fog))) * blindFactor;
 	color = mix(color, vec3(0.0), fog);
@@ -81,7 +81,7 @@ vec3 denseFogColor[2] = vec3[2](
 	vec3(0.1, 0.14, 0.24) * 0.5
 );
 
-void DenseFog(inout vec3 color, vec3 viewPos) {
+void getDenseFog(inout vec3 color, vec3 viewPos) {
 	float fog = length(viewPos) * 0.5;
 	fog = (1.0 - exp(-4.0 * fog * fog * fog));
 
@@ -95,10 +95,10 @@ void DenseFog(inout vec3 color, vec3 viewPos) {
 }
 
 void Fog(inout vec3 color, in vec3 viewPos, in vec3 skyColor) {
-	NormalFog(color, viewPos, skyColor);
-	if (isEyeInWater > 1) DenseFog(color, viewPos);
-	if (blindFactor > 0.0) BlindFog(color, viewPos);
+	getNormalFog(color, viewPos, skyColor);
+	if (isEyeInWater > 1) getDenseFog(color, viewPos);
+	if (blindFactor > 0.0) getBlindFog(color, viewPos);
 	#if MC_VERSION >= 11900
-	if (darknessFactor > 0.0) DarknessFog(color, viewPos);
+	if (darknessFactor > 0.0) getDarknessFog(color, viewPos);
 	#endif
 }

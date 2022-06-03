@@ -12,7 +12,7 @@ vec3 getReflection(vec3 viewPos, vec3 normal, vec3 reflectionFade) {
 
     bool outsideScreen = !(any(lessThan(reflectedScreenPos.xy, vec2(0.0))) || any(greaterThan(reflectedScreenPos.xy, vec2(1.0))));
     if (outsideScreen){
-        reflection = texture2D(colortex7, reflectedScreenPos.xy);
+        reflection = texture2D(colortex5, reflectedScreenPos.xy);
     }
 
     return mix(reflectionFade, reflection.rgb, reflection.a);

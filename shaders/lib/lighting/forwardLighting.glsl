@@ -68,11 +68,11 @@ void GetLighting(inout vec3 albedo, vec3 viewPos, vec3 worldPos, vec2 lightmap, 
     #endif
 
     #ifdef END
-    vec3 sceneLighting = endCol.rgb * (0.06 * fullShadow + 0.02);
+    vec3 sceneLighting = endCol * (0.06 * fullShadow + 0.02);
     #endif
 
     #else
-    vec3 sceneLighting = netherColSqrt.rgb * 0.25;
+    vec3 sceneLighting = netherColSqrt * 0.15;
     #endif
     
     float newLightmap  = (pow8(lightmap.x) + lightmap.x * 0.75) * (1.0 - lightFlatten * 0.75);
@@ -84,7 +84,7 @@ void GetLighting(inout vec3 albedo, vec3 viewPos, vec3 worldPos, vec2 lightmap, 
 
     vec3 minLighting = minLightCol * (1.0 - lightmap.y);
     vec3 albedoNormalized = normalize(albedo.rgb + 0.00001);
-    vec3 emissiveLighting = mix(albedoNormalized, vec3(1.0), emission * 0.5) * emission * 4.0;
+    vec3 emissiveLighting = mix(albedoNormalized, vec3(1.0), emission * 0.5) * emission * EMISSION_STRENGTH;
 
     #if MC_VERSION >= 11900
     sceneLighting *= 1.0 - darknessLightFactor;

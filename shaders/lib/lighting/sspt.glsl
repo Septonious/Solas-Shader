@@ -114,7 +114,7 @@ vec3 generateCosineVector(vec3 vector, vec2 hash) {
 }
 
 vec3 computeSSPT(vec3 screenPos, vec3 normal, float hand) {
-	float speed = 0.6180339887498967 * (frameCounter & 127);
+	float speed = frameCounter % 100;
 
     float dither = getBlueNoise(gl_FragCoord.xy);
           dither = fract(dither + speed);
@@ -124,7 +124,7 @@ vec3 computeSSPT(vec3 screenPos, vec3 normal, float hand) {
     vec3 illumination = vec3(0.0);
     vec3 weight = vec3(1.0);
 
-    vec3 hitNormal = normalize(DecodeNormal(texture2D(colortex5, screenPos.xy).xy));
+    vec3 hitNormal = normalize(DecodeNormal(texture2D(colortex6, screenPos.xy).xy));
     vec3 currentPos = ToView(screenPos) + hitNormal * 0.001;
     vec3 hitPos = ToScreen(currentPos);
     vec3 rayDir = generateCosineVector(hitNormal, noise);
@@ -134,7 +134,7 @@ vec3 computeSSPT(vec3 screenPos, vec3 normal, float hand) {
 
     if (hit && hand < 0.5) {
         vec3 hitAlbedo = texture2D(colortex0, currentPos.xy).rgb;
-        float isEmissive = texture2D(colortex5, currentPos.xy).a;
+        float isEmissive = texture2D(colortex6, currentPos.xy).a;
 
         weight *= hitAlbedo;
         illumination += weight * isEmissive;

@@ -77,12 +77,12 @@ void main() {
 		GetLighting(albedo.rgb, viewPos, worldPos, lightmap, emissive, subsurface);
 	}
 
-    /* DRAWBUFFERS:07 */
+    /* DRAWBUFFERS:05 */
     gl_FragData[0] = albedo;
 	gl_FragData[1] = albedo;
 
 	#ifdef SSPT
-	/* DRAWBUFFERS:075 */
+	/* DRAWBUFFERS:056 */
 	gl_FragData[2] = vec4(EncodeNormal(normal), float(gl_FragCoord.z < 1.0), emissive);
 	#endif
 }

@@ -36,7 +36,7 @@ uniform sampler2D texture, noisetex;
 uniform sampler2D depthtex1;
 
 #ifdef WATER_REFLECTION
-uniform sampler2D colortex7;
+uniform sampler2D colortex5;
 
 uniform mat4 gbufferProjection;
 #endif
@@ -76,6 +76,10 @@ vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.
 
 #ifdef WATER_NORMALS
 #include "/lib/water/waterNormals.glsl"
+#endif
+
+#ifdef SSPT
+#include "/lib/util/encode.glsl"
 #endif
 
 //Program//
@@ -160,6 +164,11 @@ void main() {
     gl_FragData[0] = albedo;
 	gl_FragData[1] = texture2D(texture, texCoord) * color;
 	gl_FragData[2].a = water;
+
+	#ifdef SSPT
+	/* DRAWBUFFERS:0126 */
+	gl_FragData[3] = vec4(EncodeNormal(newNormal), float(gl_FragCoord.z < 1.0), 0.0);
+	#endif
 }
 
 #endif

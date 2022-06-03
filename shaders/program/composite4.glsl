@@ -18,7 +18,7 @@ uniform mat4 gbufferProjection;
 uniform mat4 gbufferProjectionInverse;
 
 uniform sampler2D depthtex2;
-uniform sampler2D colortex5;
+uniform sampler2D colortex6;
 uniform sampler2D depthtex0, depthtex1;
 #endif
 
@@ -39,7 +39,7 @@ void main() {
     float z0 = texture2D(depthtex0, texCoord).x;
 
 	vec3 screenPos = vec3(texCoord, z0);
-    vec3 normal = normalize(DecodeNormal(texture2D(colortex5, texCoord).xy));
+    vec3 normal = normalize(DecodeNormal(texture2D(colortex6, texCoord).xy));
     vec3 sspt = computeSSPT(screenPos, normal, float(z0 < 0.56));
 	#endif
 
@@ -47,7 +47,7 @@ void main() {
 	gl_FragData[0].rgb = color;
 
 	#ifdef SSPT
-	/* DRAWBUFFERS:06 */
+	/* DRAWBUFFERS:07 */
 	gl_FragData[1].rgb = sspt;
 	#endif
 }

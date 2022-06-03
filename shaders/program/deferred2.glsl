@@ -120,24 +120,32 @@ void main() {
 
 	if (z0 == 1.0){ //Sky rendering
 		#ifdef OVERWORLD
-		float VoS = clamp(dot(normalize(viewPos.xyz), sunVec), 0.0, 1.0);
-		float VoM = clamp(dot(normalize(viewPos.xyz), -sunVec), 0.0, 1.0);
+		vec3 nViewPos = normalize(viewPos.xyz);
+		float VoS = clamp(dot(nViewPos, sunVec), 0.0, 1.0);
+		float VoM = clamp(dot(nViewPos, -sunVec), 0.0, 1.0);
+		float VoU = dot(nViewPos, upVec);
 
-		float nebulaFactor = 0.0;
+		if (VoU > 0.0) {
+			float nebulaFactor = 0.0;
 
-		#ifdef NEBULA
-		getNebula(skyColor.rgb, worldPos, viewPos.xyz, nebulaFactor);
-		#endif
+			#ifdef NEBULA
+			getNebula(skyColor, worldPos, viewPos.xyz, VoU, nebulaFactor);
+			#endif
 
-		#ifdef STARS
-		getStars(skyColor.rgb, worldPos, nebulaFactor);
-		#endif
+			#ifdef STARS
+			getStars(skyColor, worldPos, nebulaFactor);
+			#endif
 
-		#ifdef RAINBOW
-		getRainbow(skyColor.rgb, worldPos, viewPos.xyz, 1.75, 0.05);
-		#endif
+			#ifdef RAINBOW
+			getRainbow(skyColor, worldPos, viewPos.xyz, VoU, 1.75, 0.05);
+			#endif
 
-		getSunMoon(skyColor.rgb, VoS, VoM, lightSun, lightNight);
+			#ifdef AURORA
+			getAurora(skyColor, viewPos.xyz, worldPos);
+			#endif
+		}
+
+		getSunMoon(skyColor, VoS, VoM, lightSun, lightNight);
 
 		#if MC_VERSION >= 11900
 		skyColor *= 1.0 - darknessFactor;
@@ -148,7 +156,7 @@ void main() {
 		#endif
 
 		#ifdef NETHER
-		color = netherCol.rgb * 0.25;
+		color = netherCol.rgb * 0.15;
 		#endif
 
 		#ifdef END

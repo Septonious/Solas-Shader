@@ -69,6 +69,14 @@ float ug = mix(clamp((cameraPosition.y - 32.0) / 16.0, 0.0, 1.0), 1.0, eBS) * (1
 #include "/lib/atmosphere/volumetricClouds.glsl"
 #endif
 
+#define pi 3.14159265
+
+float getMiePhase(float cosTheta, float g) {
+    float mie = 1.0 + pow2(g) - 2.0 * g * cosTheta;
+          mie = (1.0 - pow2(g)) / ((4.0 * pi) * mie * (mie * 0.5 + 0.5));
+    return mie;
+}
+
 //Program//
 void main() {
 	vec3 vl = vec3(0.0);
@@ -95,7 +103,7 @@ void main() {
 
 	#ifdef VL
 	vl = getVolumetricLight(viewPos.xyz, newTexCoord, z0, z1, translucent, dither);
-	vl *= mix(0.5, pow2(VoL), timeBrightness) * (1.0 - rainStrength * 0.5) * (1.0 - blindFactor) * (0.5 + sunVisibility * 0.5);
+	vl *= mix(0.5, pow8(VoL), timeBrightness) * (1.0 - rainStrength * 0.5) * (1.0 - blindFactor) * (0.5 + sunVisibility * 0.5);
 
 	#if MC_VERSION >= 11900
 	vl *= 1.0 - darknessFactor;
@@ -104,8 +112,7 @@ void main() {
 
 	#ifdef VCLOUDS
 	clouds = getVolumetricCloud(viewPos.xyz, newTexCoord, z0, z1, translucent, dither);
-	clouds.rgb *= 1.0 + timeBrightness + pow8(VoL) * 0.5;
-	clouds.a *= 1.0 - rainStrength * 0.1;
+	clouds.rgb *= 1.0 + timeBrightness;
 
 	#if MC_VERSION >= 11900
 	clouds *= 1.0 - darknessFactor;
