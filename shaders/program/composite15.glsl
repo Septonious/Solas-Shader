@@ -29,7 +29,7 @@ uniform mat4 gbufferProjection;
 uniform sampler2D depthtex0;
 #endif
 
-#ifdef TAA
+#if defined TAA || defined LENS_FLARE
 uniform sampler2D colortex3;
 #endif
 
@@ -39,7 +39,7 @@ uniform sampler2D colortex0;
 uniform sampler2D colortex1;
 #endif
 
-#ifdef TAA
+#if defined TAA || defined LENS_FLARE
 const bool colortex3Clear = false;
 #endif
 
