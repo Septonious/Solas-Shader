@@ -59,12 +59,10 @@ void getRainbow(inout vec3 color, in vec3 worldPos, in vec3 viewPos, in float Vo
 #include "/lib/color/auroraColor.glsl"
 
 float getAuroraNoise(vec2 coord, vec2 wind) {
-	float noise = texture2D(noisetex, coord * 0.030 + wind * 0.25).b * 3.0;
-		  noise+= texture2D(noisetex, coord * 0.015 + wind * 0.15).b * 3.0;
+	float noise = texture2D(noisetex, coord * 0.02 + wind * 0.3).b * 2.5;
+		  noise+= texture2D(noisetex, coord * 0.01 + wind * 0.2).b * 2.5;
 
-	noise = max(1.0 - 2.0 * abs(noise - 3.0), 0.0);
-
-	return noise;
+	return max(abs(noise) - 2.0, 0.0);
 }
 
 void getAurora(inout vec3 color, in vec3 viewPos, in vec3 worldPos) {
@@ -83,28 +81,28 @@ void getAurora(inout vec3 color, in vec3 viewPos, in vec3 worldPos) {
 		dither = fract(dither + frameTimeCounter * 16.0);
 		#endif
 
-		int samples = 14;
+		int samples = 12;
 		float sampleStep = 1.0 / samples;
 		float currentStep = dither * sampleStep;
 
-		vec2 wind = vec2(frameTimeCounter * 0.0001, frameTimeCounter * 0.0002);
+		vec2 wind = vec2(frameTimeCounter * 0.0001, frameTimeCounter * 0.001);
 
 		for(int i = 0; i < samples; i++) {
-			vec3 planeCoord = worldPos * ((6.0 + currentStep * 16.0) / worldPos.y) * 0.005;
+			vec3 planeCoord = worldPos * ((6.0 + currentStep * 12.0) / worldPos.y) * 0.01;
 
-			vec2 coord = cameraPosition.xz * 0.00004 + planeCoord.xz;
+			vec2 coord = cameraPosition.xz * 0.00005 + planeCoord.xz;
 				 coord += vec2(coord.y, -coord.x) * 0.5;
 
 			float noise = getAuroraNoise(coord, wind);
 			
 			if (noise > 0.0) {
-				noise *= texture2D(noisetex, coord * 0.125 + wind * 0.25).b;
-				noise *= texture2D(noisetex, coord + wind * 16.0).b * 0.5 + 0.75;
-				noise = pow2(noise) * 4.0 * sampleStep;
-				noise *= max(sqrt(1.0 - length(planeCoord.xz) * 2.0), 0.0);
+				noise *= texture2D(noisetex, coord * 0.125 + wind * 0.25).b * 0.5 + 0.5;
+				noise *= texture2D(noisetex, coord + wind * 16.0).b * 0.25 + 0.25;
+				noise = pow2(noise) * sampleStep;
+				noise *= max(1.0 - length(planeCoord.xz) * 0.5, 0.0);
 
 				vec3 auroraColor = mix(auroraLowCol, auroraHighCol, pow(currentStep, 0.5));
-				aurora += noise * auroraColor * exp2(-8.0 * i * sampleStep);
+				aurora += noise * auroraColor * exp2(-6.0 * i * sampleStep);
 			}
 			currentStep += sampleStep;
 		}
