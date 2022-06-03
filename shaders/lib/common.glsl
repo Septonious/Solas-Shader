@@ -21,7 +21,7 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 
 //Post Effects//
 #define LENS_FLARE
-//#define TAA
+#define TAA
 //#define ENTITY_OUTLINE
 //#define CHROMATIC_ABERRATION
 #define CHROMATIC_ABERRATION_STRENGTH 1.0 //[0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00]
