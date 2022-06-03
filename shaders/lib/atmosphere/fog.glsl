@@ -62,8 +62,8 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 skyColor) {
 //Fog that appears when you have a darkness effect
 #if MC_VERSION >= 11900
 void getDarknessFog(inout vec3 color, vec3 viewPos) {
-	float fog = length(viewPos) * (darknessFactor * 0.05);
-	fog = (1.0 - exp(-pow3(fog))) * darknessFactor;
+	float fog = length(viewPos) * (darknessFactor * 0.04);
+	fog = (1.0 - exp(-2.0 * pow3(fog))) * darknessFactor;
 	color = mix(color, vec3(0.0), fog);
 }
 #endif
