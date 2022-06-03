@@ -35,14 +35,11 @@ uniform sampler2D colortex1;
 uniform sampler2D depthtex2;
 uniform sampler2D depthtex0;
 uniform sampler2D depthtex1;
-#endif
-
-#ifdef VL
-uniform mat4 shadowModelView, shadowProjection;
-
 uniform sampler2DShadow shadowtex0;
 
-#ifdef SHADOW_COLOR
+uniform mat4 shadowModelView, shadowProjection;
+
+#if defined SHADOW_COLOR && defined VL
 uniform sampler2DShadow shadowtex1;
 uniform sampler2D shadowcolor0;
 #endif

@@ -1,23 +1,3 @@
-vec4 distortShadow(vec4 shadowpos, float distortFactor) {
-	shadowpos.xy *= 1.0 / distortFactor;
-	shadowpos.z = shadowpos.z * 0.2;
-	shadowpos = shadowpos * 0.5 + 0.5;
-
-	return shadowpos;
-}
-
-vec4 getShadowSpace(vec4 wpos) {
-	wpos = shadowModelView * wpos;
-	wpos = shadowProjection * wpos;
-	wpos /= wpos.w;
-	
-	float distb = sqrt(wpos.x * wpos.x + wpos.y * wpos.y);
-	float distortFactor = 1.0 - shadowMapBias + distb * shadowMapBias;
-	wpos = distortShadow(wpos, distortFactor);
-	
-	return wpos;
-}
-
 vec3 getVolumetricLight(vec3 viewPos, vec2 coord, float z0, float z1, vec3 translucent, float dither) {
 	vec3 vl = vec3(0.0);
 	vec4 worldPos = vec4(0.0);
@@ -55,7 +35,7 @@ vec3 getVolumetricLight(vec3 viewPos, vec2 coord, float z0, float z1, vec3 trans
 				#endif
 
 				vec3 shadow = clamp(shadowCol * (1.0 - shadow0) + shadow0, vec3(0.0), vec3(1.0));
-				shadow = mix(shadow, shadow * translucent * translucent, max(float(depth0 < minDist) - float(isEyeInWater == 1), 0.0));
+				shadow = mix(shadow, shadow * translucent, max(float(depth0 < minDist) - float(isEyeInWater == 1), 0.0));
 
 				//Fog Altitude
 				vec3 fogPosition = worldPos.xyz + cameraPosition.xyz;

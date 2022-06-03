@@ -21,3 +21,23 @@ vec4 getWorldSpace(float depth, vec2 coord) {
 	
 	return wpos;
 }
+
+vec4 distortShadow(vec4 shadowpos, float distortFactor) {
+	shadowpos.xy *= 1.0 / distortFactor;
+	shadowpos.z = shadowpos.z * 0.2;
+	shadowpos = shadowpos * 0.5 + 0.5;
+
+	return shadowpos;
+}
+
+vec4 getShadowSpace(vec4 wpos) {
+	wpos = shadowModelView * wpos;
+	wpos = shadowProjection * wpos;
+	wpos /= wpos.w;
+	
+	float distb = sqrt(wpos.x * wpos.x + wpos.y * wpos.y);
+	float distortFactor = 1.0 - shadowMapBias + distb * shadowMapBias;
+	wpos = distortShadow(wpos, distortFactor);
+	
+	return wpos;
+}

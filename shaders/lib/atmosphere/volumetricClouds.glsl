@@ -13,7 +13,8 @@ float getCloudSample(vec3 pos){
 
 vec4 getVolumetricCloud(vec3 viewPos, vec2 coord, float z0, float z1, vec3 translucent, float dither){
 	vec4 finalColor = vec4(0.0);
-	vec3 worldPos = vec3(0.0);
+	vec4 shadowPos = vec4(0.0);
+	vec4 worldPos = vec4(0.0);
 
 	//Depths
 	float depth0 = getLinearDepth2(z0);
@@ -28,12 +29,16 @@ vec4 getVolumetricCloud(vec3 viewPos, vec2 coord, float z0, float z1, vec3 trans
 				break;
 			}
 			
-			worldPos = getWorldSpace(getLogarithmicDepth(minDist), coord).xyz;
+			worldPos = getWorldSpace(getLogarithmicDepth(minDist), coord);
+			shadowPos = getShadowSpace(worldPos);
+
+			//Cloud VL
+			float shadow0 = shadow2D(shadowtex0, shadowPos.xyz).z;
 
 			//Circular Fade
 			float fog = length(worldPos.xz) * 0.000075;
 				  fog = clamp(exp(-16.0 * fog + 0.5), 0.0, 1.0);
-			worldPos += cameraPosition - sunVec;
+			worldPos.xyz += cameraPosition;
 
 			float noise = getCloudSample(worldPos.xyz);
 			float heightFactor = smoothstep(VC_HEIGHT + VC_STRETCHING * noise, VC_HEIGHT - VC_STRETCHING * noise, worldPos.y);
@@ -42,9 +47,9 @@ vec4 getVolumetricCloud(vec3 viewPos, vec2 coord, float z0, float z1, vec3 trans
 			vec4 cloudsColor = vec4(mix(lightCol, ambientCol, heightFactor), noise);
 				 cloudsColor.a *= fog;
 				 cloudsColor.rgb *= cloudsColor.a;
-				 cloudsColor.rgb = mix(cloudsColor.rgb, cloudsColor.rgb * translucent * translucent, max(float(depth0 < minDist) - float(isEyeInWater == 1), 0.0));
+				 cloudsColor.rgb = mix(cloudsColor.rgb, cloudsColor.rgb * translucent, max(float(depth0 < minDist) - float(isEyeInWater == 1), 0.0));
 
-			finalColor += cloudsColor * (1.0 - finalColor.a);
+			finalColor += cloudsColor * (1.0 - finalColor.a) * shadow0;
 		}
 	}
 
