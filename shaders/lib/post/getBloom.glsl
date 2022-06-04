@@ -1,23 +1,19 @@
-vec3 GetBloomTile(float lod, vec2 coord, vec2 offset, vec2 dither) {
+vec3 GetBloomTile(float lod, vec2 coord, vec2 offset) {
 	float scale = exp2(lod);
 
 	float resScale = 1.25 * min(360.0, viewHeight) / viewHeight;
 	vec2 centerOffset = vec2(0.125 * pixelWidth, 0.125 * pixelHeight);
-	vec3 bloom = texture(colortex1, ((coord / scale + offset) * resScale + centerOffset) + dither).rgb;
+	vec3 bloom = getDiskBlur8(colortex1, ((coord / scale + offset) * resScale + centerOffset), 2.0).rgb;
 
 	return bloom;
 }
 
 void getBloom(inout vec3 color, vec2 coord) {
-	vec2 dither = vec2(0.0);
-	dither.x += (Bayer64(gl_FragCoord.xy) - 0.5) * pixelWidth;
-	dither.y += (Bayer64(gl_FragCoord.xy) - 0.5) * pixelHeight;
-
-	vec3 blur1 = GetBloomTile(1.0, coord, vec2(0.0   , 0.0   ), dither);
-	vec3 blur2 = GetBloomTile(2.0, coord, vec2(0.51  , 0.0   ), dither);
-	vec3 blur3 = GetBloomTile(3.0, coord, vec2(0.51  , 0.26  ), dither);
-	vec3 blur4 = GetBloomTile(4.0, coord, vec2(0.645 , 0.26  ), dither);
-	vec3 blur5 = GetBloomTile(5.0, coord, vec2(0.7175, 0.26  ), dither);
+	vec3 blur1 = GetBloomTile(1.0, coord, vec2(0.0   , 0.0 ));
+	vec3 blur2 = GetBloomTile(2.0, coord, vec2(0.51  , 0.0 ));
+	vec3 blur3 = GetBloomTile(3.0, coord, vec2(0.51  , 0.26));
+	vec3 blur4 = GetBloomTile(4.0, coord, vec2(0.645 , 0.26));
+	vec3 blur5 = GetBloomTile(5.0, coord, vec2(0.7175, 0.26));
 
 	#if BLOOM_RADIUS == 1
 	vec3 blur = blur1;

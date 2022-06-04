@@ -76,7 +76,7 @@ void getBlindFog(inout vec3 color, vec3 viewPos) {
 
 //Powder Snow / Lava Fog
 vec3 denseFogColor[2] = vec3[2](
-	vec3(1.0, 0.3, 0.01),
+	vec3(1.0, 0.2, 0.02),
 	vec3(0.1, 0.14, 0.24) * 0.5
 );
 

@@ -14,7 +14,6 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 
 //Shader Settings//
 //#define ENTITY_SHADOWS
-//#define ENTITY_OUTLINE
 #define SHADOW_COLOR
 #define SHADOW_FILTER
 #define SHADOW_BLUR_STRENGTH 1.0 //[1.0 1.5 2.0 2.5]
@@ -35,13 +34,13 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 
 //Bloom//
 #define BLOOM
-#define BLOOM_STRENGTH 0.50 //[0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00]
+#define BLOOM_STRENGTH 2.00 //[1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00]
 #define BLOOM_CONTRAST 8 //[-4 -3 -2 -1 0 1 2 3 4 5 6 7 8]
 #define BLOOM_RADIUS 5 //[1 2 3 4 5]
 
 //IPBR//
 #define INTEGRATED_EMISSION
-#define EMISSION_STRENGTH 4.0 //[1.0 2.0 3.0 4.0 5.0 6.0 7.0 8.0]
+#define EMISSION_STRENGTH 6.0 //[1.0 2.0 3.0 4.0 5.0 6.0 7.0 8.0]
 #define EMISSIVE_ORES
 #define EMISSIVE_FLOWERS
 
@@ -61,7 +60,7 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 //Volumetric Light//
 #define VL
 #define VL_SAMPLES 10 //[6 7 8 9 10 11 12 13 14 15 16]
-#define VL_STRENGTH 0.4 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
+#define VL_STRENGTH 0.5 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
 
 //Volumetric Clouds
 #define VCLOUDS
@@ -218,7 +217,7 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 #define TONEMAP_SL 1.00 //[0.00 0.05 0.10 0.15 0.20 0.25 0.30 0.35 0.40 0.45 0.50 0.55 0.60 0.65 0.70 0.75 0.80 0.85 0.90 0.95 1.00]
 #define TONEMAP_SA 0.00 //[0.00 0.05 0.10 0.15 0.20 0.25 0.30 0.35 0.40 0.45 0.50 0.55 0.60 0.65 0.70 0.75 0.80 0.85 0.90 0.95 1.00]
 
-#define EXPOSURE 0.25 //[-2.00 -1.75 -1.50 -1.25 -1.00 -0.75 -0.50 -0.25 0.00 0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00]
+#define EXPOSURE 0.00 //[-2.00 -1.75 -1.50 -1.25 -1.00 -0.75 -0.50 -0.25 0.00 0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00]
 #define SATURATION 1.00 //[0.00 0.05 0.10 0.15 0.20 0.25 0.30 0.35 0.40 0.45 0.50 0.55 0.60 0.65 0.70 0.75 0.80 0.85 0.90 0.95 1.00 1.05 1.10 1.15 1.20 1.25 1.30 1.35 1.40 1.45 1.50 1.55 1.60 1.65 1.70 1.75 1.80 1.85 1.90 1.95 2.00]
 #define VIBRANCE 1.50 //[0.00 0.05 0.10 0.15 0.20 0.25 0.30 0.35 0.40 0.45 0.50 0.55 0.60 0.65 0.70 0.75 0.80 0.85 0.90 0.95 1.00 1.05 1.10 1.15 1.20 1.25 1.30 1.35 1.40 1.45 1.50 1.55 1.60 1.65 1.70 1.75 1.80 1.85 1.90 1.95 2.00]
 

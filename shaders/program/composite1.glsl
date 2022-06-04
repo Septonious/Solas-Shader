@@ -36,13 +36,13 @@ void main() {
 	#endif
 
 	#ifdef VL
-    vec3 vl = getDiskBlur(colortex1, newTexCoord, 1.5 / VOLUMETRICS_RESOLUTION).rgb;
+    vec3 vl = getDiskBlur8(colortex1, newTexCoord, 1.5 / VOLUMETRICS_RESOLUTION).rgb;
 
 	color += vl * VL_STRENGTH * 0.5;
 	#endif
 
 	#ifdef VCLOUDS
-    vec4 clouds = getDiskBlur(colortex4, newTexCoord, 1.5 / VOLUMETRICS_RESOLUTION);
+    vec4 clouds = getDiskBlur16(colortex4, newTexCoord, 1.5 / VOLUMETRICS_RESOLUTION);
 
 	color = mix(color, clouds.rgb, pow8(clouds.a) * 0.8);
 	#endif

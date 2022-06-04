@@ -70,6 +70,7 @@ vec2 GetLightPos() {
 #include "/lib/post/tonemap.glsl"
 
 #ifdef BLOOM
+#include "/lib/filters/blur.glsl"
 #include "/lib/post/getBloom.glsl"
 #endif
 

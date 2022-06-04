@@ -17,9 +17,8 @@ uniform float aspectRatio;
 const bool shadowHardwareFiltering = true;
 const float shadowDistanceRenderMul = 1.0;
 const int noiseTextureResolution = 512;
-const float drynessHalflife = 50.0;
-const float wetnessHalflife = 300.0;
-const bool colortex5Clear = false;
+const float drynessHalflife = 64.0;
+const float wetnessHalflife = 512.0;
 
 //Optifine Constants//
 /*

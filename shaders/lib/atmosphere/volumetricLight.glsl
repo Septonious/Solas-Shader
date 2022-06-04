@@ -10,7 +10,7 @@ vec3 getVolumetricLight(vec3 viewPos, vec2 coord, float z0, float z1, vec3 trans
 	//Resolution Control
 	if (clamp(texCoord, vec2(0.0), vec2(VOLUMETRICS_RESOLUTION + 1e-3)) == texCoord) {
 		for(int i = 0; i < VL_SAMPLES; i++) {
-			float currentStep = (i + dither) * 16.0;
+			float currentStep = (i + dither) * 24.0;
 
 			if (depth1 < currentStep || (depth0 < currentStep && translucent == vec3(0.0))) {
 				break;
