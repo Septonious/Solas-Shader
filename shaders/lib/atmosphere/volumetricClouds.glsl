@@ -42,7 +42,7 @@ vec4 getVolumetricCloud(vec3 viewPos, vec2 coord, float z0, float z1, vec3 trans
 				worldPos.xyz += cameraPosition;
 
 				float noise = getCloudSample(worldPos.xyz);
-				float heightFactor = smoothstep(VC_HEIGHT + VC_STRETCHING * noise, VC_HEIGHT - VC_STRETCHING * noise, worldPos.y);
+				float heightFactor = pow2(smoothstep(VC_HEIGHT + VC_STRETCHING * noise, VC_HEIGHT - VC_STRETCHING * noise, worldPos.y));
 
 				//Clouds Color
 				vec4 cloudsColor = vec4(mix(lightCol, ambientCol, heightFactor), noise);

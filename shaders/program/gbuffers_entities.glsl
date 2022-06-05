@@ -65,7 +65,7 @@ void main() {
 
 	albedo.rgb = mix(albedo.rgb, entityColor.rgb, entityColor.a);
 
-	float emissive = float(entityColor.a > 0.05) + lightningBolt;
+	float emissive = float(entityColor.a > 0.05) * 0.125 + lightningBolt;
 
 	if (lightningBolt > 0.5) {
 		albedo.rgb = vec3(1.0);
