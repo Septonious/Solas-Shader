@@ -35,14 +35,14 @@ const vec2 blurOffsets[32] = vec2[32](
 
 vec3 getBlur(vec3 color, vec3 viewPos) {
 	vec3 blur = vec3(0.0);
-	
-    float z0 = texture2D(depthtex1, texCoord).x;
+
+	float z1 = texture2D(depthtex1, texCoord).r;
 	float fovScale = gbufferProjection[1][1] / 1.37;
 	float coc = 0.0;
 
 	#ifdef DOF
-	coc = max(abs(z0 - centerDepthSmooth) * DOF_STRENGTH - 0.01, 0.0);
-	coc = coc / sqrt(coc * coc + 0.1);
+	coc = max(abs(z1 - centerDepthSmooth) * DOF_STRENGTH - 0.01, 0.0);
+	coc /= sqrt(coc * coc + 0.1);
 	#endif
 
 	#ifdef DISTANT_BLUR
@@ -51,7 +51,7 @@ vec3 getBlur(vec3 color, vec3 viewPos) {
 
     float lod = log2(viewHeight * aspectRatio * coc * fovScale / 320.0);
 	
-	if (coc > 0.0 && z0 > 0.56) {
+	if (coc > 0.0 && z1 > 0.56) {
 		for(int i = 0; i < 32; i++) {
 			vec2 offset = blurOffsets[i] * coc * 0.025 * fovScale * vec2(1.0 / aspectRatio, 1.0);
 			blur += texture2DLod(colortex0, texCoord + offset, lod).rgb;

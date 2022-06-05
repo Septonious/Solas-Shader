@@ -30,9 +30,7 @@ uniform mat4 gbufferProjectionInverse;
 uniform sampler2D colortex0;
 
 //Optifine Constants//
-#if defined DOF || defined DISTANT_BLUR
 const bool colortex0MipmapEnabled = true;
-#endif
 
 //Includes//
 #if defined DOF || defined DISTANT_BLUR
@@ -41,7 +39,7 @@ const bool colortex0MipmapEnabled = true;
 
 //Program//
 void main() {
-	vec3 color = texture2D(colortex0, texCoord).rgb;
+	vec3 color = texture2DLod(colortex0, texCoord, 0.0).rgb;
 	vec4 viewPos = vec4(0.0);
 
 	#ifdef DISTANT_BLUR
@@ -55,7 +53,7 @@ void main() {
 	color = getBlur(color, viewPos.xyz);
 	#endif
 
-	/*DRAWBUFFERS:0*/
+	/* DRAWBUFFERS:0 */
 	gl_FragData[0].rgb = color;
 }
 

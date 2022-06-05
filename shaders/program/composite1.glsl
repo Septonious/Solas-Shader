@@ -44,7 +44,7 @@ void main() {
 	#ifdef VCLOUDS
     vec4 clouds = getDiskBlur16(colortex4, newTexCoord, 1.5 / VOLUMETRICS_RESOLUTION);
 
-	color = mix(color, clouds.rgb, pow8(clouds.a) * 0.8);
+	color = mix(color, clouds.rgb, pow4(clouds.a) * 0.75);
 	#endif
 
 	/* DRAWBUFFERS:0 */
