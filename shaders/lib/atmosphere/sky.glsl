@@ -26,7 +26,7 @@ vec3 getAtmosphere(vec3 viewPos) {
 
     daySky = mix(lightSun, daySky, lightMix);
 
-    vec3 sky = mix(lightNight, daySky, pow2(sunVisibility));
+    vec3 sky = mix(lightNight, daySky, pow3(sunVisibility));
          sky *= sky;
 
     //Fake Light Scattering
