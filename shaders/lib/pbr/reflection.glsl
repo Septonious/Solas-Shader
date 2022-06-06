@@ -6,7 +6,7 @@ vec3 ToScreen(in vec3 view) {
 }
 
 vec3 getReflection(vec3 viewPos, vec3 normal, vec3 reflectionFade) {
-	vec3 reflectedVector = reflect(normalize(viewPos), normal) * 100.0;
+	vec3 reflectedVector = reflect(normalize(viewPos), normal) * 64.0;
 	vec3 reflectedScreenPos = ToScreen(viewPos + reflectedVector);
 	vec4 reflection = vec4(0.0);
 

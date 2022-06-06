@@ -32,7 +32,7 @@ vec4 getVolumetricCloud(vec3 viewPos, vec2 coord, float z0, float z1, vec3 trans
 			worldPos = getWorldSpace(getLogarithmicDepth(currentStep), coord);
 			shadowPos = getShadowSpace(worldPos);
 
-			if (length(shadowPos.xy * 2.0 - 1.0) < 1.0 && length(worldPos.xz) < 1024.0) {
+			if (length(worldPos.xz) < 1024.0) {
 				//Cloud VL
 				float shadow0 = shadow2D(shadowtex0, shadowPos.xyz).z;
 
