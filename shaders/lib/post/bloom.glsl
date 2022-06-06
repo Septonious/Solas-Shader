@@ -13,7 +13,7 @@ const vec2 bloomOffsets[8] = vec2[8](
 );
 
 vec3 getBloomTile(float lod, vec2 coord, vec2 offset) {
-	vec3 bloom = vec3(0.0), temp = vec3(0.0);
+	vec3 bloom = vec3(0.0);
 	float scale = exp2(lod);
 	coord = (coord - offset) * scale;
 	float padding = 0.5 + 0.005 * scale;
