@@ -98,7 +98,7 @@ void main() {
     float visibleSun = float(texture2D(depthtex0, lightPos + 0.5).r >= 1.0);
 	visibleSun *= (1.0 - blindFactor) * (1.0 - rainStrength);
 
-	if (visibleSun > 0.001) LensFlare(color, lightPos, truePos, 0.65 * tempVisibleSun);
+	if (visibleSun > 0.001) LensFlare(color, lightPos, truePos, 0.5 * tempVisibleSun);
 	if (texCoord.x > 2.0 * pixelWidth && texCoord.x < 4.0 * pixelWidth && texCoord.y < 2.0 * pixelHeight)
 		temporalData = mix(tempVisibleSun, visibleSun, 0.125);
 	#endif
