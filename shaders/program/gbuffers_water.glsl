@@ -150,7 +150,7 @@ void main() {
 
 		if  (water > 0.9) {
 			#ifdef WATER_REFLECTION
-			float fresnel = clamp(pow4(1.0 + dot(newNormal, normalize(viewPos))) + 0.1 - float(isEyeInWater == 1), 0.0, 1.0);
+			float fresnel = clamp(pow2(1.0 + dot(newNormal, normalize(viewPos))) + 0.1 - float(isEyeInWater == 1), 0.0, 1.0);
 
 			vec3 reflection = getReflection(viewPos, newNormal, skyColor * lightmap.y);
 			albedo.rgb = mix(albedo.rgb, reflection.rgb, fresnel);

@@ -5,6 +5,13 @@ float pow5(float x) {return x*x*x*x*x;}
 float pow6(float x) {return x*x*x*x*x*x;}
 float pow7(float x) {return x*x*x*x*x*x*x;}
 float pow8(float x) {return x*x*x*x*x*x*x*x;}
+float pow9(float x) {return x*x*x*x*x*x*x*x*x;}
+float pow10(float x) {return x*x*x*x*x*x*x*x*x*x;}
+float pow11(float x) {return x*x*x*x*x*x*x*x*x*x*x;}
+float pow12(float x) {return x*x*x*x*x*x*x*x*x*x*x*x;}
+float pow13(float x) {return x*x*x*x*x*x*x*x*x*x*x*x*x;}
+float pow14(float x) {return x*x*x*x*x*x*x*x*x*x*x*x*x*x;}
+float pow15(float x) {return x*x*x*x*x*x*x*x*x*x*x*x*x*x*x;}
 float pow16(float x) {return x*x*x*x*x*x*x*x*x*x*x*x*x*x*x*x;}
 
 float sum2(float x) {return x+x;}

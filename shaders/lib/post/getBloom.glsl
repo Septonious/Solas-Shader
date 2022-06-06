@@ -27,17 +27,11 @@ void getBloom(inout vec3 color, vec2 coord) {
 	vec3 blur = (blur1 + blur2 + blur3 + blur4 + blur5) * 0.2;
 	#endif
 
-	float strength = BLOOM_STRENGTH;
-
-	#ifdef NETHER
-	strength *= 1.5;
-	#endif
-
 	#if BLOOM_CONTRAST == 0
-	color = mix(color, blur, 0.2 * strength);
+	color = mix(color, blur, 0.2 * BLOOM_STRENGTH);
 	#else
 	vec3 bloomContrast = vec3(exp2(BLOOM_CONTRAST * 0.25));
-	vec3 bloomStrength = pow(vec3(0.2 * strength), bloomContrast);
+	vec3 bloomStrength = pow(vec3(0.2 * BLOOM_STRENGTH), bloomContrast);
 
 	color = pow(color, bloomContrast);
 	blur = pow(blur, bloomContrast);
