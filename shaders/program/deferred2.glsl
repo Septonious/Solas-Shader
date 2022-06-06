@@ -46,10 +46,6 @@ uniform mat4 gbufferModelViewInverse;
 float sunVisibility = clamp(dot(sunVec, upVec) + 0.05, 0.0, 0.1) * 10.0;
 float moonVisibility = clamp(dot(-sunVec, upVec) + 0.05, 0.0, 0.1) * 10.0;
 float eBS = eyeBrightnessSmooth.y / 240.0;
-
-float GetLuminance(vec3 color) {
-	return dot(color,vec3(0.299, 0.587, 0.114));
-}
 #endif
 
 vec2 glowOffsets[16] = vec2[16](
@@ -83,13 +79,13 @@ void GlowOutline(inout vec3 color){
 	}
 }
 
-void getSunMoon(inout vec3 color, in float VoS, in float VoM, in vec3 lightSun, in vec3 lightNight) {
-	float visibility = 1.0 - rainStrength;
+void getSunMoon(inout vec3 color, in float VoS, in float VoM, in float VoU, in vec3 lightSun, in vec3 lightNight) {
+	float visibility = 8.0 * (1.0 - rainStrength);
 
-	vec3 sun = pow4(pow8(pow8(pow8(VoS)))) * lightSun * lightSun * visibility;
-	vec3 moon = pow8(pow8(pow8(pow8(VoM)))) * lightNight * visibility;
+	vec3 sun = pow8(pow8(pow24(VoS))) * lightSun * lightSun * visibility;
+	vec3 moon = pow8(pow8(pow24(VoM))) * lightNight * visibility;
 
-	color += sun + moon;
+	color += (sun * 8.0 + moon) * pow2(max(VoU, 0.0));
 }
 
 //Includes//
@@ -145,7 +141,7 @@ void main() {
 			#endif
 		}
 
-		getSunMoon(skyColor, VoS, VoM, lightSun, lightNight);
+		getSunMoon(skyColor, VoS, VoM, VoU, lightSun, lightNight);
 
 		#if MC_VERSION >= 11900
 		skyColor *= 1.0 - darknessFactor;
