@@ -58,7 +58,7 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 #define FOG_HEIGHT 8 //[10 9 8 7 6 5 4 3 2 1]
 
 //Volumetric Light//
-//#define VL
+#define VL
 #define VL_SAMPLES 10 //[6 7 8 9 10 11 12 13 14 15 16]
 #define VL_STRENGTH 0.5 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
 
