@@ -84,9 +84,9 @@ void GlowOutline(inout vec3 color){
 }
 
 void getSunMoon(inout vec3 color, in float VoS, in float VoM, in vec3 lightSun, in vec3 lightNight) {
-	float visibility = 16.0 * (1.0 - rainStrength);
+	float visibility = 1.0 - rainStrength;
 
-	vec3 sun = pow4(pow8(pow8(pow8(VoS)))) * lightSun * visibility;
+	vec3 sun = pow4(pow8(pow8(pow8(VoS)))) * lightSun * lightSun * visibility;
 	vec3 moon = pow8(pow8(pow8(pow8(VoM)))) * lightNight * visibility;
 
 	color += sun + moon;

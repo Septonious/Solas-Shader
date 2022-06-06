@@ -13,6 +13,11 @@ float pow13(float x) {return x*x*x*x*x*x*x*x*x*x*x*x*x;}
 float pow14(float x) {return x*x*x*x*x*x*x*x*x*x*x*x*x*x;}
 float pow15(float x) {return x*x*x*x*x*x*x*x*x*x*x*x*x*x*x;}
 float pow16(float x) {return x*x*x*x*x*x*x*x*x*x*x*x*x*x*x*x;}
+float pow17(float x) {return x*x*x*x*x*x*x*x*x*x*x*x*x*x*x*x*x;}
+float pow18(float x) {return x*x*x*x*x*x*x*x*x*x*x*x*x*x*x*x*x*x;}
+float pow19(float x) {return x*x*x*x*x*x*x*x*x*x*x*x*x*x*x*x*x*x*x;}
+float pow20(float x) {return x*x*x*x*x*x*x*x*x*x*x*x*x*x*x*x*x*x*x*x;}
+float pow24(float x) {return x*x*x*x*x*x*x*x*x*x*x*x*x*x*x*x*x*x*x*x*x*x*x*x;}
 
 float sum2(float x) {return x+x;}
 float sum3(float x) {return x+x+x;}
@@ -21,7 +26,3 @@ float sum5(float x) {return x+x+x+x+x;}
 float sum6(float x) {return x+x+x+x+x+x;}
 float sum7(float x) {return x+x+x+x+x+x+x;}
 float sum8(float x) {return x+x+x+x+x+x+x+x;}
-
-float smoothstep1(float x) {
-    return x * x * (3.0 - 2.0 * x);
-}
