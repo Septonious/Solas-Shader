@@ -75,7 +75,7 @@ void GetLighting(inout vec3 albedo, vec3 viewPos, vec3 worldPos, vec2 lightmap, 
     vec3 sceneLighting = netherColSqrt * 0.25;
     #endif
     
-    float newLightmap  = (pow8(lightmap.x) + lightmap.x * 0.75) * (1.0 - lightFlatten * 0.75);
+    float newLightmap  = (pow6(lightmap.x) + lightmap.x * 0.75) * (1.0 - lightFlatten * 0.75);
     vec3 blockLighting = blocklightCol * clamp(newLightmap * newLightmap, 0.0, 1.0) * (1.0 - lightmap.y * 0.75);
 
     #ifdef SSPT

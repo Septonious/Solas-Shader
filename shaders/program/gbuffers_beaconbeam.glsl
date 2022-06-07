@@ -31,6 +31,18 @@ void main() {
 out vec2 texCoord;
 out vec4 color;
 
+//Uniforms
+#ifdef TAA
+uniform int frameCounter;
+
+uniform float viewWidth, viewHeight;
+#endif
+
+//Includes//
+#ifdef TAA
+#include "/lib/util/jitter.glsl"
+#endif
+
 void main() {
 	//Coords
 	texCoord = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;
@@ -39,6 +51,10 @@ void main() {
 	color = gl_Color;
 
 	gl_Position = ftransform();
+
+	#ifdef TAA
+	gl_Position.xy = TAAJitter(gl_Position.xy, gl_Position.w);
+	#endif
 }
 
 #endif

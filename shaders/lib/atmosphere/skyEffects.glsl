@@ -9,14 +9,14 @@ void getStars(inout vec3 color, in vec3 worldPos, in float nebulaFactor) {
 	vec2 coord = planeCoord.xz * 0.5 + cameraPosition.xz * 0.000001 + (frameTimeCounter * 0.25) * 0.001;
 		 coord = floor(coord * 1024.0) / 1024.0;
 
-	float multiplier = (0.75 + moonVisibility + 0.25) * (1.0 - rainStrength) * (0.25 + nebulaFactor);
+	float multiplier = (1.0 - rainStrength) * (0.25 + nebulaFactor);
 
 	float star  = GetNoise(coord.xy);
 		  star *= GetNoise(coord.xy + 0.2);
 
 	star = clamp(star - 0.875, 0.0, 1.0) * multiplier;
     
-    color.rgb += vec3(1.0) * star;
+    color.rgb += vec3(1.0 + sunVisibility * 3.0) * star;
 }
 #endif
 
