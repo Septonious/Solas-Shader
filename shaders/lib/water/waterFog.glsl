@@ -5,7 +5,7 @@ vec4 getWaterFog(vec3 viewPos) {
     #endif
 
     float fog = length(viewPos) / waterFogRange;
-    fog = 1.0 - exp(-5.0 * fog);
+    fog = 1.0 - exp(-3.0 * fog);
 
     vec3 waterFogColor  = waterColor.rgb * waterColor.rgb;
          #ifdef OVERWORLD

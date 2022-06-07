@@ -23,13 +23,14 @@ const float wetnessHalflife = 512.0;
 //Optifine Constants//
 /*
 const int colortex0Format = RGBA16; //scene
-const int colortex0Format = RGBA16; //raw translucent, bloom, vl
+const int colortex1Format = RGBA16; //raw translucent, bloom, vl
 const int colortex2Format = RGBA16; //water data
 const int colortex3Format = RGBA16; //taa
 const int colortex4Format = RGBA16; //vclouds
 const int colortex5Format = RGBA16; //reflection image
 const int colortex6Format = RGBA16; //normals
 const int colortex7Format = RGBA16; //sspt
+const int colortex8Format = RGBA16; //vclouds temporal accumulation
 */
 
 //Common Functions//

@@ -148,7 +148,7 @@ void main() {
 		}
 		#endif
 
-		if  (water > 0.9) {
+		if (water > 0.9 && isEyeInWater == 0) {
 			#ifdef WATER_REFLECTION
 			float fresnel = clamp(pow2(1.0 + dot(newNormal, normalize(viewPos))) + 0.1 - float(isEyeInWater == 1), 0.0, 1.0);
 

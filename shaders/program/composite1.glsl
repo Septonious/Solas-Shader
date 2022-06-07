@@ -42,7 +42,7 @@ void main() {
 	#endif
 
 	#ifdef VCLOUDS
-    vec4 clouds = getDiskBlur8(colortex4, newTexCoord, 1.5 / VOLUMETRICS_RESOLUTION);
+    vec4 clouds = getDiskBlur16(colortex4, newTexCoord, 1.5 / VOLUMETRICS_RESOLUTION);
 
 	color = mix(color, clouds.rgb, pow4(clouds.a) * 0.75);
 	#endif
