@@ -31,21 +31,29 @@ vec3 calculateShadowPos(vec3 worldPos) {
 vec3 SampleFilteredShadow(vec3 shadowPos, float offset) {
     float shadow0 = 0.0;
 
-    for (int i = 0; i < 9; i++) {
+    #if !defined GBUFFERS_ENTITIES && !defined GBUFFERS_HAND && !defined GBUFFERS_TEXTURED && !defined GBUFFERS_BASIC
+    int shadowSamples = 6;
+    offset *= 1.3875;
+    #else
+    int shadowSamples = 3;
+    offset *= 0.69375;
+    #endif
+
+    for (int i = 0; i < shadowSamples; i++) {
         vec2 shadowOffset = shadowOffsets[i] * offset;
         shadow0 += shadow2D(shadowtex0, vec3(shadowPos.st + shadowOffset, shadowPos.z)).x;
     }
-    shadow0 /= 9.0;
+    shadow0 /= float(shadowSamples);
 
     vec3 shadowCol = vec3(0.0);
     #ifdef SHADOW_COLOR
     if (shadow0 < 0.999) {
-        for (int i = 0; i < 9; i++) {
+        for (int i = 0; i < shadowSamples; i++) {
             vec2 shadowOffset = shadowOffsets[i] * offset;
             shadowCol += texture2D(shadowcolor0, shadowPos.st + shadowOffset).rgb *
                          shadow2D(shadowtex1, vec3(shadowPos.st + shadowOffset, shadowPos.z)).x;
         }
-        shadowCol /= 9.0;
+        shadowCol /= float(shadowSamples);
     }
     #endif
 

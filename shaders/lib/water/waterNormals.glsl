@@ -4,8 +4,8 @@ float GetWaterHeightMap(vec3 worldPos, vec2 offset) {
 	worldPos.xz -= worldPos.y * 0.25;
 
 	offset /= 256.0;
-	float noiseA = texture2D(noisetex, (worldPos.xz - wind) / 512.0 + offset).g;
-	float noiseB = texture2D(noisetex, (worldPos.xz + wind) / 128.0 + offset).g;
+	float noiseA = texture2D(noisetex, (worldPos.xz - wind) / 256.0 + offset).g;
+	float noiseB = texture2D(noisetex, (worldPos.xz + wind) / 64.0 + offset).g;
 	
 	float noise = mix(noiseA, noiseB, 0.5);
 
@@ -28,7 +28,7 @@ vec3 GetWaterNormal(vec3 worldPos, vec3 viewPos, vec3 viewVector, vec2 lightmap)
 	float normalOffset = 0.25;
 	
 	float fresnel = pow2(clamp(1.0 + dot(normalize(normal), normalize(viewPos)), 0.0, 1.0));
-	float normalStrength = (1.0 - fresnel) * lightmap.y;
+	float normalStrength = (1.0 - fresnel) * lightmap.y * 0.5;
 
 	float h1 = GetWaterHeightMap(waterPos, vec2( normalOffset, 0.0));
 	float h2 = GetWaterHeightMap(waterPos, vec2(-normalOffset, 0.0));

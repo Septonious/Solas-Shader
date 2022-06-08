@@ -48,13 +48,14 @@ vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.
 #include "/lib/lighting/integratedEmissionEntities.glsl"
 #endif
 
-#ifdef SSPT
+#if defined SSPT || defined INTEGRATED_SPECULAR
 #include "/lib/util/encode.glsl"
 #endif
 
 //Program//
 void main() {
     vec4 albedo = texture2D(texture, texCoord) * color;
+	vec3 newNormal = normal;
 	vec2 lightmap = clamp(lmCoord, vec2(0.0), vec2(1.0));
 
 	float lightningBolt = float(entityId == 0);
@@ -71,28 +72,30 @@ void main() {
 		albedo.rgb = vec3(1.0);
 		albedo.rgb *= albedo.rgb * albedo.rgb;
 		albedo.a = 1.0;
-	}
-
-	if (albedo.a > 0.001 && lightningBolt < 0.5){
+	} else {
 		#ifdef INTEGRATED_EMISSION
 		getIntegratedEmission(emissive, lightmap, albedo);
 		#endif
 
-		GetLighting(albedo.rgb, viewPos, worldPos, lightmap, emissive, 0.0);
+		GetLighting(albedo.rgb, viewPos, worldPos, newNormal, lightmap, emissive, 0.0);
 	}
 	
-    /* DRAWBUFFERS:05 */
+    /* DRAWBUFFERS:0 */
     gl_FragData[0] = albedo;
+
+	#if defined WATER_REFLECTION || defined INTEGRATED_SPECULAR
+	/* DRAWBUFFERS:05 */
 	gl_FragData[1] = albedo;
+	#endif
 
 	#ifdef ENTITY_OUTLINE
 	 /* DRAWBUFFERS:052 */
-	gl_FragData[2] = vec4(0.0, 0.0, 1.0, 0.0);
+	gl_FragData[2].b = 1.0;
 	#endif
 
-	#ifdef SSPT
+	#if defined SSPT || defined INTEGRATED_SPECULAR
 	/* DRAWBUFFERS:0526 */
-	gl_FragData[3] = vec4(EncodeNormal(normal), float(gl_FragCoord.z < 1.0), emissive);
+	gl_FragData[3] = vec4(EncodeNormal(normal), 0.0, emissive);
 	#endif
 }
 

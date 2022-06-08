@@ -37,7 +37,7 @@ vec3 getAtmosphere(vec3 viewPos) {
     sky = mix(sky, downScatteringColor, pow12(horizonMix) * scatteringFactor);
 
     //Weather Sky
-    vec3 weatherSky = weatherCol * weatherCol * 0.05 * (1.0 + pow6(sunVisibility) * 9.0);
+    vec3 weatherSky = pow2(weatherCol) * 0.05 * (1.0 + pow6(sunVisibility) * 7.0);
 	sky = mix(sky, weatherSky, rainStrength);
 
     return sky * mix(pow(skyDensity, 1.0 + pow3(timeBrightness) * 0.25), 1.0, pow3(rainStrength));

@@ -37,6 +37,7 @@ void main() {
     
 	color = gl_Color;
 
+	//Position
 	gl_Position = ftransform();
 }
 

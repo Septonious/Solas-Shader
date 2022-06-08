@@ -2,7 +2,7 @@ float getCloudSample(vec3 pos){
 	vec3 wind = vec3(frameTimeCounter, 0.0, 0.0);
 
 	float sampleHeight = abs(VC_HEIGHT - pos.y) / VC_STRETCHING;
-	float amount = VC_AMOUNT * (1.0 + rainStrength * 0.35);
+	float amount = VC_AMOUNT * (1.0 + rainStrength * 0.5);
 
 	float noise = getTextureNoise(pos * 0.500 + wind * 0.3) * 1.3;
 		  noise+= getTextureNoise(pos * 0.125 + wind * 0.2) * 4.6;
@@ -32,12 +32,12 @@ vec4 getVolumetricCloud(vec3 viewPos, vec2 coord, float z0, float z1, vec3 trans
 			worldPos = getWorldSpace(getLogarithmicDepth(currentStep), coord);
 			shadowPos = getShadowSpace(worldPos);
 
-			if (length(worldPos.xz) < 1024.0) {
+			if (length(worldPos.xz) < 512.0) {
 				//Cloud VL
 				float shadow0 = shadow2D(shadowtex0, shadowPos.xyz).z;
 
 				//Circular Fade
-				float fog = length(worldPos.xz) * 0.0001;
+				float fog = length(worldPos.xz) * 0.00015 * (1.0 + rainStrength);
 					  fog = clamp(exp(-16.0 * fog + 0.5), 0.0, 1.0);
 				worldPos.xyz += cameraPosition;
 

@@ -1,7 +1,7 @@
 //Settings//
 #include "/lib/common.glsl"
 
-#define COMPOSITE_4
+#define COMPOSITE_5
 
 #ifdef FSH
 
@@ -30,7 +30,7 @@ void main() {
 	vec3 sspt = vec3(0.0);
 
 	#ifdef SSPT
-	sspt = NormalAwareBlur();
+	sspt = NormalAwareBlur(24);
 	#endif
 
 	/* DRAWBUFFERS:7 */

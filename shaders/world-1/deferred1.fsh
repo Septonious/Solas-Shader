@@ -3,4 +3,4 @@
 #define NETHER
 #define FSH
 
-#include "/program/deferred2.glsl"
+#include "/program/deferred1.glsl"

@@ -6,7 +6,7 @@
 uniform float darknessLightFactor;
 #endif
 
-void GetLighting(inout vec3 albedo, vec3 viewPos, vec3 worldPos, vec2 lightmap, float emission, float subsurface) {
+void GetLighting(inout vec3 albedo, vec3 viewPos, vec3 worldPos, vec3 normal, vec2 lightmap, float emission, float subsurface) {
 	float NoL = clamp(dot(normal, lightVec), 0.0, 1.0);
 	float NoU = clamp(dot(normal, upVec), -1.0, 1.0);
 	float NoE = clamp(dot(normal, eastVec), -1.0, 1.0);
@@ -14,9 +14,7 @@ void GetLighting(inout vec3 albedo, vec3 viewPos, vec3 worldPos, vec2 lightmap, 
 	float vanillaDiffuse = (0.25 * NoU + 0.75) + (0.667 - abs(NoE)) * (1.0 - abs(NoU)) * 0.15;
 		  vanillaDiffuse*= vanillaDiffuse;
 
-    emission *= dot(albedo.rgb, albedo.rgb) * 0.333;
-
-    float lightFlatten = clamp(1.0 - pow(1.0 - emission, 128.0), 0.0, 1.0);
+    float lightFlatten = clamp(1.0 - pow8(pow16(1.0 - emission)), 0.0, 1.0);
 
     #if defined OVERWORLD || defined END
     vec3 shadow = vec3(0.0);
@@ -53,7 +51,7 @@ void GetLighting(inout vec3 albedo, vec3 viewPos, vec3 worldPos, vec2 lightmap, 
     
     float scattering = 0.0;
     if (subsurface > 0.0){
-        float VoL = clamp(dot(normalize(viewPos.xyz), lightVec) * 0.5 + 0.5, 0.0, 1.0);
+        float VoL = clamp(dot(normalize(viewPos.xyz), lightVec) * 0.25 + 0.75, 0.0, 1.0);
         scattering = pow8(VoL) * subsurface;
         NoL = mix(NoL, 1.0, subsurface);
         NoL = mix(NoL, 1.0, scattering);
@@ -63,7 +61,7 @@ void GetLighting(inout vec3 albedo, vec3 viewPos, vec3 worldPos, vec2 lightmap, 
     
     #ifdef OVERWORLD
     float shadowMult = (1.0 - rainStrength * 0.8) * shadowFade;
-    vec3 sceneLighting = mix(ambientCol * (1.0 + subsurface * pow2(lightmap.y)) * pow2(lightmap.y), lightCol, fullShadow * shadowMult);
+    vec3 sceneLighting = mix(ambientCol * lightmap.y * (1.0 + subsurface * lightmap.y), lightCol, fullShadow * shadowMult);
     sceneLighting *= 1.0 + scattering * shadow;
     #endif
 
@@ -76,22 +74,20 @@ void GetLighting(inout vec3 albedo, vec3 viewPos, vec3 worldPos, vec2 lightmap, 
     #endif
     
     float newLightmap  = (pow6(lightmap.x) + lightmap.x * 0.75) * (1.0 - lightFlatten * 0.75);
-    vec3 blockLighting = blocklightCol * clamp(newLightmap * newLightmap, 0.0, 1.0) * (1.0 - lightmap.y * 0.75);
+    vec3 blockLighting = blocklightCol * clamp(newLightmap * newLightmap, 0.0, 1.0) * (1.0 - lightmap.y * 0.5);
 
     #ifdef SSPT
-    blockLighting *= 0.1;
+    blockLighting *= 0.25;
     #endif
 
     vec3 minLighting = minLightCol * (1.0 - lightmap.y);
-    vec3 albedoNormalized = normalize(albedo.rgb + 0.00001);
-    vec3 emissiveLighting = mix(albedoNormalized, vec3(1.0), emission * 0.5) * emission * EMISSION_STRENGTH;
+    vec3 emissiveLighting = albedo * emission * 2.0;
 
     #if MC_VERSION >= 11900
     sceneLighting *= 1.0 - darknessLightFactor;
     #endif
-
-    vanillaDiffuse = mix(vanillaDiffuse, 1.0, lightFlatten);
     
     albedo *= sceneLighting + blockLighting + emissiveLighting + nightVision * 0.25 + minLighting;
     albedo *= vanillaDiffuse;
+
 }

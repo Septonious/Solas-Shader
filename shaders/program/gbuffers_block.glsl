@@ -44,36 +44,26 @@ vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.
 //Program//
 void main() {
     vec4 albedo = texture2D(texture, texCoord) * color;
+	vec3 newNormal = normal;
 	vec2 lightmap = clamp(lmCoord, vec2(0.0), vec2(1.0));
 
 	vec3 screenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z);
 	vec3 viewPos = ToNDC(screenPos);
 	vec3 worldPos = ToWorld(viewPos);
 
-	if (albedo.a > 0.001){
-		GetLighting(albedo.rgb, viewPos, worldPos, lightmap, 0.0, 0.0);
-	}
+	GetLighting(albedo.rgb, viewPos, worldPos, newNormal, lightmap, 0.0, 0.0);
 
 	if (blockEntityId == 20) {
 		vec2 portalCoord = gl_FragCoord.xy / vec2(viewWidth, viewHeight);
-		portalCoord = (portalCoord - 0.5) * vec2(aspectRatio, 1.0);
+			 portalCoord = (portalCoord - 0.5) * vec2(aspectRatio, 1.0);
 
-		vec3 portColSqrt = vec3(END_R, END_G, END_B) / 255.0 * END_I;
-		vec3 portCol = portColSqrt * portColSqrt * 0.05;
 		vec2 wind = vec2(0.0, frameTimeCounter * 0.025);
 
 		float portal = texture2D(noisetex, portalCoord * 0.1 + wind * 0.05).r * 0.25 + 0.375;
-
-		#ifdef END
-			  portal *= 0.5;
-		#endif
-			  portal+= texture2D(texture, portalCoord * 0.5 + wind).r * 1.4;
-			  portal+= texture2D(texture, portalCoord + wind + 0.15).r;
-			  portal+= texture2D(texture, portalCoord * 2.0 + wind + 0.30).r * 0.7;
-			  portal+= texture2D(texture, portalCoord * 4.0 + wind + 0.45).r * 0.5;
+			  portal+= texture2D(texture, portalCoord * 0.5 + wind).r;
+			  portal+= texture2D(texture, portalCoord * 1.5 + wind).r;
 		
-		albedo.rgb = portal * portal * portCol.rgb;
-		albedo.a = 1.0;
+		albedo.rgb = portal * portal * vec3(END_R, END_G, END_B) / 255.0 * END_I * 0.25;
 	}
 
     /* DRAWBUFFERS:0 */

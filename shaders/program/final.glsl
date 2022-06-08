@@ -17,8 +17,8 @@ uniform float aspectRatio;
 const bool shadowHardwareFiltering = true;
 const float shadowDistanceRenderMul = 1.0;
 const int noiseTextureResolution = 512;
-const float drynessHalflife = 64.0;
-const float wetnessHalflife = 512.0;
+const float drynessHalflife = 150.0;
+const float wetnessHalflife = 300.0;
 
 //Optifine Constants//
 /*
@@ -30,7 +30,6 @@ const int colortex4Format = RGBA16; //vclouds
 const int colortex5Format = RGBA16; //reflection image
 const int colortex6Format = RGBA16; //normals
 const int colortex7Format = RGBA16; //sspt
-const int colortex8Format = RGBA16; //vclouds temporal accumulation
 */
 
 //Common Functions//

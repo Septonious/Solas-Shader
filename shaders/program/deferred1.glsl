@@ -34,6 +34,10 @@ uniform vec3 cameraPosition;
 uniform sampler2D colortex0, colortex2;
 uniform sampler2D depthtex0;
 
+#ifdef INTEGRATED_SPECULAR
+uniform sampler2D colortex5, colortex6;
+#endif
+
 #ifdef NEBULA
 uniform sampler2D noisetex;
 #endif
@@ -41,11 +45,16 @@ uniform sampler2D noisetex;
 uniform mat4 gbufferProjectionInverse;
 uniform mat4 gbufferModelViewInverse;
 
+#ifdef INTEGRATED_SPECULAR
+uniform mat4 gbufferProjection;
+#endif
+
 //Common Variables//
+float eBS = eyeBrightnessSmooth.y / 240.0;
+
 #if defined OVERWORLD || defined END
 float sunVisibility = clamp(dot(sunVec, upVec) + 0.05, 0.0, 0.1) * 10.0;
 float moonVisibility = clamp(dot(-sunVec, upVec) + 0.05, 0.0, 0.1) * 10.0;
-float eBS = eyeBrightnessSmooth.y / 240.0;
 #endif
 
 vec2 glowOffsets[16] = vec2[16](
@@ -79,24 +88,21 @@ void GlowOutline(inout vec3 color){
 	}
 }
 
-void getSunMoon(inout vec3 color, in float VoS, in float VoM, in float VoU, in vec3 lightSun, in vec3 lightNight) {
-	float visibility = 8.0 * (1.0 - rainStrength);
-
-	vec3 sun = pow8(pow8(pow24(VoS))) * lightSun * lightSun * visibility;
-	vec3 moon = pow8(pow8(pow24(VoM))) * lightNight * visibility;
-
-	color += (sun * 8.0 + moon) * pow2(max(VoU, 0.0));
-}
-
 //Includes//
 #include "/lib/color/dimensionColor.glsl"
 
 #ifdef OVERWORLD
 #include "/lib/atmosphere/sky.glsl"
+#include "/lib/atmosphere/sunMoon.glsl"
 #include "/lib/atmosphere/skyEffects.glsl"
 #endif
 
 #include "/lib/atmosphere/fog.glsl"
+
+#ifdef INTEGRATED_SPECULAR
+#include "/lib/pbr/reflection.glsl"
+#include "/lib/util/encode.glsl"
+#endif
 
 void main() {
 	vec3 color = texture2D(colortex0, texCoord).rgb;
@@ -159,6 +165,19 @@ void main() {
 		color = endCol.rgb * 0.1;
 		#endif
 	}
+
+	#ifdef INTEGRATED_SPECULAR
+	vec3 terrainData = texture2D(colortex6, texCoord).rgb;
+	vec3 normal = DecodeNormal(terrainData.rg);
+	float specular = terrainData.b;
+
+	if (specular > 0.0 && z0 > 0.56) {
+		float fresnel = clamp(pow2(1.0 + dot(normal, normalize(viewPos.xyz))), 0.0, 1.0);
+
+		vec3 reflection = getReflection(viewPos.xyz, normal, eBS);
+		color.rgb = mix(color.rgb, reflection.rgb, fresnel * specular);
+	}
+	#endif
 
 	if (z0 < 1.0) Fog(color, viewPos.xyz, skyColor);
 	float isGlowing = texture2D(colortex2, texCoord).b;

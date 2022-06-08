@@ -46,7 +46,8 @@ vec3 NeighbourhoodClamping(vec3 color, vec3 tempColor, vec2 viewResolution, samp
 		vec3 clr = texture2D(colortex, texCoord + offset).rgb;
 
 		clr = RGBToYCoCg(clr);
-		minclr = min(minclr, clr); maxclr = max(maxclr, clr);
+		minclr = min(minclr, clr);
+		maxclr = max(maxclr, clr);
 	}
 
 	tempColor = RGBToYCoCg(tempColor);

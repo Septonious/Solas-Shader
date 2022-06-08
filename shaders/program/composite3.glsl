@@ -1,7 +1,7 @@
 //Settings//
 #include "/lib/common.glsl"
 
-#define COMPOSITE_2
+#define COMPOSITE_3
 
 #ifdef FSH
 

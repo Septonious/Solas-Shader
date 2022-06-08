@@ -71,6 +71,9 @@ vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.
 #include "/lib/atmosphere/fog.glsl"
 
 #ifdef WATER_REFLECTION
+#ifdef OVERWORLD
+#include "/lib/atmosphere/sunMoon.glsl"
+#endif
 #include "/lib/pbr/reflection.glsl"
 #endif
 
@@ -78,7 +81,7 @@ vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.
 #include "/lib/water/waterNormals.glsl"
 #endif
 
-#ifdef SSPT
+#if defined SSPT || defined INTEGRATED_SPECULAR
 #include "/lib/util/encode.glsl"
 #endif
 
@@ -126,48 +129,54 @@ void main() {
 	}
 	#endif
 
-	#ifdef OVERWORLD
+	#if defined OVERWORLD
 	skyColor = getAtmosphere(viewPos);
 
 	#if MC_VERSION >= 11900
 	skyColor *= 1.0 - darknessFactor;
 	#endif
+	#elif defined NETHER
+	skyColor = netherColSqrt;
+	#elif defined END
+	skyColor = endCol;
 	#endif
 
-	if (albedo.a > 0.001) {
-		GetLighting(albedo.rgb, viewPos, worldPos, lightmap, 0.0, 0.0);
+	GetLighting(albedo.rgb, viewPos, worldPos, newNormal, lightmap, 0.0, 0.0);
 
-		#ifdef WATER_FOG
-		if (isEyeInWater == 0 && lightmap.y > 0.0 && water > 0.9) {
-			float oDepth = texture2D(depthtex1, screenPos.xy).r;
-			vec3 oScreenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), oDepth);
-			vec3 oViewPos = ToNDC(oScreenPos);
+	#ifdef WATER_FOG
+	if (isEyeInWater == 0 && lightmap.y > 0.0 && water > 0.9) {
+		float oDepth = texture2D(depthtex1, screenPos.xy).r;
+		vec3 oScreenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), oDepth);
+		vec3 oViewPos = ToNDC(oScreenPos);
 
-			vec4 waterFog = getWaterFog(viewPos.xyz - oViewPos);
-			albedo = mix(waterFog, vec4(albedo.rgb, 0.75), albedo.a);
-		}
+		vec4 waterFog = getWaterFog(viewPos.xyz - oViewPos);
+		albedo = mix(waterFog, vec4(albedo.rgb, 1.0), albedo.a);
+	}
+	#endif
+
+	if (water > 0.9 && isEyeInWater == 0) {
+		#ifdef WATER_REFLECTION
+		float fresnel = clamp(1.0 + dot(newNormal, normalize(viewPos)), 0.0, 1.0);
+
+		vec3 reflection = getReflection(viewPos, newNormal, lightmap.y);
+		albedo.rgb = mix(albedo.rgb, reflection.rgb, fresnel);
 		#endif
-
-		if (water > 0.9 && isEyeInWater == 0) {
-			#ifdef WATER_REFLECTION
-			float fresnel = clamp(pow2(1.0 + dot(newNormal, normalize(viewPos))) + 0.1 - float(isEyeInWater == 1), 0.0, 1.0);
-
-			vec3 reflection = getReflection(viewPos, newNormal, skyColor * lightmap.y);
-			albedo.rgb = mix(albedo.rgb, reflection.rgb, fresnel);
-			#endif
-		}
 	}
 
 	Fog(albedo.rgb, viewPos, skyColor);
 
-    /* DRAWBUFFERS:012 */
+    /* DRAWBUFFERS:01 */
     gl_FragData[0] = albedo;
 	gl_FragData[1] = texture2D(texture, texCoord) * color;
-	gl_FragData[2].a = water;
 
-	#ifdef SSPT
+	#ifdef WATER_REFRACTION
+	/* DRAWBUFFERS:012 */
+	gl_FragData[2].a = water;
+	#endif
+
+	#if defined SSPT || defined INTEGRATED_SPECULAR
 	/* DRAWBUFFERS:0126 */
-	gl_FragData[3] = vec4(EncodeNormal(newNormal), float(gl_FragCoord.z < 1.0), 0.0);
+	gl_FragData[3] = vec4(EncodeNormal(newNormal), 1.0, 0.0);
 	#endif
 }
 

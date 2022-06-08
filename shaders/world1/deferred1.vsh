@@ -3,4 +3,4 @@
 #define END
 #define VSH
 
-#include "/program/deferred2.glsl"
+#include "/program/deferred1.glsl"

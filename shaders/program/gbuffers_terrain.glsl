@@ -23,9 +23,15 @@ uniform float shadowFade;
 uniform float timeAngle, timeBrightness;
 uniform float viewWidth, viewHeight;
 
-uniform vec3 cameraPosition;
+#ifdef RAIN_PUDDLES
+uniform float wetness;
+
+uniform sampler2D noisetex;
+#endif
 
 uniform sampler2D texture;
+
+uniform vec3 cameraPosition;
 
 uniform mat4 gbufferProjectionInverse;
 uniform mat4 gbufferModelViewInverse;
@@ -44,46 +50,62 @@ vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.
 #include "/lib/util/spaceConversion.glsl"
 #include "/lib/lighting/forwardLighting.glsl"
 
+#ifdef INTEGRATED_SPECULAR
+#include "/lib/pbr/integratedSpecular.glsl"
+#endif
+
 #ifdef INTEGRATED_EMISSION
 #include "/lib/lighting/integratedEmissionTerrain.glsl"
 #endif
 
-#ifdef SSPT
+#if defined SSPT || defined INTEGRATED_SPECULAR
 #include "/lib/util/encode.glsl"
 #endif
 
 //Program//
 void main() {
     vec4 albedo = texture2D(texture, texCoord) * color;
+	vec3 newNormal = normal;
 	vec2 lightmap = clamp(lmCoord, vec2(0.0), vec2(1.0));
 
 	vec3 screenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z);
 	vec3 viewPos = ToNDC(screenPos);
 	vec3 worldPos = ToWorld(viewPos);
 
+
+
 	float emissive = 0.0;
+	float subsurface = float(mat > 0.99 && mat < 1.01);
+	
+	#ifdef INTEGRATED_SPECULAR
+	float specular = 0.0;
+	#endif
 
 	#if defined SSPT && defined EMISSIVE_CONCRETE
 	emissive += float(mat > 198.9 && mat < 199.9) * 1.5;
 	#endif
-
-	if (albedo.a > 0.001){
-		float subsurface = float(mat > 0.99 && mat < 1.01);
 		
-		#ifdef INTEGRATED_EMISSION
-		getIntegratedEmission(emissive, lightmap, albedo, worldPos);
-		#endif
+	#ifdef INTEGRATED_EMISSION
+	getIntegratedEmission(emissive, lightmap, albedo, worldPos);
+	#endif
 
-		GetLighting(albedo.rgb, viewPos, worldPos, lightmap, emissive, subsurface);
-	}
+	GetLighting(albedo.rgb, viewPos, worldPos, newNormal, lightmap, emissive, subsurface);
 
-    /* DRAWBUFFERS:05 */
+	#ifdef INTEGRATED_SPECULAR
+	getIntegratedSpecular(specular, worldPos.xz, lightmap, texture2D(texture, texCoord) * color);
+	#endif
+	
+    /* DRAWBUFFERS:0 */
     gl_FragData[0] = albedo;
-	gl_FragData[1] = albedo;
 
-	#ifdef SSPT
+	#if defined WATER_REFLECTION || defined INTEGRATED_SPECULAR
+	/* DRAWBUFFERS:05 */
+	gl_FragData[1] = albedo;
+	#endif
+
+	#if defined SSPT || defined INTEGRATED_SPECULAR
 	/* DRAWBUFFERS:056 */
-	gl_FragData[2] = vec4(EncodeNormal(normal), float(gl_FragCoord.z < 1.0), emissive);
+	gl_FragData[2] = vec4(EncodeNormal(normal), specular, emissive);
 	#endif
 }
 
@@ -125,6 +147,10 @@ attribute vec4 mc_Entity;
 #include "/lib/lighting/integratedEmissionTerrain.glsl"
 #endif
 
+#ifdef INTEGRATED_SPECULAR
+#include "/lib/pbr/integratedSpecular.glsl"
+#endif
+
 #ifdef TAA
 #include "/lib/util/jitter.glsl"
 #endif
@@ -159,15 +185,21 @@ void main() {
 	if (mc_Entity.x == 199) mat = 199;
 	#endif
 
+
+
 	#ifdef INTEGRATED_EMISSION
 	isPlant = 0.0;
 
 	getIntegratedEmissionMaterials(mat, isPlant);
 	#endif
 
+	#ifdef INTEGRATED_SPECULAR
+	getIntegratedSpecularMaterials(mat);
+	#endif
+
 	//Color & Position
 	color = gl_Color;
-
+	if (mc_Entity.x == 305) mat = 999;
 	gl_Position = ftransform();
 
 	#ifdef TAA

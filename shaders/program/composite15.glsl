@@ -12,7 +12,7 @@ in vec2 texCoord;
 #ifdef TAA
 uniform int frameCounter;
 
-uniform float viewWidth, viewHeight, aspectRatio;
+uniform float viewWidth, viewHeight;
 #endif
 
 uniform sampler2D colortex0;
@@ -24,7 +24,7 @@ uniform mat4 gbufferPreviousProjection, gbufferProjectionInverse;
 uniform mat4 gbufferPreviousModelView, gbufferModelViewInverse;
 
 uniform sampler2D colortex3;
-uniform sampler2D depthtex1, depthtex0;
+uniform sampler2D depthtex1;
 #endif
 
 //Includes//

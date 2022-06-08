@@ -1,15 +1,16 @@
 #ifdef FSH
-void getIntegratedEmission(inout float emissive, in vec2 lightmap, in vec4 albedo, in vec3 worldPos){
+void getIntegratedEmission(inout float emissive, in vec2 lightmap, inout vec4 albedo, in vec3 worldPos){
 	float newEmissive = 0.0;
-	float lengthAlbedo = clamp(length(albedo.rgb), 0.0, 1.0);
+	float lAlbedo = clamp(length(albedo.rgb), 0.0, 1.0);
 
 	#ifdef EMISSIVE_ORES
     if (mat > 99.9 && mat < 100.1) { // Emissive Ores
         float stoneDif = max(abs(albedo.r - albedo.g), max(abs(albedo.r - albedo.b), abs(albedo.g - albedo.b)));
         float ore = max(max(stoneDif - 0.175, 0.0), 0.0);
-        newEmissive = pow(ore, 0.25) * 0.25;
+        newEmissive = pow(ore, 0.25) * 0.125;
     } 
 	#endif
+
 	if (mat > 100.9 && mat < 101.1) { // Crying Obsidian and Respawn Anchor
 		newEmissive = (albedo.b - albedo.r) * albedo.r;
         newEmissive *= newEmissive * 0.5;
@@ -28,63 +29,65 @@ void getIntegratedEmission(inout float emissive, in vec2 lightmap, in vec4 albed
         }
 
 	} else if (mat > 102.9 && mat < 103.1) { // Warped Stem & Hyphae
-		newEmissive = float(lengthAlbedo > 0.49) * 0.4 + float(lengthAlbedo > 0.59);
+		newEmissive = float(lAlbedo > 0.49) * 0.4 + float(lAlbedo > 0.59);
 	} else if (mat > 103.9 && mat < 104.1) { // Crimson Stem & Hyphae
-		newEmissive = (float(lengthAlbedo > 0.47) * 0.5 + float(lengthAlbedo > 0.50)) * float(albedo.b < 0.25);
+		newEmissive = (float(lAlbedo > 0.47) * 0.5 + float(lAlbedo > 0.50)) * float(albedo.b < 0.25);
 	} else if (mat > 104.9 && mat < 105.1) { // Warped Nether Warts
 		newEmissive = pow2(float(albedo.g - albedo.b));
 	} else if (mat > 105.9 && mat < 106.1) { // Warped Nylium
 		newEmissive = float(albedo.g > albedo.b && albedo.g > albedo.r) * pow(float(albedo.g - albedo.b), 3.0);
 	} else if (mat > 107.9 && mat < 108.1) { // Amethyst
-		newEmissive = float(lengthAlbedo > 0.5) * 0.1;
+		newEmissive = float(lAlbedo > 0.5) * 0.1;
 	} else if (mat > 109.9 && mat < 110.1) { // Glow Lichen
 		newEmissive = (1.0 - lightmap.y) * (0.025 + float(albedo.r > albedo.g || albedo.r > albedo.b));
 	} else if (mat > 110.9 && mat < 111.1) { // Redstone Things
 		newEmissive = float(albedo.r > 0.75) * 0.1;
 	} else if (mat > 111.9 && mat < 112.1) { // Soul Emissives
-		newEmissive = float(lengthAlbedo > 0.9) * 0.25;
+		newEmissive = float(lAlbedo > 0.9) * 0.1;
 	} else if (mat > 112.9 && mat < 113.1) { // Brewing Stand
 		newEmissive = float(albedo.r > 0.5 && albedo.b < 0.4) * 0.25;
 	} else if (mat > 113.9 && mat < 114.1) { // Glow berries
-		newEmissive = float(albedo.r > 0.5) * 0.75;
+		newEmissive = float(albedo.r > 0.5) * 0.5;
 	} else if (mat > 114.9 && mat < 115.1) { // Torches
-		newEmissive = float(lengthAlbedo > 0.99) * 0.5;
+		newEmissive = float(lAlbedo > 0.99) * 0.1;
 	} else if (mat > 115.9 && mat < 116.1) { // Furnaces
 		newEmissive = float(albedo.r > 0.8 || (albedo.r > 0.6 && albedo.b < 0.5)) * 0.1;
 	} else if (mat > 116.9 && mat < 117.1) { // Chorus
 		newEmissive = float(albedo.r > albedo.b || albedo.r > albedo.g) * float(albedo.b > 0.575) * 0.25;
 	} else if (mat > 117.9 && mat < 118.1) { // Enchanting Table
-		newEmissive = float(lengthAlbedo > 0.75) * 0.1;
+		newEmissive = float(lAlbedo > 0.75) * 0.1;
 	} else if (mat > 118.9 && mat < 119.1) { // Soul Campfire
 		newEmissive = float(albedo.b > albedo.r || albedo.b > albedo.g) * 0.25;
 	} else if (mat > 119.9 && mat < 120.1) { // Normal Campfire
 		newEmissive = float(albedo.r > 0.65 && albedo.b < 0.35) * 0.20;
-	} else if (mat > 121.9 && mat < 122.1) { // Glowstone
-		newEmissive = (2.0 + pow16(lengthAlbedo)) * 0.1;
+	} else if (mat > 120.9 && mat < 121.9) { // Redstone Block
+		newEmissive = 0.25 + lAlbedo * 0.25;
+	} else if (mat > 121.9 && mat < 122.1) { // Glowstone, Fire, etc
+		newEmissive = (1.0 + pow16(lAlbedo)) * 0.0625;
 	} else if (mat > 122.9 && mat < 123.1) { // Sculks
-		newEmissive = float(lengthAlbedo > 0.05 && albedo.r < 0.25) * 0.1;
+		newEmissive = float(lAlbedo > 0.05 && albedo.r < 0.25) * 0.1;
 	} else if (mat > 123.9 && mat < 124.1) { // Redstone Lamp
-		newEmissive = 0.25 + float(lengthAlbedo > 0.75) * 0.25;
+		newEmissive = 0.25 + float(lAlbedo > 0.75) * 0.25;
 	} else if (mat > 124.9 && mat < 125.1) { // Sea Lantern
-		newEmissive = float(lengthAlbedo > 0.95) * 0.25 + float(albedo.g > 0.4) * 0.025;
+		newEmissive = float(lAlbedo > 0.95) * 0.25 + float(albedo.g > 0.4) * 0.025;
 	} else if (mat > 125.9 && mat < 126.1) { // Nether Wart
-		newEmissive = float(lengthAlbedo > 0.25) * 0.25 + float(lengthAlbedo > 0.75) * 0.5;
+		newEmissive = float(lAlbedo > 0.25) * 0.25 + float(lAlbedo > 0.75) * 0.5;
 	}
 
+	#ifdef POWDER_SNOW_HIGHLIGHT
+	if (mat > 199.9 && mat < 200.1){
+		newEmissive = 0.1;
+	} 
+	#endif
+
 	#ifdef DEBRIS_HIGHLIGHT
-	if (mat > 120.9 && mat < 121.1) newEmissive = 1.0;
+	if (mat > 200.9 && mat < 201.1) newEmissive = 1.0;
 	#endif
 
 	#if defined OVERWORLD && defined EMISSIVE_FLOWERS
 	if (isPlant > 0.9 && isPlant < 1.1){ // Flowers
-		newEmissive = float(albedo.b > albedo.g || albedo.r > albedo.g) * 0.02 * (1.0 - rainStrength);
+		newEmissive = float(albedo.b > albedo.g || albedo.r > albedo.g) * 0.025 * (1.0 - rainStrength);
 	}
-	#endif
-
-	#ifdef POWDER_SNOW_HIGHLIGHT
-	if (mat > 29999.9 && mat < 30000.1){
-		newEmissive = 0.1;
-	} 
 	#endif
 
 	emissive += newEmissive * EMISSION_STRENGTH;
@@ -116,14 +119,16 @@ void getIntegratedEmissionMaterials(inout float mat, inout float isPlant){
 	if (mc_Entity.x == 118) mat = 118.0;
 	if (mc_Entity.x == 119) mat = 119.0;
 	if (mc_Entity.x == 120) mat = 120.0;
+	if (mc_Entity.x == 121) mat = 121.0;
 	if (mc_Entity.x == 122) mat = 122.0;
 	if (mc_Entity.x == 123) mat = 123.0;
 	if (mc_Entity.x == 124) mat = 124.0;
 	if (mc_Entity.x == 125) mat = 125.0;
 	if (mc_Entity.x == 126) mat = 126.0;
+	if (mc_Entity.x == 127) mat = 127.0;
 
 	#ifdef DEBRIS_HIGHLIGHT
-	if (mc_Entity.x == 121) mat = 121.0;
+	if (mc_Entity.x == 201) mat = 201.0;
 	#endif
 
 	#if defined EMISSIVE_FLOWERS && defined OVERWORLD
@@ -131,7 +136,7 @@ void getIntegratedEmissionMaterials(inout float mat, inout float isPlant){
 	#endif
 
 	#ifdef POWDER_SNOW_HIGHLIGHT
-	if (mc_Entity.x == 200) mat = 30000;
+	if (mc_Entity.x == 200) mat = 200;
 	#endif
 }
 #endif
