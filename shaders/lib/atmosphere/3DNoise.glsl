@@ -1,4 +1,4 @@
-float getTextureNoise(vec3 pos){
+float getTextureNoise(vec3 pos) {
 	pos *= 0.2;
 	pos.xz *= 0.2;
 

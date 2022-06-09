@@ -16,7 +16,7 @@ void getStars(inout vec3 color, in vec3 worldPos, in float nebulaFactor) {
 
 	star = clamp(star - 0.875, 0.0, 1.0) * multiplier;
     
-    color.rgb += vec3(2.0 + sunVisibility * 2.0) * star;
+    color.rgb += vec3(2.0 + sunVisibility * 4.0) * star;
 }
 #endif
 

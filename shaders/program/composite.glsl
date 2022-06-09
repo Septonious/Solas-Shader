@@ -9,7 +9,11 @@
 in vec2 texCoord;
 
 #if defined VL || defined VCLOUDS
-in vec3 sunVec, upVec;
+in vec3 sunVec;
+#endif
+
+#ifdef VCLOUDS
+in vec3 upVec;
 #endif
 
 //Uniforms//
@@ -23,7 +27,11 @@ uniform float darknessFactor;
 #endif
 
 uniform float far, near;
-uniform float timeBrightness, timeAngle, rainStrength, blindFactor;
+uniform float timeBrightness, rainStrength, blindFactor;
+
+#ifdef VCLOUDS
+uniform float timeAngle;
+#endif
 
 uniform ivec2 eyeBrightnessSmooth;
 
@@ -46,16 +54,21 @@ uniform sampler2D shadowcolor0;
 #endif
 
 //Common Variables//
-#if defined VL || defined VCLOUDS
+#ifdef VCLOUDS
 float sunVisibility = clamp(dot(sunVec, upVec) + 0.05, 0.0, 0.1) * 10.0;
+#endif
 
+#if defined VL || defined VCLOUDS
 float eBS = eyeBrightnessSmooth.y / 240.0;
 float ug = mix(clamp((cameraPosition.y - 32.0) / 16.0, 0.0, 1.0), 1.0, eBS) * (1.0 - blindFactor);
 #endif
 
 //Includes//
-#if defined VL || defined VCLOUDS
+#ifdef VCLOUDS
 #include "/lib/color/lightColor.glsl"
+#endif
+
+#if defined VL || defined VCLOUDS
 #include "/lib/util/blueNoise.glsl"
 #include "/lib/atmosphere/spaceConversion.glsl"
 #endif
@@ -98,7 +111,7 @@ void main() {
 
 	#ifdef VL
 	vl = getVolumetricLight(viewPos.xyz, newTexCoord, depth0, depth1, translucent, dither);
-	vl *= mix(0.5, pow8(VoL), timeBrightness) * (1.0 - rainStrength * 0.5) * (1.0 - blindFactor);
+	vl *= mix(1.0, pow4(VoL), timeBrightness) * (1.0 - rainStrength * 0.5) * (1.0 - blindFactor);
 
 	#if MC_VERSION >= 11900
 	vl *= 1.0 - darknessFactor;
@@ -107,7 +120,7 @@ void main() {
 
 	#ifdef VCLOUDS
 	clouds = getVolumetricCloud(viewPos.xyz, newTexCoord, depth0, depth1, translucent, dither);
-	clouds.rgb *= 1.0 + pow3(sunVisibility) * 0.75;
+	clouds.rgb *= 1.0 + pow3(sunVisibility);
 
 	#if MC_VERSION >= 11900
 	clouds *= 1.0 - darknessFactor;
@@ -129,7 +142,11 @@ void main() {
 out vec2 texCoord;
 
 #if defined VL || defined VCLOUDS
-out vec3 sunVec, upVec;
+out vec3 sunVec;
+#endif
+
+#ifdef VCLOUDS
+out vec3 upVec;
 #endif
 
 //Uniforms//
@@ -155,7 +172,9 @@ void main() {
     sunVec = normalize((gbufferModelView * vec4(vec3(0.0, sunRotationData * 2000.0), 1.0)).xyz);
     #endif
 	
+	#ifdef VCLOUDS
 	upVec = normalize(gbufferModelView[1].xyz);
+	#endif
 	#endif
 
 	//Position

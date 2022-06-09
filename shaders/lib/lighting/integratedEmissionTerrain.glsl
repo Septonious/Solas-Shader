@@ -33,7 +33,7 @@ void getIntegratedEmission(inout float emissive, in vec2 lightmap, inout vec4 al
 	} else if (mat > 103.9 && mat < 104.1) { // Crimson Stem & Hyphae
 		newEmissive = (float(lAlbedo > 0.47) * 0.5 + float(lAlbedo > 0.50)) * float(albedo.b < 0.25);
 	} else if (mat > 104.9 && mat < 105.1) { // Warped Nether Warts
-		newEmissive = pow2(float(albedo.g - albedo.b));
+		newEmissive = pow2(float(albedo.g - albedo.b)) * 0.5;
 	} else if (mat > 105.9 && mat < 106.1) { // Warped Nylium
 		newEmissive = float(albedo.g > albedo.b && albedo.g > albedo.r) * pow(float(albedo.g - albedo.b), 3.0);
 	} else if (mat > 107.9 && mat < 108.1) { // Amethyst

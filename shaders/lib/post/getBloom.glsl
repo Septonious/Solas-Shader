@@ -31,7 +31,7 @@ void getBloom(inout vec3 color, vec2 coord) {
 	color = mix(color, blur, 0.2 * BLOOM_STRENGTH);
 	#else
 	vec3 bloomContrast = vec3(exp2(BLOOM_CONTRAST * 0.25));
-	vec3 bloomStrength = pow(vec3(0.2 * BLOOM_STRENGTH), bloomContrast);
+	vec3 bloomStrength = pow(vec3(0.2 * BLOOM_STRENGTH), bloomContrast) * (1.0 - float(isEyeInWater == 1));
 
 	color = pow(color, bloomContrast);
 	blur = pow(blur, bloomContrast);

@@ -6,7 +6,7 @@ vec3 getVolumetricLight(vec3 viewPos, vec2 coord, float depth0, float depth1, ve
 	//Resolution Control
 	if (clamp(texCoord, vec2(0.0), vec2(VOLUMETRICS_RESOLUTION + 1e-3)) == texCoord) {
 		for(int i = 0; i < VL_SAMPLES; i++) {
-			float currentStep = (i + dither) * 16.0;
+			float currentStep = (i + dither) * 12.0;
 
 			if (depth1 < currentStep || (depth0 < currentStep && translucent == vec3(0.0)) || currentStep >= 128.0) {
 				break;
@@ -30,16 +30,19 @@ vec3 getVolumetricLight(vec3 viewPos, vec2 coord, float depth0, float depth1, ve
 				#endif
 
 				vec3 shadow = clamp(shadowCol * (1.0 - shadow0) + shadow0, vec3(0.0), vec3(1.0));
-				shadow = mix(shadow, shadow * translucent, max(float(depth0 < currentStep) - float(isEyeInWater == 1), 0.0));
 
-				//Fog Altitude
-				float worldHeightFactor = clamp((worldPos.y + cameraPosition.y) * 0.001 * FOG_HEIGHT, 0.0, 1.0);
-				shadow *= 1.0 - worldHeightFactor;
+				if (isEyeInWater == 0) {
+					shadow = mix(shadow, shadow * translucent, float(depth0 < currentStep));
+
+					//Fog Altitude
+					float worldHeightFactor = clamp((worldPos.y + cameraPosition.y) * 0.001 * FOG_HEIGHT, 0.0, 1.0);
+					shadow *= 1.0 - worldHeightFactor;
+				}
 
 				vl += shadow;
 			}
 		}
 	}
 	
-	return sqrt(vl * lightCol);
+	return sqrt(vl);
 }

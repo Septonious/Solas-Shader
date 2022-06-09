@@ -125,7 +125,7 @@ void main() {
 							tangent.y, binormal.y, normal.y,
 							tangent.z, binormal.z, normal.z);
 
-		newNormal = clamp(normalize(GetWaterNormal(worldPos, viewPos, viewVector, lightmap) * tbnMatrix), vec3(-1.0), vec3(1.0));
+		newNormal = clamp(normalize(getWaterNormal(worldPos, viewPos, viewVector, lightmap) * tbnMatrix), vec3(-1.0), vec3(1.0));
 	}
 	#endif
 
@@ -156,7 +156,7 @@ void main() {
 
 	if (water > 0.9 && isEyeInWater == 0) {
 		#ifdef WATER_REFLECTION
-		float fresnel = clamp(1.0 + dot(newNormal, normalize(viewPos)), 0.0, 1.0);
+		float fresnel = clamp(1.0 + dot(newNormal, normalize(viewPos)), 0.0, 0.75);
 
 		vec3 reflection = getReflection(viewPos, newNormal, lightmap.y);
 		albedo.rgb = mix(albedo.rgb, reflection.rgb, fresnel);

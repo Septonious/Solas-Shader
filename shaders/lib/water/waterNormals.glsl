@@ -1,4 +1,4 @@
-float GetWaterHeightMap(vec3 worldPos, vec2 offset) {
+float getWaterHeightMap(vec3 worldPos, vec2 offset) {
     vec2 wind = vec2(frameTimeCounter);
 
 	worldPos.xz -= worldPos.y * 0.25;
@@ -12,28 +12,28 @@ float GetWaterHeightMap(vec3 worldPos, vec2 offset) {
     return noise;
 }
 
-vec3 GetParallaxWaves(vec3 worldPos, vec3 viewVector) {
+vec3 getParallaxWaves(vec3 worldPos, vec3 viewVector) {
 	vec3 parallaxPos = worldPos;
 	
 	for(int i = 0; i < 4; i++) {
-		float height = -1.25 * GetWaterHeightMap(parallaxPos, vec2(0.0)) + 0.25;
+		float height = -1.25 * getWaterHeightMap(parallaxPos, vec2(0.0)) + 0.25;
 		parallaxPos.xz += height * viewVector.xy / viewDistance;
 	}
 	return parallaxPos;
 }
 
-vec3 GetWaterNormal(vec3 worldPos, vec3 viewPos, vec3 viewVector, vec2 lightmap) {
-	vec3 waterPos = GetParallaxWaves(worldPos + cameraPosition, viewVector);
+vec3 getWaterNormal(vec3 worldPos, vec3 viewPos, vec3 viewVector, vec2 lightmap) {
+	vec3 waterPos = getParallaxWaves(worldPos + cameraPosition, viewVector);
 
 	float normalOffset = 0.25;
 	
 	float fresnel = pow2(clamp(1.0 + dot(normalize(normal), normalize(viewPos)), 0.0, 1.0));
 	float normalStrength = (1.0 - fresnel) * lightmap.y * 0.5;
 
-	float h1 = GetWaterHeightMap(waterPos, vec2( normalOffset, 0.0));
-	float h2 = GetWaterHeightMap(waterPos, vec2(-normalOffset, 0.0));
-	float h3 = GetWaterHeightMap(waterPos, vec2(0.0,  normalOffset));
-	float h4 = GetWaterHeightMap(waterPos, vec2(0.0, -normalOffset));
+	float h1 = getWaterHeightMap(waterPos, vec2( normalOffset, 0.0));
+	float h2 = getWaterHeightMap(waterPos, vec2(-normalOffset, 0.0));
+	float h3 = getWaterHeightMap(waterPos, vec2(0.0,  normalOffset));
+	float h4 = getWaterHeightMap(waterPos, vec2(0.0, -normalOffset));
 
 	float xDelta = (h2 - h1) / normalOffset;
 	float yDelta = (h4 - h3) / normalOffset;

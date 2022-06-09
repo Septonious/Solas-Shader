@@ -14,14 +14,10 @@ in vec4 position;
 #endif
 
 //Uniforms//
-uniform float rainStrength;
-
 uniform sampler2D tex;
 
 #ifdef WATER_CAUSTICS
-uniform int isEyeInWater;
-
-uniform float frameTimeCounter, timeBrightness;
+uniform float frameTimeCounter;
 
 uniform vec3 cameraPosition;
 
@@ -37,15 +33,15 @@ void main() {
     vec4 albedo = texture2D(tex, texCoord.xy) * color;
 
     #ifdef SHADOW_COLOR
-	albedo.rgb = mix(vec3(1.0), albedo.rgb, 1.0 - pow8(1.0 - albedo.a));
-	albedo.rgb *= 1.0 - pow2(pow8(pow8(albedo.a)));
+	albedo.rgb *= (1.0 - pow2(pow8(pow8(albedo.a)))) * 4.0;
+	albedo.rgb = pow16(albedo.rgb);
 
 	#ifdef WATER_CAUSTICS
 	float water = float(mat > 0.98 && mat < 1.02);
 
 	if (water > 0.9){
 		float caustics = getCaustics(position.xyz + cameraPosition.xyz);
-		albedo.rgb = waterColor.rgb * caustics * (1.0 - rainStrength);
+		albedo.rgb = waterColor.rgb * caustics;
 	}
 	#endif
 	#endif

@@ -14,5 +14,5 @@ vec2 getRefraction(vec2 coord, vec3 pos){
 
 	vec2 noise = vec2(h2 - h1, h4 - h3);
 
-	return clamp(coord + noise * 0.015, vec2(0.0), vec2(1.0));
+	return clamp(coord + noise * 0.015 * WATER_REFRACTION_STRENGTH, vec2(0.0), vec2(1.0));
 }

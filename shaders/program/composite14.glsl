@@ -13,11 +13,13 @@ in vec3 sunVec, upVec;
 #endif
 
 //Uniforms//
-uniform float viewWidth, viewHeight;
-
 #if defined BLOOM || defined LENS_FLARE
+uniform int isEyeInWater;
+
 uniform float aspectRatio;
 #endif
+
+uniform float viewWidth, viewHeight;
 
 #ifdef LENS_FLARE
 uniform float blindFactor, rainStrength;

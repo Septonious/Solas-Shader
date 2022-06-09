@@ -27,7 +27,10 @@ vec3 getAtmosphere(vec3 viewPos) {
     daySky = getBiomeColor(daySky);
     #endif
 
-    vec3 sky = mix(lightNight, mix(lightSun, daySky, lightMix), pow3(sunVisibility));
+    vec3 lightSky = pow(lightSun, vec3(2.5 - sunVisibility));
+    lightSky = lightSky / (1.0 + lightSky * rainStrength);
+
+    vec3 sky = mix(lightNight, mix(sqrt(lightSky), daySky, lightMix), pow3(sunVisibility));
          sky *= sky;
 
     //Fake Light Scattering
