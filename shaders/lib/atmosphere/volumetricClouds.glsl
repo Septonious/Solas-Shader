@@ -11,21 +11,17 @@ float getCloudSample(vec3 pos){
 	return clamp(noise * amount - (10.0 + sampleHeight * 5.0), 0.0, 1.0);
 }
 
-vec4 getVolumetricCloud(vec3 viewPos, vec2 coord, float z0, float z1, vec3 translucent, float dither){
+vec4 getVolumetricCloud(vec3 viewPos, vec2 coord, float depth0, float depth1, vec3 translucent, float dither){
 	vec4 finalColor = vec4(0.0);
 	vec4 shadowPos = vec4(0.0);
 	vec4 worldPos = vec4(0.0);
-
-	//Depths
-	float depth0 = getLinearDepth2(z0);
-	float depth1 = getLinearDepth2(z1);
 
 	//Resolution Control
 	if (clamp(texCoord, vec2(0.0), vec2(VOLUMETRICS_RESOLUTION + 1e-3)) == texCoord && ug != 0.0) {
 		for (int i = 0; i < VC_SAMPLES; i++) {
 			float currentStep = (i + dither) * VC_DISTANCE;
 		
-			if (depth1 < currentStep || (depth0 < currentStep && translucent == vec3(0.0))){
+			if (depth1 < currentStep || (depth0 < currentStep && translucent == vec3(0.0)) || finalColor.a > 0.99){
 				break;
 			}
 			

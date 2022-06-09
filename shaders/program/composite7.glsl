@@ -8,8 +8,10 @@
 //Varyings//
 in vec2 texCoord;
 
+#ifdef WATER_FOG
 #if defined OVERWORLD || defined END
 in vec3 sunVec, upVec;
+#endif
 #endif
 
 //Uniforms//
@@ -17,17 +19,16 @@ in vec3 sunVec, upVec;
 uniform int isEyeInWater;
 
 uniform float blindFactor;
-#endif
-
-#ifdef WATER_REFRACTION
-uniform float frameTimeCounter;
-#endif
-
 #if defined OVERWORLD || defined END
 uniform float timeBrightness, timeAngle, rainStrength;
 #endif
 
 uniform ivec2 eyeBrightnessSmooth;
+#endif
+
+#ifdef WATER_REFRACTION
+uniform float frameTimeCounter;
+#endif
 
 #ifdef WATER_REFRACTION
 uniform vec3 cameraPosition;
@@ -37,18 +38,20 @@ uniform sampler2D noisetex;
 #endif
 
 uniform sampler2D colortex0;
+
+#if defined WATER_FOG || defined WATER_REFRACTION
 uniform sampler2D depthtex0;
 
 uniform mat4 gbufferProjectionInverse;
+#endif
 
 #ifdef WATER_REFRACTION
 uniform mat4 gbufferModelViewInverse;
 #endif
 
 //Common Variables//
+#if (defined OVERWORLD || defined END) && defined WATER_FOG
 float eBS = eyeBrightnessSmooth.y / 240.0;
-
-#if defined OVERWORLD || defined END
 float sunVisibility = clamp(dot(sunVec, upVec) + 0.05, 0.0, 0.1) * 10.0;
 float moonVisibility = clamp(dot(-sunVec, upVec) + 0.05, 0.0, 0.1) * 10.0;
 #endif
@@ -67,10 +70,12 @@ float moonVisibility = clamp(dot(-sunVec, upVec) + 0.05, 0.0, 0.1) * 10.0;
 void main() {
 	vec3 color = texture2D(colortex0, texCoord).rgb;
 
+	#if defined WATER_FOG || defined WATER_REFRACTION
 	float z0 = texture2D(depthtex0, texCoord).r;
 	vec4 screenPos = vec4(texCoord, z0, 1.0);
 	vec4 viewPos = gbufferProjectionInverse * (screenPos * 2.0 - 1.0);
 	viewPos /= viewPos.w;
+	#endif
 
 	#ifdef WATER_REFRACTION
 	float water = texture2D(colortex2, texCoord).a;
@@ -105,6 +110,7 @@ void main() {
 //Varyings//
 out vec2 texCoord;
 
+#ifdef WATER_FOG
 #if defined OVERWORLD || defined END
 out vec3 sunVec, upVec;
 #endif
@@ -115,19 +121,27 @@ uniform float timeAngle;
 
 uniform mat4 gbufferModelView;
 #endif
+#endif
 
 void main() {
+	//Coords
 	texCoord = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;
 	
-	#if defined OVERWORLD || defined END
+	//Sun & Other Vectors
+	#ifdef WATER_FOG
+    #if defined OVERWORLD
 	const vec2 sunRotationData = vec2(cos(sunPathRotation * 0.01745329251994), -sin(sunPathRotation * 0.01745329251994));
 	float ang = fract(timeAngle - 0.25);
 	ang = (ang + (cos(ang * 3.14159265358979) * -0.5 + 0.5 - ang) / 3.0) * 6.28318530717959;
 	sunVec = normalize((gbufferModelView * vec4(vec3(-sin(ang), cos(ang) * sunRotationData) * 2000.0, 1.0)).xyz);
+    #elif defined END
+    sunVec = normalize((gbufferModelView * vec4(vec3(0.0, sunRotationData * 2000.0), 1.0)).xyz);
+    #endif
 	
 	upVec = normalize(gbufferModelView[1].xyz);
 	#endif
 
+	//Position
 	gl_Position = ftransform();
 }
 

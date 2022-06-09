@@ -1,11 +1,7 @@
-vec3 getVolumetricLight(vec3 viewPos, vec2 coord, float z0, float z1, vec3 translucent, float dither) {
+vec3 getVolumetricLight(vec3 viewPos, vec2 coord, float depth0, float depth1, vec3 translucent, float dither) {
 	vec3 vl = vec3(0.0);
 	vec4 worldPos = vec4(0.0);
 	vec4 shadowPos = vec4(0.0);
-
-	//Depths
-	float depth0 = getLinearDepth2(z0);
-	float depth1 = getLinearDepth2(z1);
 		
 	//Resolution Control
 	if (clamp(texCoord, vec2(0.0), vec2(VOLUMETRICS_RESOLUTION + 1e-3)) == texCoord) {

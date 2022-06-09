@@ -60,8 +60,10 @@ void main() {
 out vec2 texCoord;
 
 void main() {
+	//Coords
 	texCoord = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;
 	
+	//Position
 	gl_Position = ftransform();
 }
 

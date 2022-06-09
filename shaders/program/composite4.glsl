@@ -33,6 +33,10 @@ uniform sampler2D colortex0;
 
 //Program//
 void main() {
+	#ifndef SSPT
+	discard;
+	#endif
+
 	vec3 color = texture2D(colortex0, texCoord).rgb;
 
 	#ifdef SSPT
@@ -63,8 +67,10 @@ out vec2 texCoord;
 
 //Program//
 void main() {
+	//Coords
 	texCoord = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;
 	
+	//Position
 	gl_Position = ftransform();
 }
 

@@ -81,6 +81,9 @@ void main() {
 	float z0 = texture2D(depthtex0, newTexCoord).r;
 	float z1 = texture2D(depthtex1, newTexCoord).r;
 
+	float depth0 = getLinearDepth2(z0);
+	float depth1 = getLinearDepth2(z1);
+
 	vec4 screenPos = vec4(newTexCoord, z0, 1.0);
 	vec4 viewPos = gbufferProjectionInverse * (screenPos * 2.0 - 1.0);
 	viewPos /= viewPos.w;
@@ -94,7 +97,7 @@ void main() {
 	#endif
 
 	#ifdef VL
-	vl = getVolumetricLight(viewPos.xyz, newTexCoord, z0, z1, translucent, dither);
+	vl = getVolumetricLight(viewPos.xyz, newTexCoord, depth0, depth1, translucent, dither);
 	vl *= mix(0.5, pow8(VoL), timeBrightness) * (1.0 - rainStrength * 0.5) * (1.0 - blindFactor);
 
 	#if MC_VERSION >= 11900
@@ -103,7 +106,7 @@ void main() {
 	#endif
 
 	#ifdef VCLOUDS
-	clouds = getVolumetricCloud(viewPos.xyz, newTexCoord, z0, z1, translucent, dither);
+	clouds = getVolumetricCloud(viewPos.xyz, newTexCoord, depth0, depth1, translucent, dither);
 	clouds.rgb *= 1.0 + pow3(sunVisibility) * 0.75;
 
 	#if MC_VERSION >= 11900
@@ -138,17 +141,24 @@ uniform mat4 gbufferModelView;
 
 //Program//
 void main() {
+	//Coords
 	texCoord = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;
 	
+	//Sun & Other Vectors
 	#if defined VL || defined VCLOUDS
+    #if defined OVERWORLD
 	const vec2 sunRotationData = vec2(cos(sunPathRotation * 0.01745329251994), -sin(sunPathRotation * 0.01745329251994));
 	float ang = fract(timeAngle - 0.25);
 	ang = (ang + (cos(ang * 3.14159265358979) * -0.5 + 0.5 - ang) / 3.0) * 6.28318530717959;
 	sunVec = normalize((gbufferModelView * vec4(vec3(-sin(ang), cos(ang) * sunRotationData) * 2000.0, 1.0)).xyz);
-
+    #elif defined END
+    sunVec = normalize((gbufferModelView * vec4(vec3(0.0, sunRotationData * 2000.0), 1.0)).xyz);
+    #endif
+	
 	upVec = normalize(gbufferModelView[1].xyz);
 	#endif
 
+	//Position
 	gl_Position = ftransform();
 }
 

@@ -35,7 +35,7 @@ vec3 SampleFilteredShadow(vec3 shadowPos, float offset) {
     int shadowSamples = 6;
     offset *= 1.3875;
     #else
-    int shadowSamples = 3;
+    int shadowSamples = 2;
     offset *= 0.69375;
     #endif
 
@@ -62,9 +62,6 @@ vec3 SampleFilteredShadow(vec3 shadowPos, float offset) {
 
 vec3 GetShadow(vec3 worldPos, float NoL) {
     vec3 shadowPos = calculateShadowPos(worldPos);
-
-    bool doShadow = shadowPos.x > 0.0 && shadowPos.x < 1.0 &&
-                    shadowPos.y > 0.0 && shadowPos.y < 1.0;
 
     float offset = float(SHADOW_BLUR_STRENGTH) / shadowMapResolution;
 

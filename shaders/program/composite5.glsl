@@ -27,6 +27,10 @@ uniform mat4 gbufferProjection;
 
 //Program//
 void main() {
+	#ifndef SSPT
+	discard;
+	#endif
+
 	vec3 sspt = vec3(0.0);
 
 	#ifdef SSPT
@@ -48,8 +52,10 @@ out vec2 texCoord;
 
 //Program//
 void main() {
+	//Coords
 	texCoord = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;
 	
+	//Position
 	gl_Position = ftransform();
 }
 

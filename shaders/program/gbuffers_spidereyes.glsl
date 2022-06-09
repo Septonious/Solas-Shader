@@ -35,9 +35,9 @@ void main() {
 	//Coords
 	texCoord = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;
     
+	//Color & Position
 	color = gl_Color;
 
-	//Position
 	gl_Position = ftransform();
 }
 
