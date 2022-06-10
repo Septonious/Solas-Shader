@@ -32,11 +32,9 @@ vec3 SampleFilteredShadow(vec3 shadowPos, float offset) {
     float shadow0 = 0.0;
 
     #if !defined GBUFFERS_ENTITIES && !defined GBUFFERS_HAND && !defined GBUFFERS_TEXTURED && !defined GBUFFERS_BASIC
-    int shadowSamples = 6;
-    offset *= 1.3875;
+    int shadowSamples = 4;
     #else
     int shadowSamples = 2;
-    offset *= 0.69375;
     #endif
 
     for (int i = 0; i < shadowSamples; i++) {

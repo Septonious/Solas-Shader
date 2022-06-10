@@ -49,14 +49,14 @@ void GetLighting(inout vec3 albedo, vec3 viewPos, vec3 worldPos, vec3 normal, ve
         }
     }
     
-    float scattering = 0.0;
     if (subsurface > 0.0){
-        float VoL = clamp(dot(normalize(viewPos.xyz), lightVec) * 0.25 + 0.75, 0.0, 1.0);
-        scattering = pow8(VoL) * subsurface;
         NoL = mix(NoL, 1.0, subsurface);
-        NoL = mix(NoL, 1.0, scattering);
     }
     
+    float VoL = clamp(dot(normalize(viewPos.xyz), lightVec) * 0.25 + 0.75, 0.0, 1.0);
+    float scattering = pow8(VoL) * (0.5 + subsurface * 0.5);
+    NoL = mix(NoL, 1.0, scattering);
+
     vec3 fullShadow = shadow * NoL;
     
     #ifdef OVERWORLD

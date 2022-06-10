@@ -110,8 +110,10 @@ void main() {
 	#endif
 
 	#ifdef VL
+	VoL = pow3(VoL);
+
 	vl = getVolumetricLight(viewPos.xyz, newTexCoord, depth0, depth1, translucent, dither);
-	vl *= mix(1.0, pow4(VoL), timeBrightness) * (1.0 - rainStrength * 0.5) * (1.0 - blindFactor);
+	vl *= mix(0.75 + VoL * 0.25, VoL, timeBrightness) * (1.0 - rainStrength * 0.5) * (1.0 - blindFactor);
 
 	#if MC_VERSION >= 11900
 	vl *= 1.0 - darknessFactor;
@@ -120,7 +122,7 @@ void main() {
 
 	#ifdef VCLOUDS
 	clouds = getVolumetricCloud(viewPos.xyz, newTexCoord, depth0, depth1, translucent, dither);
-	clouds.rgb *= 1.0 + pow3(sunVisibility);
+	clouds.rgb *= 1.0 + pow2(sunVisibility);
 
 	#if MC_VERSION >= 11900
 	clouds *= 1.0 - darknessFactor;

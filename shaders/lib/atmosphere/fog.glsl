@@ -13,7 +13,7 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 skyColor) {
 	
 	//Overworld Fog
 	#ifdef OVERWORLD
-	float density = FOG_DENSITY * (1.0 + pow4(rainStrength) * 7.0);
+	float density = FOG_DENSITY * (1.0 + pow4(rainStrength) * 7.0) * (1.5 - mefade);
 	float fog = lViewPos * density * 0.001;
 	fog = 1.0 - exp(-3.0 * fog);
 

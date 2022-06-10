@@ -42,15 +42,15 @@ vec3 weatherCol = vec3(WEATHER_RR, WEATHER_RG, WEATHER_RB) / 255.0 * WEATHER_RI;
 #endif
 
 float mefade = 1.0 - clamp(abs(timeAngle - 0.5) * 8.0 - 1.5, 0.0, 1.0);
-float dfade = 1.0 - pow(1.0 - timeBrightness, 1.5);
+float dfade = 1.0 - pow2(1.0 - timeBrightness);
 
 vec3 lightSun = mix(mix(lightMorning, lightEvening, mefade), lightDay, dfade);
 vec3 ambientSun = mix(mix(ambientMorning, ambientEvening, mefade), ambientDay, dfade);
 
-vec3 lightColRaw = mix(lightNight, lightSun, pow3(sunVisibility));
+vec3 lightColRaw = mix(lightNight, lightSun, sunVisibility);
 vec3 lightColSqrt = mix(lightColRaw, dot(lightColRaw, vec3(0.299, 0.587, 0.114)) * weatherCol.rgb, rainStrength);
 vec3 lightCol = lightColSqrt * lightColSqrt;
 
-vec3 ambientColRaw = mix(ambientNight, ambientSun, pow3(sunVisibility));
+vec3 ambientColRaw = mix(ambientNight, ambientSun, sunVisibility);
 vec3 ambientColSqrt = mix(ambientColRaw, dot(ambientColRaw, vec3(0.299, 0.587, 0.114)) * weatherCol.rgb, rainStrength);
 vec3 ambientCol = ambientColSqrt * ambientColSqrt;

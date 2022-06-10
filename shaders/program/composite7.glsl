@@ -51,11 +51,13 @@ uniform mat4 gbufferModelViewInverse;
 #endif
 
 //Common Variables//
+#ifdef WATER_FOG
 float eBS = eyeBrightnessSmooth.y / 240.0;
 
-#if (defined OVERWORLD || defined END) && defined WATER_FOG
+#if defined OVERWORLD || defined END
 float sunVisibility = clamp(dot(sunVec, upVec) + 0.05, 0.0, 0.1) * 10.0;
 float moonVisibility = clamp(dot(-sunVec, upVec) + 0.05, 0.0, 0.1) * 10.0;
+#endif
 #endif
 
 //Includes//
@@ -137,6 +139,7 @@ void main() {
 	ang = (ang + (cos(ang * 3.14159265358979) * -0.5 + 0.5 - ang) / 3.0) * 6.28318530717959;
 	sunVec = normalize((gbufferModelView * vec4(vec3(-sin(ang), cos(ang) * sunRotationData) * 2000.0, 1.0)).xyz);
     #elif defined END
+	const vec2 sunRotationData = vec2(cos(sunPathRotation * 0.01745329251994), -sin(sunPathRotation * 0.01745329251994));
     sunVec = normalize((gbufferModelView * vec4(vec3(0.0, sunRotationData * 2000.0), 1.0)).xyz);
     #endif
 	

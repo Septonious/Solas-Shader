@@ -156,10 +156,10 @@ void main() {
 
 	if (water > 0.9 && isEyeInWater == 0) {
 		#ifdef WATER_REFLECTION
-		float fresnel = clamp(1.0 + dot(newNormal, normalize(viewPos)), 0.0, 0.75);
+		float fresnel = clamp(1.0 + dot(newNormal, normalize(viewPos)), 0.0, 1.0);
 
 		vec3 reflection = getReflection(viewPos, newNormal, lightmap.y);
-		albedo.rgb = mix(albedo.rgb, reflection.rgb, fresnel);
+		albedo.rgb = mix(albedo.rgb, reflection.rgb, pow3(fresnel));
 		#endif
 	}
 
@@ -246,8 +246,9 @@ void main() {
 	#endif
 
 	//Sun & Other vectors
-    #if defined OVERWORLD
 	const vec2 sunRotationData = vec2(cos(sunPathRotation * 0.01745329251994), -sin(sunPathRotation * 0.01745329251994));
+	
+    #if defined OVERWORLD
 	float ang = fract(timeAngle - 0.25);
 	ang = (ang + (cos(ang * 3.14159265358979) * -0.5 + 0.5 - ang) / 3.0) * 6.28318530717959;
 	sunVec = normalize((gbufferModelView * vec4(vec3(-sin(ang), cos(ang) * sunRotationData) * 2000.0, 1.0)).xyz);

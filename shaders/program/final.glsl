@@ -32,41 +32,23 @@ const int colortex6Format = RGBA16; //normals
 const int colortex7Format = RGBA16; //sspt
 */
 
-//Common Functions//
-vec2 sharpenOffsets[4] = vec2[4](
-	vec2( 1.0,  0.0),
-	vec2( 0.0,  1.0),
-	vec2(-1.0,  0.0),
-	vec2( 0.0, -1.0)
-);
-
-void sharpenFilter(inout vec3 color, vec2 coord) {
-	float mult = MC_RENDER_QUALITY * 0.0625;
-	vec2 view = 1.0 / vec2(viewWidth, viewHeight);
-
-	color *= MC_RENDER_QUALITY * 0.25 + 1.0;
-
-	for(int i = 0; i < 4; i++) {
-		vec2 offset = sharpenOffsets[i] * view;
-		color -= texture2D(colortex0, coord + offset).rgb * mult;
-	}
-}
-
 //Includes//
+#include "/lib/filters/sharpen.glsl"
+
 #ifdef CHROMATIC_ABERRATION
 #include "/lib/post/chromaticAberration.glsl"
 #endif
 
 //Program//
 void main() {
-	vec3 color = texture2D(colortex0, texCoord).rgb;
-	sharpenFilter(color, texCoord);
+	vec4 color = texture2D(colortex0, texCoord);
+	sharpenFilter(color, texCoord, colortex0, MC_RENDER_QUALITY);
 
 	#ifdef CHROMATIC_ABERRATION
-	getChromaticAberration(color, texCoord);
+	getChromaticAberration(color.rgb, texCoord);
 	#endif
 
-	gl_FragColor.rgb = color + Bayer256(gl_FragCoord.xy) / 256.0;
+	gl_FragColor = color + Bayer256(gl_FragCoord.xy) / 256.0;
 }
 
 #endif
