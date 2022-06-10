@@ -158,7 +158,7 @@ void main() {
 		#endif
 
 		#ifdef NETHER
-		color = netherCol.rgb * 0.15;
+		color = netherColSqrt.rgb * 0.15;
 		#endif
 
 		#ifdef END
@@ -203,9 +203,9 @@ out vec3 sunVec, upVec;
 //Uniforms
 #if defined OVERWORLD || defined END
 uniform float timeAngle;
+#endif
 
 uniform mat4 gbufferModelView;
-#endif
 
 void main() {
 	//Coords
@@ -221,7 +221,9 @@ void main() {
     sunVec = normalize((gbufferModelView * vec4(vec3(0.0, sunRotationData * 2000.0), 1.0)).xyz);
     #endif
 	
+	#if defined OVERWORLD || defined END
 	upVec = normalize(gbufferModelView[1].xyz);
+	#endif
 
 	//Position
 	gl_Position = ftransform();

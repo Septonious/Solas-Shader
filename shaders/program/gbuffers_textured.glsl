@@ -52,7 +52,7 @@ void main() {
 
     /* DRAWBUFFERS:01 */
     gl_FragData[0] = albedo;
-	gl_FragData[1].rgb = vec3(0.0);
+	gl_FragData[1] = vec4(0.0);
 }
 
 #endif
@@ -75,9 +75,9 @@ uniform float viewWidth, viewHeight;
 
 #if defined OVERWORLD || defined END
 uniform float timeAngle;
+#endif
 
 uniform mat4 gbufferModelView;
-#endif
 
 //Includes//
 #ifdef TAA

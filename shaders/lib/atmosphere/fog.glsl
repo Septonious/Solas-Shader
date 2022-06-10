@@ -42,7 +42,7 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 skyColor) {
 
 	//Nether Fog
 	#ifdef NETHER
-	vec3 fogColor = netherCol.rgb * 0.15;
+	vec3 fogColor = netherColSqrt.rgb * 0.15;
 	float fog = pow(lViewPos * FOG_DENSITY * 0.0025, 1.5);
 
 	#ifdef DISTANT_FADE

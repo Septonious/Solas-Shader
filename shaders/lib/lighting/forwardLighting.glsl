@@ -70,7 +70,7 @@ void GetLighting(inout vec3 albedo, vec3 viewPos, vec3 worldPos, vec3 normal, ve
     #endif
 
     #else
-    vec3 sceneLighting = netherColSqrt * 0.25;
+    vec3 sceneLighting = pow(netherColSqrt, vec3(0.25)) * 0.25;
     #endif
     
     float newLightmap  = (pow6(lightmap.x) + lightmap.x * 0.75) * (1.0 - lightFlatten * 0.75);

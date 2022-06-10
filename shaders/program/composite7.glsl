@@ -19,6 +19,7 @@ in vec3 sunVec, upVec;
 uniform int isEyeInWater;
 
 uniform float blindFactor;
+
 #if defined OVERWORLD || defined END
 uniform float timeBrightness, timeAngle, rainStrength;
 #endif
@@ -50,8 +51,9 @@ uniform mat4 gbufferModelViewInverse;
 #endif
 
 //Common Variables//
-#if (defined OVERWORLD || defined END) && defined WATER_FOG
 float eBS = eyeBrightnessSmooth.y / 240.0;
+
+#if (defined OVERWORLD || defined END) && defined WATER_FOG
 float sunVisibility = clamp(dot(sunVec, upVec) + 0.05, 0.0, 0.1) * 10.0;
 float moonVisibility = clamp(dot(-sunVec, upVec) + 0.05, 0.0, 0.1) * 10.0;
 #endif
@@ -138,7 +140,9 @@ void main() {
     sunVec = normalize((gbufferModelView * vec4(vec3(0.0, sunRotationData * 2000.0), 1.0)).xyz);
     #endif
 	
+	#if defined OVERWORLD || defined END
 	upVec = normalize(gbufferModelView[1].xyz);
+	#endif
 	#endif
 
 	//Position

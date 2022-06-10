@@ -103,7 +103,9 @@ void main() {
     sunVec = normalize((gbufferModelView * vec4(vec3(0.0, sunRotationData * 2000.0), 1.0)).xyz);
     #endif
 	
+	#if defined OVERWORLD || defined END
 	upVec = normalize(gbufferModelView[1].xyz);
+	#endif
 	#endif
 
 	//Position

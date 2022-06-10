@@ -135,9 +135,9 @@ uniform float viewWidth, viewHeight;
 
 #if defined OVERWORLD || defined END
 uniform float timeAngle;
+#endif
 
 uniform mat4 gbufferModelView;
-#endif
 
 //Attributes//
 attribute vec4 mc_Entity;

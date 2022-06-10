@@ -36,7 +36,7 @@ vec4 getVolumetricCloud(vec3 viewPos, vec2 coord, float depth0, float depth1, ve
 				float shadow0 = shadow2D(shadowtex0, shadowPos.xyz).z;
 
 				//Circular Fade
-				float fog = length(worldPos.xz) * 0.0001 * (1.0 + rainStrength);
+				float fog = length(worldPos.xz) * 0.00015 * (1.0 + rainStrength);
 					  fog = clamp(exp(-VC_DISTANCE * fog + 0.6), 0.0, 1.0);
 				worldPos.xyz += cameraPosition;
 

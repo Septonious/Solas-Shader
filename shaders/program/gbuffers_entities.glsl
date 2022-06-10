@@ -114,9 +114,9 @@ out vec4 color;
 //Uniforms
 #if defined OVERWORLD || defined END
 uniform float timeAngle;
+#endif
 
 uniform mat4 gbufferModelView;
-#endif
 
 //Attributes//
 #ifdef INTEGRATED_EMISSION

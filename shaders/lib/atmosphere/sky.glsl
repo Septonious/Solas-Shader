@@ -30,7 +30,7 @@ vec3 getAtmosphere(vec3 viewPos) {
     vec3 lightSky = pow(lightSun, vec3(2.5 - sunVisibility));
     lightSky = lightSky / (1.0 + lightSky * rainStrength);
 
-    vec3 sky = mix(lightNight, mix(sqrt(lightSky), daySky, lightMix), pow3(sunVisibility));
+    vec3 sky = mix(lightNight * 0.75, mix(sqrt(lightSky), daySky, lightMix), pow3(sunVisibility));
          sky *= sky;
 
     //Fake Light Scattering
@@ -43,5 +43,5 @@ vec3 getAtmosphere(vec3 viewPos) {
     vec3 weatherSky = pow2(weatherCol) * 0.05 * (1.0 + pow6(sunVisibility) * 7.0);
 	sky = mix(sky, weatherSky, rainStrength);
 
-    return sky * mix(pow(skyDensity, 1.0 + pow3(timeBrightness) * 0.25), 1.0, pow3(rainStrength));
+    return sky * mix(pow(skyDensity, 0.75 + pow3(timeBrightness) * 0.5), 1.0, pow3(rainStrength));
 }
