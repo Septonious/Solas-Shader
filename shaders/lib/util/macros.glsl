@@ -18,6 +18,7 @@ float pow18(float x) {return x*x*x*x*x*x*x*x*x*x*x*x*x*x*x*x*x*x;}
 float pow19(float x) {return x*x*x*x*x*x*x*x*x*x*x*x*x*x*x*x*x*x*x;}
 float pow20(float x) {return x*x*x*x*x*x*x*x*x*x*x*x*x*x*x*x*x*x*x*x;}
 float pow24(float x) {return x*x*x*x*x*x*x*x*x*x*x*x*x*x*x*x*x*x*x*x*x*x*x*x;}
+float pow32(float x) {return x*x*x*x*x*x*x*x*x*x*x*x*x*x*x*x*x*x*x*x*x*x*x*x*x*x*x*x*x*x*x*x;}
 
 vec2 pow2(vec2 x) {return x*x;}
 vec2 pow3(vec2 x) {return x*x*x;}

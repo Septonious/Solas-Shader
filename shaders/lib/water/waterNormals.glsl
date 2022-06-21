@@ -28,7 +28,7 @@ vec3 getWaterNormal(vec3 worldPos, vec3 viewPos, vec3 viewVector, vec2 lightmap)
 	float normalOffset = 0.25;
 	
 	float fresnel = pow2(clamp(1.0 + dot(normalize(normal), normalize(viewPos)), 0.0, 1.0));
-	float normalStrength = (1.0 - fresnel) * lightmap.y * 0.5;
+	float normalStrength = (1.0 - fresnel) * lightmap.y;
 
 	float h1 = getWaterHeightMap(waterPos, vec2( normalOffset, 0.0));
 	float h2 = getWaterHeightMap(waterPos, vec2(-normalOffset, 0.0));

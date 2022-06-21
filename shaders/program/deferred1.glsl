@@ -115,7 +115,9 @@ void main() {
 	vec3 skyColor = vec3(0.0);
 
 	#ifdef OVERWORLD
+	#if defined NEBULA || defined STARS || defined RAINBOW || defined AURORA
 	vec3 worldPos = normalize(mat3(gbufferModelViewInverse) * viewPos.xyz);
+	#endif
 
 	skyColor = getAtmosphere(viewPos.xyz);
 	#endif
@@ -128,6 +130,7 @@ void main() {
 		float VoU = dot(nViewPos, upVec);
 
 		if (VoU > 0.0) {
+			VoU = sqrt(VoU);
 			float nebulaFactor = 0.0;
 
 			#ifdef NEBULA
@@ -135,7 +138,7 @@ void main() {
 			#endif
 
 			#ifdef STARS
-			getStars(skyColor, worldPos, nebulaFactor);
+			getStars(skyColor, worldPos, VoU, nebulaFactor);
 			#endif
 
 			#ifdef RAINBOW

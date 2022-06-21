@@ -15,7 +15,7 @@ vec3 getVolumetricLight(vec3 viewPos, vec2 coord, float depth0, float depth1, ve
 			worldPos = getWorldSpace(getLogarithmicDepth(currentStep), coord);
 			shadowPos = getShadowSpace(worldPos);
 
-			if (length(shadowPos.xy * 2.0 - 1.0) < 1.0 && length(worldPos) < 128.0) {
+			if (length(worldPos) < 128.0) {
 				float shadow0 = shadow2D(shadowtex0, shadowPos.xyz).z;
 					
 				vec3 shadowCol = vec3(0.0);

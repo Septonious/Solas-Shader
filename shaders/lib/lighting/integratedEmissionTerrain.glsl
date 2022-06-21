@@ -86,7 +86,7 @@ void getIntegratedEmission(inout float emissive, in vec2 lightmap, inout vec4 al
 
 	#if defined OVERWORLD && defined EMISSIVE_FLOWERS
 	if (isPlant > 0.9 && isPlant < 1.1){ // Flowers
-		newEmissive = float(albedo.b > albedo.g || albedo.r > albedo.g) * 0.025 * (1.0 - rainStrength);
+		newEmissive = float(albedo.b > albedo.g || albedo.r > albedo.g) * 0.125 * (1.0 - rainStrength);
 	}
 	#endif
 
