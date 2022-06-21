@@ -60,10 +60,6 @@ void main() {
 
 	float lightningBolt = float(entityId == 0);
 
-	vec3 screenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z);
-	vec3 viewPos = ToNDC(screenPos);
-	vec3 worldPos = ToWorld(viewPos);
-
 	albedo.rgb = mix(albedo.rgb, entityColor.rgb, entityColor.a);
 
 	float emissive = float(entityColor.a > 0.05) * 0.125 + lightningBolt;
@@ -72,7 +68,11 @@ void main() {
 		albedo.rgb = vec3(1.0);
 		albedo.rgb *= albedo.rgb * albedo.rgb;
 		albedo.a = 1.0;
-	} else {
+	} else if (lightningBolt < 0.5 && albedo.a > 0.01) {
+		vec3 screenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z);
+		vec3 viewPos = ToNDC(screenPos);
+		vec3 worldPos = ToWorld(viewPos);
+
 		#ifdef INTEGRATED_EMISSION
 		getIntegratedEmission(emissive, lightmap, albedo);
 		#endif

@@ -13,13 +13,13 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 skyColor) {
 	
 	//Overworld Fog
 	#ifdef OVERWORLD
-	float density = FOG_DENSITY * (1.0 + pow4(rainStrength) * 7.0) * (1.5 - mefade);
+	float density = FOG_DENSITY * (1.0 + pow4(rainStrength) * 7.0);
 	float fog = lViewPos * density * 0.001;
 	fog = 1.0 - exp(-3.0 * fog);
 
 	//Fog Altitude
-	float worldHeightFactor = clamp((worldPos.y + cameraPosition.y) * 0.001 * FOG_HEIGHT, 0.0, 1.0);
-	fog *= 1.0 - worldHeightFactor;
+	float fogAltitude = clamp((worldPos.y + cameraPosition.y) * 0.001 * FOG_HEIGHT, 0.0, 1.0);
+	fog *= 1.0 - fogAltitude;
 
 	vec3 dayFogColor = vec3(SKY_R, SKY_G, SKY_B) / 255.0 * SKY_I;
     vec3 fogColor = mix(dayFogColor, skyColor, 0.5 + clamp(rainStrength + moonVisibility, 0.0, 0.5));

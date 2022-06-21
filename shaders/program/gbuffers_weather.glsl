@@ -20,16 +20,18 @@ uniform sampler2D texture;
 void main() {
     vec4 albedo = texture2D(texture, texCoord);
 
-	vec2 lightmap = clamp(lmCoord, vec2(0.0), vec2(1.0));
+	if (albedo.a > 0.01) {
+		vec2 lightmap = clamp(lmCoord, vec2(0.0), vec2(1.0));
 
-	albedo.a *= 0.2 * rainStrength * length(albedo.rgb / 3.0);
-	albedo.rgb = sqrt(albedo.rgb);
-	albedo.rgb *= (vec3(1.0) + lmCoord.x * lmCoord.x * blocklightCol) * 0.75;
+		albedo.a *= 0.2 * rainStrength * length(albedo.rgb / 3.0);
+		albedo.rgb = sqrt(albedo.rgb);
+		albedo.rgb *= (vec3(1.0) + lmCoord.x * lmCoord.x * blocklightCol) * 0.75;
 
-	#if MC_VERSION < 10800
-	albedo.a *= 4.0;
-	albedo.rgb *= 0.525;
-	#endif
+		#if MC_VERSION < 10800
+		albedo.a *= 4.0;
+		albedo.rgb *= 0.525;
+		#endif
+	}
 
     /* DRAWBUFFERS:0 */
     gl_FragData[0] = albedo;

@@ -67,13 +67,7 @@ void main() {
     vec4 albedo = texture2D(texture, texCoord) * color;
 	vec3 newNormal = normal;
 	vec2 lightmap = clamp(lmCoord, vec2(0.0), vec2(1.0));
-
-	vec3 screenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z);
-	vec3 viewPos = ToNDC(screenPos);
-	vec3 worldPos = ToWorld(viewPos);
-
-
-
+	
 	float emissive = 0.0;
 	float subsurface = float(mat > 0.99 && mat < 1.01);
 	
@@ -84,17 +78,23 @@ void main() {
 	#if defined SSPT && defined EMISSIVE_CONCRETE
 	emissive += float(mat > 198.9 && mat < 199.9) * 1.5;
 	#endif
-		
-	#ifdef INTEGRATED_EMISSION
-	getIntegratedEmission(emissive, lightmap, albedo, worldPos);
-	#endif
-
-	GetLighting(albedo.rgb, viewPos, worldPos, newNormal, lightmap, emissive, subsurface);
-
-	#ifdef INTEGRATED_SPECULAR
-	getIntegratedSpecular(specular, worldPos.xz, lightmap, texture2D(texture, texCoord) * color);
-	#endif
 	
+	if (albedo.a > 0.01) {
+		vec3 screenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z);
+		vec3 viewPos = ToNDC(screenPos);
+		vec3 worldPos = ToWorld(viewPos);
+
+		#ifdef INTEGRATED_EMISSION
+		getIntegratedEmission(emissive, lightmap, albedo, worldPos);
+		#endif
+
+		GetLighting(albedo.rgb, viewPos, worldPos, newNormal, lightmap, emissive, subsurface);
+
+		#ifdef INTEGRATED_SPECULAR
+		getIntegratedSpecular(specular, worldPos.xz, lightmap, texture2D(texture, texCoord) * color);
+		#endif
+	}
+
     /* DRAWBUFFERS:0 */
     gl_FragData[0] = albedo;
 

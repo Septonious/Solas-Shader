@@ -41,14 +41,17 @@ vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.
 //Program//
 void main() {
     vec4 albedo = texture2D(texture, texCoord) * color;
-	vec3 newNormal = normal;
-	vec2 lightmap = clamp(lmCoord, vec2(0.0), vec2(1.0));
 
-	vec3 screenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z);
-	vec3 viewPos = ToNDC(screenPos);
-	vec3 worldPos = ToWorld(viewPos);
+	if (albedo.a > 0.01) {
+		vec3 newNormal = normal;
+		vec2 lightmap = clamp(lmCoord, vec2(0.0), vec2(1.0));
 
-	GetLighting(albedo.rgb, viewPos, worldPos, newNormal, lightmap, 0.0, 0.0);
+		vec3 screenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z);
+		vec3 viewPos = ToNDC(screenPos);
+		vec3 worldPos = ToWorld(viewPos);
+
+		GetLighting(albedo.rgb, viewPos, worldPos, newNormal, lightmap, 0.0, 0.0);
+	}
 
     /* DRAWBUFFERS:01 */
     gl_FragData[0] = albedo;

@@ -141,7 +141,7 @@ void main() {
 	skyColor = endCol;
 	#endif
 
-	GetLighting(albedo.rgb, viewPos, worldPos, newNormal, lightmap, 0.0, 0.0);
+	if (albedo.a > 0.01) GetLighting(albedo.rgb, viewPos, worldPos, newNormal, lightmap, 0.0, 0.0);
 
 	#ifdef WATER_FOG
 	if (isEyeInWater == 0 && lightmap.y > 0.0 && water > 0.9) {
