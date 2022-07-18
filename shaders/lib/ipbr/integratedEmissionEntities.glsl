@@ -49,25 +49,6 @@ void getIntegratedEmission(in vec3 albedo, inout vec2 lightmap, inout float emis
 
 #ifdef VSH
 void getIntegratedEmissionEntities(inout float mat){
-    if (entityId == 100) mat = 100.0;
-	if (entityId == 101) mat = 101.0;
-	if (entityId == 102) mat = 102.0;
-	if (entityId == 103) mat = 103.0;
-	if (entityId == 104) mat = 104.0;
-	if (entityId == 105) mat = 105.0;
-	if (entityId == 106) mat = 106.0;
-    if (entityId == 107) mat = 107.0;
-	if (entityId == 108) mat = 108.0;
-	if (entityId == 110) mat = 110.0;
-	if (entityId == 111) mat = 111.0;
-	if (entityId == 112) mat = 112.0;
-	if (entityId == 113) mat = 113.0;
-	if (entityId == 114) mat = 114.0;
-	if (entityId == 115) mat = 115.0;
-	if (entityId == 116) mat = 116.0;
-	if (entityId == 117) mat = 117.0;
-	if (entityId == 118) mat = 118.0;
-	if (entityId == 119) mat = 119.0;
-	if (entityId == 120) mat = 120.0;
+    if (entityId >= 100) mat = float(entityId);
 }
 #endif
