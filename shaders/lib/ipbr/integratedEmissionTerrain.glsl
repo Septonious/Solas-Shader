@@ -46,9 +46,9 @@ void getIntegratedEmission(inout vec3 albedo, in vec3 worldPos, in vec2 lightmap
         }
 
 	} else if (mat > 102.9 && mat < 103.1) { // Warped Stem & Hyphae
-		newEmission = float(lAlbedo > 0.49) * 0.4 + float(lAlbedo > 0.59);
+		newEmission = float(lAlbedo > 0.49) * 0.25 + float(lAlbedo > 0.59);
 	} else if (mat > 103.9 && mat < 104.1) { // Crimson Stem & Hyphae
-		newEmission = (float(lAlbedo > 0.47) * 0.5 + float(lAlbedo > 0.50)) * float(albedo.b < 0.25);
+		newEmission = (float(lAlbedo > 0.47) * 0.25 + float(lAlbedo > 0.50)) * float(albedo.b < 0.25);
 	} else if (mat > 104.9 && mat < 105.1) { // Warped Nether Warts
 		newEmission = pow2(float(albedo.g - albedo.b)) * 0.5;
 	} else if (mat > 105.9 && mat < 106.1) { // Warped Nylium

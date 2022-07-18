@@ -94,7 +94,7 @@ void main() {
 	#if defined OVERWORLD
 	skyColor = getAtmosphere(viewPos.xyz);
 	#elif defined NETHER
-	skyColor = netherColSqrt.rgb * 0.15;
+	skyColor = netherColSqrt.rgb * 0.25;
 	#elif defined END
 	skyColor = endLightCol * 0.15;
 	#endif
