@@ -17,10 +17,11 @@ float get3DNoise(vec3 pos) {
 }
 
 vec2 getCloudSample(vec3 pos, in float firstLayer, float secondLayer) {
-	float noise = get3DNoise(pos * 0.625) * 1.0;
-		  noise+= get3DNoise(pos * 0.250) * 1.5;
-		  noise+= get3DNoise(pos * 0.125) * 3.0;
-		  noise+= get3DNoise(pos * 0.025) * 9.0;
+	frameTimeCounter *= 1.0 + rainStrength;
+	float noise = get3DNoise(pos * 0.625 + frameTimeCounter * 0.4) * 1.0;
+		  noise+= get3DNoise(pos * 0.250 + frameTimeCounter * 0.3) * 1.5;
+		  noise+= get3DNoise(pos * 0.125 + frameTimeCounter * 0.2) * 3.0;
+		  noise+= get3DNoise(pos * 0.025 + frameTimeCounter * 0.1) * 9.0;
 
 	#ifdef VL
 	float result0 = noise * VL_AMOUNT - (10.0 + firstLayer * 5.0);
