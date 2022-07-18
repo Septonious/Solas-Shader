@@ -224,7 +224,7 @@ void main() {
 	lightMapCoord = (gl_TextureMatrix[1] * gl_MultiTexCoord1).xy;
 	lightMapCoord = clamp((lightMapCoord - 0.03125) * 1.06667, vec2(0.0), vec2(0.9333, 1.0));
 
-	//Normal
+	//Normals stuff
 	normal = normalize(gl_NormalMatrix * gl_Normal);
 
 	#ifdef WATER_NORMALS

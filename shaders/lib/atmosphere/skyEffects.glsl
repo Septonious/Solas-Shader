@@ -26,6 +26,7 @@ void getStars(inout vec3 color, in vec3 worldPos, in float VoU, in float nebulaF
 }
 #endif
 
+//cringe
 #ifdef END_BLACK_HOLE
 void getBlackHole(inout vec3 color, in vec3 worldPos, in float VoS, in float VoU, inout float blackHoleFactor) {
 	VoU = clamp(VoU, 0.0, 1.0);

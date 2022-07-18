@@ -118,7 +118,7 @@ void computeVolumetricEffects(vec4 translucent, vec3 viewPos, vec2 newTexCoord, 
 					}
 					#endif
 
-					//Second layer of Clouds
+					//Volumetric Clouds
 					float cloudLighting1 = clamp(smoothstep(VC_HEIGHT + VC_STRETCHING * noise.y, VC_HEIGHT - VC_STRETCHING * noise.y, playerPos.y) * 0.5 + noise.y * 0.5, 0.0, 1.0);
 					vec4 cloudsColor1 = vec4(mix(lightCol, ambientCol, cloudLighting1), noise.y);
 						cloudsColor1.a *= VC_OPACITY;
