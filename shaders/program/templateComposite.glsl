@@ -4,18 +4,17 @@
 #ifdef FSH
 
 //Varyings//
-varying vec2 texCoord;
+in vec2 texCoord;
 
 //Uniforms//
 uniform sampler2D colortex0;
 
-//Includes//
-
+//Program//
 void main() {
-	vec4 albedo = texture2D(colortex0, texCoord);
+	vec3 color = texture2D(colortex0, texCoord).rgb;
 
 	/* DRAWBUFFERS:0 */
-	gl_FragData[0] = albedo;
+	gl_FragData[0].rgb = color.rgb;
 }
 
 #endif
@@ -25,15 +24,14 @@ void main() {
 #ifdef VSH
 
 //Varyings//
-varying vec2 texCooord;
+out vec2 texCoord;
 
-//Uniforms//
-
-//Includes//
-
+//Program//
 void main() {
-	texCoord = gl_MultiTexCoord0.xy;
+	//Coord
+	texCoord = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;
 	
+	//Position
 	gl_Position = ftransform();
 }
 

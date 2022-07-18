@@ -1,0 +1,18 @@
+vec2 sharpenOffsets[4] = vec2[4](
+	vec2( 1.0,  0.0),
+	vec2( 0.0,  1.0),
+	vec2(-1.0,  0.0),
+	vec2( 0.0, -1.0)
+);
+
+void sharpenFilter(in sampler2D colortex, inout vec3 color, in vec2 coord) {
+	float mult = MC_RENDER_QUALITY * 0.0625;
+	vec2 view = 1.0 / vec2(viewWidth, viewHeight);
+
+	color *= MC_RENDER_QUALITY * 0.25 + 1.0;
+
+	for(int i = 0; i < 4; i++) {
+		vec2 offset = sharpenOffsets[i] * view;
+		color -= texture2D(colortex, coord + offset).rgb * mult;
+	}
+}

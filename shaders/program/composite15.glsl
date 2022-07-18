@@ -1,8 +1,6 @@
 //Settings//
 #include "/lib/common.glsl"
 
-#define COMPOSITE_15
-
 #ifdef FSH
 
 //Varyings//
@@ -23,7 +21,7 @@ uniform vec3 cameraPosition, previousCameraPosition;
 uniform mat4 gbufferPreviousProjection, gbufferProjectionInverse;
 uniform mat4 gbufferPreviousModelView, gbufferModelViewInverse;
 
-uniform sampler2D colortex3;
+uniform sampler2D colortex5;
 uniform sampler2D depthtex1;
 #endif
 
@@ -37,15 +35,15 @@ void main() {
 	vec3 color = texture2D(colortex0, texCoord).rgb;
 
 	#ifdef TAA
-    vec4 prev = vec4(texture2D(colortex3, texCoord).r, 0.0, 0.0, 0.0);
-	prev = TemporalAA(color, prev.r, colortex0, colortex3);
+    vec4 prev = vec4(texture2D(colortex5, texCoord).r, 0.0, 0.0, 0.0);
+	prev = TemporalAA(color, prev.r, colortex0, colortex5);
 	#endif
 
 	/* DRAWBUFFERS:0 */
 	gl_FragData[0].rgb = color;
 
 	#ifdef TAA
-	/* DRAWBUFFERS:03 */
+	/* DRAWBUFFERS:05 */
 	gl_FragData[1] = prev;
 	#endif
 }

@@ -1,137 +1,112 @@
 //Settings//
 #include "/lib/common.glsl"
 
-#define COMPOSITE_0
-
 #ifdef FSH
 
 //Varyings//
 in vec2 texCoord;
 
-#if defined VL || defined VCLOUDS
-in vec3 sunVec;
-#endif
-
-#ifdef VCLOUDS
-in vec3 upVec;
+#ifdef VC
+in vec3 sunVec, upVec;
 #endif
 
 //Uniforms//
-#if defined VL || defined VCLOUDS
-uniform int isEyeInWater;
+#ifdef VC
+uniform int moonPhase;
 
-uniform float frameTimeCounter;
+#ifdef VL
+uniform int isEyeInWater;
+#endif
+
+uniform float far, near, frameTimeCounter;
+uniform float timeAngle, timeBrightness, rainStrength;
+uniform float blindFactor;
 
 #if MC_VERSION >= 11900
 uniform float darknessFactor;
 #endif
 
-uniform float far, near;
-uniform float timeBrightness, rainStrength, blindFactor;
-
-#ifdef VCLOUDS
-uniform float timeAngle;
-#endif
-
 uniform ivec2 eyeBrightnessSmooth;
 
 uniform vec3 cameraPosition;
+#endif
 
-uniform mat4 gbufferProjectionInverse, gbufferModelViewInverse;
+uniform sampler2D colortex0;
 
+#ifdef VC
+uniform sampler2D noisetex;
+uniform sampler2D depthtex0, depthtex1;
 uniform sampler2D colortex1;
-uniform sampler2D depthtex2;
-uniform sampler2D depthtex0;
-uniform sampler2D depthtex1;
-uniform sampler2DShadow shadowtex0;
+uniform sampler2DShadow shadowtex0, shadowtex1;
 
-uniform mat4 shadowModelView, shadowProjection;
+uniform mat4 gbufferProjectionInverse;
 
-#if defined SHADOW_COLOR && defined VL
-uniform sampler2DShadow shadowtex1;
+#if defined VC && defined SHADOW_COLOR
 uniform sampler2D shadowcolor0;
 #endif
+
+uniform mat4 shadowModelView, shadowProjection;
+uniform mat4 gbufferModelViewInverse;
 #endif
 
 //Common Variables//
-#ifdef VCLOUDS
+#ifdef VC
+float eBS = eyeBrightnessSmooth.y / 240.0;
+float ug = mix(clamp((cameraPosition.y - 56.0) / 16.0, 0.0, 1.0), 1.0, eBS);
 float sunVisibility = clamp(dot(sunVec, upVec) + 0.05, 0.0, 0.1) * 10.0;
 #endif
 
-#if defined VL || defined VCLOUDS
-float eBS = eyeBrightnessSmooth.y / 240.0;
-float ug = mix(clamp((cameraPosition.y - 32.0) / 16.0, 0.0, 1.0), 1.0, eBS) * (1.0 - blindFactor);
-#endif
-
 //Includes//
-#ifdef VCLOUDS
+#ifdef VC
 #include "/lib/color/lightColor.glsl"
-#endif
-
-#if defined VL || defined VCLOUDS
-#include "/lib/util/blueNoise.glsl"
+#include "/lib/util/blueNoiseDithering.glsl"
 #include "/lib/atmosphere/spaceConversion.glsl"
-#endif
-
-#ifdef VL
-#include "/lib/atmosphere/volumetricLight.glsl"
-#endif
-
-#ifdef VCLOUDS
-#include "/lib/atmosphere/3DNoise.glsl"
-#include "/lib/atmosphere/volumetricClouds.glsl"
+#include "/lib/atmosphere/volumetricEffects.glsl"
 #endif
 
 //Program//
 void main() {
-	vec3 vl = vec3(0.0);
-	vec4 clouds = vec4(0.0);
+	vec3 color = pow(texture2D(colortex0, texCoord).rgb, vec3(2.2));
+	vec4 vlOut1 = vec4(0.0);
+	vec4 vlOut2 = vec4(0.0);
 
-	#if defined VL || defined VCLOUDS
-	vec2 newTexCoord = texCoord * VOLUMETRICS_RENDER_SCALE;
-	vec3 translucent = texture2D(colortex1, newTexCoord).rgb;
-
-	float z0 = texture2D(depthtex0, newTexCoord).r;
-	float z1 = texture2D(depthtex1, newTexCoord).r;
-
-	float depth0 = getLinearDepth2(z0);
-	float depth1 = getLinearDepth2(z1);
-
-	vec4 screenPos = vec4(newTexCoord, z0, 1.0);
-	vec4 viewPos = gbufferProjectionInverse * (screenPos * 2.0 - 1.0);
-	viewPos /= viewPos.w;
-
-	float VoL = clamp(dot(normalize(viewPos.xyz), sunVec), 0.0, 1.0);
+	#ifdef VC
 	float dither = getBlueNoise(gl_FragCoord.xy);
 
 	#ifdef TAA
 	dither = fract(dither + frameTimeCounter * 16.0);
 	#endif
-	#endif
 
-	#ifdef VL
-	VoL = pow3(VoL);
+	vec2 newTexCoord = texCoord * VOLUMETRICS_RENDER_SCALE;
+	vec4 translucent = texture2D(colortex1, newTexCoord);
 
-	vl = getVolumetricLight(viewPos.xyz, newTexCoord, depth0, depth1, translucent, dither);
-	vl *= mix(0.75 + VoL * 0.25, VoL, timeBrightness) * (1.0 - rainStrength * 0.5) * (1.0 - blindFactor);
+	float z0 = texture2D(depthtex0, newTexCoord).r;
+	float z1 = texture2D(depthtex1, newTexCoord).r;
+
+	vec4 screenPos = vec4(newTexCoord, z0, 1.0);
+	vec4 viewPos = gbufferProjectionInverse * (screenPos * 2.0 - 1.0);
+	viewPos /= viewPos.w;
+
+	computeVolumetricEffects(translucent, viewPos.xyz, newTexCoord, getLinearDepth2(z0), getLinearDepth2(z1), dither, vlOut1, vlOut2);
+	vlOut1 = sqrt(vlOut1);
+	vlOut2 = sqrt(vlOut2);
+
+	vlOut1 *= ug;
+	vlOut2 *= ug;
 
 	#if MC_VERSION >= 11900
-	vl *= 1.0 - darknessFactor;
-	#endif
-	#endif
-
-	#ifdef VCLOUDS
-	clouds = getVolumetricCloud(viewPos.xyz, newTexCoord, depth0, depth1, translucent, dither);
-	clouds.rgb *= 2.0 + pow2(sunVisibility);
-
-	#if MC_VERSION >= 11900
-	clouds *= 1.0 - darknessFactor;
-	#endif
+	vlOut1 *= 1.0 - darknessFactor;
+	vlOut2 *= 1.0 - darknessFactor;
 	#endif
 
-    /*DRAWBUFFERS:14*/
-	gl_FragData[0].rgb = vl;
-	gl_FragData[1] = clouds;
+	vlOut1 *= 1.0 - blindFactor;
+	vlOut2 *= 1.0 - blindFactor;
+	#endif
+
+	/* DRAWBUFFERS:034 */
+	gl_FragData[0].rgb = color;
+	gl_FragData[1] = vlOut1;
+	gl_FragData[2] = vlOut2;
 }
 
 #endif
@@ -143,16 +118,12 @@ void main() {
 //Varyings//
 out vec2 texCoord;
 
-#if defined VL || defined VCLOUDS
-out vec3 sunVec;
-#endif
-
-#ifdef VCLOUDS
-out vec3 upVec;
+#ifdef VC
+out vec3 sunVec, upVec;
 #endif
 
 //Uniforms//
-#if defined VL || defined VCLOUDS
+#ifdef VC
 uniform float timeAngle;
 
 uniform mat4 gbufferModelView;
@@ -160,27 +131,21 @@ uniform mat4 gbufferModelView;
 
 //Program//
 void main() {
-	//Coords
+	//Coord
 	texCoord = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;
 	
-	//Sun & Other Vectors
-	#if defined VL || defined VCLOUDS
-    #if defined OVERWORLD
+	//Sun Vector
+	#ifdef VC
 	const vec2 sunRotationData = vec2(cos(sunPathRotation * 0.01745329251994), -sin(sunPathRotation * 0.01745329251994));
 	float ang = fract(timeAngle - 0.25);
 	ang = (ang + (cos(ang * 3.14159265358979) * -0.5 + 0.5 - ang) / 3.0) * 6.28318530717959;
 	sunVec = normalize((gbufferModelView * vec4(vec3(-sin(ang), cos(ang) * sunRotationData) * 2000.0, 1.0)).xyz);
-    #elif defined END
-    sunVec = normalize((gbufferModelView * vec4(vec3(0.0, sunRotationData * 2000.0), 1.0)).xyz);
-    #endif
-	
-	#ifdef VCLOUDS
 	upVec = normalize(gbufferModelView[1].xyz);
-	#endif
 	#endif
 
 	//Position
 	gl_Position = ftransform();
 }
+
 
 #endif

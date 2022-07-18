@@ -7,95 +7,99 @@
 
 //Varyings//
 in float mat;
-
-in vec2 texCoord, lmCoord;
-in vec3 sunVec, upVec, eastVec, normal;
+in vec2 texCoord, lightMapCoord;
+in vec3 sunVec, upVec, eastVec;
+in vec3 normal;
 in vec4 color;
 
 //Uniforms//
 uniform int entityId;
 
-uniform float nightVision;
-uniform float rainStrength;
-uniform float shadowFade;
-uniform float timeAngle, timeBrightness;
 uniform float viewWidth, viewHeight;
+uniform float nightVision;
+
+#ifdef OVERWORLD
+uniform float rainStrength;
+#endif
+
+#if defined OVERWORLD || defined END
+uniform float timeBrightness, timeAngle;
+#endif
 
 uniform vec3 cameraPosition;
+
+uniform vec4 entityColor;
 
 uniform sampler2D texture;
 
 uniform mat4 gbufferProjectionInverse;
 uniform mat4 gbufferModelViewInverse;
+
+#if defined OVERWORLD || defined END
 uniform mat4 shadowProjection;
 uniform mat4 shadowModelView;
-
-uniform vec4 entityColor;
-
-//Common Variables//
-float sunVisibility  = clamp((dot( sunVec, upVec) + 0.05) * 10.0, 0.0, 1.0);
-float moonVisibility = clamp((dot(-sunVec, upVec) + 0.05) * 10.0, 0.0, 1.0);
-
-vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.0);
-
-//Includes//
-#include "/lib/color/blocklightColor.glsl"
-#include "/lib/color/dimensionColor.glsl"
-#include "/lib/util/spaceConversion.glsl"
-#include "/lib/lighting/forwardLighting.glsl"
-
-#ifdef INTEGRATED_EMISSION
-#include "/lib/lighting/integratedEmissionEntities.glsl"
 #endif
 
-#if defined SSPT || defined INTEGRATED_SPECULAR
+//Common Variables//
+#ifdef OVERWORLD
+float sunVisibility = clamp((dot(sunVec, upVec) + 0.05) * 10.0, 0.0, 1.0);
+#endif
+
+//Includes//
+#include "/lib/util/ToNDC.glsl"
+#include "/lib/util/ToWorld.glsl"
+
+#if defined OVERWORLD || defined END
+#include "/lib/util/ToShadow.glsl"
+#include "/lib/lighting/shadows.glsl"
+#endif
+
+#include "/lib/color/dimensionColor.glsl"
+#include "/lib/lighting/sceneLighting.glsl"
+
+#ifdef INTEGRATED_EMISSION
+#include "/lib/ipbr/integratedEmissionEntities.glsl"
+#endif
+
+#ifdef INTEGRATED_SPECULAR
 #include "/lib/util/encode.glsl"
 #endif
 
 //Program//
 void main() {
-    vec4 albedo = texture2D(texture, texCoord) * color;
-	vec3 newNormal = normal;
-	vec2 lightmap = clamp(lmCoord, vec2(0.0), vec2(1.0));
+	vec4 albedo = texture2D(texture, texCoord) * color;
+		 albedo.rgb = mix(albedo.rgb, entityColor.rgb, entityColor.a);
 
 	float lightningBolt = float(entityId == 0);
-
-	albedo.rgb = mix(albedo.rgb, entityColor.rgb, entityColor.a);
-
-	float emissive = float(entityColor.a > 0.05) * 0.125 + lightningBolt;
+	float emission = float(entityColor.a > 0.05) * 0.025 + lightningBolt;
 
 	if (lightningBolt > 0.5) {
 		albedo.rgb = vec3(1.0);
 		albedo.rgb *= albedo.rgb * albedo.rgb;
 		albedo.a = 1.0;
-	} else if (lightningBolt < 0.5 && albedo.a > 0.01) {
+	}
+
+	#ifndef ENTITY_HIGHLIGHT
+	if (albedo.a > 0.001 && lightningBolt < 0.5) {
 		vec3 screenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z);
 		vec3 viewPos = ToNDC(screenPos);
 		vec3 worldPos = ToWorld(viewPos);
+		vec2 lightmap = clamp(lightMapCoord, vec2(0.0), vec2(1.0));
 
 		#ifdef INTEGRATED_EMISSION
-		getIntegratedEmission(emissive, lightmap, albedo);
+		getIntegratedEmission(albedo.rgb, lightmap, emission);
 		#endif
 
-		GetLighting(albedo.rgb, viewPos, worldPos, newNormal, lightmap, emissive, 0.0);
+		getSceneLighting(albedo.rgb, viewPos, worldPos, normal, lightmap, emission, 0.0, 0.0);
 	}
+	#endif
 	
-    /* DRAWBUFFERS:0 */
-    gl_FragData[0] = albedo;
+	/* DRAWBUFFERS:0 */
+	gl_FragData[0] = albedo;
 
-	#if defined WATER_REFLECTION || defined INTEGRATED_SPECULAR
-	/* DRAWBUFFERS:05 */
-	gl_FragData[1] = albedo;
-	#endif
-
-	#ifdef ENTITY_OUTLINE
-	 /* DRAWBUFFERS:052 */
-	gl_FragData[2].b = 1.0;
-	#endif
-
-	#if defined SSPT || defined INTEGRATED_SPECULAR
-	/* DRAWBUFFERS:0526 */
-	gl_FragData[3] = vec4(EncodeNormal(normal), 0.0, emissive);
+	#ifdef INTEGRATED_SPECULAR
+	/* DRAWBUFFERS:02 */
+	gl_FragData[1].a = 0.01 + emission;
 	#endif
 }
 
@@ -107,33 +111,34 @@ void main() {
 
 //Varyings//
 out float mat;
-out vec2 texCoord, lmCoord;
-out vec3 sunVec, upVec, eastVec, normal;
+out vec2 texCoord, lightMapCoord;
+out vec3 sunVec, upVec, eastVec;
+out vec3 normal;
 out vec4 color;
 
-//Uniforms
+//Uniforms//
+#ifdef INTEGRATED_EMISSION
+uniform int entityId;
+#endif
+
 #if defined OVERWORLD || defined END
 uniform float timeAngle;
 #endif
 
 uniform mat4 gbufferModelView;
 
-//Attributes//
-#ifdef INTEGRATED_EMISSION
-uniform int entityId;
-#endif
-
 //Includes//
 #ifdef INTEGRATED_EMISSION
-#include "/lib/lighting/integratedEmissionEntities.glsl"
+#include "/lib/ipbr/integratedEmissionEntities.glsl"
 #endif
 
+//Program//
 void main() {
-	//Coords
-	texCoord = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;
+	//Coord
+    texCoord = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;
 
-	lmCoord = (gl_TextureMatrix[1] * gl_MultiTexCoord1).xy;
-	lmCoord = clamp((lmCoord - 0.03125) * 1.06667, vec2(0.0), vec2(0.9333, 1.0));
+	lightMapCoord = (gl_TextureMatrix[1] * gl_MultiTexCoord1).xy;
+	lightMapCoord = clamp((lightMapCoord - 0.03125) * 1.06667, vec2(0.0), vec2(0.9333, 1.0));
 
 	//Normal
 	normal = normalize(gl_NormalMatrix * gl_Normal);
@@ -154,13 +159,12 @@ void main() {
 
 	//Materials
 	mat = 0.0;
-
 	#ifdef INTEGRATED_EMISSION
 	getIntegratedEmissionEntities(mat);
 	#endif
 
 	//Color & Position
-	color = gl_Color;
+    color = gl_Color;
 
 	gl_Position = ftransform();
 }

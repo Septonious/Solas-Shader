@@ -6,16 +6,26 @@
 #ifdef FSH
 
 //Varyings//
-in vec2 texCoord, lmCoord;
-in vec3 sunVec, upVec, eastVec, normal;
+in vec2 texCoord, lightMapCoord;
+in vec3 sunVec, upVec, eastVec;
+in vec3 normal;
 in vec4 color;
 
 //Uniforms//
-uniform float nightVision;
-uniform float rainStrength;
-uniform float shadowFade;
-uniform float timeAngle, timeBrightness;
 uniform float viewWidth, viewHeight;
+uniform float nightVision;
+
+#ifdef OVERWORLD
+uniform float rainStrength;
+#endif
+
+#if defined OVERWORLD || defined END
+uniform float timeBrightness, timeAngle;
+#endif
+
+#ifdef INTEGRATED_EMISSION
+uniform ivec2 atlasSize;
+#endif
 
 uniform vec3 cameraPosition;
 
@@ -23,39 +33,64 @@ uniform sampler2D texture;
 
 uniform mat4 gbufferProjectionInverse;
 uniform mat4 gbufferModelViewInverse;
+
+#if defined OVERWORLD || defined END
 uniform mat4 shadowProjection;
 uniform mat4 shadowModelView;
+#endif
 
 //Common Variables//
-float sunVisibility  = clamp((dot( sunVec, upVec) + 0.05) * 10.0, 0.0, 1.0);
-float moonVisibility = clamp((dot(-sunVec, upVec) + 0.05) * 10.0, 0.0, 1.0);
-
-vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.0);
+#ifdef OVERWORLD
+float sunVisibility = clamp((dot(sunVec, upVec) + 0.05) * 10.0, 0.0, 1.0);
+#endif
 
 //Includes//
-#include "/lib/color/blocklightColor.glsl"
+#include "/lib/util/ToNDC.glsl"
+#include "/lib/util/ToWorld.glsl"
+
+#if defined OVERWORLD || defined END
+#include "/lib/util/ToShadow.glsl"
+#include "/lib/lighting/shadows.glsl"
+#endif
+
 #include "/lib/color/dimensionColor.glsl"
-#include "/lib/util/spaceConversion.glsl"
-#include "/lib/lighting/forwardLighting.glsl"
+#include "/lib/lighting/sceneLighting.glsl"
 
 //Program//
 void main() {
-    vec4 albedo = texture2D(texture, texCoord) * color;
+	vec4 albedoTexture = texture2D(texture, texCoord);
+	vec4 albedo = albedoTexture * color;
+	float emission = 0.0;
 
-	if (albedo.a > 0.01) {
-		vec3 newNormal = normal;
-		vec2 lightmap = clamp(lmCoord, vec2(0.0), vec2(1.0));
-
+	if (albedo.a > 0.001) {
 		vec3 screenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z);
 		vec3 viewPos = ToNDC(screenPos);
 		vec3 worldPos = ToWorld(viewPos);
+		vec2 lightmap = clamp(lightMapCoord, vec2(0.0), vec2(1.0));
 
-		GetLighting(albedo.rgb, viewPos, worldPos, newNormal, lightmap, 0.0, 0.0);
+		#ifdef INTEGRATED_EMISSION
+		if (atlasSize.x < 900.0) { // We don't want to detect particles from the block atlas
+		float lAlbedo = length(albedo.rgb);
+			if (max(abs(albedoTexture.r - albedoTexture.b), abs(albedoTexture.b - albedoTexture.g)) < 0.001) { // Grayscale Particles
+				if (lAlbedo > 0.5 && color.g < 0.5 && color.b > color.r * 1.1 && color.r > 0.3) // Ender Particle, Crying Obsidian Drop
+					emission = max(pow2(albedo.r), 0.1) * 2.0;
+				if (lAlbedo > 0.5 && color.g < 0.5 && color.r > (color.g + color.b) * 3.0) // Redstone Particle
+					lightmap = vec2(0.0), emission = max(pow2(albedo.r), 0.1) * 2.0;
+			}
+		}
+		#endif
+
+		getSceneLighting(albedo.rgb, viewPos, worldPos, normal, lightmap, emission, 0.0, 0.0);
 	}
 
-    /* DRAWBUFFERS:01 */
-    gl_FragData[0] = albedo;
-	gl_FragData[1] = vec4(0.0);
+	/* DRAWBUFFERS:01 */
+	gl_FragData[0] = albedo;
+	gl_FragData[1] = vec4(0.0, 0.0, 0.0, 1.0);
+
+	#ifdef INTEGRATED_EMISSION
+	/* DRAWBUFFERS:012 */
+	gl_FragData[2].b = emission;
+	#endif
 }
 
 #endif
@@ -65,34 +100,25 @@ void main() {
 #ifdef VSH
 
 //Varyings//
-out vec2 texCoord, lmCoord;
-out vec3 sunVec, upVec, eastVec, normal;
+out vec2 texCoord, lightMapCoord;
+out vec3 sunVec, upVec, eastVec;
+out vec3 normal;
 out vec4 color;
 
-//Uniforms
-#ifdef TAA
-uniform int frameCounter;
-
-uniform float viewWidth, viewHeight;
-#endif
-
+//Uniforms//
 #if defined OVERWORLD || defined END
 uniform float timeAngle;
 #endif
 
 uniform mat4 gbufferModelView;
 
-//Includes//
-#ifdef TAA
-#include "/lib/util/jitter.glsl"
-#endif
-
+//Program//
 void main() {
-	//Coords
-	texCoord = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;
+	//Coord
+    texCoord = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;
 
-	lmCoord = (gl_TextureMatrix[1] * gl_MultiTexCoord1).xy;
-	lmCoord = clamp((lmCoord - 0.03125) * 1.06667, vec2(0.0), vec2(0.9333, 1.0));
+	lightMapCoord = (gl_TextureMatrix[1] * gl_MultiTexCoord1).xy;
+	lightMapCoord = clamp((lightMapCoord - 0.03125) * 1.06667, vec2(0.0), vec2(0.9333, 1.0));
 
 	//Normal
 	normal = normalize(gl_NormalMatrix * gl_Normal);
@@ -112,13 +138,9 @@ void main() {
 	eastVec = normalize(gbufferModelView[0].xyz);
 
 	//Color & Position
-	color = gl_Color;
+    color = gl_Color;
 
 	gl_Position = ftransform();
-
-	#ifdef TAA
-	gl_Position.xy = TAAJitter(gl_Position.xy, gl_Position.w);
-	#endif
 }
 
 #endif

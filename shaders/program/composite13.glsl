@@ -1,8 +1,6 @@
 //Settings//
 #include "/lib/common.glsl"
 
-#define COMPOSITE_13
-
 #ifdef FSH
 
 //Varyings//
@@ -11,24 +9,32 @@ in vec2 texCoord;
 //Uniforms//
 #ifdef BLOOM
 uniform float viewWidth, viewHeight, aspectRatio;
+uniform sampler2D colortex2;
 #endif
 
 uniform sampler2D colortex0;
 
+//Optifine Constants//
+#ifdef BLOOM
+const bool colortex2MipmapEnabled = true;
+const bool colortex0MipmapEnabled = true;
+#endif
+
 //Includes//
 #ifdef BLOOM
-#include "/lib/post/bloom.glsl"
+#include "/lib/util/bayerDithering.glsl"
+#include "/lib/post/computeBloom.glsl"
 #endif
 
 void main() {
-	vec3 blur = vec3(1.0);
+	vec3 blur = vec3(0.0);
 
 	#ifdef BLOOM
 	blur = getBlur(texCoord);
 	#endif
 
 	/* DRAWBUFFERS:1 */
-	gl_FragData[0] = vec4(blur, 1.0);
+	gl_FragData[0].rgb = blur;
 }
 
 #endif
@@ -41,8 +47,10 @@ void main() {
 out vec2 texCoord;
 
 void main() {
+	//Coord
 	texCoord = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;
 
+	//Position
 	gl_Position = ftransform();
 }
 

@@ -1,6 +1,6 @@
 #version 130
 
-#define END
+#define EMD
 #define VSH
 
 #include "/program/composite3.glsl"

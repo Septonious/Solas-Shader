@@ -3,49 +3,87 @@ float GetNoise(vec2 pos) {
 	return fract(sin(dot(pos, vec2(12.9898, 4.1414))) * 43758.5453);
 }
 
-void getStars(inout vec3 color, in vec3 worldPos, in float VoU, in float nebulaFactor) {
-	vec3 planeCoord = worldPos.xyz / (worldPos.y + length(worldPos.xz));
+void getStars(inout vec3 color, in vec3 worldPos, in float VoU, in float nebulaFactor, in float blackHoleFactor) {
+	#ifdef OVERWORLD
+	float visibility = (1.0 - timeBrightness) * (1.0 - rainStrength) * (pow2(max(VoU, 0.0)) + nebulaFactor);
+	#else
+	float visibility = 0.25 * (1.0 + nebulaFactor);
+	#endif
 
-	vec2 coord = planeCoord.xz * 0.4 + cameraPosition.xz * 0.000001 + frameTimeCounter * 0.001;
-		 coord = floor(coord * 1024.0) / 1024.0;
+	if (visibility > 0.0) {
+		vec2 planeCoord = worldPos.xz / (worldPos.y + length(worldPos.xz));
+			 planeCoord+= frameTimeCounter * 0.001 * (1.0 + blackHoleFactor * 100.0);
+			 planeCoord+= cameraPosition.xz * 0.0001;
+			 planeCoord = floor(planeCoord * 256.0) / 512.0;
 
-	float multiplier = (1.0 - rainStrength) * (0.1 + nebulaFactor) * max(VoU, 0.0);
+		float star = GetNoise(planeCoord.xy);
+			  star*= GetNoise(planeCoord.xy + 1.0);
 
-	float star  = GetNoise(coord.xy);
-		  star *= GetNoise(coord.xy + 0.2);
+		star = clamp(star - 0.875, 0.0, 1.0) * visibility;
+		
+		color.rgb += vec3(4.0) * star;
+	}
+}
+#endif
 
-	star = clamp(star - 0.875, 0.0, 1.0) * multiplier;
-    
-    color.rgb += vec3(8.0) * star;
+#ifdef END_BLACK_HOLE
+void getBlackHole(inout vec3 color, in vec3 worldPos, in float VoS, in float VoU, inout float blackHoleFactor) {
+	VoU = clamp(VoU, 0.0, 1.0);
+	float visibility = pow8(VoU);
+
+	if (visibility > 0.0) {
+		vec2 planeCoord = worldPos.yy / length(worldPos);
+
+		float nebulaNoise  = texture2D(noisetex, planeCoord * 0.005).r;
+			  nebulaNoise -= texture2D(noisetex, planeCoord * 0.050).r * 0.10;
+			  nebulaNoise -= texture2D(noisetex, planeCoord * 0.125).r * 0.05;
+			  nebulaNoise = max(nebulaNoise, 0.0);
+
+		vec3 blackHoleColor = mix(endLightColSqrt, endAmbientCol, pow32(nebulaNoise)) * visibility * pow2(nebulaNoise);
+		color += blackHoleColor;
+		color = mix(color, vec3(0.0), float(length(blackHoleColor) > 0.6));
+
+		blackHoleFactor = nebulaNoise * visibility;
+	}
 }
 #endif
 
 #ifdef NEBULA
-void getNebula(inout vec3 color, in vec3 worldPos, in vec3 viewPos, in float VoU, inout float nebulaFactor) {
-	float visibility = (1.0 - rainStrength) * (1.0 - sunVisibility) * max(VoU, 0.0);
+void getNebula(inout vec3 color, in vec3 worldPos, in float VoU, inout float nebulaFactor) {
+	#ifdef OVERWORLD
+	float visibility = (1.0 - sunVisibility) * (1.0 - rainStrength) * (1.0 - abs(VoU)) * 0.5;
+	#else
+	float visibility = pow2(1.0 - abs(VoU));
+	#endif
 
 	if (visibility > 0.0) {
-		vec2 planeCoord = worldPos.xz / (worldPos.y + length(worldPos.xz) * 0.25) * 0.25 + frameTimeCounter * 0.001;
-			planeCoord += cameraPosition.xz * 0.00001;
+		vec2 planeCoord = worldPos.xz / length(worldPos.xyz) * 0.75;
+			 planeCoord+= frameTimeCounter * 0.001;
+			 planeCoord+= cameraPosition.xz * 0.001;
 
-		float nebulaNoise  = texture2D(noisetex, planeCoord * 0.04).r * 0.8;
-			  nebulaNoise -= texture2D(noisetex, planeCoord * 0.08).r * 0.4;
-			  nebulaNoise -= texture2D(noisetex, planeCoord * 0.32).r * 0.2;
+		float nebulaNoise  = texture2D(noisetex, planeCoord * 0.005).r;
+			  nebulaNoise -= texture2D(noisetex, planeCoord * 0.050).r * 0.1;
+			  nebulaNoise -= texture2D(noisetex, planeCoord * 0.125).r * 0.05;
 			  nebulaNoise = max(nebulaNoise, 0.0);
 
-		color.rgb += nebulaNoise * pow3(lightNight) * visibility * (2.0 + pow3(nebulaNoise) * 128.0);
-		nebulaFactor = nebulaNoise;
+		#ifdef OVERWORLD
+		color += lightNight * visibility * pow2(nebulaNoise + pow4(nebulaNoise));
+		#else
+		color += mix(mix(endLightCol, endLightColSqrt, pow2(nebulaNoise)), endAmbientCol, nebulaNoise) * visibility * pow2(nebulaNoise + pow2(nebulaNoise));
+		#endif
+
+		nebulaFactor = nebulaNoise * visibility;
 	}
 }
 #endif
 
 #ifdef RAINBOW
-void getRainbow(inout vec3 color, in vec3 worldPos, in vec3 viewPos, in float VoU, in float size, in float rad) {
-	float visibility = max(VoU, 0.0) * wetness * (1.0 - pow(rainStrength, 0.33)) * timeBrightness;
+void getRainbow(inout vec3 color, in vec3 worldPos, in float VoU, in float size, in float rad) {
+	float visibility = pow2(sunVisibility) * (1.0 - rainStrength) * wetness * 0.75 * pow2(max(VoU, 0.0));
 
 	if (visibility > 0.0) {
-		vec3 planeCoord = worldPos / (worldPos.y + length(worldPos.xz) * 0.5);
-		vec2 rainbowCoord = planeCoord.xz + vec2(2.5, 0.0);
+		vec2 planeCoord = worldPos.xy / (worldPos.y + length(worldPos.xz) * 0.65);
+		vec2 rainbowCoord = vec2(planeCoord.x + 2.5, planeCoord.y);
 
 		float rainbowFactor = clamp(1.0 - length(rainbowCoord) / size, 0.0, 1.0);
 		
@@ -61,48 +99,48 @@ void getRainbow(inout vec3 color, in vec3 worldPos, in vec3 viewPos, in float Vo
 #endif
 
 #ifdef AURORA
-#include "/lib/color/auroraColor.glsl"
-
-float getAuroraNoise(vec2 coord, vec2 wind) {
-	float noise = texture2D(noisetex, coord * 0.02 + wind * 0.3).b * 2.5;
-		  noise+= texture2D(noisetex, coord * 0.01 + wind * 0.2).b * 2.5;
+float getAuroraNoise(vec2 coord) {
+	float noise = texture2D(noisetex, coord * 0.01250 + frameTimeCounter * 0.0001).b * 2.5;
+		  noise+= texture2D(noisetex, coord * 0.00625 + frameTimeCounter * 0.0002).b * 2.5;
 
 	return max(abs(noise) - 2.0, 0.0);
 }
 
-void getAurora(inout vec3 color, in vec3 viewPos, in vec3 worldPos) {
-	float visibility = moonVisibility * pow2(1.0 - rainStrength);
+void getAurora(inout vec3 color, in vec3 worldPos) {
+	float visibility = (1.0 - sunVisibility) * (1.0 - rainStrength);
 
-	#ifdef FOG_PERBIOME
-	visibility *= pow2(isCold);
+	#ifdef AURORA_FULL_MOON_VISIBILITY
+	visibility *= float(moonPhase == 0);
 	#endif
 
-	vec3 aurora = vec3(0.0);
+	#ifdef AURORA_COLD_BIOME_VISIBILITY
+	visibility *= isSnowy;
+	#endif
 
 	if (visibility > 0.0) {
+		vec3 aurora = vec3(0.0);
+		
 		float dither = Bayer64(gl_FragCoord.xy);
 
 		#ifdef TAA
 		dither = fract(dither + frameTimeCounter * 16.0);
 		#endif
 
-		int samples = 12;
+		int samples = 6;
 		float sampleStep = 1.0 / samples;
 		float currentStep = dither * sampleStep;
 
-		vec2 wind = vec2(frameTimeCounter * 0.0001, frameTimeCounter * 0.001);
-
 		for(int i = 0; i < samples; i++) {
-			vec3 planeCoord = worldPos * ((6.0 + currentStep * 12.0) / worldPos.y) * 0.01;
+			vec3 planeCoord = worldPos * ((6.0 + currentStep * 12.0) / worldPos.y) * 0.0125;
 
 			vec2 coord = cameraPosition.xz * 0.00005 + planeCoord.xz;
 				 coord += vec2(coord.y, -coord.x) * 0.5;
 
-			float noise = getAuroraNoise(coord, wind);
+			float noise = getAuroraNoise(coord);
 			
 			if (noise > 0.0) {
-				noise *= texture2D(noisetex, coord * 0.125 + wind * 0.25).b * 0.5 + 0.5;
-				noise *= texture2D(noisetex, coord + wind * 16.0).b * 0.25 + 0.25;
+				noise *= texture2D(noisetex, coord * 0.125 + frameTimeCounter * 0.000125).b * 0.5 + 0.5;
+				noise *= texture2D(noisetex, coord * 0.500 + frameTimeCounter * 0.002500).b * 0.3 + 0.7;
 				noise = pow2(noise) * sampleStep;
 				noise *= max(1.0 - length(planeCoord.xz) * 0.5, 0.0);
 
@@ -111,8 +149,8 @@ void getAurora(inout vec3 color, in vec3 viewPos, in vec3 worldPos) {
 			}
 			currentStep += sampleStep;
 		}
-	}
 
-	color += aurora * visibility;
+		color += aurora * visibility;
+	}
 }
 #endif

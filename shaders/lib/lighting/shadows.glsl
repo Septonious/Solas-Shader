@@ -5,16 +5,11 @@ uniform sampler2DShadow shadowtex1;
 uniform sampler2D shadowcolor0;
 #endif
 
-const vec2 shadowOffsets[9] = vec2[9](
-    vec2( 0.0, 0.0),
-    vec2( 0.0, 1.0),
-    vec2( 0.7, 0.7),
-    vec2( 1.0, 0.0),
-    vec2( 0.7,-0.7),
-    vec2( 0.0,-1.0),
-    vec2(-0.7,-0.7),
-    vec2(-1.0, 0.0),
-    vec2(-0.7, 0.7)
+const vec2 shadowOffsets[4] = vec2[4](
+    vec2( 0.0, 0.75),
+    vec2( 0.0,-0.75),
+    vec2( 0.75, 0.0),
+    vec2(-0.75, 0.0)
 );
 
 vec3 calculateShadowPos(vec3 worldPos) {
@@ -28,17 +23,17 @@ vec3 calculateShadowPos(vec3 worldPos) {
     return shadowPos * 0.5 + 0.5;
 }
 
-vec3 SampleFilteredShadow(vec3 shadowPos, float offset) {
+vec3 sampleFilteredShadow(vec3 shadowPos, float shadowBlurStrength) {
     float shadow0 = 0.0;
 
-    #if !defined GBUFFERS_ENTITIES && !defined GBUFFERS_HAND && !defined GBUFFERS_TEXTURED && !defined GBUFFERS_BASIC
+    #ifdef GBUFFERS_TERRAIN
     int shadowSamples = 4;
     #else
-    int shadowSamples = 2;
+    int shadowSamples = 1;
     #endif
 
     for (int i = 0; i < shadowSamples; i++) {
-        vec2 shadowOffset = shadowOffsets[i] * offset;
+        vec2 shadowOffset = shadowOffsets[i] * shadowBlurStrength;
         shadow0 += shadow2D(shadowtex0, vec3(shadowPos.st + shadowOffset, shadowPos.z)).x;
     }
     shadow0 /= float(shadowSamples);
@@ -47,7 +42,7 @@ vec3 SampleFilteredShadow(vec3 shadowPos, float offset) {
     #ifdef SHADOW_COLOR
     if (shadow0 < 0.999) {
         for (int i = 0; i < shadowSamples; i++) {
-            vec2 shadowOffset = shadowOffsets[i] * offset;
+            vec2 shadowOffset = shadowOffsets[i] * shadowBlurStrength;
             shadowCol += texture2D(shadowcolor0, shadowPos.st + shadowOffset).rgb *
                          shadow2D(shadowtex1, vec3(shadowPos.st + shadowOffset, shadowPos.z)).x;
         }
@@ -58,12 +53,9 @@ vec3 SampleFilteredShadow(vec3 shadowPos, float offset) {
     return clamp(shadowCol * (1.0 - shadow0) + shadow0, vec3(0.0), vec3(1.0));
 }
 
-vec3 GetShadow(vec3 worldPos, float NoL) {
+vec3 getShadow(vec3 worldPos) {
     vec3 shadowPos = calculateShadowPos(worldPos);
-
-    float offset = float(SHADOW_BLUR_STRENGTH) / shadowMapResolution;
-
-    vec3 shadow = SampleFilteredShadow(shadowPos, offset);
+    vec3 shadow = sampleFilteredShadow(shadowPos, shadowBlurStrength);
 
     return shadow;
 }

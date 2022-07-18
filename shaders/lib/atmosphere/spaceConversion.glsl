@@ -13,31 +13,24 @@ vec4 getViewSpace(float depth, vec2 coord) {
 	return viewPos;
 }
 
-vec4 getWorldSpace(float depth, vec2 coord) {
+vec3 calculateWorldPos(float depth, vec2 coord) {
 	vec4 viewPos = getViewSpace(depth, coord);
-
-	vec4 wpos = gbufferModelViewInverse * viewPos;
-	wpos /= wpos.w;
+	vec3 worldPos = mat3(gbufferModelViewInverse) * viewPos.xyz + gbufferModelViewInverse[3].xyz;
 	
-	return wpos;
+	return worldPos;
 }
 
-vec4 distortShadow(vec4 shadowpos, float distortFactor) {
-	shadowpos.xy *= 1.0 / distortFactor;
-	shadowpos.z = shadowpos.z * 0.2;
-	shadowpos = shadowpos * 0.5 + 0.5;
+#define diagonal3(m) vec3((m)[0].x, (m)[1].y, m[2].z)
+#define projMAD(m, v) (diagonal3(m) * (v) + (m)[3].xyz)
 
-	return shadowpos;
-}
+vec3 calculateShadowPos(vec3 worldPos) {
+    vec3 shadowPos = mat3(shadowModelView) * worldPos + shadowModelView[3].xyz;
+		 shadowPos = projMAD(shadowProjection, shadowPos);
+    float distb = sqrt(shadowPos.x * shadowPos.x + shadowPos.y * shadowPos.y);
+    float distortFactor = distb * shadowMapBias + (1.0 - shadowMapBias);
 
-vec4 getShadowSpace(vec4 wpos) {
-	wpos = shadowModelView * wpos;
-	wpos = shadowProjection * wpos;
-	wpos /= wpos.w;
-	
-	float distb = sqrt(wpos.x * wpos.x + wpos.y * wpos.y);
-	float distortFactor = 1.0 - shadowMapBias + distb * shadowMapBias;
-	wpos = distortShadow(wpos, distortFactor);
-	
-	return wpos;
+    shadowPos.xy /= distortFactor;
+    shadowPos.z *= 0.2;
+    
+    return shadowPos * 0.5 + 0.5;
 }

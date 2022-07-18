@@ -6,35 +6,26 @@
 #ifdef FSH
 
 //Varyings//
-in vec2 texCoord, lmCoord;
+in vec2 texCoord, lightMapCoord;
 
 //Uniforms//
 uniform float rainStrength;
 
 uniform sampler2D texture;
 
-//Includes//
-#include "/lib/color/blocklightColor.glsl"
-
 //Program//
 void main() {
-    vec4 albedo = texture2D(texture, texCoord);
+    vec4 albedo = texture2D(texture, texCoord) * rainStrength;
 
-	if (albedo.a > 0.01) {
-		vec2 lightmap = clamp(lmCoord, vec2(0.0), vec2(1.0));
-
-		albedo.a *= 0.2 * rainStrength * length(albedo.rgb / 3.0);
+	if (albedo.a > 0.001) {
+		albedo.a *= length(albedo.rgb / 3.0);
 		albedo.rgb = sqrt(albedo.rgb);
-		albedo.rgb *= (vec3(1.0) + lmCoord.x * lmCoord.x * blocklightCol) * 0.75;
-
-		#if MC_VERSION < 10800
-		albedo.a *= 4.0;
-		albedo.rgb *= 0.525;
-		#endif
+		albedo.rgb *= vec3(1.0) + lightMapCoord.x * blockLightCol;
 	}
 
-    /* DRAWBUFFERS:0 */
-    gl_FragData[0] = albedo;
+    /* DRAWBUFFERS:01 */
+    gl_FragData[0] = albedo * 0.5;
+	gl_FragData[1] = vec4(0.0, 0.0, 0.0, 1.0);
 }
 
 #endif
@@ -44,15 +35,15 @@ void main() {
 #ifdef VSH
 
 //Varyings//
-out vec2 texCoord, lmCoord;
+out vec2 texCoord, lightMapCoord;
 
 //Program//
 void main() {
 	//Coords
 	texCoord = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;
     
-	lmCoord = (gl_TextureMatrix[1] * gl_MultiTexCoord1).xy;
-	lmCoord = clamp((lmCoord - 0.03125) * 1.06667, vec2(0.0), vec2(0.9333, 1.0));
+	lightMapCoord = (gl_TextureMatrix[1] * gl_MultiTexCoord1).xy;
+	lightMapCoord = clamp((lightMapCoord - 0.03125) * 1.06667, vec2(0.0), vec2(0.9333, 1.0));
 
 	//Position
 	gl_Position = ftransform();

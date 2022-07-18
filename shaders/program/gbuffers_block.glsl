@@ -6,19 +6,25 @@
 #ifdef FSH
 
 //Varyings//
-in vec2 texCoord, lmCoord;
-in vec3 sunVec, upVec, eastVec, normal;
+in vec2 texCoord, lightMapCoord;
+in vec3 sunVec, upVec, eastVec;
+in vec3 normal;
 in vec4 color;
 
 //Uniforms//
 uniform int blockEntityId;
 
-uniform float nightVision;
-uniform float rainStrength;
-uniform float shadowFade;
-uniform float timeAngle, timeBrightness;
-uniform float viewWidth, viewHeight, aspectRatio;
 uniform float frameTimeCounter;
+uniform float viewWidth, viewHeight, aspectRatio;
+uniform float nightVision;
+
+#ifdef OVERWORLD
+uniform float rainStrength;
+#endif
+
+#if defined OVERWORLD || defined END
+uniform float timeBrightness, timeAngle;
+#endif
 
 uniform vec3 cameraPosition;
 
@@ -26,51 +32,85 @@ uniform sampler2D texture, noisetex;
 
 uniform mat4 gbufferProjectionInverse;
 uniform mat4 gbufferModelViewInverse;
+
+#if defined OVERWORLD || defined END
 uniform mat4 shadowProjection;
 uniform mat4 shadowModelView;
+#endif
 
 //Common Variables//
-float sunVisibility  = clamp((dot( sunVec, upVec) + 0.05) * 10.0, 0.0, 1.0);
-float moonVisibility = clamp((dot(-sunVec, upVec) + 0.05) * 10.0, 0.0, 1.0);
-
-vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.0);
+#ifdef OVERWORLD
+float sunVisibility = clamp((dot(sunVec, upVec) + 0.05) * 10.0, 0.0, 1.0);
+#endif
 
 //Includes//
-#include "/lib/color/blocklightColor.glsl"
+#include "/lib/util/ToNDC.glsl"
+#include "/lib/util/ToWorld.glsl"
+
+#if defined OVERWORLD || defined END
+#include "/lib/util/ToShadow.glsl"
+#include "/lib/lighting/shadows.glsl"
+#endif
+
 #include "/lib/color/dimensionColor.glsl"
-#include "/lib/util/spaceConversion.glsl"
-#include "/lib/lighting/forwardLighting.glsl"
+#include "/lib/lighting/sceneLighting.glsl"
+
+#if defined BLOOM || defined INTEGRATED_SPECULAR
+#include "/lib/util/encode.glsl"
+#endif
 
 //Program//
 void main() {
-    vec4 albedo = texture2D(texture, texCoord) * color;
+	vec4 albedo = texture2D(texture, texCoord) * color;
+	float emission = 0.0;
 
-	if (albedo.a > 0.01) {
-		vec3 newNormal = normal;
-		vec2 lightmap = clamp(lmCoord, vec2(0.0), vec2(1.0));
+	if (blockEntityId == 21) {
+		emission = pow2(length(albedo.rgb)) * float(albedo.r < albedo.g);
+	}
 
+	if (blockEntityId == 22) {
+		if (float(albedo.r > albedo.g * 1.55) > 0.9) {
+			albedo.rgb = pow(albedo.rgb, vec3(1.25)) * 1.25;
+		}
+	}
+	
+	if (albedo.a > 0.001) {
 		vec3 screenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z);
 		vec3 viewPos = ToNDC(screenPos);
 		vec3 worldPos = ToWorld(viewPos);
+		vec2 lightmap = clamp(lightMapCoord, vec2(0.0), vec2(1.0));
 
-		GetLighting(albedo.rgb, viewPos, worldPos, newNormal, lightmap, 0.0, 0.0);
-
-		if (blockEntityId == 20) {
-			vec2 portalCoord = gl_FragCoord.xy / vec2(viewWidth, viewHeight);
-				portalCoord = (portalCoord - 0.5) * vec2(aspectRatio, 1.0);
-
-			vec2 wind = vec2(0.0, frameTimeCounter * 0.025);
-
-			float portal = texture2D(noisetex, portalCoord * 0.1 + wind * 0.05).r * 0.25 + 0.375;
-				portal+= texture2D(texture, portalCoord * 0.5 + wind).r;
-				portal+= texture2D(texture, portalCoord * 1.5 + wind).r;
-			
-			albedo.rgb = portal * portal * vec3(END_R, END_G, END_B) / 255.0 * END_I * 0.25;
-		}
+		getSceneLighting(albedo.rgb, viewPos, worldPos, normal, lightmap, emission, 0.0, 0.0);
 	}
 
-    /* DRAWBUFFERS:0 */
-    gl_FragData[0] = albedo;
+	if (blockEntityId == 20) {
+		vec2 portalCoord = gl_FragCoord.xy / vec2(viewWidth, viewHeight);
+			 portalCoord = (portalCoord - 0.5) * vec2(aspectRatio, 1.0);
+
+		float portal = texture2D(noisetex, portalCoord * 0.1 + frameTimeCounter * 0.0025).r * 0.25 + 0.375;
+			  portal+= texture2D(texture,  portalCoord * 0.5 + frameTimeCounter * 0.0050).r * 2.0;
+			  portal+= texture2D(texture,  portalCoord * 1.5 + frameTimeCounter * 0.0075).r * 2.0;
+			
+		albedo.rgb = portal * portal * endLightColSqrt * 0.25;
+	}
+
+	/* DRAWBUFFERS:0 */
+	gl_FragData[0] = albedo;
+
+	#ifndef INTEGRATED_SPECULAR
+		#if defined BLOOM || defined INTEGRATED_SPECULAR
+		/* DRAWBUFFERS:02 */
+		gl_FragData[1] = vec4(EncodeNormal(normal), 0.0, emission);
+		#endif
+	#else
+		/* DRAWBUFFERS:06 */
+		gl_FragData[1] = vec4(albedo.rgb, 0.05);
+
+		#if defined BLOOM || defined INTEGRATED_SPECULAR
+		/* DRAWBUFFERS:062 */
+		gl_FragData[2] = vec4(EncodeNormal(normal), 0.0, emission);
+		#endif
+	#endif
 }
 
 #endif
@@ -80,23 +120,36 @@ void main() {
 #ifdef VSH
 
 //Varyings//
-out vec2 texCoord, lmCoord;
-out vec3 sunVec, upVec, eastVec, normal;
+out vec2 texCoord, lightMapCoord;
+out vec3 sunVec, upVec, eastVec;
+out vec3 normal;
 out vec4 color;
 
-//Uniforms
+//Uniforms//
+#ifdef TAA
+uniform int frameCounter;
+
+uniform float viewWidth, viewHeight;
+#endif
+
 #if defined OVERWORLD || defined END
 uniform float timeAngle;
 #endif
 
 uniform mat4 gbufferModelView;
 
-void main() {
-	//Coords
-	texCoord = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;
+//Includes//
+#ifdef TAA
+#include "/lib/util/jitter.glsl"
+#endif
 
-	lmCoord = (gl_TextureMatrix[1] * gl_MultiTexCoord1).xy;
-	lmCoord = clamp((lmCoord - 0.03125) * 1.06667, vec2(0.0), vec2(0.9333, 1.0));
+//Program//
+void main() {
+	//Coord
+    texCoord = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;
+
+	lightMapCoord = (gl_TextureMatrix[1] * gl_MultiTexCoord1).xy;
+	lightMapCoord = clamp((lightMapCoord - 0.03125) * 1.06667, vec2(0.0), vec2(0.9333, 1.0));
 
 	//Normal
 	normal = normalize(gl_NormalMatrix * gl_Normal);
@@ -116,9 +169,13 @@ void main() {
 	eastVec = normalize(gbufferModelView[0].xyz);
 
 	//Color & Position
-	color = gl_Color;
+    color = gl_Color;
 
 	gl_Position = ftransform();
+
+	#ifdef TAA
+	gl_Position.xy = TAAJitter(gl_Position.xy, gl_Position.w);
+	#endif
 }
 
 #endif

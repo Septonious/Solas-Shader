@@ -1,6 +1,6 @@
 #version 130
 
-#define NETHER
+#define METHER
 #define VSH
 
 #include "/program/deferred1.glsl"

@@ -12,16 +12,26 @@ in float mat;
 in float isPlant;
 #endif
 
-in vec2 texCoord, lmCoord;
-in vec3 sunVec, upVec, eastVec, normal;
+in vec2 texCoord, lightMapCoord;
+in vec3 sunVec, upVec, eastVec;
+in vec3 normal;
 in vec4 color;
 
 //Uniforms//
-uniform float nightVision;
-uniform float rainStrength;
-uniform float shadowFade;
-uniform float timeAngle, timeBrightness;
 uniform float viewWidth, viewHeight;
+uniform float nightVision;
+
+#ifdef INTEGRATED_EMISSION
+uniform float frameTimeCounter;
+#endif
+
+#ifdef OVERWORLD
+uniform float rainStrength;
+#endif
+
+#if defined OVERWORLD || defined END
+uniform float timeBrightness, timeAngle;
+#endif
 
 #ifdef RAIN_PUDDLES
 uniform float wetness;
@@ -29,83 +39,88 @@ uniform float wetness;
 uniform sampler2D noisetex;
 #endif
 
-uniform sampler2D texture;
-
 uniform vec3 cameraPosition;
+
+uniform sampler2D texture;
 
 uniform mat4 gbufferProjectionInverse;
 uniform mat4 gbufferModelViewInverse;
+
+#if defined OVERWORLD || defined END
 uniform mat4 shadowProjection;
 uniform mat4 shadowModelView;
+#endif
 
 //Common Variables//
-float sunVisibility  = clamp((dot( sunVec, upVec) + 0.05) * 10.0, 0.0, 1.0);
-float moonVisibility = clamp((dot(-sunVec, upVec) + 0.05) * 10.0, 0.0, 1.0);
-
-vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.0);
+#ifdef OVERWORLD
+float sunVisibility = clamp((dot(sunVec, upVec) + 0.05) * 10.0, 0.0, 1.0);
+#endif
 
 //Includes//
-#include "/lib/color/blocklightColor.glsl"
-#include "/lib/color/dimensionColor.glsl"
-#include "/lib/util/spaceConversion.glsl"
-#include "/lib/lighting/forwardLighting.glsl"
+#include "/lib/util/ToNDC.glsl"
+#include "/lib/util/ToWorld.glsl"
 
-#ifdef INTEGRATED_SPECULAR
-#include "/lib/pbr/integratedSpecular.glsl"
+#if defined OVERWORLD || defined END
+#include "/lib/util/ToShadow.glsl"
+#include "/lib/lighting/shadows.glsl"
 #endif
+
+#include "/lib/color/dimensionColor.glsl"
+#include "/lib/lighting/sceneLighting.glsl"
 
 #ifdef INTEGRATED_EMISSION
-#include "/lib/lighting/integratedEmissionTerrain.glsl"
+#include "/lib/ipbr/integratedEmissionTerrain.glsl"
 #endif
 
-#if defined SSPT || defined INTEGRATED_SPECULAR
+#ifdef INTEGRATED_SPECULAR
+#include "/lib/ipbr/integratedSpecular.glsl"
+#endif
+
+#if defined BLOOM || defined INTEGRATED_SPECULAR
 #include "/lib/util/encode.glsl"
 #endif
 
 //Program//
 void main() {
-    vec4 albedo = texture2D(texture, texCoord) * color;
-	vec3 newNormal = normal;
-	vec2 lightmap = clamp(lmCoord, vec2(0.0), vec2(1.0));
-	
-	float emissive = 0.0;
+	vec4 albedo = texture2D(texture, texCoord) * color;
 	float subsurface = float(mat > 0.99 && mat < 1.01);
-	
-	#ifdef INTEGRATED_SPECULAR
+	float emission = 0.0;
 	float specular = 0.0;
-	#endif
+	float roughness = 0.0;
 
-	#if defined SSPT && defined EMISSIVE_CONCRETE
-	emissive += float(mat > 198.9 && mat < 199.9) * 1.5;
-	#endif
-	
-	if (albedo.a > 0.01) {
+	if (albedo.a > 0.0001) {
 		vec3 screenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z);
 		vec3 viewPos = ToNDC(screenPos);
 		vec3 worldPos = ToWorld(viewPos);
+		vec2 lightmap = clamp(lightMapCoord, vec2(0.0), vec2(1.0));
 
 		#ifdef INTEGRATED_EMISSION
-		getIntegratedEmission(emissive, lightmap, albedo, worldPos);
+		getIntegratedEmission(albedo.rgb, worldPos, lightmap, emission);
 		#endif
-
-		GetLighting(albedo.rgb, viewPos, worldPos, newNormal, lightmap, emissive, subsurface);
 
 		#ifdef INTEGRATED_SPECULAR
-		getIntegratedSpecular(specular, worldPos.xz, lightmap, texture2D(texture, texCoord) * color);
+		getIntegratedSpecular(albedo, normal, worldPos.xz, lightmap, specular, roughness);
 		#endif
+
+		getSceneLighting(albedo.rgb, viewPos, worldPos, normal, lightmap, emission, subsurface, specular);
 	}
 
-    /* DRAWBUFFERS:0 */
-    gl_FragData[0] = albedo;
+	/* DRAWBUFFERS:0 */
+	gl_FragData[0] = albedo;
 
-	#if defined WATER_REFLECTION || defined INTEGRATED_SPECULAR
-	/* DRAWBUFFERS:05 */
-	gl_FragData[1] = albedo;
-	#endif
+	#ifndef INTEGRATED_SPECULAR
+		#if defined BLOOM || defined INTEGRATED_SPECULAR
+		/* DRAWBUFFERS:02 */
+		gl_FragData[1] = vec4(EncodeNormal(normal), specular, emission);
+		#endif
+	#else
+		/* DRAWBUFFERS:06 */
+		gl_FragData[1] = vec4(albedo.rgb, roughness);
 
-	#if defined SSPT || defined INTEGRATED_SPECULAR
-	/* DRAWBUFFERS:056 */
-	gl_FragData[2] = vec4(EncodeNormal(normal), specular, emissive);
+		#if defined BLOOM || defined INTEGRATED_SPECULAR
+		/* DRAWBUFFERS:062 */
+		gl_FragData[2] = vec4(EncodeNormal(normal), specular, emission);
+		#endif
 	#endif
 }
 
@@ -122,11 +137,13 @@ out float mat;
 out float isPlant;
 #endif
 
-out vec2 texCoord, lmCoord;
-out vec3 sunVec, upVec, eastVec, normal;
+out vec2 texCoord, lightMapCoord;
+out vec3 sunVec, upVec, eastVec;
+out vec3 normal;
+out vec3 glPos;
 out vec4 color;
 
-//Uniforms
+//Uniforms//
 #ifdef TAA
 uniform int frameCounter;
 
@@ -138,29 +155,31 @@ uniform float timeAngle;
 #endif
 
 uniform mat4 gbufferModelView;
+uniform mat4 gbufferModelViewInverse;
 
 //Attributes//
 attribute vec4 mc_Entity;
 
 //Includes//
 #ifdef INTEGRATED_EMISSION
-#include "/lib/lighting/integratedEmissionTerrain.glsl"
+#include "/lib/ipbr/integratedEmissionTerrain.glsl"
 #endif
 
 #ifdef INTEGRATED_SPECULAR
-#include "/lib/pbr/integratedSpecular.glsl"
+#include "/lib/ipbr/integratedSpecular.glsl"
 #endif
 
 #ifdef TAA
 #include "/lib/util/jitter.glsl"
 #endif
 
+//Program//
 void main() {
-	//Coords
-	texCoord = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;
+	//Coord
+    texCoord = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;
 
-	lmCoord = (gl_TextureMatrix[1] * gl_MultiTexCoord1).xy;
-	lmCoord = clamp((lmCoord - 0.03125) * 1.06667, vec2(0.0), vec2(0.9333, 1.0));
+	lightMapCoord = (gl_TextureMatrix[1] * gl_MultiTexCoord1).xy;
+	lightMapCoord = clamp((lightMapCoord - 0.03125) * 1.06667, vec2(0.0), vec2(0.9333, 1.0));
 
 	//Normal
 	normal = normalize(gl_NormalMatrix * gl_Normal);
@@ -184,13 +203,8 @@ void main() {
 
 	if (mc_Entity.x >= 4 && mc_Entity.x <= 13) mat = 1.0;
 
-	#if defined SSPT && defined EMISSIVE_CONCRETE
-	if (mc_Entity.x == 199) mat = 199;
-	#endif
-
 	#ifdef INTEGRATED_EMISSION
 	isPlant = 0.0;
-
 	getIntegratedEmissionMaterials(mat, isPlant);
 	#endif
 
@@ -199,8 +213,8 @@ void main() {
 	#endif
 
 	//Color & Position
-	color = gl_Color;
-	if (mc_Entity.x == 305) mat = 999;
+    color = gl_Color;
+
 	gl_Position = ftransform();
 
 	#ifdef TAA

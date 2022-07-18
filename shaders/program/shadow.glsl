@@ -5,13 +5,17 @@
 #ifdef FSH
 
 //Varyings//
+#ifdef WATER_CAUSTICS
 in float mat;
+#endif
+
 in vec2 texCoord;
-in vec4 color;
 
 #ifdef WATER_CAUSTICS
-in vec4 position;
+in vec3 worldPos;
 #endif
+
+in vec4 color;
 
 //Uniforms//
 uniform sampler2D tex;
@@ -22,26 +26,26 @@ uniform float frameTimeCounter;
 uniform vec3 cameraPosition;
 
 uniform sampler2D noisetex;
+#endif
 
 //Includes//
-#include "/lib/color/waterColor.glsl"
+#ifdef WATER_CAUSTICS
 #include "/lib/water/waterCaustics.glsl"
 #endif
 
 //Program//
 void main() {
-    vec4 albedo = texture2D(tex, texCoord.xy) * color;
+    vec4 albedo = texture2D(tex, texCoord) * color;
 
     #ifdef SHADOW_COLOR
-	albedo.rgb *= (1.0 - pow2(pow8(pow8(albedo.a)))) * 4.0;
-	albedo.rgb = pow16(albedo.rgb);
+	albedo.rgb *= 1.0 - pow8(pow8(albedo.a));
 
 	#ifdef WATER_CAUSTICS
 	float water = float(mat > 0.98 && mat < 1.02);
 
 	if (water > 0.9){
-		float caustics = getCaustics(position.xyz + cameraPosition.xyz);
-		albedo.rgb = waterColor.rgb * caustics;
+		float caustics = getCaustics(worldPos + cameraPosition);
+		albedo.rgb = normalize(waterColor) * caustics;
 	}
 	#endif
 	#endif
@@ -55,29 +59,47 @@ void main() {
 #ifdef VSH
 
 //Varyings//
+#ifdef WATER_CAUSTICS
 out float mat;
+#endif
+
 out vec2 texCoord;
+
+#ifdef WATER_CAUSTICS
+out vec3 worldPos;
+#endif
+
 out vec4 color;
-out vec4 position;
 
 //Uniforms//
 uniform mat4 shadowProjection, shadowProjectionInverse;
 uniform mat4 shadowModelView, shadowModelViewInverse;
 
 //Attributes//
+#ifdef WATER_CAUSTICS
 attribute vec4 mc_Entity;
+#endif
 
 //Program//
 void main() {
+	//Coord
 	texCoord = gl_MultiTexCoord0.xy;
 
-	color = gl_Color;
-	
+	//Materials
+	#ifdef WATER_CAUSTICS
 	mat = 0.0;
 	if (mc_Entity.x == 1) mat = 1.0;
+	#endif
 	
-	position = shadowModelViewInverse * shadowProjectionInverse * ftransform();
-	
+	//Color & Position
+	color = gl_Color;
+
+	vec4 position = shadowModelViewInverse * shadowProjectionInverse * ftransform();
+
+	#ifdef WATER_CAUSTICS
+	worldPos = position.xyz;
+	#endif
+
 	gl_Position = shadowProjection * shadowModelView * position;
 
 	float dist = sqrt(gl_Position.x * gl_Position.x + gl_Position.y * gl_Position.y);
