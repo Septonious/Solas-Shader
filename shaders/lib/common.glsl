@@ -275,7 +275,7 @@ const vec3 waterColorSqrt = vec3(WATER_R, WATER_G, WATER_B) / 255.0 * WATER_I;
 const vec3 waterColor = waterColorSqrt * waterColorSqrt;
 
 //Water Fog Range//
-const float waterFogRange = 128.0 / WATER_FOG_DENSITY;
+const float waterFogRange = 256.0 / WATER_FOG_DENSITY;
 
 //Weather Color//
 const vec3 weatherCol = vec3(WEATHER_RR, WEATHER_RG, WEATHER_RB) / 255.0 * WEATHER_RI;

@@ -44,7 +44,7 @@ void computeVolumetricEffects(vec4 translucent, vec3 viewPos, vec2 newTexCoord, 
 		#ifdef VL
 		vec3 shadowCol = vec3(0.0);
 
-		float shadowBrightness = 16.0 * (1.0 + float(isEyeInWater == 1) * 2.0);
+		float shadowBrightness = 10.0 * (1.0 + float(isEyeInWater == 1) * 4.0);
 		float lViewPos = length(viewPos.xz) * 0.000125;
 		float firstLayerVisibility = clamp(VL_OPACITY, cameraPosition.y * 0.005, 1.0) * (1.0 - dfade * 0.75) * VL_OPACITY;
 		#endif

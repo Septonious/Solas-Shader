@@ -67,7 +67,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
         float VoL = pow12(clamp(dot(normalize(viewPos.xyz), lightVec) * 0.5 + 0.5, 0.0, 1.0));
         scattering = VoL * subsurface + VoL * float(specular > 0.0);
         NoL = mix(NoL, 1.0, sqrt(subsurface) * 0.75);
-        NoL = mix(NoL, 1.0, float(specular > 0.0) * 0.75);
+        NoL = mix(NoL, 1.0, specular * 0.75);
         NoL = mix(NoL, 1.0, scattering);
     }
 
