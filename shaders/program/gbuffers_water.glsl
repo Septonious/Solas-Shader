@@ -135,7 +135,7 @@ void main() {
 		}
 		#endif
 
-		getSceneLighting(albedo.rgb, viewPos, worldPos, newNormal, lightmap, portal * pow8(length(albedo.rgb)) * EMISSION_STRENGTH, 0.0, 0.0);
+		getSceneLighting(albedo.rgb, viewPos, worldPos, newNormal, lightmap, portal * pow8(length(albedo.rgb)) * 32.0, 0.0, 0.0);
 
 		#if defined OVERWORLD
 		skyColor = getAtmosphere(viewPos);
