@@ -166,8 +166,9 @@ void main() {
 	gl_FragData[1] = albedo;
 
 	#if defined BLOOM || defined INTEGRATED_SPECULAR
-	/* DRAWBUFFERS:012 */
-	gl_FragData[2] = vec4(EncodeNormal(newNormal), portal * 4.0, 1.0 - portal * 0.75);
+	/* DRAWBUFFERS:0162 */
+	gl_FragData[2].a = 0.001;
+	gl_FragData[3] = vec4(EncodeNormal(newNormal), portal * 4.0, 1.0 - portal * 0.75);
 	#endif
 }
 

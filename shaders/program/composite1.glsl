@@ -124,13 +124,13 @@ void main() {
 	vec4 viewPos = gbufferProjectionInverse * (screenPos * 2.0 - 1.0);
 	viewPos /= viewPos.w;
 
-	float roughness = clamp(texture2D(colortex6, texCoord).a * 100.0 - 1.0, 0.0, 10.0);
+	float roughness = clamp(texture2D(colortex6, texCoord).a * 100.0, 0.0, 10.0);
 	vec4 terrainData = texture2D(colortex2, texCoord);
 	vec3 normal = DecodeNormal(terrainData.rg);
 	float specular = terrainData.a;
 	float emissive = terrainData.b;
 
-	if (specular > 0.05 && emissive == 0.0 && roughness < 9.0 && z0 > 0.56 && isEyeInWater == 0) {
+	if (specular > 0.05 && emissive == 0.0 && z0 > 0.56 && isEyeInWater == 0) {
 		float fresnel = clamp(pow4(1.0 + dot(normal, normalize(viewPos.xyz))), 0.0, 1.0);
 
 		vec3 reflection = getReflection(viewPos.xyz, normal, color, roughness);
