@@ -20,7 +20,7 @@ bool rayTrace(vec3 viewPos, vec3 rayDir, inout vec3 rayPos) {
         if (clamp(rayPos.xy, 0.0, 1.0) != rayPos.xy) return false;
 
         float depth = texelFetch(depthtex1, ivec2(rayPos.xy * viewResolution), 0).r;
-        float depthLenience = max(abs(rayDir.z) * 5.0, 0.025 / pow2(viewPos.z)); // Provided by DrDesten#6282
+        float depthLenience = max(abs(rayDir.z) * 10.0, 0.025 / pow2(viewPos.z)); // Provided by DrDesten#6282
 
         intersect = abs(depthLenience - (rayPos.z - depth)) < depthLenience && depth >= 0.56;
     }
