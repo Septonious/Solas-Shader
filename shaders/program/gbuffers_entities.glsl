@@ -98,7 +98,7 @@ void main() {
 	gl_FragData[0] = albedo;
 
 	#ifndef INTEGRATED_SPECULAR
-		#if defined BLOOM || defined INTEGRATED_SPECULAR
+		#ifdef BLOOM
 		/* DRAWBUFFERS:02 */
 		gl_FragData[1] = vec4(EncodeNormal(normal), emission, 1.0);
 		#endif
