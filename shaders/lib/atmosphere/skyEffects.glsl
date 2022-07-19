@@ -19,7 +19,7 @@ void getStars(inout vec3 color, in vec3 worldPos, in float VoU, in float nebulaF
 		float star = GetNoise(planeCoord.xy);
 			  star*= GetNoise(planeCoord.xy + 1.0);
 
-		star = clamp(star - 0.875, 0.0, 1.0) * visibility;
+		star = clamp(star - (0.875 - nebulaFactor * 0.125), 0.0, 1.0) * visibility;
 		
 		color.rgb += vec3(4.0) * star;
 	}
