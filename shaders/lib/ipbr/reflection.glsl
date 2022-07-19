@@ -1,5 +1,4 @@
-vec3 getReflection(vec3 viewPos, vec3 normal, in vec3 color) {
-	float roughness = texture2D(colortex6, texCoord).a * 100.0;
+vec3 getReflection(vec3 viewPos, vec3 normal, vec3 color, float roughness) {
 	vec3 reflectedVector = reflect(normalize(viewPos), normal) * 100.0;
 	vec3 reflectedScreenPos = ToScreen(reflectedVector);
 	vec3 reflection = vec3(0.0);

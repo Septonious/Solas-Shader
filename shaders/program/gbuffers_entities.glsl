@@ -61,7 +61,7 @@ float sunVisibility = clamp((dot(sunVec, upVec) + 0.05) * 10.0, 0.0, 1.0);
 #include "/lib/ipbr/integratedEmissionEntities.glsl"
 #endif
 
-#ifdef INTEGRATED_SPECULAR
+#if defined BLOOM || defined INTEGRATED_SPECULAR
 #include "/lib/util/encode.glsl"
 #endif
 
@@ -97,9 +97,19 @@ void main() {
 	/* DRAWBUFFERS:0 */
 	gl_FragData[0] = albedo;
 
-	#ifdef INTEGRATED_SPECULAR
-	/* DRAWBUFFERS:02 */
-	gl_FragData[1].b = emission;
+	#ifndef INTEGRATED_SPECULAR
+		#if defined BLOOM || defined INTEGRATED_SPECULAR
+		/* DRAWBUFFERS:02 */
+		gl_FragData[1] = vec4(EncodeNormal(normal), emission, 1.0);
+		#endif
+	#else
+		/* DRAWBUFFERS:06 */
+		gl_FragData[1] = vec4(albedo.rgb, 0.1);
+
+		#if defined BLOOM || defined INTEGRATED_SPECULAR
+		/* DRAWBUFFERS:062 */
+		gl_FragData[2] = vec4(EncodeNormal(normal), emission, 1.0);
+		#endif
 	#endif
 }
 

@@ -80,7 +80,7 @@ void getIntegratedEmission(inout vec3 albedo, in vec3 worldPos, in vec2 lightmap
 	} else if (mat > 120.9 && mat < 121.9) { // Redstone Block
 		newEmission = (0.125 + lAlbedo * 0.125) * 0.5;
 	} else if (mat > 121.9 && mat < 122.1) { // Glowstone, Fire, etc
-		newEmission = 0.5 + pow16(lAlbedo) * 0.5;
+		newEmission = 0.5 + pow16(lAlbedo) * 0.25;
 	} else if (mat > 122.9 && mat < 123.1) { // Sculks
 		newEmission = float(lAlbedo > 0.05 && albedo.r < 0.25) * 0.125;
 	} else if (mat > 123.9 && mat < 124.1) { // Redstone Lamp

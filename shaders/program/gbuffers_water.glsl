@@ -114,6 +114,8 @@ void main() {
 	float water = float(mat > 0.9 && mat < 1.1);
 	float portal = float(mat > 1.9 && mat < 2.1);
 
+	albedo.a = mix(albedo.a, 1.0, portal);
+
 	if (water > 0.9) {
 		albedo.a = WATER_A;
 		albedo.rgb = waterColor;
@@ -161,7 +163,7 @@ void main() {
 
 	/* DRAWBUFFERS:01 */
 	gl_FragData[0] = albedo;
-	gl_FragData[1] = vec4(albedo.rgb, mix(albedo.a, 0.0, portal));
+	gl_FragData[1] = albedo;
 
 	#if defined BLOOM || defined INTEGRATED_SPECULAR
 	/* DRAWBUFFERS:012 */

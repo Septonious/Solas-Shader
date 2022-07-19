@@ -15,10 +15,10 @@ vec3 getBloom(vec2 coord) {
 	float z0 = texture2D(depthtex0, coord).r;
 
 	if (z0 > 0.56) {
-		vec3 blur1 = getBloomTile(1.0, coord, vec2(0.0  , 0.0 ));
-		vec3 blur2 = getBloomTile(2.0, coord, vec2(0.51 , 0.0 ));
-		vec3 blur3 = getBloomTile(3.0, coord, vec2(0.51 , 0.26));
-		vec3 blur4 = getBloomTile(4.0, coord, vec2(0.645, 0.26));
+		vec3 blur1 = getBloomTile(1.0, coord, vec2(0.0, 0.0));
+		vec3 blur2 = getBloomTile(2.0, coord, vec2(0.6, 0.0));
+		vec3 blur3 = getBloomTile(3.0, coord, vec2(0.6, 0.3));
+		vec3 blur4 = getBloomTile(4.0, coord, vec2(0.0, 0.6));
 		
 		#if BLOOM_RADIUS == 1
 		vec3 blur = blur1;
@@ -30,7 +30,7 @@ vec3 getBloom(vec2 coord) {
 		vec3 blur = (blur1 * 2.11 + blur2 * 1.97 + blur3 * 1.57 + blur4) / 6.65;
 		#endif
 
-		return blur * BLOOM_STRENGTH * 0.5;
+		return blur * BLOOM_STRENGTH;
 	} else {
 		return vec3(0.0);
 	}

@@ -58,7 +58,7 @@ void computeVolumetricEffects(vec4 translucent, vec3 viewPos, vec2 newTexCoord, 
 		for(int i = 0; i < VC_SAMPLES; i++) {
 			float currentDistance = (i + dither) * currentDistanceFactor;
 
-			if (depth1 < currentDistance || (depth0 < currentDistance && (translucent.rgb == vec3(0.0) || translucent.a == 0.0 || translucent.a == 1.0))) {
+			if (depth1 < currentDistance || (depth0 < currentDistance && translucent.rgb == vec3(0.0))) {
 				break;
 			}
 
