@@ -78,7 +78,7 @@ void getIntegratedEmission(inout vec3 albedo, in vec3 worldPos, in vec2 lightmap
 	} else if (mat > 119.9 && mat < 120.1) { // Normal Campfire && Magma Block
 		newEmission = float(albedo.r > 0.65 && albedo.b < 0.35) * 0.25;
 	} else if (mat > 120.9 && mat < 121.9) { // Redstone Block
-		newEmission = (0.125 + lAlbedo * 0.125) * 0.5;
+		newEmission = 0.125 + lAlbedo * 0.125;
 	} else if (mat > 121.9 && mat < 122.1) { // Glowstone, Fire, etc
 		newEmission = 0.5 + pow16(lAlbedo) * 0.25;
 	} else if (mat > 122.9 && mat < 123.1) { // Sculks
@@ -113,7 +113,7 @@ void getIntegratedEmission(inout vec3 albedo, in vec3 worldPos, in vec2 lightmap
 	#if defined OVERWORLD && defined EMISSIVE_FLOWERS
 	if (isPlant > 0.9 && isPlant < 1.1){ // Flowers
 		if (albedo.b > albedo.g || albedo.r > albedo.g) {
-			newEmission = 0.075 * lAlbedo * (1.0 - rainStrength);
+			newEmission = 0.125 * lAlbedo * (1.0 - rainStrength);
 		}
 	}
 	#endif
