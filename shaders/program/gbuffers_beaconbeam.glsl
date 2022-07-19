@@ -21,7 +21,7 @@ void main() {
 
 	#ifdef BLOOM
 	/* DRAWBUFFERS:02 */
-	gl_FragData[1].a = 0.25;
+	gl_FragData[1].b = 0.125;
 	#endif
 
 }
