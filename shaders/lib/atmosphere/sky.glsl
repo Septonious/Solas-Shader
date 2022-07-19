@@ -24,7 +24,7 @@ vec3 getAtmosphere(vec3 viewPos) {
     float skyDensity = mix(exp(-(1.0 - (1.0 - absVoU))), 0.9 - sunVisibility * 0.3, rainStrength * 0.75);
 
     //Day & Night Sky
-    vec3 daySky = mix(skyColSqrt, pow(skyColor, vec3(1.25)) * 1.75, dfade);
+    vec3 daySky = mix(skyColSqrt, pow(skyColor, vec3(1.3)) * 1.6, dfade);
     vec3 sky = mix(lightNight, daySky, sunVisibility) * skyDensity;
 
     //Fake Light Scattering

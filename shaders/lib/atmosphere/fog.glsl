@@ -14,7 +14,7 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 colo
 	float fogAltitude = clamp((worldPos.y + cameraPosition.y) * 0.001 * FOG_HEIGHT, 0.0, 1.0);
 	fog *= 1.0 - fogAltitude * (0.5 + sunVisibility * 0.5);
 
-	vec3 fogColor = mix(colorOfTheSky, skyColor * 2.0, 0.5 * sunVisibility);
+	vec3 fogColor = mix(colorOfTheSky, skyColor, 0.5 * sunVisibility);
 	
 	//Distant Fade
 	#ifdef DISTANT_FADE
