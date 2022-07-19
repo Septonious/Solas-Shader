@@ -101,10 +101,10 @@ void getRainbow(inout vec3 color, in vec3 worldPos, in float VoU, in float size,
 
 #ifdef AURORA
 float getAuroraNoise(vec2 coord) {
-	float noise = texture2D(noisetex, coord * 0.01250 + frameTimeCounter * 0.0001).b * 2.5;
-		  noise+= texture2D(noisetex, coord * 0.00625 + frameTimeCounter * 0.0002).b * 2.5;
+	float noise = texture2D(noisetex, coord * 0.02).b * 3.0;
+		  noise+= texture2D(noisetex, coord * 0.01).b * 3.0;
 
-	return max(abs(noise) - 2.0, 0.0);
+	return max(abs(noise) - 2.5, 0.0);
 }
 
 void getAurora(inout vec3 color, in vec3 worldPos) {
@@ -132,7 +132,7 @@ void getAurora(inout vec3 color, in vec3 worldPos) {
 		float currentStep = dither * sampleStep;
 
 		for(int i = 0; i < samples; i++) {
-			vec3 planeCoord = worldPos * ((6.0 + currentStep * 12.0) / worldPos.y) * 0.0125;
+			vec3 planeCoord = worldPos * ((6.0 + currentStep * 12.0) / worldPos.y) * 0.025;
 
 			vec2 coord = cameraPosition.xz * 0.00005 + planeCoord.xz;
 				 coord += vec2(coord.y, -coord.x) * 0.5;
@@ -143,7 +143,7 @@ void getAurora(inout vec3 color, in vec3 worldPos) {
 				noise *= texture2D(noisetex, coord * 0.125 + frameTimeCounter * 0.000125).b * 0.5 + 0.5;
 				noise *= texture2D(noisetex, coord * 0.500 + frameTimeCounter * 0.002500).b * 0.3 + 0.7;
 				noise = pow2(noise) * sampleStep;
-				noise *= max(1.0 - length(planeCoord.xz) * 0.5, 0.0);
+				noise *= max(1.0 - length(planeCoord.xz) * 0.25, 0.0);
 
 				vec3 auroraColor = mix(auroraLowCol, auroraHighCol, pow(currentStep, 0.5));
 				aurora += noise * auroraColor * exp2(-6.0 * i * sampleStep);

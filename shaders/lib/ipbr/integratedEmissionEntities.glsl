@@ -36,9 +36,13 @@ void getIntegratedEmission(in vec3 albedo, inout vec2 lightmap, inout float emis
     } else if (mat > 105.9 && mat < 106.1) { // End Crystal
         emission = float(albedo.r > 0.5 && albedo.g < 0.55) * 0.075;
         lightmap.x *= emission;
-    } else if (mat > 106.9 && mat < 107.1) {
-        emission = float(lAlbedo > 0.95) * 0.5;
     }
+
+    #ifdef PLAYER_BRIGHT_PARTS_HIGHLIGHT
+    if (mat > 106.9 && mat < 107.1) {
+        emission = float(lAlbedo > 0.99) * 0.25;
+    }
+    #endif
 
 	emission *= EMISSION_STRENGTH;
 }
