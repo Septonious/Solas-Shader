@@ -26,10 +26,10 @@ void getIntegratedSpecular(in vec4 albedo, in vec3 normal, in vec2 worldPos, in 
         specular = float(pow16(albedo.r)) * 8.0;
         roughness = 0.5;
     } else if (mat > 301.9 && mat < 302.1) {// Gold Block & Gold Pressure Plate
-        specular = pow10(lAlbedo * 0.75);
-        roughness = 0.5;
+        specular = pow10(lAlbedo);
+        roughness = 0.25;
     } else if (mat > 302.9 && mat < 303.1) {// Emerald & Diamond Blocks
-        specular = pow12(lAlbedo) * 0.75;
+        specular = pow12(lAlbedo);
         roughness = 0.25;
     } else if (mat > 303.9 && mat < 304.1) {// Polished Stones Blocks & Basalt & Obsidian
         specular = pow2(lAlbedo) * 0.125;
