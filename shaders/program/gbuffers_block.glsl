@@ -64,34 +64,36 @@ void main() {
 	vec4 albedo = texture2D(texture, texCoord) * color;
 	float emission = 0.0;
 
-	if (blockEntityId == 21) {
-		emission = pow2(length(albedo.rgb)) * float(albedo.r < albedo.g);
-	}
-
-	if (blockEntityId == 22) {
-		if (float(albedo.r > albedo.g * 1.55) > 0.9) {
-			albedo.rgb = pow(albedo.rgb, vec3(1.25)) * 1.25;
-		}
-	}
-	
 	if (albedo.a > 0.001) {
 		vec3 screenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z);
 		vec3 viewPos = ToNDC(screenPos);
 		vec3 worldPos = ToWorld(viewPos);
 		vec2 lightmap = clamp(lightMapCoord, vec2(0.0), vec2(1.0));
 
+		if (blockEntityId == 21) {
+			emission = pow2(length(albedo.rgb)) * float(albedo.r < albedo.g);
+		}
+
+		if (blockEntityId == 22) {
+			if (float(albedo.r > albedo.g * 1.55) > 0.9) {
+				albedo.rgb = pow(albedo.rgb, vec3(1.25)) * 1.25;
+			}
+		}
+
 		getSceneLighting(albedo.rgb, viewPos, worldPos, normal, lightmap, emission, 0.0, 0.0);
-	}
 
-	if (blockEntityId == 20) {
-		vec2 portalCoord = gl_FragCoord.xy / vec2(viewWidth, viewHeight);
-			 portalCoord = (portalCoord - 0.5) * vec2(aspectRatio, 1.0);
+		if (blockEntityId == 20) {
+			vec2 portalCoordPlayerPos = (worldPos.xz + cameraPosition.xz) * 0.2;
 
-		float portal = texture2D(noisetex, portalCoord * 0.1 + frameTimeCounter * 0.0025).r * 0.25 + 0.375;
-			  portal+= texture2D(texture,  portalCoord * 0.5 + frameTimeCounter * 0.0050).r * 2.0;
-			  portal+= texture2D(texture,  portalCoord * 1.5 + frameTimeCounter * 0.0075).r * 2.0;
+			float portalNoise = texture2D(noisetex, portalCoordPlayerPos * 0.1).r * 0.25 + 0.375;
+			float portal0 = texture2D(texture,  portalCoordPlayerPos.rg * 0.50 + vec2(0.0, frameTimeCounter * 0.012)).r * 3.00;
+			float portal1 = texture2D(texture,  portalCoordPlayerPos.gr * 0.75 + vec2(0.0, frameTimeCounter * 0.009)).r * 2.50;
+			float portal2 = texture2D(texture,  portalCoordPlayerPos.rg * 1.00 + vec2(0.0, frameTimeCounter * 0.006)).r * 1.75;
+			float portal3 = texture2D(texture,  portalCoordPlayerPos.gr * 1.25 + vec2(0.0, frameTimeCounter * 0.003)).r * 1.25;
 			
-		albedo.rgb = portal * portal * endLightColSqrt * 0.25;
+			albedo.rgb = pow2(portalNoise) * endAmbientCol + portal3 * vec3(0.3, 0.2, 0.5) + portal2 * vec3(0.4, 0.2, 0.4) + portal1 * vec3(0.2, 0.4, 0.4) + portal0 * vec3(0.2, 0.3, 0.5);
+			emission = pow4(length(albedo.rgb)) * 16.0;
+		}
 	}
 
 	/* DRAWBUFFERS:0 */
