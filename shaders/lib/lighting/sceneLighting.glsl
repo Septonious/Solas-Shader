@@ -105,7 +105,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
          bloom = pow4(bloom) * 128.0;
          bloom = clamp(bloom * inversesqrt(getLuminance(bloom)), 0.0, 1.0) * (1.0 - float(emission > 0.0));
          bloom = bloom * (0.125 + lightmap.x * 0.875) * BLOCKLIGHT_I * 2.0;
-
+    
     vec3 blockLighting = blockLightCol * blockLightMap * 0.25 + bloom;
     
     #else
