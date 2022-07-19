@@ -53,7 +53,7 @@ vec3 getReflection(vec3 viewPos, vec3 normal, in vec3 color) {
 	reflectionFade *= eBS;
 
 	#elif defined NETHER
-	vec3 reflectionFade = netherColSqrt.rgb * 0.15;
+	vec3 reflectionFade = netherColSqrt.rgb * 0.25;
 	#elif defined END
 	vec3 reflectionFade = endLightCol * 0.15;
 

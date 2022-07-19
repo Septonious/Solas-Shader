@@ -126,8 +126,8 @@ void main() {
 
 	vec4 terrainData = texture2D(colortex2, texCoord);
 	vec3 normal = DecodeNormal(terrainData.rg);
-	float specular = terrainData.b;
-	float emissive = terrainData.a;
+	float specular = terrainData.a;
+	float emissive = terrainData.b;
 
 	if (specular > 0.05 && emissive != 0.01 && z0 > 0.56 && isEyeInWater == 0) {
 		float fresnel = clamp(pow4(1.0 + dot(normal, normalize(viewPos.xyz))), 0.0, 1.0);

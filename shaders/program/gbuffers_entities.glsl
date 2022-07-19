@@ -99,7 +99,7 @@ void main() {
 
 	#ifdef INTEGRATED_SPECULAR
 	/* DRAWBUFFERS:02 */
-	gl_FragData[1].a = 0.01 + emission;
+	gl_FragData[1].b = emission;
 	#endif
 }
 

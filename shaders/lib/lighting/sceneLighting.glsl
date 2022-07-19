@@ -63,11 +63,10 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     NoL = clamp(NoL * 1.01 - 0.01, 0.0, 1.0);
 
     float scattering = 0.0;
-    if (subsurface > 0.0 || specular > 0.0){
+    if (subsurface > 0.0){
         float VoL = pow12(clamp(dot(normalize(viewPos.xyz), lightVec) * 0.5 + 0.5, 0.0, 1.0));
-        scattering = VoL * subsurface + VoL * float(specular > 0.0);
+        scattering = VoL * subsurface;
         NoL = mix(NoL, 1.0, sqrt(subsurface) * 0.75);
-        NoL = mix(NoL, 1.0, specular * 0.75);
         NoL = mix(NoL, 1.0, scattering);
     }
 
@@ -99,14 +98,16 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     //COLORED LIGHTING USING SHIMMER MOD
     vec3 coloredLight = getColoredLighting(worldPos, blockLightMap);
     vec3 blockLighting = blockLightCol * blockLightMap + coloredLight * BLOCKLIGHT_I;
+
     #elif defined BLOOM_COLORED_LIGHTING
     //BLOOM BASED COLORED LIGHTING
     #if !defined GBUFFERS_ENTITIES && !defined GBUFFERS_WATER
     vec3 bloom = texture2D(colortex7, gl_FragCoord.xy / vec2(viewWidth, viewHeight)).rgb;
+         bloom = pow4(bloom) * 128.0;
          bloom = clamp(bloom * inversesqrt(getLuminance(bloom)), 0.0, 1.0) * (1.0 - float(emission > 0.0));
-         bloom = pow4(bloom) * (0.5 + lightmap.x * 0.5);
+         bloom = bloom * (0.5 + lightmap.x * 0.5);
 
-    vec3 blockLighting = blockLightCol * blockLightMap * 0.5 + bloom;
+    vec3 blockLighting = blockLightCol * blockLightMap * 0.25 + bloom;
     #else
     //VANILLA LIGHTING
     vec3 blockLighting = blockLightCol * pow2(blockLightMap);

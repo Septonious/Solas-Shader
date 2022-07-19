@@ -140,9 +140,9 @@ void main() {
 		#if defined OVERWORLD
 		skyColor = getAtmosphere(viewPos);
 		#elif defined NETHER
-		skyColor = netherColSqrt.rgb * 0.15;
+		skyColor = netherColSqrt.rgb * 0.25;
 		#elif defined END
-		skyColor = endLightCol.rgb * 0.1;
+		skyColor = endLightCol.rgb * 0.15;
 		#endif
 
 		#ifdef OVERWORLD
@@ -165,7 +165,7 @@ void main() {
 
 	#if defined BLOOM || defined INTEGRATED_SPECULAR
 	/* DRAWBUFFERS:012 */
-	gl_FragData[2] = vec4(EncodeNormal(newNormal), 0.5 - portal * 0.5, 1.0);
+	gl_FragData[2] = vec4(EncodeNormal(newNormal), portal * 4.0, 1.0 - portal * 0.75);
 	#endif
 }
 
