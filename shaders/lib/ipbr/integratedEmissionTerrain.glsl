@@ -96,6 +96,8 @@ void getIntegratedEmission(inout vec3 albedo, in vec3 worldPos, in vec2 lightmap
 	} else if (mat > 128.9 && mat < 129.1) {// End Rod
 		newEmission = pow4(lAlbedo) * 0.5;
 		albedo.rgb *= endLightColSqrt;
+	} else if (mat > 129.9 && mat < 130.1) { // Powered Rail
+		newEmission = float(albedo.r > 0.5 && albedo.g < 0.25) * 0.125;
 	}
 
 	#ifdef EMISSIVE_POWDER_SNOW
