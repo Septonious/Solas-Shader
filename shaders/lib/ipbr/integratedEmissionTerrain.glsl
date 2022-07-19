@@ -54,7 +54,7 @@ void getIntegratedEmission(inout vec3 albedo, in vec3 worldPos, in vec2 lightmap
 	} else if (mat > 105.9 && mat < 106.1) { // Warped Nylium
 		newEmission = float(albedo.g > albedo.b && albedo.g > albedo.r) * pow(float(albedo.g - albedo.b), 3.0);
 	} else if (mat > 107.9 && mat < 108.1) { // Amethyst
-		newEmission = pow32(lAlbedo) * 0.25;
+		newEmission = pow8(lAlbedo) * 0.25;
 	} else if (mat > 109.9 && mat < 110.1) { // Glow Lichen
 		newEmission = (0.0125 + pow16(lAlbedo) * 0.125) * (1.0 - lightmap.y * 0.75);
 	} else if (mat > 110.9 && mat < 111.1) { // Redstone Things
