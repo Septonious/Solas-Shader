@@ -141,6 +141,8 @@ void computeVolumetricEffects(vec4 translucent, vec3 viewPos, vec2 newTexCoord, 
 			}
 		}
 
+		secondCloudLayer.rgb = mix(secondCloudLayer.rgb, secondCloudLayer.rgb * skyColor * 1.5, timeBrightness);
+
 		#ifdef VL
 		vlOut1 = firstCloudLayer;
 		#endif

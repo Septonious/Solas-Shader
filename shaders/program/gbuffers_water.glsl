@@ -168,7 +168,7 @@ void main() {
 	#if defined BLOOM || defined INTEGRATED_SPECULAR
 	/* DRAWBUFFERS:0162 */
 	gl_FragData[2].a = 0.001;
-	gl_FragData[3] = vec4(EncodeNormal(newNormal), portal * 4.0, 1.0 - portal * 0.75);
+	gl_FragData[3] = vec4(EncodeNormal(newNormal), portal * 4.0, 0.75 - portal * 0.75);
 	#endif
 }
 
