@@ -101,17 +101,12 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
 
     #elif defined BLOOM_COLORED_LIGHTING
     //BLOOM BASED COLORED LIGHTING
-    #if !defined GBUFFERS_ENTITIES && !defined GBUFFERS_WATER
     vec3 bloom = texture2D(colortex7, gl_FragCoord.xy / vec2(viewWidth, viewHeight)).rgb;
          bloom = pow4(bloom) * 128.0;
          bloom = clamp(bloom * inversesqrt(getLuminance(bloom)), 0.0, 1.0) * (1.0 - float(emission > 0.0));
          bloom = bloom * (0.5 + lightmap.x * 0.5);
 
     vec3 blockLighting = blockLightCol * blockLightMap * 0.25 + bloom;
-    #else
-    //VANILLA LIGHTING
-    vec3 blockLighting = blockLightCol * pow2(blockLightMap);
-    #endif
     
     #else
     vec3 blockLighting = blockLightCol * blockLightMap;
