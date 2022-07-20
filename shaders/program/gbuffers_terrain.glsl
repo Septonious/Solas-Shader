@@ -88,7 +88,7 @@ void main() {
 	float specular = 0.0;
 	float roughness = 0.0;
 
-	if (albedo.a > 0.0001) {
+	if (albedo.a > 0.001) {
 		vec3 screenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z);
 		vec3 viewPos = ToNDC(screenPos);
 		vec3 worldPos = ToWorld(viewPos);
