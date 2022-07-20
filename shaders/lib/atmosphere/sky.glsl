@@ -1,7 +1,7 @@
 //Constant Colors For Fake Light Scattering
 vec3 highScatteringColor = vec3(0.85, 1.00, 0.15);
-vec3 midScatteringColor  = vec3(1.35, 0.40, 0.25);
-vec3 downScatteringColor = vec3(1.50, 0.50, 0.00);
+vec3 midScatteringColor  = vec3(1.30, 0.45, 0.25) * 1.25;
+vec3 downScatteringColor = vec3(1.60, 0.40, 0.00) * 1.50;
 
 vec3 getAtmosphere(vec3 viewPos) {
     vec3 nViewPos = normalize(viewPos);
