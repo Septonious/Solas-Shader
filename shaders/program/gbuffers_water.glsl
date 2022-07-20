@@ -77,6 +77,7 @@ float sunVisibility = clamp((dot(sunVec, upVec) + 0.05) * 10.0, 0.0, 1.0);
 //Includes//
 #include "/lib/util/ToNDC.glsl"
 #include "/lib/util/ToWorld.glsl"
+#include "/lib/util/bayerDithering.glsl"
 
 #if defined OVERWORLD || defined END
 #include "/lib/util/ToShadow.glsl"
@@ -87,7 +88,6 @@ float sunVisibility = clamp((dot(sunVec, upVec) + 0.05) * 10.0, 0.0, 1.0);
 #include "/lib/lighting/sceneLighting.glsl"
 
 #ifdef OVERWORLD
-#include "/lib/util/bayerDithering.glsl"
 #include "/lib/atmosphere/sky.glsl"
 #include "/lib/water/waterFog.glsl"
 #endif
@@ -114,6 +114,18 @@ void main() {
 	float water = float(mat > 0.9 && mat < 1.1);
 	float portal = float(mat > 1.9 && mat < 2.1);
 
+	if (portal > 0.9) {
+		vec2 portalCoord = (worldPos.xy + cameraPosition.xy) * 0.075 + Bayer64(gl_FragCoord.xy) / 128.0;
+
+		vec2 wind = vec2(0.0, frameTimeCounter);
+
+		float noise = texture2D(noisetex, portalCoord * 0.3 - wind * 0.009).r;
+			  noise+= texture2D(noisetex, portalCoord * 0.2 + wind * 0.006).r;
+			  noise+= texture2D(noisetex, portalCoord * 0.1 - wind * 0.003).r;
+
+		albedo.rgb = mix(vec3(0.4, 0.1, 0.5) * (noise - 0.5), vec3(0.5, 0.3, 0.6), 0.5);
+	}
+
 	albedo.a = mix(albedo.a, 1.0, portal);
 
 	if (water > 0.9) {
@@ -137,7 +149,7 @@ void main() {
 		}
 		#endif
 
-		getSceneLighting(albedo.rgb, viewPos, worldPos, newNormal, lightmap, portal * pow8(length(albedo.rgb)) * 32.0, 0.0, 0.0);
+		getSceneLighting(albedo.rgb, viewPos, worldPos, newNormal, lightmap, portal * pow8(length(albedo.rgb)) * 64.0, 0.0, 0.0);
 
 		#if defined OVERWORLD
 		skyColor = getAtmosphere(viewPos);
@@ -168,7 +180,7 @@ void main() {
 	#if defined BLOOM || defined INTEGRATED_SPECULAR
 	/* DRAWBUFFERS:0162 */
 	gl_FragData[2].a = 0.001;
-	gl_FragData[3] = vec4(EncodeNormal(newNormal), portal * 4.0, 1.0 - portal * 0.75);
+	gl_FragData[3] = vec4(EncodeNormal(newNormal), portal * pow8(length(albedo.rgb)) * 64.0, 1.0 - portal * 0.75);
 	#endif
 }
 
