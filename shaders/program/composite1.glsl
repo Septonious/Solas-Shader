@@ -119,7 +119,7 @@ void main() {
 	vec4 viewPos = gbufferProjectionInverse * (screenPos * 2.0 - 1.0);
 	viewPos /= viewPos.w;
 
-	float roughness = mix(clamp(texture2D(colortex6, texCoord).a * 100.0, 0.0, 10.0), 0.0, float(z0 < z1));
+	float roughness = mix(clamp(texture2D(colortex6, texCoord).a * 100.0, 0.0, 10.0), 0.1, float(z0 < z1));
 	vec4 terrainData = texture2D(colortex2, texCoord);
 	vec3 normal = DecodeNormal(terrainData.rg);
 	float specular = terrainData.a;
