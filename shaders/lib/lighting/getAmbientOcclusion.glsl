@@ -22,7 +22,7 @@ float getAmbientOcclusion(float z){
 		totalWeight += weight;
 	}
 	ao /= totalWeight;
-	if (totalWeight < 0.0001) ao = texture2DLod(colortex4, texCoord, 2.0).r;
+	if (totalWeight < 0.0001) ao = texture2D(colortex4, texCoord).r;
 
 	return pow(ao, AO_STRENGTH);
 }

@@ -18,11 +18,6 @@ uniform sampler2D colortex0;
 uniform sampler2D colortex4, depthtex0;
 #endif
 
-//Optifine Constants//
-#ifdef AO
-const bool colortex4MipmapEnabled = true;
-#endif
-
 //Includes//
 #ifdef AO
 #include "/lib/lighting/getAmbientOcclusion.glsl"

@@ -134,6 +134,8 @@ void main() {
 
 			getSunMoon(skyColor, nViewPos, lightSun, lightNight, VoS, VoM, VoU, ug);
 		}
+
+		skyColor += Bayer64(gl_FragCoord.xy) / 64.0;
 		#endif
 
 		#ifdef END

@@ -24,7 +24,6 @@ uniform sampler2D colortex5;
 //Optifine Constants//
 #ifdef BLOOM
 const bool colortex1MipmapEnabled = true;
-const bool colortex7Clear = false;
 #endif
 
 #ifdef TAA
@@ -47,7 +46,7 @@ void main() {
 
 	#ifdef BLOOM
 	bloom = getBloom(texCoord);
-	color += bloom * 0.5;
+	color += bloom * 0.25;
 	#endif
 
 	#ifdef TAA
