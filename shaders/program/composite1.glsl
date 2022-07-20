@@ -56,14 +56,8 @@ uniform sampler2D colortex0;
 
 #ifdef INTEGRATED_SPECULAR
 uniform sampler2D noisetex;
-
-#if REFLECTION_TYPE == 1
 uniform sampler2D depthtex1;
-#endif
-
-#ifdef NEBULA
 uniform sampler2D depthtex0;
-#endif
 
 uniform mat4 gbufferProjection;
 uniform mat4 gbufferProjectionInverse;
@@ -120,16 +114,17 @@ void main() {
 
 	#ifdef INTEGRATED_SPECULAR
 	float z0 = texture2D(depthtex0, texCoord).r;
+	float z1 = texture2D(depthtex1, texCoord).r;
 	vec4 screenPos = vec4(texCoord, z0, 1.0);
 	vec4 viewPos = gbufferProjectionInverse * (screenPos * 2.0 - 1.0);
 	viewPos /= viewPos.w;
 
-	float roughness = clamp(texture2D(colortex6, texCoord).a * 100.0, 0.0, 10.0);
+	float roughness = mix(clamp(texture2D(colortex6, texCoord).a * 100.0, 0.0, 10.0), 0.0, float(z0 < z1));
 	vec4 terrainData = texture2D(colortex2, texCoord);
 	vec3 normal = DecodeNormal(terrainData.rg);
 	float specular = terrainData.a;
 	float emissive = terrainData.b;
-	specular *= 1.0 - float(specular == 1.0) * 0.5;
+	specular *= 1.0 - float(specular == 1.0) * 0.25;
 
 	if (specular > 0.05 && emissive == 0.0 && z0 > 0.56 && isEyeInWater == 0) {
 		float fresnel = clamp(pow4(1.0 + dot(normal, normalize(viewPos.xyz))), 0.0, 1.0);
