@@ -114,18 +114,6 @@ void main() {
 	float water = float(mat > 0.9 && mat < 1.1);
 	float portal = float(mat > 1.9 && mat < 2.1);
 
-	if (portal > 0.9) {
-		vec2 portalCoord = (worldPos.xy + cameraPosition.xy) * 0.075 + Bayer64(gl_FragCoord.xy) / 128.0;
-
-		vec2 wind = vec2(0.0, frameTimeCounter);
-
-		float noise = texture2D(noisetex, portalCoord * 0.3 - wind * 0.009).r;
-			  noise+= texture2D(noisetex, portalCoord * 0.2 + wind * 0.006).r;
-			  noise+= texture2D(noisetex, portalCoord * 0.1 - wind * 0.003).r;
-
-		albedo.rgb = mix(vec3(0.4, 0.1, 0.5) * (noise - 0.5), vec3(0.5, 0.3, 0.6), 0.5);
-	}
-
 	albedo.a = mix(albedo.a, 1.0, portal);
 
 	if (water > 0.9) {

@@ -30,7 +30,7 @@ vec3 getBloom(vec2 coord) {
 		vec3 blur = (blur1 * 2.11 + blur2 * 1.97 + blur3 * 1.57 + blur4) / 6.65;
 		#endif
 
-		return blur * BLOOM_STRENGTH;
+		return blur * BLOOM_STRENGTH * 0.25;
 	} else {
 		return vec3(0.0);
 	}

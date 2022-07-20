@@ -58,7 +58,7 @@ void getIntegratedEmission(inout vec3 albedo, in vec3 worldPos, in vec2 lightmap
 	} else if (mat > 109.9 && mat < 110.1) { // Glow Lichen
 		newEmission = (0.0125 + pow16(lAlbedo) * 0.125) * (1.0 - lightmap.y * 0.75);
 	} else if (mat > 110.9 && mat < 111.1) { // Redstone Things
-		newEmission = pow32(albedo.r) * 0.125;
+		newEmission = float(albedo.r > 0.9);
 	} else if (mat > 111.9 && mat < 112.1) { // Soul Emissives
 		newEmission = float(lAlbedo > 0.9) * 0.75;
 	} else if (mat > 112.9 && mat < 113.1) { // Brewing Stand
@@ -90,7 +90,7 @@ void getIntegratedEmission(inout vec3 albedo, in vec3 worldPos, in vec2 lightmap
 	} else if (mat > 125.9 && mat < 126.1) { // Nether Wart
 		newEmission = float(lAlbedo > 0.25) * 0.25 + float(lAlbedo > 0.75) * 0.5;
 	} else if (mat > 126.9 && mat < 127.1) { // End Portal Frame
-		newEmission = clamp(pow6(albedo.b - albedo.g) * 128.0 * float(albedo.r < 0.65) * sin(frameTimeCounter), 0.0, 1.0);
+		newEmission = pow6(albedo.b - albedo.g) * 128.0 * float(albedo.r < 0.65) * sin(frameTimeCounter);
 	} else if (mat > 127.9 && mat < 128.1) { // Dragon Egg
 		newEmission = pow2(lAlbedo) * 8.0 * clamp(sin(frameTimeCounter), 0.0, 1.0);
 	} else if (mat > 128.9 && mat < 129.1) {// End Rod
@@ -118,7 +118,7 @@ void getIntegratedEmission(inout vec3 albedo, in vec3 worldPos, in vec2 lightmap
 	}
 	#endif
 
-	emission += max(newEmission, 0.0) * EMISSION_STRENGTH;
+	emission += clamp(newEmission, 0.0, 16.0) * EMISSION_STRENGTH;
 }
 #endif
 
