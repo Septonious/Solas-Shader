@@ -16,12 +16,13 @@ uniform sampler2D texture;
 void main() {
 	vec4 albedo = texture2D(texture, texCoord) * color;
 
-	/* DRAWBUFFERS:0 */
+	/* DRAWBUFFERS:01 */
 	gl_FragData[0] = albedo;
+	gl_FragData[1] = vec4(0.0, 0.0, 0.0, 1.0);
 
 	#ifdef BLOOM
-	/* DRAWBUFFERS:02 */
-	gl_FragData[1].b = 0.125;
+	/* DRAWBUFFERS:012 */
+	gl_FragData[2].b = 0.125;
 	#endif
 
 }
@@ -36,6 +37,18 @@ void main() {
 out vec2 texCoord;
 out vec4 color;
 
+//Uniforms//
+#ifdef TAA
+uniform int frameCounter;
+
+uniform float viewWidth, viewHeight;
+#endif
+
+//Includes//
+#ifdef TAA
+#include "/lib/util/jitter.glsl"
+#endif
+
 //Program//
 void main() {
 	//Coord
@@ -45,6 +58,10 @@ void main() {
     color = gl_Color;
 
 	gl_Position = ftransform();
+
+	#ifdef TAA
+	gl_Position.xy = TAAJitter(gl_Position.xy, gl_Position.w);
+	#endif
 }
 
 #endif
