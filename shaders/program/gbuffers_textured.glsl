@@ -47,6 +47,7 @@ float sunVisibility = clamp((dot(sunVec, upVec) + 0.05) * 10.0, 0.0, 1.0);
 //Includes//
 #include "/lib/util/ToNDC.glsl"
 #include "/lib/util/ToWorld.glsl"
+#include "/lib/util/bayerDithering.glsl"
 
 #if defined OVERWORLD || defined END
 #include "/lib/util/ToShadow.glsl"

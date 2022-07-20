@@ -12,11 +12,11 @@ const float wetnessHalflife = 128.0;
 /*
 const int colortex0Format = R11F_G11F_B10F; //scene
 const int colortex1Format = RGBA8; //translucent
-const int colortex2Format = RGBA8; //normals, emissives, specular
+const int colortex2Format = RGBA16; //normals, emissives, specular
 const int colortex3Format = RGBA8; //vc
 const int colortex4Format = RGBA8; //ao, vc
 const int colortex5Format = RGBA16; //temporal data
-const int colortex6Format = RGB10_A2; //reflection color
+const int colortex6Format = RGBA16; //reflection color
 const int colortex7Format = RGB16; //bloom color, used for bloom based colored lighting :tm: :tatsu_approves:
 */
 
@@ -35,6 +35,8 @@ uniform float aspectRatio;
 #endif
 
 //Includes//
+#include "/lib/util/bayerDithering.glsl"
+
 #ifdef SHARPENING
 #include "/lib/post/sharpenFilter.glsl"
 #endif
@@ -55,7 +57,7 @@ void main() {
 	getChromaticAberration(color, texCoord);
 	#endif
 
-	gl_FragColor.rgb = color;
+	gl_FragColor.rgb = color + Bayer64(gl_FragCoord.xy) / 32.0;
 }
 
 #endif

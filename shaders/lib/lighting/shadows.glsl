@@ -6,10 +6,10 @@ uniform sampler2D shadowcolor0;
 #endif
 
 const vec2 shadowOffsets[4] = vec2[4](
-    vec2( 0.0,  0.75),
-    vec2( 0.0, -0.75),
-    vec2( 0.75, 0.00),
-    vec2(-0.75, 0.00)
+    vec2( 0.00,  0.75),
+    vec2( 0.75,  0.00),
+    vec2( 0.00, -0.75),
+    vec2(-0.75,  0.00)
 );
 
 vec3 calculateShadowPos(vec3 worldPos) {
@@ -27,13 +27,13 @@ vec3 sampleFilteredShadow(vec3 shadowPos, float shadowBlurStrength) {
     float shadow0 = 0.0;
 
     #ifdef GBUFFERS_TERRAIN
-    int shadowSamples = 4;
+    int shadowSamples = SHADOW_SAMPLE_COUNT;
     #else
     int shadowSamples = 1;
     #endif
 
     for (int i = 0; i < shadowSamples; i++) {
-        vec2 shadowOffset = shadowOffsets[i] * shadowBlurStrength;
+        vec2 shadowOffset = shadowOffsets[i] * shadowBlurStrength + Bayer128(gl_FragCoord.xy) / 384.0;
         shadow0 += shadow2D(shadowtex0, vec3(shadowPos.st + shadowOffset, shadowPos.z)).x;
     }
     shadow0 /= float(shadowSamples);
@@ -50,7 +50,7 @@ vec3 sampleFilteredShadow(vec3 shadowPos, float shadowBlurStrength) {
     }
     #endif
 
-    return clamp(shadowCol * (1.0 - shadow0) + shadow0, vec3(0.0), vec3(1.0));
+    return clamp(shadowCol * (1.0 - shadow0) + shadow0, 0.0, 1.0);
 }
 
 vec3 getShadow(vec3 worldPos) {
