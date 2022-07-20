@@ -5,7 +5,7 @@ float GetNoise(vec2 pos) {
 
 void getStars(inout vec3 color, in vec3 worldPos, in float VoU, in float nebulaFactor, in float blackHoleFactor) {
 	#ifdef OVERWORLD
-	float visibility = (1.0 - timeBrightness) * (1.0 - rainStrength) * (pow2(max(VoU, 0.0)) + nebulaFactor);
+	float visibility = (1.0 - sunVisibility) * (1.0 - rainStrength) * (pow2(max(VoU, 0.0)) + nebulaFactor);
 	#else
 	float visibility = 0.25 * (1.0 + nebulaFactor);
 	#endif
@@ -17,11 +17,11 @@ void getStars(inout vec3 color, in vec3 worldPos, in float VoU, in float nebulaF
 			 planeCoord = floor(planeCoord * 256.0) / 512.0;
 
 		float star = GetNoise(planeCoord.xy);
-			  star*= GetNoise(planeCoord.xy + 1.0);
+			  star*= GetNoise(planeCoord.xy + 0.25);
 
 		star = clamp(star - (0.875 - nebulaFactor * 0.125), 0.0, 1.0) * visibility;
 		
-		color.rgb += vec3(4.0) * star;
+		color.rgb += vec3(4.0) * pow4(star);
 	}
 }
 #endif
@@ -52,7 +52,7 @@ void getBlackHole(inout vec3 color, in vec3 worldPos, in float VoS, in float VoU
 #ifdef NEBULA
 void getNebula(inout vec3 color, in vec3 worldPos, in float VoU, inout float nebulaFactor) {
 	#ifdef OVERWORLD
-	float visibility = (1.0 - sunVisibility) * (1.0 - rainStrength) * 0.5 * (1.0 - abs(VoU));
+	float visibility = (1.0 - sunVisibility) * (1.0 - rainStrength) * 0.75 * (1.0 - abs(VoU));
 	#else
 	float visibility = 0.5 * (1.0 - abs(VoU));
 	#endif

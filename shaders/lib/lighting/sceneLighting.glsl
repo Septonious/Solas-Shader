@@ -88,7 +88,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     #endif
 
     //Block Lighting//
-    float blockLightMap = (pow3(lightmap.x) + pow2(lightmap.x) * 0.125) * (1.0 - float(emission > 0.0));
+    float blockLightMap = (pow3(lightmap.x) + pow2(lightmap.x) * 0.125) * float(emission == 0.0);
 
     #ifdef OVERWORLD
     blockLightMap *= 1.0 - lightmap.y * 0.5;
@@ -102,11 +102,11 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     #elif defined BLOOM_COLORED_LIGHTING
     //BLOOM BASED COLORED LIGHTING
     vec3 bloom = texture2D(colortex7, gl_FragCoord.xy / vec2(viewWidth, viewHeight)).rgb;
-         bloom = pow4(bloom) * 128.0;
-         bloom = clamp(bloom * inversesqrt(getLuminance(bloom)), 0.0, 1.0) * (1.0 - float(emission > 0.0));
-         bloom = bloom * (0.125 + lightmap.x * 0.875) * BLOCKLIGHT_I * 3.0;
+         bloom = pow3(bloom) * 128.0;
+         bloom = clamp(bloom * inversesqrt(getLuminance(bloom)), 0.0, 1.0) * float(emission == 0.0);
+         bloom = bloom * (0.1 + lightmap.x * 0.9) * BLOCKLIGHT_I;
     
-    vec3 blockLighting = blockLightCol * blockLightMap * 0.25 + bloom;
+    vec3 blockLighting = blockLightCol * blockLightMap * 0.125 + bloom;
     
     #else
     vec3 blockLighting = blockLightCol * blockLightMap;

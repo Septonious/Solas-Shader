@@ -89,7 +89,7 @@ vec3 getReflection(vec3 viewPos, vec3 normal, vec3 color, float roughness) {
 		reflection = pow(reflection, vec3(2.2));
     }
 
-	vec3 finalReflection = mix(reflectionFade * reflectionFade, reflection, float(reflection != vec3(0.0))) * float(roughness > 0.0);
+	vec3 finalReflection = mix(reflectionFade * reflectionFade, reflection, float(reflection != vec3(0.0)));
 
     #if MC_VERSION >= 11900
     finalReflection *= 1.0 - darknessFactor;

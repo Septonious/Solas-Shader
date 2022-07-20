@@ -126,7 +126,7 @@ void main() {
 	float emissive = terrainData.b;
 	specular *= 1.0 - float(specular == 1.0) * 0.25;
 
-	if (specular > 0.05 && emissive == 0.0 && z0 > 0.56 && isEyeInWater == 0) {
+	if (specular > 0.05 && emissive == 0.0 && roughness >= 0.1 && z0 > 0.56 && isEyeInWater == 0) {
 		float fresnel = clamp(pow4(1.0 + dot(normal, normalize(viewPos.xyz))), 0.0, 1.0);
 
 		vec3 reflection = getReflection(viewPos.xyz, normal, color, roughness);

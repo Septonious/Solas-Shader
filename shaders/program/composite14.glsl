@@ -61,7 +61,7 @@ void main() {
 	/* DRAWBUFFERS:057 */
 	gl_FragData[0].rgb = color;
 	gl_FragData[1].gba = temporalColor;
-	gl_FragData[2].rgb = pow(bloom / 128.0, vec3(0.25));
+	gl_FragData[2].rgb = pow(bloom / 128.0, vec3(0.33));
 }
 
 #endif

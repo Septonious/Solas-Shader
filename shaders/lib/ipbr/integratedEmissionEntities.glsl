@@ -40,7 +40,7 @@ void getIntegratedEmission(in vec3 albedo, inout vec2 lightmap, inout float emis
 
     #ifdef PLAYER_BRIGHT_PARTS_HIGHLIGHT
     if (mat > 106.9 && mat < 107.1) {
-        emission = float(lAlbedo > 0.99) * 0.25;
+        emission = float(pow32(pow32(lAlbedo)) > 0.99) * 0.125;
     }
     #endif
 
