@@ -19,7 +19,14 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 colo
 	//Distant Fade
 	#ifdef DISTANT_FADE
 	if (isEyeInWater == 0) {
-		float vanillaFog = pow3(lViewPos * 0.000125) + pow6(lWorldPos / far);
+		float vanillaFog = pow3(lViewPos * 0.000125);
+
+		#if DISTANT_FADE_STYLE == 0
+		vanillaFog += pow6(lWorldPos / far);
+		#elif DISTANT_FADE_STYLE == 1
+		vanillaFog += pow6(lViewPos / far);
+		#endif
+
 		vanillaFog = clamp(vanillaFog, 0.0, 1.0);
 
 		fogColor *= fog;
