@@ -122,7 +122,7 @@ void main() {
 	}
 
 	if (albedo.a > 0.001) {
-		vec2 lightmap = clamp(lightMapCoord, vec2(0.0), vec2(1.0));
+		vec2 lightmap = clamp(lightMapCoord, 0.0, 1.0);
 
 		#ifdef WATER_NORMALS
 		if (water > 0.5) {

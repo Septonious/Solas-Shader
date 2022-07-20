@@ -30,11 +30,11 @@ vec2 getCloudSample(vec3 pos, in float firstLayer, float secondLayer) {
 
 	float result1 = noise * amount1 - (10.0 + secondLayer * 5.0);
 
-	return clamp(vec2(result0, result1), vec2(0.0), vec2(1.0));
+	return clamp(vec2(result0, result1), 0.0, 1.0);
 }
 
 void computeVolumetricEffects(vec4 translucent, vec3 viewPos, vec2 newTexCoord, float depth0, float depth1, float dither, inout vec4 vlOut1, inout vec4 vlOut2) {
-	if (clamp(texCoord, vec2(0.0), vec2(VOLUMETRICS_RESOLUTION + 1e-3)) == texCoord) {
+	if (clamp(texCoord, 0.0, VOLUMETRICS_RESOLUTION + 1e-3) == texCoord) {
 		#ifdef VL
 		vec4 firstCloudLayer = vec4(0.0);
 		#endif
@@ -99,7 +99,7 @@ void computeVolumetricEffects(vec4 translucent, vec3 viewPos, vec2 newTexCoord, 
 						}
 					}
 
-					vec3 shadow = clamp(shadowCol * shadowBrightness * (1.0 - shadow0) + shadow0, vec3(0.0), vec3(shadowBrightness));
+					vec3 shadow = clamp(shadowCol * shadowBrightness * (1.0 - shadow0) + shadow0, 0.0, shadowBrightness);
 					#endif
 
 					//VL Fog

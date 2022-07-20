@@ -22,6 +22,6 @@ void getSunMoon(inout vec3 color, in vec3 nViewPos, in vec3 lightSun, in vec3 li
 			 sunAndMoon*= pow16(length(sunAndMoon));
 			 sunAndMoon+= sunGlare * lightSun * 0.25 * sunVisibility + moonGlare * lightNight * 0.5 * (1.0 - sunVisibility);
 
-		color += sunAndMoon * visibility;
+		color += clamp(sunAndMoon, 0.0, 1.0) * visibility;
 	}
 }

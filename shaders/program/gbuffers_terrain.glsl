@@ -92,7 +92,7 @@ void main() {
 		vec3 screenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z);
 		vec3 viewPos = ToNDC(screenPos);
 		vec3 worldPos = ToWorld(viewPos);
-		vec2 lightmap = clamp(lightMapCoord, vec2(0.0), vec2(1.0));
+		vec2 lightmap = clamp(lightMapCoord, 0.0, 1.0);
 
 		#ifdef INTEGRATED_EMISSION
 		getIntegratedEmission(albedo.rgb, worldPos, lightmap, emission);

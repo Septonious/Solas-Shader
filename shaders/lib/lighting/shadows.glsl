@@ -6,10 +6,10 @@ uniform sampler2D shadowcolor0;
 #endif
 
 const vec2 shadowOffsets[4] = vec2[4](
-    vec2( 0.0, 0.75),
-    vec2( 0.0,-0.75),
-    vec2( 0.75, 0.0),
-    vec2(-0.75, 0.0)
+    vec2( 0.0,  0.75),
+    vec2( 0.0, -0.75),
+    vec2( 0.75, 0.00),
+    vec2(-0.75, 0.00)
 );
 
 vec3 calculateShadowPos(vec3 worldPos) {
