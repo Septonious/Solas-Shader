@@ -37,9 +37,6 @@ void getIntegratedSpecular(in vec4 albedo, in vec3 normal, in vec2 worldPos, in 
     } else if (mat > 304.9 && mat < 305.1) {// Obsidian
         specular = (0.1 + lAlbedo * 0.1) * 0.5;
         roughness = 1.0;
-    } else if (mat > 305.9 && mat < 306.1) {// Grass Blocks (only diffuse reflections)
-        specular = 0.01;
-        roughness = 0.0;
     }
 
     #ifdef RAIN_PUDDLES
@@ -48,7 +45,7 @@ void getIntegratedSpecular(in vec4 albedo, in vec3 normal, in vec2 worldPos, in 
     specular += wetness * lightmap.y * (1.0 - lightmap.x) * (texture2D(noisetex, (worldPos + cameraPosition.xz) * 0.00125).r - 0.25) * 0.25 * clamp(upNormal, 0.0, 1.0);
     #endif
 
-    specular = max(specular * SPECULAR_STRENGTH, 0.95);
+    specular = clamp(specular * SPECULAR_STRENGTH, 0.0, 0.95);
     roughness *= 0.01;
 }
 #endif
