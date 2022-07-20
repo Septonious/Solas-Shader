@@ -30,7 +30,7 @@ const float shadowBlurStrength = 1.0 / shadowMapResolution;
 #define EMISSION_STRENGTH 8.0 //[2.0 4.0 6.0 8.0 10.0 12.0 14.0 16.0]
 #define RAIN_PUDDLES
 #define INTEGRATED_SPECULAR
-#define SPECULAR_STRENGTH 1.50 //[0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00]
+#define SPECULAR_STRENGTH 1.0 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2.0]
 #define REFLECTION_RT_SAMPLE_COUNT 20 //[4 8 12 16 20 24 28 32]
 #define REFLECTION_TYPE 1 //[0 1]
 
@@ -78,7 +78,9 @@ const float shadowBlurStrength = 1.0 / shadowMapResolution;
 #define WATER_NORMALS
 #define WATER_NORMAL_INTENSITY 0.2 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
 #define WATER_NORMAL_OFFSET 0.50 //[0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00]
+#define WATER_NORMAL_FREQUENCY 1.0 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
 #define WATER_CAUSTICS
+#define WATER_CAUSTICS_STRENGTH 1.00 //[0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00]
 #define WATER_FOG
 #define WATER_FOG_DENSITY 0.7 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
 

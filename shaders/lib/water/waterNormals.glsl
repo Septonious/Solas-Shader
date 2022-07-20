@@ -1,7 +1,7 @@
 float getWaterHeightMap(vec3 worldPos, vec2 offset) {
 	worldPos.xz -= worldPos.y * 0.25;
 
-	offset /= 256.0;
+	offset /= 256.0 * WATER_NORMAL_FREQUENCY;
 	float noiseA = texture2D(noisetex, (worldPos.xz - frameTimeCounter * 0.50) / 256.0 + offset).g;
 	float noiseB = texture2D(noisetex, (worldPos.xz + frameTimeCounter * 0.75) / 128.0 + offset).g;
 
