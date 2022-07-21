@@ -71,7 +71,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     if (subsurface > 0.0){
         float VoL = pow12(clamp(dot(normalize(viewPos.xyz), lightVec) * 0.5 + 0.5, 0.0, 1.0));
         scattering = VoL * subsurface;
-        NoL = mix(NoL, 1.0, sqrt(subsurface) * 0.75);
+        NoL = mix(NoL, 1.0, sqrt(subsurface));
         NoL = mix(NoL, 1.0, scattering);
     }
 
@@ -93,7 +93,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     #endif
 
     //Block Lighting//
-    float blockLightMap = (pow3(lightmap.x) + pow2(lightmap.x) * 0.125) * float(emission == 0.0);
+    float blockLightMap = (pow4(lightmap.x) * 2.0 + pow2(lightmap.x) * 0.125) * float(emission == 0.0);
 
     #ifdef OVERWORLD
     blockLightMap *= 1.0 - lightmap.y * 0.5;

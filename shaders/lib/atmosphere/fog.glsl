@@ -12,19 +12,19 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 colo
 
 	//Fog Altitude
 	float fogAltitude = clamp((worldPos.y + cameraPosition.y) * 0.001 * FOG_HEIGHT, 0.0, 1.0);
-	fog *= 1.0 - fogAltitude * (0.5 + sunVisibility * 0.5);
+	fog *= 1.0 - fogAltitude;
 
-	vec3 fogColor = mix(colorOfTheSky, skyColor, 0.5 * sunVisibility);
+	vec3 fogColor = colorOfTheSky;
 	
 	//Distant Fade
 	#ifdef DISTANT_FADE
 	if (isEyeInWater == 0) {
-		float vanillaFog = pow3(lViewPos * 0.000125);
+		float vanillaFog = pow4(lViewPos * 0.000125);
 
 		#if DISTANT_FADE_STYLE == 0
-		vanillaFog += pow6(lWorldPos / far);
+		vanillaFog += pow8(lWorldPos / far);
 		#elif DISTANT_FADE_STYLE == 1
-		vanillaFog += pow6(lViewPos / far);
+		vanillaFog += pow8(lViewPos / far);
 		#endif
 
 		vanillaFog = clamp(vanillaFog, 0.0, 1.0);
