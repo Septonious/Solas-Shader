@@ -60,7 +60,7 @@ void getIntegratedEmission(inout vec3 albedo, in vec3 worldPos, in vec2 lightmap
 	} else if (mat > 110.9 && mat < 111.1) { // Redstone Things
 		newEmission = float(albedo.r > 0.9);
 	} else if (mat > 111.9 && mat < 112.1) { // Soul Emissives
-		newEmission = float(lAlbedo > 0.9) * 0.75;
+		newEmission = float(lAlbedo > 0.9) * 0.5;
 	} else if (mat > 112.9 && mat < 113.1) { // Brewing Stand
 		newEmission = float(albedo.r > 0.5 && albedo.b < 0.4) * 0.25;
 	} else if (mat > 113.9 && mat < 114.1) { // Glow berries
@@ -86,7 +86,7 @@ void getIntegratedEmission(inout vec3 albedo, in vec3 worldPos, in vec2 lightmap
 	} else if (mat > 123.9 && mat < 124.1) { // Redstone Lamp
 		newEmission = 0.25 + float(lAlbedo > 0.75) * 0.5;
 	} else if (mat > 124.9 && mat < 125.1) { // Sea Lantern
-		newEmission = 0.125 + float(lAlbedo > 0.95);
+		newEmission = 0.125 + float(lAlbedo > 0.95) * 0.5;
 	} else if (mat > 125.9 && mat < 126.1) { // Nether Wart
 		newEmission = float(lAlbedo > 0.25) * 0.25 + float(lAlbedo > 0.75) * 0.5;
 	} else if (mat > 126.9 && mat < 127.1) { // End Portal Frame

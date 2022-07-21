@@ -16,7 +16,7 @@ float getAmbientOcclusion(float z){
 	
 	for(int i = 0; i < 4; i++){
 		vec2 offset = aoOffsets[i] / vec2(viewWidth, viewHeight);
-		float sampleDepth = getLinearDepth(texture2D(depthtex0, texCoord + offset * 3.0).r);
+		float sampleDepth = getLinearDepth(texture2D(depthtex0, texCoord + offset * 2.0).r);
 		float weight = max(1.0 - 2.0 * far * abs(depth0 - sampleDepth), 0.00001);
 		ao += texture2DLod(colortex4, texCoord + offset * 2.0, 1).r * weight;
 		totalWeight += weight;

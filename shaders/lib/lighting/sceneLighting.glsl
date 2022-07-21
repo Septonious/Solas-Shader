@@ -26,6 +26,10 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
 	float vanillaDiffuse = (0.25 * NoU + 0.75) + (0.667 - abs(NoE)) * (1.0 - abs(NoU)) * 0.15;
 		  vanillaDiffuse*= vanillaDiffuse;
 
+    float lViewPos = length(viewPos);
+    float dither = Bayer128(gl_FragCoord.xy) / 256.0;
+    dither = mix(dither, 0.0, clamp(lViewPos * 0.125, 0.0, 1.00));
+
     //Main Scene Lighting (Sunlight & Shadows)
     #if defined OVERWORLD || defined END
     vec3 shadow = vec3(0.0);
@@ -57,7 +61,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
 
             worldPosM += bias;
                         
-            shadow = getShadow(worldPosM);
+            shadow = getShadow(worldPosM, dither);
         }
     }
 
@@ -105,8 +109,8 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     vec3 bloom = texture2D(colortex7, gl_FragCoord.xy / vec2(viewWidth, viewHeight)).rgb;
          bloom = pow3(bloom) * 128.0;
          bloom = clamp(bloom * inversesqrt(getLuminance(bloom)), 0.0, 1.0) * float(emission == 0.0);
-         bloom = bloom * (0.1 + lightmap.x * 0.9) * BLOCKLIGHT_I * BLOOM_STRENGTH;
-         bloom *= 1.25 - clamp(length(viewPos) * 0.125, 0.0, 1.00);
+         bloom *= (0.1 + lightmap.x * 0.9) * BLOCKLIGHT_I * BLOOM_STRENGTH;
+         bloom *= 1.25 - clamp(lViewPos * 0.125, 0.0, 1.00);
     
     vec3 blockLighting = blockLightCol * blockLightMap * 0.125 + bloom;
     

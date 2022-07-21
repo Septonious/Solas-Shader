@@ -23,7 +23,7 @@ vec3 calculateShadowPos(vec3 worldPos) {
     return shadowPos * 0.5 + 0.5;
 }
 
-vec3 sampleFilteredShadow(vec3 shadowPos, float shadowBlurStrength) {
+vec3 sampleFilteredShadow(vec3 shadowPos, float shadowBlurStrength, float dither) {
     float shadow0 = 0.0;
 
     #ifdef GBUFFERS_TERRAIN
@@ -33,7 +33,7 @@ vec3 sampleFilteredShadow(vec3 shadowPos, float shadowBlurStrength) {
     #endif
 
     for (int i = 0; i < shadowSamples; i++) {
-        vec2 shadowOffset = shadowOffsets[i] * shadowBlurStrength + Bayer128(gl_FragCoord.xy) / 384.0;
+        vec2 shadowOffset = shadowOffsets[i] * shadowBlurStrength + dither;
         shadow0 += shadow2D(shadowtex0, vec3(shadowPos.st + shadowOffset, shadowPos.z)).x;
     }
     shadow0 /= float(shadowSamples);
@@ -42,7 +42,7 @@ vec3 sampleFilteredShadow(vec3 shadowPos, float shadowBlurStrength) {
     #ifdef SHADOW_COLOR
     if (shadow0 < 0.999) {
         for (int i = 0; i < shadowSamples; i++) {
-            vec2 shadowOffset = shadowOffsets[i] * shadowBlurStrength;
+            vec2 shadowOffset = shadowOffsets[i] * shadowBlurStrength + dither;
             shadowCol += texture2D(shadowcolor0, shadowPos.st + shadowOffset).rgb *
                          shadow2D(shadowtex1, vec3(shadowPos.st + shadowOffset, shadowPos.z)).x;
         }
@@ -53,9 +53,9 @@ vec3 sampleFilteredShadow(vec3 shadowPos, float shadowBlurStrength) {
     return clamp(shadowCol * (1.0 - shadow0) + shadow0, 0.0, 1.0);
 }
 
-vec3 getShadow(vec3 worldPos) {
+vec3 getShadow(vec3 worldPos, float dither) {
     vec3 shadowPos = calculateShadowPos(worldPos);
-    vec3 shadow = sampleFilteredShadow(shadowPos, shadowBlurStrength);
+    vec3 shadow = sampleFilteredShadow(shadowPos, shadowBlurStrength, dither);
 
     return shadow;
 }
