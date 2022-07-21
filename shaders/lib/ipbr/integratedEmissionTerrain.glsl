@@ -113,7 +113,7 @@ void getIntegratedEmission(inout vec3 albedo, in vec3 worldPos, in vec2 lightmap
 	#if defined OVERWORLD && defined EMISSIVE_FLOWERS
 	if (isPlant > 0.9 && isPlant < 1.1){ // Flowers
 		if (albedo.b > albedo.g || albedo.r > albedo.g) {
-			newEmission = 0.125 * lAlbedo * (1.0 - rainStrength);
+			newEmission = 0.25 * lAlbedo * (1.0 - rainStrength);
 		}
 	}
 	#endif
