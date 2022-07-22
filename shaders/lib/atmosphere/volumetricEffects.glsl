@@ -1,5 +1,4 @@
 float amount1 = mix(VC_AMOUNT * (1.0 + moonPhase / 21.0), 2.0, rainStrength);
-const float distanceThreshold = VC_SAMPLES * 32.0;
 
 float get3DNoise(vec3 pos) {
 	pos *= 0.4 + moonPhase / 21.0;
@@ -35,34 +34,30 @@ vec2 getCloudSample(vec3 pos, in float firstLayer, float secondLayer) {
 
 void computeVolumetricEffects(vec4 translucent, vec3 viewPos, vec2 newTexCoord, float depth0, float depth1, float dither, inout vec4 vlOut1, inout vec4 vlOut2) {
 	if (clamp(texCoord, 0.0, VOLUMETRICS_RESOLUTION + 1e-3) == texCoord) {
-		#ifdef VL
-		vec4 firstCloudLayer = vec4(0.0);
-		#endif
-
-		vec4 secondCloudLayer = vec4(0.0);
+		vec4 vl = vec4(0.0);
+		vec4 vc = vec4(0.0);
 
 		#ifdef VL
 		vec3 shadowCol = vec3(0.0);
 
-		float shadowBrightness = 16.0 * (1.0 + float(isEyeInWater == 1) * 7.0);
-		float lViewPos = length(viewPos.xz) * 0.000125;
-		float firstLayerVisibility = clamp(VL_OPACITY, cameraPosition.y * 0.005, 1.0) * (1.0 - dfade * 0.6) * VL_OPACITY;
+		float firstLayerVisibility = min(clamp(VL_OPACITY, cameraPosition.y * 0.005, 1.0) * (1.0 - dfade * 0.75) * (1.0 + float(isEyeInWater == 1)) * VL_OPACITY, 1.0);
 		#endif
+
+		float lViewPos = length(viewPos.xz) * 0.000125;
 
 		vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.0);
 		float VoL = clamp(dot(normalize(viewPos), lightVec), 0.0, 1.0) * 0.5;
-		lightCol *= 1.0 + VoL + pow6(VoL);
+		lightCol *= 1.0 + VoL + pow4(VoL);
 
-		float currentDistanceFactor = 200.0 / VC_SAMPLES * (far / 250.0) * (1.0 - float(isEyeInWater == 1) * 0.5);
+		float end = VC_DISTANCE * far;
+		float start = 0.25 + dither * VC_QUALITY;
 
-		for(int i = 0; i < VC_SAMPLES; i++) {
-			float currentDistance = (i + dither) * currentDistanceFactor;
-
-			if (depth1 < currentDistance || (depth0 < currentDistance && translucent.rgb == vec3(0.0))) {
+		for (start; start < end; start += VC_QUALITY) {
+			if (depth1 < start || (depth0 < start && translucent.rgb == vec3(0.0))) {
 				break;
 			}
 
-			vec3 worldPos = calculateWorldPos(getLogarithmicDepth(currentDistance), newTexCoord);
+			vec3 worldPos = calculateWorldPos(getLogarithmicDepth(start), newTexCoord);
 			vec3 shadowPos = calculateShadowPos(worldPos);
 			vec3 playerPos = worldPos + cameraPosition;
 
@@ -80,16 +75,17 @@ void computeVolumetricEffects(vec4 translucent, vec3 viewPos, vec2 newTexCoord, 
 			#endif
 
 			float secondLayer = abs(VC_HEIGHT - playerPos.y) / VC_STRETCHING;
-			float cloudVisibility = (1.0 - float(shadow1 != 1.0) * float(eyeBrightnessSmooth.y <= 150.0)) * float(lWorldPos < distanceThreshold) * float(firstLayer < 4.0 || secondLayer < 2.0);
+			float cloudVisibility = (1.0 - float(shadow1 != 1.0) * float(eyeBrightnessSmooth.y <= 150.0)) * float(lWorldPos < end) * float(firstLayer < 4.0 || secondLayer < 2.0);
 
 			if (cloudVisibility > 0.5) {
 				vec2 noise = getCloudSample(playerPos, firstLayer, secondLayer);
 
 				if (noise != vec2(0.0)) {
-					#ifdef VL
-					//Distant Fade for VL
-					float vanillaFog = 1.0 - clamp(pow3(lViewPos) + pow6(lWorldPos / far), 0.0, 1.0);
+					//Distant Fade
+					float vanillaFog0 = 1.0 - clamp(pow3(lViewPos) + pow6(lWorldPos / far), 0.0, 1.0);
+					float vanillaFog1 = 1.0 - clamp(pow2(lViewPos) + pow4(lWorldPos / far * 0.2), 0.0, 1.0);
 
+					#ifdef VL
 					//Colored Shadows
 					#ifdef SHADOW_COLOR
 					if (shadow0 < 1.0) {
@@ -99,11 +95,11 @@ void computeVolumetricEffects(vec4 translucent, vec3 viewPos, vec2 newTexCoord, 
 						}
 					}
 
-					vec3 shadow = clamp(shadowCol * shadowBrightness * (1.0 - shadow0) + shadow0, 0.0, shadowBrightness);
+					vec3 shadow = clamp(shadowCol * 4.0 * (1.0 - shadow0) + shadow0, 0.0, 1.0);
 					#endif
 
 					//VL Fog
-					firstLayerVisibility *= vanillaFog;
+					firstLayerVisibility *= vanillaFog0;
 
 					float cloudLighting0 = clamp(smoothstep(VL_HEIGHT + VL_STRETCHING * noise.x, VL_HEIGHT - VL_STRETCHING * noise.x, playerPos.y) * 0.25 + noise.x * 0.75, 0.0, 1.0);
 					vec4 cloudsColor0 = vec4(0.0);
@@ -120,11 +116,10 @@ void computeVolumetricEffects(vec4 translucent, vec3 viewPos, vec2 newTexCoord, 
 					//Volumetric Clouds
 					float cloudLighting1 = clamp(smoothstep(VC_HEIGHT + VC_STRETCHING * noise.y, VC_HEIGHT - VC_STRETCHING * noise.y, playerPos.y) * 0.5 + noise.y * 0.5, 0.0, 1.0);
 					vec4 cloudsColor1 = vec4(mix(lightCol, ambientCol, cloudLighting1), noise.y);
-						cloudsColor1.a *= VC_OPACITY;
-						cloudsColor1.rgb *= cloudsColor1.a;
+						 cloudsColor1.rgb *= cloudsColor1.a;
 
 					//Trabslucency Blending
-					if (depth0 < currentDistance) {
+					if (depth0 < start) {
 						#ifdef VL
 						cloudsColor0.rgb *= translucent.rgb * translucent.rgb;
 						#endif
@@ -133,20 +128,17 @@ void computeVolumetricEffects(vec4 translucent, vec3 viewPos, vec2 newTexCoord, 
 					}
 
 					#ifdef VL
-					firstCloudLayer += cloudsColor0 * (1.0 - firstCloudLayer.a) * (1.0 - secondCloudLayer.a);
+					vl += cloudsColor0 * (1.0 - vl.a) * (1.0 - vc.a);
 					#endif
 
-					secondCloudLayer += cloudsColor1 * (1.0 - secondCloudLayer.a);
+					vc += cloudsColor1 * (1.0 - vc.a) * vanillaFog1;
 				}
 			}
 		}
 
-		secondCloudLayer.rgb = mix(secondCloudLayer.rgb, secondCloudLayer.rgb * skyColor * 1.5, timeBrightness);
+		vc.rgb = mix(vc.rgb, vc.rgb * skyColor * 1.5, timeBrightness * (1.0 - rainStrength));
 
-		#ifdef VL
-		vlOut1 = firstCloudLayer;
-		#endif
-
-		vlOut2 = secondCloudLayer;
+		vlOut1 = vl;
+		vlOut2 = vc;
 	}
 }

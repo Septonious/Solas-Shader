@@ -24,7 +24,7 @@ uniform float timeBrightness, timeAngle, rainStrength;
 #if MC_VERSION >= 11900
 uniform float darknessFactor;
 #endif
-
+uniform float viewWidth, viewHeight;
 uniform float far, frameTimeCounter;
 uniform float blindFactor;
 
@@ -134,8 +134,6 @@ void main() {
 
 			getSunMoon(skyColor, nViewPos, lightSun, lightNight, VoS, VoM, VoU, ug);
 		}
-
-		skyColor += Bayer64(gl_FragCoord.xy) / 64.0;
 		#endif
 
 		#ifdef END

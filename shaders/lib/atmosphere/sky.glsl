@@ -38,5 +38,5 @@ vec3 getAtmosphere(vec3 viewPos) {
     //Underground Sky
 	sky = mix(minLightCol, sky, ug);
 
-    return sky + (Bayer128(gl_FragCoord.xy) - 0.5) / 128.0;
+    return sky + Bayer64(gl_FragCoord.xy) / 64.0;
 }

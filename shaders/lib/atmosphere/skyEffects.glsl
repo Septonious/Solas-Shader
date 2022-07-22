@@ -5,13 +5,13 @@ float GetNoise(vec2 pos) {
 
 void getStars(inout vec3 color, in vec3 worldPos, in float VoU, in float nebulaFactor, in float blackHoleFactor) {
 	#ifdef OVERWORLD
-	float visibility = (1.0 - sunVisibility) * (1.0 - rainStrength) * (pow2(max(VoU, 0.0)) + nebulaFactor);
+	float visibility = (1.0 - sunVisibility) * (1.0 - rainStrength) * (0.5 + nebulaFactor * 0.5);
 	#else
 	float visibility = 0.25 * (1.0 + nebulaFactor);
 	#endif
 
 	if (visibility > 0.0) {
-		vec2 planeCoord = worldPos.xz / (worldPos.y + length(worldPos.xz));
+		vec2 planeCoord = worldPos.xz / (length(worldPos.y) + length(worldPos.xz));
 			 planeCoord+= frameTimeCounter * 0.001 * (1.0 + blackHoleFactor * 100.0);
 			 planeCoord+= cameraPosition.xz * 0.0001;
 			 planeCoord = floor(planeCoord * 512.0) / 256.0;
@@ -19,7 +19,7 @@ void getStars(inout vec3 color, in vec3 worldPos, in float VoU, in float nebulaF
 		float star = GetNoise(planeCoord.xy);
 			  star*= GetNoise(planeCoord.xy + 0.25);
 
-		star = clamp(star - (0.875 - nebulaFactor * 0.25), 0.0, 1.0) * visibility;
+		star = clamp(star - (0.875 - nebulaFactor * 0), 0.0, 1.0) * visibility;
 		
 		color.rgb += vec3(64.0 * (1.0 + pow4(star))) * pow2(star);
 	}
@@ -52,7 +52,7 @@ void getBlackHole(inout vec3 color, in vec3 worldPos, in float VoS, in float VoU
 #ifdef NEBULA
 void getNebula(inout vec3 color, in vec3 worldPos, in float VoU, inout float nebulaFactor) {
 	#ifdef OVERWORLD
-	float visibility = (1.0 - sunVisibility) * (1.0 - rainStrength) * 0.75 * (1.0 - abs(VoU));
+	float visibility = (1.0 - sunVisibility) * 0.5 * (1.0 - rainStrength);
 	#else
 	float visibility = 0.5 * (1.0 - abs(VoU));
 	#endif
@@ -61,14 +61,17 @@ void getNebula(inout vec3 color, in vec3 worldPos, in float VoU, inout float neb
 		vec2 planeCoord = worldPos.xz / (length(worldPos.y) + length(worldPos.xz));
 			 planeCoord+= frameTimeCounter * 0.005;
 			 planeCoord+= cameraPosition.xz * 0.0001;
+			 #ifdef OVERWORLD
+			 planeCoord *= 2.5;
+			 #endif
 
 		float nebulaNoise  = texture2D(noisetex, planeCoord * 0.005).r;
-			  nebulaNoise -= texture2D(noisetex, planeCoord * 0.050).g * 0.1;
-			  nebulaNoise -= texture2D(noisetex, planeCoord * 0.125).b * 0.05;
+			  nebulaNoise -= texture2D(noisetex, planeCoord * 0.050).g * 0.08;
+			  nebulaNoise -= texture2D(noisetex, planeCoord * 0.125).b * 0.04;
 			  nebulaNoise = max(nebulaNoise, 0.0);
 
 		#ifdef OVERWORLD
-		color += lightNight * visibility * (nebulaNoise + pow2(nebulaNoise));
+		color += lightNight * visibility * (nebulaNoise + pow2(nebulaNoise) * 2.0) * 0.5;
 		#else
 		color += mix(mix(endLightCol, endLightColSqrt, pow2(nebulaNoise)), endAmbientCol, nebulaNoise) * visibility * pow2(nebulaNoise + pow2(nebulaNoise));
 		#endif

@@ -38,7 +38,7 @@ void main() {
     vec4 albedo = texture2D(tex, texCoord) * color;
 
     #ifdef SHADOW_COLOR
-	albedo.rgb *= 1.0 - pow8(pow8(albedo.a));
+	albedo.rgb *= 1.0 - pow8(pow32(albedo.a));
 
 	#ifdef WATER_CAUSTICS
 	float water = float(mat > 0.98 && mat < 1.02);

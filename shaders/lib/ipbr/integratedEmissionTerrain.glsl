@@ -94,7 +94,7 @@ void getIntegratedEmission(inout vec3 albedo, in vec3 worldPos, in vec2 lightmap
 	} else if (mat > 127.9 && mat < 128.1) { // Dragon Egg
 		newEmission = pow2(lAlbedo) * 8.0 * clamp(sin(frameTimeCounter), 0.0, 1.0);
 	} else if (mat > 128.9 && mat < 129.1) {// End Rod
-		newEmission = pow4(lAlbedo) * 0.5;
+		newEmission = pow4(lAlbedo) * 0.6;
 		albedo.rgb *= endLightColSqrt;
 	} else if (mat > 129.9 && mat < 130.1) { // Powered Rail
 		newEmission = float(albedo.r > 0.5 && albedo.g < 0.25) * 0.05;

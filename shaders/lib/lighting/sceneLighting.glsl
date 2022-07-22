@@ -27,7 +27,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
 		  vanillaDiffuse*= vanillaDiffuse;
 
     float lViewPos = length(viewPos);
-    float dither = Bayer128(gl_FragCoord.xy) / 256.0;
+    float dither = Bayer128(gl_FragCoord.xy) / 384.0;
     dither = mix(dither, 0.0, clamp(lViewPos * 0.125, 0.0, 1.00));
 
     //Main Scene Lighting (Sunlight & Shadows)
