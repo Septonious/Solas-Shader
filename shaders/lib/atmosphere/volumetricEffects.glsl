@@ -47,9 +47,9 @@ void computeVolumetricEffects(vec4 translucent, vec3 viewPos, vec2 newTexCoord, 
 
 		vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.0);
 		float VoL = clamp(dot(normalize(viewPos), lightVec), 0.0, 1.0) * 0.5;
-		lightCol *= 1.0 + VoL + pow4(VoL);
+		lightCol *= 1.0 + pow6(VoL);
 
-		float end = VC_DISTANCE * far;
+		float end = min(VC_DISTANCE * far, 1024.0);
 		float start = 0.25 + dither * VC_QUALITY;
 
 		for (start; start < end; start += VC_QUALITY) {
@@ -83,7 +83,7 @@ void computeVolumetricEffects(vec4 translucent, vec3 viewPos, vec2 newTexCoord, 
 				if (noise != vec2(0.0)) {
 					//Distant Fade
 					float vanillaFog0 = 1.0 - clamp(pow3(lViewPos) + pow6(lWorldPos / far), 0.0, 1.0);
-					float vanillaFog1 = 1.0 - clamp(pow2(lViewPos) + pow4(lWorldPos / far * 0.2), 0.0, 1.0);
+					float vanillaFog1 = 1.0 - clamp(pow4(lViewPos) + (lWorldPos / far * 0.1), 0.0, 1.0);
 
 					#ifdef VL
 					//Colored Shadows

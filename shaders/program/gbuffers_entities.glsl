@@ -105,7 +105,7 @@ void main() {
 		#endif
 	#else
 		/* DRAWBUFFERS:06 */
-		gl_FragData[1].rgb = albedo.rgb;
+		gl_FragData[1] = vec4(albedo.rgb, 0.0001);
 
 		#if defined BLOOM || defined INTEGRATED_SPECULAR
 		/* DRAWBUFFERS:062 */

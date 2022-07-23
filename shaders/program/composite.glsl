@@ -91,6 +91,7 @@ void main() {
 	vlOut1 = sqrt(vlOut1);
 	vlOut2 = sqrt(vlOut2);
 
+	if (isEyeInWater != 1) vlOut1 *= ug;
 	vlOut2 *= ug;
 
 	#if MC_VERSION >= 11900
