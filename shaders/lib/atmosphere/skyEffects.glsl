@@ -29,13 +29,17 @@ void getStars(inout vec3 color, in vec3 worldPos, in float VoU, in float nebulaF
 #ifdef NEBULA
 void getNebula(inout vec3 color, in vec3 worldPos, in float VoU, inout float nebulaFactor) {
 	#ifdef OVERWORLD
-	float visibility = (1.0 - sunVisibility) * 0.5 * (1.0 - rainStrength);
+	float visibility = (1.0 - sunVisibility) * 0.5 * (1.0 - rainStrength) * max(VoU, 0.0);
 	#else
 	float visibility = 1.0 - abs(VoU);
 	#endif
 
 	if (visibility > 0.0) {
+		#ifdef OVERWORLD
+		vec2 planeCoord = worldPos.xz / (worldPos.y + length(worldPos));
+		#else
 		vec2 planeCoord = worldPos.xz / length(worldPos);
+		#endif
 			 planeCoord+= frameTimeCounter * 0.01;
 			 planeCoord+= cameraPosition.xz * 0.001;
 			 #ifdef OVERWORLD

@@ -22,10 +22,6 @@ uniform sampler2D colortex5;
 #endif
 
 //Optifine Constants//
-#ifdef BLOOM
-const bool colortex1MipmapEnabled = true;
-#endif
-
 #ifdef TAA
 const bool colortex5Clear = false;
 #endif

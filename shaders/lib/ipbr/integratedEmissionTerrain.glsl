@@ -54,7 +54,7 @@ void getIntegratedEmission(inout vec3 albedo, in vec3 worldPos, in vec2 lightmap
 	} else if (mat > 105.9 && mat < 106.1) { // Warped Nylium
 		newEmission = float(albedo.g > albedo.b && albedo.g > albedo.r) * pow(float(albedo.g - albedo.b), 3.0);
 	} else if (mat > 107.9 && mat < 108.1) { // Amethyst
-		newEmission = pow8(lAlbedo) * 0.25;
+		newEmission = pow4(lAlbedo) * 0.25;
 	} else if (mat > 109.9 && mat < 110.1) { // Glow Lichen
 		newEmission = (0.0125 + pow16(lAlbedo) * 0.125) * (1.0 - lightmap.y * 0.75);
 	} else if (mat > 110.9 && mat < 111.1) { // Redstone Things
@@ -66,7 +66,7 @@ void getIntegratedEmission(inout vec3 albedo, in vec3 worldPos, in vec2 lightmap
 	} else if (mat > 113.9 && mat < 114.1) { // Glow berries
 		newEmission = float(albedo.r > 0.5) * 0.5;
 	} else if (mat > 114.9 && mat < 115.1) { // Torches
-		newEmission = float(lAlbedo > 0.99) * 0.5;
+		newEmission = float(lAlbedo > 0.99) * 0.25;
 	} else if (mat > 115.9 && mat < 116.1) { // Furnaces
 		newEmission = float(albedo.r > 0.8 || (albedo.r > 0.6 && albedo.b < 0.5)) * 0.125;
 	} else if (mat > 116.9 && mat < 117.1) { // Chorus
@@ -74,19 +74,19 @@ void getIntegratedEmission(inout vec3 albedo, in vec3 worldPos, in vec2 lightmap
 	} else if (mat > 117.9 && mat < 118.1) { // Enchanting Table
 		newEmission = float(lAlbedo > 0.75) * 0.25;
 	} else if (mat > 118.9 && mat < 119.1) { // Soul Campfire
-		newEmission = float(albedo.b > albedo.r || albedo.b > albedo.g) * 0.25;
+		newEmission = float(albedo.b > albedo.r || albedo.b > albedo.g) * 0.5;
 	} else if (mat > 119.9 && mat < 120.1) { // Normal Campfire && Magma Block
-		newEmission = float(albedo.r > 0.65 && albedo.b < 0.35) * 0.25;
+		newEmission = float(albedo.r > 0.65 && albedo.b < 0.35) * 0.5;
 	} else if (mat > 120.9 && mat < 121.9) { // Redstone Block
-		newEmission = 0.125 + lAlbedo * 0.125;
+		newEmission = 0.25 + pow16(lAlbedo) * 0.25;
 	} else if (mat > 121.9 && mat < 122.1) { // Glowstone, Fire, etc
-		newEmission = 0.25;
+		newEmission = 0.5;
 	} else if (mat > 122.9 && mat < 123.1) { // Sculks
 		newEmission = float(lAlbedo > 0.05 && albedo.r < 0.25) * 0.125;
 	} else if (mat > 123.9 && mat < 124.1) { // Redstone Lamp
 		newEmission = 0.25 + float(lAlbedo > 0.75) * 0.5;
 	} else if (mat > 124.9 && mat < 125.1) { // Sea Lantern
-		newEmission = 0.125 + float(lAlbedo > 0.95) * 0.5;
+		newEmission = 0.125 + float(lAlbedo > 0.95) * 0.875;
 	} else if (mat > 125.9 && mat < 126.1) { // Nether Wart
 		newEmission = float(lAlbedo > 0.25) * 0.25 + float(lAlbedo > 0.75) * 0.5;
 	} else if (mat > 126.9 && mat < 127.1) { // End Portal Frame
@@ -113,7 +113,7 @@ void getIntegratedEmission(inout vec3 albedo, in vec3 worldPos, in vec2 lightmap
 	#if defined OVERWORLD && defined EMISSIVE_FLOWERS
 	if (isPlant > 0.9 && isPlant < 1.1){ // Flowers
 		if (albedo.b > albedo.g || albedo.r > albedo.g) {
-			newEmission = 0.25 * lAlbedo * (1.0 - rainStrength);
+			newEmission = 0.5 * lAlbedo * (1.0 - rainStrength);
 		}
 	}
 	#endif
