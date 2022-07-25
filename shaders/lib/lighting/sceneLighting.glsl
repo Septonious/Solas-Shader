@@ -32,8 +32,14 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
 
     //Main Scene Lighting (Sunlight & Shadows)
     #if defined OVERWORLD || defined END
+    bool skyLightFactor = true;
+
+    #ifdef OVERWORLD
+    skyLightFactor = pow4(lightmap.y) > 0.001;
+    #endif
+
     vec3 shadow = vec3(0.0);
-    if (pow4(lightmap.y) > 0.001 && (NoL > 0.0 || subsurface > 0.0)) {
+    if (skyLightFactor && (NoL > 0.0 || subsurface > 0.0)) {
         //Shadows without peter-panning from Emin's Complementary Reimagined shaderpack, tysm for allowing me to use them ^^
         //Developed by Emin#7309 and gri573#7741
         float shadowLength = shadowDistance * 0.9166667 - length(vec4(worldPos.x, worldPos.y, worldPos.y, worldPos.z));

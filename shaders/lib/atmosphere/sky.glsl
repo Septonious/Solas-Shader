@@ -6,12 +6,6 @@ vec3 downScatteringColor = vec3(1.45, 0.35, 0.20) * 1.25;
 vec3 getAtmosphere(vec3 viewPos) {
     vec3 nViewPos = normalize(viewPos);
 
-    float dither = Bayer64(gl_FragCoord.xy);
-
-    #ifdef TAA
-    dither = fract(dither + frameTimeCounter * 16.0);
-    #endif
-
     float VoS = clamp(dot(nViewPos, sunVec), 0.0, 1.0);
     float VoU = dot(nViewPos, upVec);
 
@@ -44,5 +38,5 @@ vec3 getAtmosphere(vec3 viewPos) {
     //Underground Sky
 	sky = mix(minLightCol, sky, ug);
 
-    return sky + dither / 16.0;
+    return sky;
 }

@@ -31,13 +31,13 @@ void getNebula(inout vec3 color, in vec3 worldPos, in float VoU, inout float neb
 	#ifdef OVERWORLD
 	float visibility = (1.0 - sunVisibility) * 0.5 * (1.0 - rainStrength);
 	#else
-	float visibility = 0.4 * (1.0 - abs(VoU));
+	float visibility = 1.0 - abs(VoU);
 	#endif
 
 	if (visibility > 0.0) {
-		vec2 planeCoord = worldPos.xz / (length(worldPos.y) + length(worldPos.xz));
-			 planeCoord+= frameTimeCounter * 0.005;
-			 planeCoord+= cameraPosition.xz * 0.0001;
+		vec2 planeCoord = worldPos.xz / length(worldPos);
+			 planeCoord+= frameTimeCounter * 0.01;
+			 planeCoord+= cameraPosition.xz * 0.001;
 			 #ifdef OVERWORLD
 			 planeCoord *= 2.5;
 			 #endif
@@ -50,7 +50,7 @@ void getNebula(inout vec3 color, in vec3 worldPos, in float VoU, inout float neb
 		#ifdef OVERWORLD
 		color += lightNight * visibility * (nebulaNoise + pow2(nebulaNoise) * 2.0) * 0.5;
 		#else
-		color += mix(mix(endLightCol, endLightColSqrt, pow2(nebulaNoise)), endAmbientCol, nebulaNoise) * visibility * pow2(nebulaNoise + pow2(nebulaNoise));
+		color += mix(mix(endAmbientCol, endAmbientColSqrt, pow2(nebulaNoise)), vec3(0.5, 0.25, 0.2) * endLightColSqrt, pow4(nebulaNoise)) * visibility * nebulaNoise;
 		#endif
 
 		nebulaFactor = nebulaNoise * visibility;

@@ -67,9 +67,9 @@ float sunVisibility = clamp(dot(sunVec, upVec) + 0.05, 0.0, 0.1) * 10.0;
 
 //Includes//
 #include "/lib/color/dimensionColor.glsl"
+#include "/lib/util/bayerDithering.glsl"
 
 #ifdef OVERWORLD
-#include "/lib/util/bayerDithering.glsl"
 #include "/lib/atmosphere/sky.glsl"
 #include "/lib/atmosphere/sunMoon.glsl"
 #endif
@@ -110,6 +110,12 @@ void main() {
 	#endif
 
 	if (z0 == 1.0) { //Sky rendering
+		float dither = Bayer64(gl_FragCoord.xy);
+
+		#ifdef TAA
+		dither = fract(dither + frameTimeCounter * 16.0);
+		#endif
+
 		#ifdef OVERWORLD
 		if (ug != 0.0) {
 			#ifdef NEBULA
@@ -156,7 +162,7 @@ void main() {
 
 		skyColor *= 1.0 - blindFactor;
 
-		color = skyColor;
+		color = skyColor + dither / 16.0;
 	} else {
 		Fog(color, viewPos.xyz, worldPos.xyz, skyColor);
 	}
