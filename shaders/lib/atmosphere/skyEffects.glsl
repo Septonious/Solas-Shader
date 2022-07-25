@@ -21,7 +21,7 @@ void getStars(inout vec3 color, in vec3 worldPos, in float VoU, in float nebulaF
 
 		star = clamp(star - (0.875 - nebulaFactor * 0.125), 0.0, 1.0) * visibility;
 		
-		color.rgb += vec3(64.0 * (1.0 + pow4(star))) * pow2(star);
+		color += vec3(32.0 * (1.0 + pow4(star))) * pow2(star);
 	}
 }
 #endif
@@ -54,29 +54,6 @@ void getNebula(inout vec3 color, in vec3 worldPos, in float VoU, inout float neb
 		#endif
 
 		nebulaFactor = nebulaNoise * visibility;
-	}
-}
-#endif
-
-//cringe
-#ifdef END_BLACK_HOLE
-void getBlackHole(inout vec3 color, in vec3 worldPos, in float VoS, in float VoU, inout float blackHoleFactor) {
-	VoU = clamp(VoU, 0.0, 1.0);
-	float visibility = pow8(VoU);
-
-	if (visibility > 0.0) {
-		vec2 planeCoord = worldPos.yy / length(worldPos);
-
-		float nebulaNoise  = texture2D(noisetex, planeCoord * 0.005).r;
-			  nebulaNoise -= texture2D(noisetex, planeCoord * 0.050).r * 0.10;
-			  nebulaNoise -= texture2D(noisetex, planeCoord * 0.125).r * 0.05;
-			  nebulaNoise = max(nebulaNoise, 0.0);
-
-		vec3 blackHoleColor = mix(endLightColSqrt, endAmbientCol, pow32(nebulaNoise)) * visibility * pow2(nebulaNoise);
-		color += blackHoleColor;
-		color = mix(color, vec3(0.0), float(length(blackHoleColor) > 0.6));
-
-		blackHoleFactor = nebulaNoise * visibility;
 	}
 }
 #endif

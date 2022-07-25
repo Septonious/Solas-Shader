@@ -147,10 +147,6 @@ void main() {
 		getNebula(skyColor, worldPos, VoU, nebulaFactor);
 		#endif
 
-		#ifdef END_BLACK_HOLE
-		getBlackHole(skyColor, worldPos, VoS, VoU, blackHoleFactor);
-		#endif
-
 		#ifdef END_STARS
 		getStars(skyColor, worldPos, VoU, nebulaFactor, blackHoleFactor);
 		#endif

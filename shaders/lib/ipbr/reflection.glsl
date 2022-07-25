@@ -57,23 +57,15 @@ vec3 getReflection(vec3 viewPos, vec3 normal, vec3 color, float roughness) {
 	vec3 reflectionFade = endLightCol * 0.15;
 
 	if (eBS != 0.0 && roughness <= 0.1) {
-		#if defined END_NEBULA || defined END_BLACK_HOLE || defined END_STARS
+		#if defined END_NEBULA || defined END_STARS
 		vec3 worldPos = mat3(gbufferModelViewInverse) * reflectedVector;
 		vec3 nViewPos = normalize(reflectedVector);
-
-		#ifdef END_BLACK_HOLE
-		float VoS = clamp(dot(nViewPos, sunVec), 0.0, 1.0);
-		#endif
 
 		float VoU = dot(nViewPos, upVec);
 		#endif
 
 		#ifdef END_NEBULA
 		getNebula(reflectionFade, worldPos, VoU, nebulaFactor);
-		#endif
-
-		#ifdef END_BLACK_HOLE
-		getBlackHole(reflectionFade, worldPos, VoS, VoU, blackHoleFactor);
 		#endif
 
 		#ifdef END_STARS

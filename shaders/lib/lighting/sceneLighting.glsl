@@ -90,7 +90,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     #endif
 
     #ifdef END
-    vec3 sceneLighting = mix(endAmbientCol, endLightCol, fullShadow) * 0.25;
+    vec3 sceneLighting = mix(endAmbientCol, endLightCol, fullShadow) * 0.125;
     #endif
     #endif
 

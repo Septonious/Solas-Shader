@@ -44,7 +44,7 @@ const float shadowBlurStrength = 1.0 / shadowMapResolution;
 #define RAINBOW
 #define NEBULA
 #define END_NEBULA
-//#define END_BLACK_HOLE
+#define END_BLACK_HOLE
 #define END_STARS
 #define STARS
 #define AURORA
