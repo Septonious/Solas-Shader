@@ -10,7 +10,7 @@ const float wetnessHalflife = 128.0;
 
 //Optifine Constants//
 /*
-const int colortex0Format = R11F_G11F_B10F; //scene
+const int colortex0Format = RGB16; //scene
 const int colortex1Format = RGBA8; //translucent
 const int colortex2Format = RGBA16; //normals, emissives, specular
 const int colortex3Format = RGBA8; //vc

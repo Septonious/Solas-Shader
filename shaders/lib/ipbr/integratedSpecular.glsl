@@ -21,7 +21,7 @@ void getIntegratedSpecular(in vec4 albedo, in vec3 normal, in vec2 worldPos, in 
 
     if (mat > 299.9 && mat < 300.1) {// Sand
         specular = (float(albedo.b > 0.65) * 0.0625 + float(albedo.b > 0.75) * 0.125) * 0.125;
-        roughness = 0.125;
+        roughness = 0.1;
     } else if (mat > 300.9 && mat < 301.1) {// Iron Block
         specular = float(pow16(albedo.r)) * 8.0;
         roughness = 0.5;
@@ -33,10 +33,10 @@ void getIntegratedSpecular(in vec4 albedo, in vec3 normal, in vec2 worldPos, in 
         roughness = 0.25;
     } else if (mat > 303.9 && mat < 304.1) {// Polished Stones Blocks & Basalt
         specular = pow2(lAlbedo) * 0.175;
-        roughness = 3.0;
+        roughness = 1.75;
     } else if (mat > 304.9 && mat < 305.1) {// Obsidian
         specular = (0.1 + lAlbedo * 0.1) * 0.5;
-        roughness = 1.0;
+        roughness = 1.25;
     }
 
     #ifdef RAIN_PUDDLES

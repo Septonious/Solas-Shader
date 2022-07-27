@@ -77,7 +77,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     if (subsurface > 0.0){
         float VoL = pow12(clamp(dot(normalize(viewPos.xyz), lightVec) * 0.5 + 0.5, 0.0, 1.0));
         scattering = VoL * subsurface;
-        NoL = mix(NoL, 1.0, sqrt(subsurface));
+        NoL = mix(NoL, 1.0, subsurface * 0.75);
         NoL = mix(NoL, 1.0, scattering);
     }
 
@@ -125,7 +125,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     
     //Minimum & Emissive Lighting//
     vec3 minLighting = minLightCol * (1.0 - lightmap.y);
-    vec3 emissiveLighting = albedo * emission;
+    vec3 emissiveLighting = albedo * emission * EMISSION_STRENGTH;
 
     albedo = pow(albedo, vec3(2.2));
 

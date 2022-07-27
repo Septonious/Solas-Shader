@@ -137,7 +137,7 @@ void main() {
 		}
 		#endif
 
-		getSceneLighting(albedo.rgb, viewPos, worldPos, newNormal, lightmap, portal * pow8(length(albedo.rgb)) * 32.0, 0.0, 0.0);
+		getSceneLighting(albedo.rgb, viewPos, worldPos, newNormal, lightmap, portal * pow8(length(albedo.rgb)) * 4.0, 0.0, 0.0);
 
 		#if defined OVERWORLD
 		skyColor = getAtmosphere(viewPos);
@@ -196,7 +196,7 @@ out vec4 color;
 
 //Uniforms//
 #ifdef TAA
-uniform int frameCounter;
+uniform int framemod8;
 
 uniform float viewWidth, viewHeight;
 #endif

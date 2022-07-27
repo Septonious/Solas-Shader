@@ -46,8 +46,7 @@ void computeVolumetricEffects(vec4 translucent, vec3 viewPos, vec2 newTexCoord, 
 		float lViewPos = length(viewPos.xz) * 0.000125;
 
 		vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.0);
-		float VoL = clamp(dot(normalize(viewPos), lightVec), 0.0, 1.0) * 0.5;
-		lightCol *= 1.0 + pow6(VoL);
+		float VoL = clamp(dot(normalize(viewPos), lightVec), 0.0, 1.0);
 
 		float end = min(VC_DISTANCE * far, 1024.0);
 		float start = 0.25 + dither * VC_QUALITY;
@@ -83,7 +82,7 @@ void computeVolumetricEffects(vec4 translucent, vec3 viewPos, vec2 newTexCoord, 
 				if (noise != vec2(0.0)) {
 					//Distant Fade
 					float vanillaFog0 = 1.0 - clamp(pow3(lViewPos) + pow6(lWorldPos / far), 0.0, 1.0);
-					float vanillaFog1 = 1.0 - clamp(pow4(lViewPos) + (lWorldPos / far * 0.1), 0.0, 1.0);
+					float vanillaFog1 = 1.0 - clamp(pow4(lViewPos) + pow2(lWorldPos / far * 0.15), 0.0, 1.0);
 
 					#ifdef VL
 					//Colored Shadows
@@ -95,7 +94,7 @@ void computeVolumetricEffects(vec4 translucent, vec3 viewPos, vec2 newTexCoord, 
 						}
 					}
 
-					vec3 shadow = clamp(shadowCol * 4.0 * (1.0 - shadow0) + shadow0, 0.0, 1.0);
+					vec3 shadow = clamp(shadowCol * 4.0 * (1.0 - shadow0) + shadow0, 0.0, 4.0);
 					#endif
 
 					//VL Fog
@@ -114,8 +113,8 @@ void computeVolumetricEffects(vec4 translucent, vec3 viewPos, vec2 newTexCoord, 
 					#endif
 
 					//Volumetric Clouds
-					float cloudLighting1 = clamp(smoothstep(VC_HEIGHT + VC_STRETCHING * noise.y, VC_HEIGHT - VC_STRETCHING * noise.y, playerPos.y) * 0.5 + noise.y * 0.6, 0.0, 1.0);
-					vec4 cloudsColor1 = vec4(mix(lightCol, ambientCol, cloudLighting1), noise.y);
+					float cloudLighting1 = clamp(smoothstep(VC_HEIGHT + VC_STRETCHING * noise.y, VC_HEIGHT - VC_STRETCHING * noise.y, playerPos.y) * 0.5 + noise.y * 0.5, 0.0, 1.0);
+					vec4 cloudsColor1 = vec4(mix(lightCol * (1.0 + pow6(VoL)), ambientCol, cloudLighting1), noise.y);
 						 cloudsColor1.rgb *= cloudsColor1.a;
 
 					//Trabslucency Blending

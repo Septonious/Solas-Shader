@@ -47,8 +47,12 @@ uniform vec3 cameraPosition;
 uniform sampler2D colortex0;
 uniform sampler2D depthtex0;
 
-#ifdef NEBULA
+#if defined END_NEBULA || defined AURORA
 uniform sampler2D noisetex;
+#endif
+
+#ifdef MILKY_WAY
+uniform sampler2D depthtex2;
 #endif
 
 uniform mat4 gbufferProjectionInverse;
@@ -110,15 +114,9 @@ void main() {
 	#endif
 
 	if (z0 == 1.0) { //Sky rendering
-		float dither = Bayer64(gl_FragCoord.xy);
-
-		#ifdef TAA
-		dither = fract(dither + frameTimeCounter * 16.0);
-		#endif
-
 		#ifdef OVERWORLD
 		if (ug != 0.0) {
-			#ifdef NEBULA
+			#ifdef MILKY_WAY
 			getNebula(skyColor, worldPos, VoU, nebulaFactor);
 			#endif
 
@@ -157,8 +155,7 @@ void main() {
 		#endif
 
 		skyColor *= 1.0 - blindFactor;
-
-		color = skyColor + dither / 16.0;
+		color = skyColor;
 	} else {
 		Fog(color, viewPos.xyz, worldPos.xyz, skyColor);
 	}

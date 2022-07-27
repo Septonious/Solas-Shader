@@ -96,7 +96,7 @@ void main() {
 		vec2 lightmap = clamp(lightMapCoord, 0.0, 1.0);
 
 		#ifdef INTEGRATED_EMISSION
-		getIntegratedEmission(albedo.rgb, worldPos, lightmap, emission);
+		getIntegratedEmission(albedo.rgb, viewPos, worldPos, lightmap, emission);
 		#endif
 
 		#ifdef INTEGRATED_SPECULAR
@@ -146,7 +146,7 @@ out vec4 color;
 
 //Uniforms//
 #ifdef TAA
-uniform int frameCounter;
+uniform int framemod8;
 
 uniform float viewWidth, viewHeight;
 #endif

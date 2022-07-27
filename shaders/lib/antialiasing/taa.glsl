@@ -37,12 +37,12 @@ vec3 ClipAABB(vec3 q,vec3 aabb_min, vec3 aabb_max){
 		return q;
 }
 
-vec3 NeighbourhoodClamping(vec3 color, vec3 tempColor, vec2 viewResolution, sampler2D colortex) {
+vec3 NeighbourhoodClamping(vec3 color, vec3 tempColor, vec2 viewScale, sampler2D colortex) {
 	vec3 minclr = RGBToYCoCg(color);
 	vec3 maxclr = minclr;
 
 	for(int i = 0; i < 8; i++) {
-		vec2 offset = neighbourhoodOffsets[i] * viewResolution;
+		vec2 offset = neighbourhoodOffsets[i] * viewScale;
 		vec3 clr = texture2D(colortex, texCoord + offset).rgb;
 
 		clr = RGBToYCoCg(clr);
@@ -72,7 +72,7 @@ vec4 TemporalAA(inout vec3 color, float tempData, sampler2D colortex, sampler2D 
 		prvCoord.y > 0.0 && prvCoord.y < 1.0
 	);
 	
-	blendFactor *= 0.6 + 0.3;
+	blendFactor *= 0.7 + 0.2;
 	
 	color = mix(color, tempColor, blendFactor);
 

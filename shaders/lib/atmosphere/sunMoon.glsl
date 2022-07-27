@@ -8,7 +8,7 @@ void getSunMoon(inout vec3 color, in vec3 nViewPos, in vec3 lightSun, in vec3 li
 		float moonGlare = pow24(VoM);
 
 		if (moon > 0.0 && moonPhase > 0) { // Moon phases, uses the same method as Complementary v4
-			float phaseFactor = float(moonPhase != 4) * (1.0 - float(moonPhase > 4) * 2.0) * 0.00125;
+			float phaseFactor = float(moonPhase != 4) * (1.0 - float(moonPhase > 4) * 2.0) * 0.00175;
 
 			const vec2 sunRotationData = vec2(cos(sunPathRotation * 0.01745329251994), -sin(sunPathRotation * 0.01745329251994));
 			float ang = fract(timeAngle - (0.25 + phaseFactor));
@@ -20,7 +20,7 @@ void getSunMoon(inout vec3 color, in vec3 nViewPos, in vec3 lightSun, in vec3 li
 		
 		vec3 sunAndMoon = sun * lightSun * sunVisibility + moon * lightNight * 10.0 * (1.0 - sunVisibility);
 			 sunAndMoon*= pow16(length(sunAndMoon));
-			 sunAndMoon+= sunGlare * lightSun * 0.25 * sunVisibility + moonGlare * lightNight * 0.5 * (1.0 - sunVisibility);
+			 sunAndMoon+= sunGlare * lightSun * 0.125 * sunVisibility + moonGlare * lightNight * 0.25 * (1.0 - sunVisibility);
 
 		color += clamp(sunAndMoon, 0.0, 1.0) * visibility;
 	}

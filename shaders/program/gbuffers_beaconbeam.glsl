@@ -39,7 +39,7 @@ out vec4 color;
 
 //Uniforms//
 #ifdef TAA
-uniform int frameCounter;
+uniform int framemod8;
 
 uniform float viewWidth, viewHeight;
 #endif
