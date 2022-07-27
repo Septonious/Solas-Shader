@@ -10,7 +10,6 @@ const float shadowBlurStrength = 1.0 / shadowMapResolution;
 #define SHADOW_COLOR
 //#define ENTITY_SHADOWS
 #define SHADOW_SAMPLE_COUNT 2 //[1 2 3 4]
-//#define ENTITY_HIGHLIGHT
 //#define SHIMMER_MOD_SUPPORT
 
 //Ambient Occlusion//
@@ -23,9 +22,9 @@ const float shadowBlurStrength = 1.0 / shadowMapResolution;
 //#define PLAYER_BRIGHT_PARTS_HIGHLIGHT
 #define EMISSIVE_FLOWERS
 #define EMISSIVE_ORES
-#define EMISSIVE_CONCRETE
 //#define EMISSIVE_POWDER_SNOW
 //#define EMISSIVE_DEBRIS
+//#define ENTITY_HIGHLIGHT
 #define EMISSION_STRENGTH 4.0 //[1.0 1.5 2.0 2.5 3.0 3.5 4.0 4.5 5.0 5.5 6.0 6.5 7.0 7.5 8.0]
 #define RAIN_PUDDLES
 #define INTEGRATED_SPECULAR
@@ -90,6 +89,7 @@ const float shadowBlurStrength = 1.0 / shadowMapResolution;
 //#define CHROMATIC_ABERRATION
 #define CHROMATIC_ABERRATION_STRENGTH 1.00 //[0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00]
 #define SHARPENING
+
 #define TONEMAP_LOWER_CURVE 1.5 //[0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5]
 #define TONEMAP_UPPER_CURVE 1.5 //[0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5]
 #define TONEMAP_WHITE_CURVE 1.5  //[1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2.0 2.1 2.2 2.3 2.4 2.5]
