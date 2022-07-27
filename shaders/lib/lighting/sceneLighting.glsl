@@ -85,7 +85,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     
     #ifdef OVERWORLD
     float rainFactor = 1.0 - rainStrength * 0.75;
-    vec3 sceneLighting = mix(ambientCol, lightCol, fullShadow * rainFactor) * pow4(lightmap.y);
+    vec3 sceneLighting = mix(ambientCol, lightCol, fullShadow * rainFactor) * pow4(lightmap.y) * (2.0 - sunVisibility);
     sceneLighting *= 1.0 + scattering * shadow;
     #endif
 

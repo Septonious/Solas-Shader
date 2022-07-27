@@ -51,7 +51,7 @@ void getNebula(inout vec3 color, in vec3 worldPos, in float VoU, inout float neb
 		#endif
 
 		#ifdef OVERWORLD
-		planeCoord.y += 0.5;
+		planeCoord.y += 0.75;
 		vec4 milkyWay = texture2D(depthtex2, planeCoord * 0.5 + 0.5);
 		color += lightNight * milkyWay.rgb * pow6(milkyWay.a) * length(milkyWay.rgb) * visibility;
 		#else
