@@ -1,7 +1,7 @@
 //Constant Colors For Fake Light Scattering
-vec3 highScatteringColor = vec3(0.85, 1.00, 0.15) * 0.75;
-vec3 midScatteringColor  = vec3(1.35, 0.40, 0.25);
-vec3 downScatteringColor = vec3(1.45, 0.40, 0.15) * 1.25;
+//vec3 highScatteringColor = vec3(0.85, 1.00, 0.15);
+//vec3 midScatteringColor  = vec3(1.35, 0.40, 0.25);
+//vec3 downScatteringColor = vec3(1.55, 0.60, 0.05);
 
 vec3 getAtmosphere(vec3 viewPos) {
     vec3 nViewPos = normalize(viewPos);
@@ -28,7 +28,7 @@ vec3 getAtmosphere(vec3 viewPos) {
     vec3 sky = mix(lightNight, daySky, sunVisibility) * skyDensity;
 
     //Fake Light Scattering
-    sky = mix(sky, downScatteringColor, horizonFactor * scatteringFactor * 0.5);
+    sky = mix(sky, lowScatteringColor, horizonFactor * scatteringFactor);
     sky = mix(sky, midScatteringColor, pow8(VoUFactor * 3.5) * scatteringFactor);
     sky = mix(sky, highScatteringColor, (1.0 - horizonFactor) * (1.0 - pow8(VoUFactor * 3.5)) * pow4(VoUFactor * 3.0) * scatteringFactor);
 

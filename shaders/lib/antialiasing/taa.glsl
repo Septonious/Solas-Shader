@@ -72,7 +72,7 @@ vec4 TemporalAA(inout vec3 color, float tempData, sampler2D colortex, sampler2D 
 		prvCoord.y > 0.0 && prvCoord.y < 1.0
 	);
 	
-	blendFactor *= 0.7 + 0.2;
+	blendFactor *= 0.8 + 0.1;
 	
 	color = mix(color, tempColor, blendFactor);
 
