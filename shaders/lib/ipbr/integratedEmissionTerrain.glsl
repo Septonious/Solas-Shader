@@ -46,11 +46,13 @@ void getIntegratedEmission(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos,
         }
 
 	} else if (mat > 102.9 && mat < 103.1) { // Warped Stem & Hyphae
-		newEmission = float(lAlbedo > 0.49) * 0.25 + float(lAlbedo > 0.59);
+        float core = float(albedo.r < 0.1);
+        float edge = float(albedo.b > 0.35 && albedo.b < 0.4);
+        newEmission = core * 0.25 + 0.125 * edge;
 	} else if (mat > 103.9 && mat < 104.1) { // Crimson Stem & Hyphae
 		newEmission = (float(lAlbedo > 0.47) * 0.25 + float(lAlbedo > 0.50)) * float(albedo.b < 0.25);
 	} else if (mat > 104.9 && mat < 105.1) { // Warped Nether Warts
-		newEmission = pow2(float(albedo.g - albedo.b)) * 0.5;
+		newEmission = float(lAlbedo > 0.75) * 0.05;
 	} else if (mat > 105.9 && mat < 106.1) { // Warped Nylium
 		newEmission = float(albedo.g > albedo.b && albedo.g > albedo.r) * pow(float(albedo.g - albedo.b), 3.0);
 	} else if (mat > 107.9 && mat < 108.1) { // Amethyst

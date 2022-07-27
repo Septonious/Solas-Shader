@@ -28,7 +28,7 @@ const float shadowBlurStrength = 1.0 / shadowMapResolution;
 #define EMISSION_STRENGTH 4.0 //[1.0 1.5 2.0 2.5 3.0 3.5 4.0 4.5 5.0 5.5 6.0 6.5 7.0 7.5 8.0]
 #define RAIN_PUDDLES
 #define INTEGRATED_SPECULAR
-#define SPECULAR_STRENGTH 1.0 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2.0]
+#define SPECULAR_STRENGTH 1.5 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2.0]
 #define REFLECTION_RT_SAMPLE_COUNT 20 //[4 8 12 16 20 24 28 32]
 #define REFLECTION_TYPE 1 //[0 1]
 
