@@ -74,11 +74,12 @@ void main() {
 		float lAlbedo = length(albedo.rgb);
 			if (max(abs(albedoTexture.r - albedoTexture.b), abs(albedoTexture.b - albedoTexture.g)) < 0.001) { // Grayscale Particles
 				if (lAlbedo > 0.5 && color.g < 0.5 && color.b > color.r * 1.1 && color.r > 0.3) // Ender Particle, Crying Obsidian Drop
-					emission = max(pow2(albedo.r), 0.1) * 2.0;
+					emission = max(pow2(albedo.r), 0.1);
 				if (lAlbedo > 0.5 && color.g < 0.5 && color.r > (color.g + color.b) * 3.0) // Redstone Particle
-					lightmap = vec2(0.0), emission = max(pow2(albedo.r), 0.1) * 2.0;
+					emission = max(pow2(albedo.r), 0.1);
 			}
 		}
+		emission *= EMISSION_STRENGTH;
 		#endif
 
 		getSceneLighting(albedo.rgb, viewPos, worldPos, normal, lightmap, emission, 0.0, 0.0);

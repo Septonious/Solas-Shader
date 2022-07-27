@@ -72,7 +72,7 @@ void getIntegratedEmission(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos,
 	} else if (mat > 116.9 && mat < 117.1) { // Chorus
 		newEmission = float(albedo.g > 0.55);
 	} else if (mat > 117.9 && mat < 118.1) { // Enchanting Table
-		newEmission = float(lAlbedo > 0.75) * 0.75;
+		newEmission = float(lAlbedo > 0.75) * 0.25;
 	} else if (mat > 118.9 && mat < 119.1) { // Soul Campfire
 		newEmission = float(albedo.b > albedo.r || albedo.b > albedo.g) * 0.25;
 	} else if (mat > 119.9 && mat < 120.1) { // Normal Campfire && Magma Block

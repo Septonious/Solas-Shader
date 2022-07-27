@@ -29,7 +29,7 @@ void getStars(inout vec3 color, in vec3 worldPos, in float VoU, in float nebulaF
 #ifdef MILKY_WAY
 void getNebula(inout vec3 color, in vec3 worldPos, in float VoU, inout float nebulaFactor) {
 	#ifdef OVERWORLD
-	float visibility = (1.0 - sunVisibility) * (1.0 - rainStrength) * max(VoU, 0.0) * MILKY_WAY_BRIGHTNESS;
+	float visibility = (1.0 - sunVisibility) * (1.0 - rainStrength) * sqrt(max(VoU, 0.0)) * MILKY_WAY_BRIGHTNESS;
 	#else
 	float visibility = 1.0 - abs(VoU);
 	#endif
@@ -51,7 +51,7 @@ void getNebula(inout vec3 color, in vec3 worldPos, in float VoU, inout float neb
 		#endif
 
 		#ifdef OVERWORLD
-		planeCoord.y += 0.75;
+		planeCoord.y += 0.5;
 		vec4 milkyWay = texture2D(depthtex2, planeCoord * 0.5 + 0.5);
 		color += lightNight * milkyWay.rgb * pow6(milkyWay.a) * length(milkyWay.rgb) * visibility;
 		#else
