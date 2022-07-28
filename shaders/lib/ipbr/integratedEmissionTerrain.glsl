@@ -24,7 +24,7 @@ void getIntegratedEmission(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos,
 	#ifdef EMISSIVE_ORES
     if (mat > 99.9 && mat < 100.1) { // Glowing Ores
         float stoneDif = max(abs(albedo.r - albedo.g), max(abs(albedo.r - albedo.b), abs(albedo.g - albedo.b)));
-        newEmission = max(stoneDif - 0.125, 0.0);
+        newEmission = max(stoneDif - 0.175, 0.0);
     } 
 	#endif
 
@@ -54,7 +54,7 @@ void getIntegratedEmission(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos,
 	} else if (mat > 104.9 && mat < 105.1) { // Warped Nether Warts
 		newEmission = float(lAlbedo > 0.75) * 0.05;
 	} else if (mat > 105.9 && mat < 106.1) { // Warped Nylium
-		newEmission = float(albedo.g > albedo.b && albedo.g > albedo.r) * pow(float(albedo.g - albedo.b), 3.0);
+		newEmission = float(albedo.g > albedo.b && albedo.g > albedo.r) * pow3(float(albedo.g - albedo.b));
 	} else if (mat > 107.9 && mat < 108.1) { // Amethyst
 		newEmission = 0.25 + pow8(lAlbedo) * 0.25;
 	} else if (mat > 109.9 && mat < 110.1) { // Glow Lichen
@@ -68,7 +68,7 @@ void getIntegratedEmission(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos,
 	} else if (mat > 113.9 && mat < 114.1) { // Glow berries
 		newEmission = float(albedo.r > 0.5);
 	} else if (mat > 114.9 && mat < 115.1) { // Torches
-		newEmission = float(lAlbedo > 0.99) * 0.25;
+		newEmission = float(lAlbedo > 0.99) * 0.5;
 	} else if (mat > 115.9 && mat < 116.1) { // Furnaces
 		newEmission = float(albedo.r > 0.8 || (albedo.r > 0.6 && albedo.b < 0.5)) * 0.25;
 	} else if (mat > 116.9 && mat < 117.1) { // Chorus
@@ -82,13 +82,13 @@ void getIntegratedEmission(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos,
 	} else if (mat > 120.9 && mat < 121.9) { // Redstone Block
 		newEmission = 0.25 + pow16(lAlbedo) * 0.25;
 	} else if (mat > 121.9 && mat < 122.1) { // Glowstone, Fire, etc
-		newEmission = 0.25;
+		newEmission = 0.25 + lAlbedo * 0.25;
 	} else if (mat > 122.9 && mat < 123.1) { // Sculks
 		newEmission = float(lAlbedo > 0.05 && albedo.r < 0.25) * 0.125;
 	} else if (mat > 123.9 && mat < 124.1) { // Redstone Lamp
 		newEmission = 1.0 + float(lAlbedo > 0.75) * 0.5;
 	} else if (mat > 124.9 && mat < 125.1) { // Sea Lantern
-		newEmission = 0.125 + float(lAlbedo > 0.95) * 0.875;
+		newEmission = 0.125 + float(lAlbedo > 0.95) * 0.75;
 	} else if (mat > 125.9 && mat < 126.1) { // Nether Wart
 		newEmission = float(lAlbedo > 0.25) * 0.25 + float(lAlbedo > 0.75) * 0.5;
 	} else if (mat > 126.9 && mat < 127.1) { // End Portal Frame
