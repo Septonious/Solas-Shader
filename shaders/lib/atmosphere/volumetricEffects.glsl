@@ -48,7 +48,7 @@ void computeVolumetricEffects(vec4 translucent, vec3 viewPos, vec2 newTexCoord, 
 		vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.0);
 		float VoL = clamp(dot(normalize(viewPos), lightVec), 0.0, 1.0);
 
-		float end = min(VC_DISTANCE * far, 1024.0);
+		float end = min(VC_DISTANCE * far, 800.0);
 		float start = 0.25 + dither * VC_QUALITY;
 
 		for (start; start < end; start += VC_QUALITY) {
@@ -74,7 +74,7 @@ void computeVolumetricEffects(vec4 translucent, vec3 viewPos, vec2 newTexCoord, 
 			#endif
 
 			float secondLayer = abs(VC_HEIGHT - playerPos.y) / VC_STRETCHING;
-			float cloudVisibility = (1.0 - float(shadow1 != 1.0) * float(eyeBrightnessSmooth.y <= 150.0)) * float(lWorldPos < end) * float(firstLayer < 3.5 || secondLayer < 2.5);
+			float cloudVisibility = (1.0 - float(shadow1 != 1.0) * float(eyeBrightnessSmooth.y <= 150.0)) * float(lWorldPos < end) * float(firstLayer < 4.0 || secondLayer < 2.0);
 
 			if (cloudVisibility > 0.5) {
 				vec2 noise = getCloudSample(playerPos, firstLayer, secondLayer);
@@ -100,10 +100,10 @@ void computeVolumetricEffects(vec4 translucent, vec3 viewPos, vec2 newTexCoord, 
 					//VL Fog
 					firstLayerVisibility *= vanillaFog0;
 
-					float cloudLighting0 = clamp(smoothstep(VL_HEIGHT + VL_STRETCHING * noise.x, VL_HEIGHT - VL_STRETCHING * noise.x, playerPos.y) * 0.25 + noise.x * 0.75, 0.0, 1.0);
+					float cloudLighting0 = clamp(smoothstep(VL_HEIGHT + VL_STRETCHING * noise.x, VL_HEIGHT - VL_STRETCHING * noise.x, playerPos.y) * 0.5 + noise.x * 0.5, 0.0, 0.5);
 					vec4 cloudsColor0 = vec4(0.0);
 					if (firstLayerVisibility > 0.0 && shadow1 != 0.0) {
-						cloudsColor0 = vec4(lightCol, noise.x);
+						cloudsColor0 = vec4(mix(lightCol, ambientCol, cloudLighting0), noise.x);
 						#ifdef SHADOW_COLOR
 						cloudsColor0.rgb *= shadow;
 						#endif

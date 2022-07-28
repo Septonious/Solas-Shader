@@ -13,7 +13,7 @@ uniform int frameCounter;
 uniform float viewWidth, viewHeight;
 #endif
 
-uniform sampler2D colortex0;
+uniform sampler2D colortex1;
 
 #ifdef TAA
 uniform vec3 cameraPosition, previousCameraPosition;
@@ -32,18 +32,18 @@ uniform sampler2D depthtex1;
 #endif
 
 void main() {
-	vec3 color = texture2D(colortex0, texCoord).rgb;
+	vec3 color = texture2D(colortex1, texCoord).rgb;
 
 	#ifdef TAA
     vec4 prev = vec4(texture2D(colortex5, texCoord).r, 0.0, 0.0, 0.0);
-	prev = TemporalAA(color, prev.r, colortex0, colortex5);
+	prev = TemporalAA(color, prev.r, colortex1, colortex5);
 	#endif
 
-	/* DRAWBUFFERS:0 */
+	/* DRAWBUFFERS:1 */
 	gl_FragData[0].rgb = color;
 
 	#ifdef TAA
-	/* DRAWBUFFERS:05 */
+	/* DRAWBUFFERS:15 */
 	gl_FragData[1] = prev;
 	#endif
 }

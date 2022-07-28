@@ -27,7 +27,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
 		  vanillaDiffuse*= vanillaDiffuse;
 
     float lViewPos = length(viewPos);
-    float dither = Bayer128(gl_FragCoord.xy) / 384.0;
+    float dither = Bayer256(gl_FragCoord.xy) / 384.0;
     dither = mix(dither, 0.0, clamp(lViewPos * 0.125, 0.0, 1.00));
 
     //Main Scene Lighting (Sunlight & Shadows)
@@ -75,7 +75,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
 
     float scattering = 0.0;
     if (subsurface > 0.0){
-        float VoL = pow12(clamp(dot(normalize(viewPos.xyz), lightVec) * 0.5 + 0.5, 0.0, 1.0));
+        float VoL = pow16(clamp(dot(normalize(viewPos), lightVec) * 0.5 + 0.5, 0.0, 1.0));
         scattering = VoL * subsurface;
         NoL = mix(NoL, 1.0, subsurface * 0.75);
         NoL = mix(NoL, 1.0, scattering);

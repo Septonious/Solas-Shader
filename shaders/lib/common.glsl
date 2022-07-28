@@ -55,24 +55,24 @@ const float shadowBlurStrength = 1.0 / shadowMapResolution;
 #define DISTANT_FADE
 #define DISTANT_FADE_STYLE 0 //[0 1]
 #define FOG_DENSITY 1.0 //[0.0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2.0]
-#define FOG_HEIGHT 6.0 //[10.0 9.5 9.0 8.5 8.0 7.5 7.0 6.5 6.0 5.5 5.0 4.5 4.0 3.5 3.0 2.5 2.0 1.5 1.0]
+#define FOG_HEIGHT 5.0 //[10.0 9.5 9.0 8.5 8.0 7.5 7.0 6.5 6.0 5.5 5.0 4.5 4.0 3.5 3.0 2.5 2.0 1.5 1.0]
 
 //Volumetric Light
 #define VOLUMETRICS_RESOLUTION 0.5 //[0.5 0.6 0.7 0.8 0.9 1.0]
 #define VL
 #define VL_OPACITY 0.25 //[0.10 0.15 0.20 0.25 0.30 0.35 0.40 0.45 0.50 0.55 0.60 0.65 0.70 0.75 0.80 0.85 0.90 0.95 1.00]
 #define VL_AMOUNT 3.50 //[1.50 1.60 1.70 1.80 1.90 2.00 2.10 2.20 2.30 2.40 2.50 2.60 2.70 2.80 2.90 3.00 3.10 3.20 3.30 3.40 3.50]
-#define VL_STRETCHING 10.0 //[8.0 9.0 10.0 11.0 12.0 13.0 14.0 15.0 16.0]
+#define VL_STRETCHING 16.0 //[8.0 9.0 10.0 11.0 12.0 13.0 14.0 15.0 16.0]
 #define VL_HEIGHT 65.0 //[50.0 55.0 60.0 65.0 70.0 75.0 80.0 85.0 90.0 95.0 100.0]
 
 //Volumetric Clouds
 #define VC
 #define VC_AMOUNT 1.60 //[1.00 1.10 1.20 1.30 1.40 1.50 1.60 1.70 1.80 1.90 2.00]
-#define VC_STRETCHING 10.0 //[8.0 9.0 10.0 11.0 12.0 13.0 14.0 15.0 16.0]
+#define VC_STRETCHING 12.0 //[8.0 9.0 10.0 11.0 12.0 13.0 14.0 15.0 16.0]
 #define VC_HEIGHT 220.0 //[160.0 170.0 180.0 190.0 200.0 210.0 220.0 230.0 240.0 250.0]
 #define VC_QUALITY 8 //[16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1]
 #define VC_DISTANCE 4.5 //[1.0 1.5 2.0 2.5 3.0 3.5 4.0 4.5 5.0 5.5 6.0]
-#define VC_OPACITY 0.65 //[0.10 0.15 0.20 0.25 0.30 0.35 0.40 0.45 0.50 0.55 0.60 0.65 0.70 0.75 0.80 0.85 0.90 0.95 1.00]
+#define VC_OPACITY 0.55 //[0.10 0.15 0.20 0.25 0.30 0.35 0.40 0.45 0.50 0.55 0.60 0.65 0.70 0.75 0.80 0.85 0.90 0.95 1.00]
 
 //Water//
 #define WATER_NORMALS
@@ -338,4 +338,7 @@ const vec3 weatherCol = vec3(WEATHER_RR, WEATHER_RG, WEATHER_RB) / 255.0 * WEATH
 #endif
 
 #ifdef ENTITY_SHADOWS
+#endif
+
+#ifdef EMISSIVE_FLOWERS
 #endif

@@ -10,13 +10,13 @@ const float wetnessHalflife = 128.0;
 
 //Optifine Constants//
 /*
-const int colortex0Format = RGB16; //scene
-const int colortex1Format = RGBA8; //translucent
+const int colortex0Format = R11F_G11F_B10F; //scene
+const int colortex1Format = RGBA16; //translucent
 const int colortex2Format = RGBA16; //normals, emissives, specular
 const int colortex3Format = RGBA8; //vc
 const int colortex4Format = RGBA8; //ao, vc
 const int colortex5Format = RGBA16; //temporal data
-const int colortex6Format = RGBA16; //reflection color
+const int colortex6Format = RGBA8; //reflection color
 const int colortex7Format = RGB16; //bloom color, used for bloom based colored lighting :tm: :tatsu_approves:
 */
 
@@ -24,7 +24,7 @@ const int colortex7Format = RGB16; //bloom color, used for bloom based colored l
 in vec2 texCoord;
 
 //Uniforms//
-uniform sampler2D colortex0;
+uniform sampler2D colortex1;
 
 #ifdef SHARPENING
 uniform float viewWidth, viewHeight;
@@ -35,6 +35,8 @@ uniform float aspectRatio;
 #endif
 
 //Includes//
+#include "/lib/util/bayerDithering.glsl"
+
 #ifdef SHARPENING
 #include "/lib/post/sharpenFilter.glsl"
 #endif
@@ -45,10 +47,10 @@ uniform float aspectRatio;
 
 //Program//
 void main() {
-	vec3 color = texture2D(colortex0, texCoord).rgb;
+	vec3 color = texture2D(colortex1, texCoord).rgb;
 
 	#ifdef SHARPENING
-	sharpenFilter(colortex0, color, texCoord);
+	sharpenFilter(colortex1, color, texCoord);
 	#endif
 
 	#ifdef CHROMATIC_ABERRATION

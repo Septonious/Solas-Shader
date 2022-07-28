@@ -34,7 +34,7 @@ void getIntegratedSpecular(in vec4 albedo, in vec3 normal, in vec2 worldPos, in 
     } else if (mat > 303.9 && mat < 304.1) {// Polished Stones Blocks & Basalt
         specular = pow2(lAlbedo) * 0.175;
         roughness = 1.75;
-    } else if (mat > 304.9 && mat < 305.1) {// Obsidian
+    } else if (mat > 304.9 && mat < 305.1) {// Obsidian & Polished Deepslate
         specular = (0.1 + lAlbedo * 0.1) * 0.5;
         roughness = 1.25;
     }

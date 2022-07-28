@@ -42,7 +42,7 @@ void main() {
 
 	#ifdef BLOOM
 	bloom = getBloom(texCoord);
-	color += bloom * 0;
+	color += bloom;
 	#endif
 
 	#ifdef TAA
@@ -53,7 +53,7 @@ void main() {
 	color = pow(color, vec3(1.0 / 2.2));
 	ColorSaturation(color);
 
-	/* DRAWBUFFERS:057 */
+	/* DRAWBUFFERS:157 */
 	gl_FragData[0].rgb = color;
 	gl_FragData[1].gba = temporalColor;
 	gl_FragData[2].rgb = pow(bloom / 128.0, vec3(0.33));
