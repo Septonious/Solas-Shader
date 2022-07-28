@@ -58,7 +58,7 @@ void getIntegratedEmission(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos,
 	} else if (mat > 107.9 && mat < 108.1) { // Amethyst
 		newEmission = 0.25 + pow8(lAlbedo) * 0.25;
 	} else if (mat > 109.9 && mat < 110.1) { // Glow Lichen
-		newEmission = (0.0125 + pow16(lAlbedo) * 0.125) * (1.0 - lightmap.y * 0.75);
+		newEmission = (0.025 + pow16(lAlbedo) * 0.25) * (1.0 - lightmap.y * 0.75);
 	} else if (mat > 110.9 && mat < 111.1) { // Redstone Things
 		newEmission = float(albedo.r > 0.9);
 	} else if (mat > 111.9 && mat < 112.1) { // Soul Emissives
