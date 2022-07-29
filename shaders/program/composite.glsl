@@ -19,7 +19,6 @@ uniform int isEyeInWater;
 #endif
 
 uniform float far, near, frameTimeCounter;
-uniform float viewWidth, viewHeight;
 uniform float timeAngle, timeBrightness, rainStrength;
 uniform float blindFactor;
 
