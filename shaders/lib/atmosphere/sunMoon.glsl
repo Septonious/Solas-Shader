@@ -2,7 +2,7 @@ void getSunMoon(inout vec3 color, in vec3 nViewPos, in vec3 lightSun, in vec3 li
 	float visibility = (1.0 - rainStrength) * ug;
 
 	if (visibility > 0.0) {
-		float sun = pow16(pow32(VoS));
+		float sun = pow24(pow32(VoS));
 		float moon = pow32(pow32(VoM));
 		float sunGlare = pow24(VoS);
 		float moonGlare = pow24(VoM);
@@ -22,6 +22,6 @@ void getSunMoon(inout vec3 color, in vec3 nViewPos, in vec3 lightSun, in vec3 li
 			 sunAndMoon*= pow16(length(sunAndMoon));
 			 sunAndMoon+= sunGlare * lightSun * 0.125 * sunVisibility + moonGlare * lightNight * 0.25 * (1.0 - sunVisibility);
 
-		color += clamp(sunAndMoon, 0.0, 0.5) * visibility;
+		color += clamp(sunAndMoon, 0.0, 8.0) * visibility;
 	}
 }

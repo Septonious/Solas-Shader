@@ -101,10 +101,6 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     //Block Lighting//
     float blockLightMap = (pow4(lightmap.x) * 2.0 + pow2(lightmap.x) * 0.125) * float(emission == 0.0);
 
-    #ifdef OVERWORLD
-    blockLightMap *= 1.0 - lightmap.y * 0.5;
-    #endif
-
     #if defined SHIMMER_MOD_SUPPORT
     //COLORED LIGHTING USING SHIMMER MOD
     vec3 coloredLight = getColoredLighting(worldPos, blockLightMap);
