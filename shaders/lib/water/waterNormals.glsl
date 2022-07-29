@@ -20,11 +20,8 @@ vec3 getParallaxWaves(vec3 worldPos, vec3 viewVector) {
 	return parallaxPos;
 }
 
-vec3 getWaterNormal(vec3 worldPos, vec3 viewPos, vec3 viewVector, vec2 lightmap) {
+vec3 getWaterNormal(vec3 worldPos, vec3 viewVector, vec2 lightmap) {
 	vec3 waterPos = getParallaxWaves(worldPos + cameraPosition, viewVector);
-	
-	float fresnel = pow4(clamp(1.0 + dot(normalize(normal), normalize(viewPos)), 0.0, 1.0));
-	float normalStrength = (1.0 - fresnel) * lightmap.y;
 
 	float harmonic0 = getWaterHeightMap(waterPos, vec2( WATER_NORMAL_OFFSET, 0.0));
 	float harmonic1 = getWaterHeightMap(waterPos, vec2(-WATER_NORMAL_OFFSET, 0.0));
@@ -36,5 +33,5 @@ vec3 getWaterNormal(vec3 worldPos, vec3 viewPos, vec3 viewVector, vec2 lightmap)
 
 	vec3 normalMap = vec3(xDelta, yDelta, 1.0 - (xDelta * xDelta + yDelta * yDelta));
 
-	return normalMap * normalStrength + vec3(0.0, 0.0, 1.0 - normalStrength);
+	return normalMap * lightmap.y + vec3(0.0, 0.0, 1.0 - lightmap.y);
 }

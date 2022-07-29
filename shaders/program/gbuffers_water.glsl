@@ -133,7 +133,7 @@ void main() {
 								  tangent.y, binormal.y, normal.y,
 								  tangent.z, binormal.z, normal.z);
 
-			newNormal = clamp(normalize(getWaterNormal(worldPos, viewPos, viewVector, lightmap) * tbnMatrix), vec3(-1.0), vec3(1.0));
+			newNormal = clamp(normalize(getWaterNormal(worldPos, viewVector, lightmap) * tbnMatrix), vec3(-1.0), vec3(1.0));
 		}
 		#endif
 
