@@ -74,10 +74,11 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     NoL = clamp(NoL * 1.01 - 0.01, 0.0, 1.0);
 
     float scattering = 0.0;
-    if (subsurface > 0.0){
-        float VoL = pow16(clamp(dot(normalize(viewPos), lightVec) * 0.5 + 0.5, 0.0, 1.0));
-        scattering = VoL * subsurface;
-        NoL = mix(NoL, 1.0, subsurface * 0.75);
+    if (subsurface > 0.0 || specular > 0.0){
+        float VoL = clamp(dot(normalize(viewPos), lightVec), 0.0, 1.0);
+        VoL = pow6(VoL) * 0.5 + pow18(VoL) * 0.5;
+        scattering = VoL * subsurface * 3.0 + VoL * specular;
+        NoL = mix(NoL, 1.0, subsurface);
         NoL = mix(NoL, 1.0, scattering);
     }
 
@@ -108,11 +109,12 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
 
     #elif defined BLOOM_COLORED_LIGHTING
     //BLOOM BASED COLORED LIGHTING
-    vec3 bloom = texture2D(colortex7, gl_FragCoord.xy / vec2(viewWidth, viewHeight)).rgb;
-         bloom = pow3(bloom) * 128.0;
-         bloom = clamp(bloom * inversesqrt(getLuminance(bloom)), 0.0, 1.0) * float(emission == 0.0);
+    vec2 bloomCoord = gl_FragCoord.xy / vec2(viewWidth, viewHeight);
+    vec3 bloom = texture2D(colortex7, bloomCoord).rgb * float(emission == 0.0);
+         bloom = pow4(bloom) * 256.0;
+         bloom = clamp(2.0 * bloom * pow(getLuminance(bloom) + 0.01, -0.5), 0.0, 1.0);
          bloom *= (0.25 + lightmap.x * 0.75) * BLOCKLIGHT_I * BLOOM_STRENGTH;
-    
+
     vec3 blockLighting = blockLightCol * blockLightMap * 0.125 + bloom;
     
     #else

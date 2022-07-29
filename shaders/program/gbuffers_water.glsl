@@ -130,8 +130,8 @@ void main() {
 			albedo.a = WATER_A;
 
 			mat3 tbnMatrix = mat3(tangent.x, binormal.x, normal.x,
-								 tangent.y, binormal.y, normal.y,
-								 tangent.z, binormal.z, normal.z);
+								  tangent.y, binormal.y, normal.y,
+								  tangent.z, binormal.z, normal.z);
 
 			newNormal = clamp(normalize(getWaterNormal(worldPos, viewPos, viewVector, lightmap) * tbnMatrix), vec3(-1.0), vec3(1.0));
 		}
@@ -227,7 +227,7 @@ void main() {
 	lightMapCoord = (gl_TextureMatrix[1] * gl_MultiTexCoord1).xy;
 	lightMapCoord = clamp((lightMapCoord - 0.03125) * 1.06667, vec2(0.0), vec2(0.9333, 1.0));
 
-	//Normals stuff
+	//Normal
 	normal = normalize(gl_NormalMatrix * gl_Normal);
 
 	#ifdef WATER_NORMALS

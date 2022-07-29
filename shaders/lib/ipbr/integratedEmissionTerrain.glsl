@@ -15,7 +15,6 @@ no switches?
  ⠀⠀⠀⠀⠁⠇⠡⠩⡫⢿⣝⡻⡮⣒⢽⠋
 */
 
-#ifdef FSH
 void getIntegratedEmission(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in vec2 lightmap, inout float emission){
 	float lAlbedo = clamp(length(albedo), 0.0, 1.0);
 	float lViewPos = length(viewPos);
@@ -88,7 +87,7 @@ void getIntegratedEmission(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos,
 	} else if (mat > 123.9 && mat < 124.1) { // Redstone Lamp
 		newEmission = 1.0 + float(lAlbedo > 0.75) * 0.5;
 	} else if (mat > 124.9 && mat < 125.1) { // Sea Lantern
-		newEmission = 0.125 + float(lAlbedo > 0.95) * 0.5;
+		newEmission = 0.125 + float(lAlbedo > 0.95) * 0.25;
 	} else if (mat > 125.9 && mat < 126.1) { // Nether Wart
 		newEmission = float(lAlbedo > 0.25) * 0.25 + float(lAlbedo > 0.75) * 0.5;
 	} else if (mat > 126.9 && mat < 127.1) { // End Portal Frame
@@ -123,16 +122,3 @@ void getIntegratedEmission(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos,
 
 	emission += newEmission * clamp(sin(frameTimeCounter), 0.75, 2.0) * EMISSION_STRENGTH;
 }
-#endif
-
-
-#ifdef VSH
-void getIntegratedEmissionMaterials(inout float mat, inout float isPlant){
-	isPlant = 0.0;
-	if (mc_Entity.x >= 100 && mc_Entity.x <= 250) mat = float(mc_Entity.x);
-
-	#if defined EMISSIVE_FLOWERS && defined OVERWORLD
-	if (mc_Entity.x >= 5 && mc_Entity.x <= 7) isPlant = 1.0;
-	#endif
-}
-#endif

@@ -15,6 +15,11 @@ in float isPlant;
 in vec2 texCoord, lightMapCoord;
 in vec3 sunVec, upVec, eastVec;
 in vec3 normal;
+
+#ifdef INTEGRATED_NORMAL_MAPPING
+in vec3 binormal, tangent;
+#endif
+
 in vec4 color;
 
 //Uniforms//
@@ -69,6 +74,10 @@ float sunVisibility = clamp((dot(sunVec, upVec) + 0.05) * 10.0, 0.0, 1.0);
 #include "/lib/color/dimensionColor.glsl"
 #include "/lib/lighting/sceneLighting.glsl"
 
+#ifdef INTEGRATED_NORMAL_MAPPING
+#include "/lib/ipbr/integratedNormalMapping.glsl"
+#endif
+
 #ifdef INTEGRATED_EMISSION
 #include "/lib/ipbr/integratedEmissionTerrain.glsl"
 #endif
@@ -84,6 +93,7 @@ float sunVisibility = clamp((dot(sunVec, upVec) + 0.05) * 10.0, 0.0, 1.0);
 //Program//
 void main() {
 	vec4 albedo = texture2D(texture, texCoord) * color;
+	vec3 newNormal = normal;
 	float subsurface = float(mat > 0.99 && mat < 1.01);
 	float emission = 0.0;
 	float specular = 0.0;
@@ -95,15 +105,23 @@ void main() {
 		vec3 worldPos = ToWorld(viewPos);
 		vec2 lightmap = clamp(lightMapCoord, 0.0, 1.0);
 
+		#ifdef INTEGRATED_NORMAL_MAPPING
+		mat3 tbnMatrix = mat3(tangent.x, binormal.x, normal.x,
+							  tangent.y, binormal.y, normal.y,
+							  tangent.z, binormal.z, normal.z);
+
+		newNormal = clamp(normalize(getIntegratedNormalMapping(albedo.rgb) * tbnMatrix), vec3(-1.0), vec3(1.0));
+		#endif
+
 		#ifdef INTEGRATED_EMISSION
 		getIntegratedEmission(albedo.rgb, viewPos, worldPos, lightmap, emission);
 		#endif
 
 		#ifdef INTEGRATED_SPECULAR
-		getIntegratedSpecular(albedo, normal, worldPos.xz, lightmap, specular, roughness);
+		getIntegratedSpecular(albedo, newNormal, worldPos.xz, lightmap, specular, roughness);
 		#endif
 
-		getSceneLighting(albedo.rgb, viewPos, worldPos, normal, lightmap, emission, subsurface, specular);
+		getSceneLighting(albedo.rgb, viewPos, worldPos, newNormal, lightmap, emission, subsurface, specular);
 	}
 
 	/* DRAWBUFFERS:0 */
@@ -112,7 +130,7 @@ void main() {
 	#ifndef INTEGRATED_SPECULAR
 		#ifdef BLOOM
 		/* DRAWBUFFERS:02 */
-		gl_FragData[1] = vec4(EncodeNormal(normal), emission, specular);
+		gl_FragData[1] = vec4(EncodeNormal(newNormal), emission, specular);
 		#endif
 	#else
 		/* DRAWBUFFERS:06 */
@@ -120,7 +138,7 @@ void main() {
 
 		#if defined BLOOM || defined INTEGRATED_SPECULAR
 		/* DRAWBUFFERS:062 */
-		gl_FragData[2] = vec4(EncodeNormal(normal), emission, specular);
+		gl_FragData[2] = vec4(EncodeNormal(newNormal), emission, specular);
 		#endif
 	#endif
 }
@@ -141,7 +159,11 @@ out float isPlant;
 out vec2 texCoord, lightMapCoord;
 out vec3 sunVec, upVec, eastVec;
 out vec3 normal;
-out vec3 glPos;
+
+#ifdef INTEGRATED_NORMAL_MAPPING
+out vec3 binormal, tangent;
+#endif
+
 out vec4 color;
 
 //Uniforms//
@@ -161,15 +183,11 @@ uniform mat4 gbufferModelViewInverse;
 //Attributes//
 attribute vec4 mc_Entity;
 
+#ifdef INTEGRATED_NORMAL_MAPPING
+attribute vec4 at_tangent;
+#endif
+
 //Includes//
-#ifdef INTEGRATED_EMISSION
-#include "/lib/ipbr/integratedEmissionTerrain.glsl"
-#endif
-
-#ifdef INTEGRATED_SPECULAR
-#include "/lib/ipbr/integratedSpecular.glsl"
-#endif
-
 #ifdef TAA
 #include "/lib/util/jitter.glsl"
 #endif
@@ -184,6 +202,11 @@ void main() {
 
 	//Normal
 	normal = normalize(gl_NormalMatrix * gl_Normal);
+
+	#ifdef INTEGRATED_NORMAL_MAPPING
+	binormal = normalize(gl_NormalMatrix * cross(at_tangent.xyz, gl_Normal.xyz) * at_tangent.w);
+	tangent  = normalize(gl_NormalMatrix * at_tangent.xyz);
+	#endif
 
 	//Sun & Other vectors
     #if defined OVERWORLD
@@ -202,15 +225,18 @@ void main() {
 	//Materials
 	mat = 0.0;
 
-	if (mc_Entity.x >= 4 && mc_Entity.x <= 13) mat = 1.0;
+	if (mc_Entity.x >= 4 && mc_Entity.x <= 13) {
+		mat = 1.0;
+	} else {
+		mat = float(mc_Entity.x);
+	}
 
 	#ifdef INTEGRATED_EMISSION
 	isPlant = 0.0;
-	getIntegratedEmissionMaterials(mat, isPlant);
-	#endif
 
-	#ifdef INTEGRATED_SPECULAR
-	getIntegratedSpecularMaterials(mat);
+	#if defined EMISSIVE_FLOWERS && defined OVERWORLD
+	if (mc_Entity.x >= 5 && mc_Entity.x <= 7) isPlant = 1.0;
+	#endif
 	#endif
 
 	//Color & Position

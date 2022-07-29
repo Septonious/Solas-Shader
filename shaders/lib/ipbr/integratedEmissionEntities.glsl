@@ -15,7 +15,6 @@ no switches?
  ⠀⠀⠀⠀⠁⠇⠡⠩⡫⢿⣝⡻⡮⣒⢽⠋
 */
 
-#ifdef FSH
 void getIntegratedEmission(in vec3 albedo, inout vec2 lightmap, inout float emission){
     float lAlbedo = length(albedo);
 
@@ -46,11 +45,3 @@ void getIntegratedEmission(in vec3 albedo, inout vec2 lightmap, inout float emis
 
 	emission *= EMISSION_STRENGTH;
 }
-#endif
-
-
-#ifdef VSH
-void getIntegratedEmissionEntities(inout float mat){
-    if (entityId >= 100) mat = float(entityId);
-}
-#endif

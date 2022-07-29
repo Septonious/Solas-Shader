@@ -170,8 +170,9 @@ void main() {
 
 	//Materials
 	mat = 0.0;
+	
 	#ifdef INTEGRATED_EMISSION
-	getIntegratedEmissionEntities(mat);
+	mat = float(entityId);
 	#endif
 
 	//Color & Position
