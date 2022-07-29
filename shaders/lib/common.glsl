@@ -60,10 +60,8 @@ const float shadowBlurStrength = 1.0 / shadowMapResolution;
 //Volumetric Light
 #define VOLUMETRICS_RESOLUTION 0.5 //[0.5 0.6 0.7 0.8 0.9 1.0]
 #define VL
-#define VL_OPACITY 0.25 //[0.10 0.15 0.20 0.25 0.30 0.35 0.40 0.45 0.50 0.55 0.60 0.65 0.70 0.75 0.80 0.85 0.90 0.95 1.00]
-#define VL_AMOUNT 3.50 //[1.50 1.60 1.70 1.80 1.90 2.00 2.10 2.20 2.30 2.40 2.50 2.60 2.70 2.80 2.90 3.00 3.10 3.20 3.30 3.40 3.50]
-#define VL_STRETCHING 16.0 //[8.0 9.0 10.0 11.0 12.0 13.0 14.0 15.0 16.0]
-#define VL_HEIGHT 70.0 //[50.0 55.0 60.0 65.0 70.0 75.0 80.0 85.0 90.0 95.0 100.0]
+#define VL_OPACITY 0.25 //[0.10 0.15 0.20 0.25 0.30 0.35 0.40 0.45 0.50]
+#define VL_HEIGHT 7.0 //[10.0 9.5 9.0 8.5 8.0 7.5 7.0 6.5 6.0 5.5 5.0 4.5 4.0 3.5 3.0 2.5 2.0 1.5 1.0]
 
 //Volumetric Clouds
 #define VC
@@ -82,7 +80,7 @@ const float shadowBlurStrength = 1.0 / shadowMapResolution;
 #define WATER_CAUSTICS
 #define WATER_CAUSTICS_STRENGTH 1.25 //[0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00]
 #define WATER_FOG
-#define WATER_FOG_DENSITY 0.7 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
+#define WATER_FOG_DENSITY 0.5 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
 
 //Post Processing//
 #define TAA
@@ -90,8 +88,8 @@ const float shadowBlurStrength = 1.0 / shadowMapResolution;
 #define CHROMATIC_ABERRATION_STRENGTH 1.00 //[0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00]
 #define SHARPENING
 
-#define TONEMAP_LOWER_CURVE 1.5 //[0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5]
-#define TONEMAP_UPPER_CURVE 1.5 //[0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5]
+#define TONEMAP_LOWER_CURVE 1.4 //[0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5]
+#define TONEMAP_UPPER_CURVE 1.4 //[0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5]
 #define TONEMAP_WHITE_CURVE 1.5  //[1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2.0 2.1 2.2 2.3 2.4 2.5]
 
 #define EXPOSURE 0.70 //[0.00 0.10 0.20 0.30 0.40 0.50 0.60 0.70 0.80 0.90 1.00]

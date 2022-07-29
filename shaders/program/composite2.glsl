@@ -25,14 +25,14 @@ void main() {
 
 	#ifdef VC
 	vec2 newTexCoord = texCoord * VOLUMETRICS_RESOLUTION;
-    vec4 clouds0 = getDiskBlur4(colortex3, newTexCoord, 1.0 / VOLUMETRICS_RESOLUTION);
-		 clouds0 *= clouds0;
+    vec4 vl = getDiskBlur4(colortex3, newTexCoord, 1.0 / VOLUMETRICS_RESOLUTION);
+		 vl *= vl;
 
-    vec4 clouds1 = getDiskBlur4(colortex4, newTexCoord, 1.0 / VOLUMETRICS_RESOLUTION);
-		 clouds1 *= clouds1;
+    vec4 vc = getDiskBlur4(colortex4, newTexCoord, 1.0 / VOLUMETRICS_RESOLUTION);
+		 vc *= vc;
 
-	color = mix(color, clouds1.rgb, pow6(clouds1.a) * VC_OPACITY);
-	color = mix(color, clouds0.rgb, pow4(clouds0.a));
+	color = mix(color, vc.rgb, pow6(vc.a) * VC_OPACITY);
+	color = mix(color, vl.rgb, vl.a);
 	#endif
 
 	/* DRAWBUFFERS:0 */
