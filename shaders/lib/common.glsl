@@ -76,7 +76,7 @@ const float shadowBlurStrength = 1.0 / shadowMapResolution;
 #define WATER_NORMALS
 #define WATER_NORMAL_BUMP 0.3 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
 #define WATER_NORMAL_OFFSET 0.50 //[0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00]
-#define WATER_NORMAL_VISIBILITY 0.8 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
+#define WATER_NORMAL_VISIBILITY 0.6 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
 #define WATER_CAUSTICS
 #define WATER_CAUSTICS_STRENGTH 1.25 //[0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00]
 #define WATER_FOG
