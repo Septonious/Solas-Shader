@@ -18,7 +18,7 @@ void main() {
     vec4 albedo = texture2D(texture, texCoord) * rainStrength;
 
 	if (albedo.a > 0.001) {
-		albedo.a *= length(albedo.rgb / 3.0);
+		albedo.a *= length(albedo.rgb * 0.25);
 		albedo.rgb = sqrt(albedo.rgb);
 		albedo.rgb *= vec3(1.0) + lightMapCoord.x * blockLightCol;
 	}

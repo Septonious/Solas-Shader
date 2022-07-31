@@ -90,8 +90,8 @@ void getRainbow(inout vec3 color, in vec3 worldPos, in float VoU, in float size,
 
 #ifdef AURORA
 float getAuroraNoise(vec2 coord) {
-	float noise = texture2D(noisetex, coord * 0.006).b * 2.0;
-		  noise+= texture2D(noisetex, coord * 0.003).b * 4.0;
+	float noise = texture2D(noisetex, coord * 0.006).b * 3.0;
+		  noise+= texture2D(noisetex, coord * 0.003).b * 3.0;
 
 	return max(1.0 - 2.0 * abs(noise - 3.0), 0.0);
 }
@@ -130,7 +130,7 @@ void getAurora(inout vec3 color, in vec3 worldPos) {
 				noise *= texture2D(noisetex, coord * 0.125 + frameTimeCounter * 0.002).g * 0.5 + 0.5;
 				noise *= texture2D(noisetex, coord * 0.250 + frameTimeCounter * 0.003).b * 0.5 + 0.5;
 				noise = pow2(noise) * sampleStep;
-				noise *= max(1.0 - length(planeCoord.xz) * 0.125, 0.0);
+				noise *= max(1.0 - length(planeCoord.xz) * 0.1, 0.0);
 
 				vec3 auroraColor = mix(auroraLowCol, auroraHighCol, pow(currentStep, 0.5));
 				aurora += noise * auroraColor * exp2(-6.0 * i * sampleStep);
