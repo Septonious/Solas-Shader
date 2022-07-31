@@ -74,6 +74,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     NoL = clamp(NoL * 1.01 - 0.01, 0.0, 1.0);
 
     float scattering = 0.0;
+    specular = max(specular, 0.25);
     if (subsurface > 0.0 || specular > 0.0){
         float VoL = clamp(dot(normalize(viewPos), lightVec), 0.0, 1.0);
         VoL = pow6(VoL) * 0.5 + pow18(VoL) * 0.5;
@@ -112,8 +113,8 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     vec2 bloomCoord = gl_FragCoord.xy / vec2(viewWidth, viewHeight);
     vec3 bloom = texture2D(colortex7, bloomCoord).rgb * float(emission == 0.0);
          bloom = pow4(bloom) * 256.0;
-         bloom = clamp(2.0 * bloom * pow(getLuminance(bloom) + 0.01, -0.5), 0.0, 1.0);
-         bloom *= (0.25 + lightmap.x * 0.75) * BLOCKLIGHT_I * BLOOM_STRENGTH;
+         bloom = clamp(2.0 * bloom * pow(getLuminance(bloom) + 0.005, -0.5), 0.0, 1.0);
+         bloom *= (0.125 + lightmap.x * 0.875) * BLOCKLIGHT_I * BLOOM_STRENGTH;
 
     vec3 blockLighting = blockLightCol * blockLightMap * 0.125 + bloom;
     

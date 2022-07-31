@@ -5,7 +5,7 @@ float GetNoise(vec2 pos) {
 
 void getStars(inout vec3 color, in vec3 worldPos, in float VoU, in float nebulaFactor, in float blackHoleFactor) {
 	#ifdef OVERWORLD
-	float visibility = (1.0 - sunVisibility) * (1.0 - rainStrength) * (0.9 + nebulaFactor * 0.1) * pow(VoU, 0.125);
+	float visibility = (1.0 - sunVisibility) * (1.0 - rainStrength) * pow(VoU, 0.125);
 	#else
 	float visibility = 0.5 + nebulaFactor * 0.5;
 	#endif
@@ -51,7 +51,7 @@ void getNebula(inout vec3 color, in vec3 worldPos, in float VoU, inout float neb
 		#endif
 
 		#ifdef OVERWORLD
-		planeCoord.y += 0.75;
+		planeCoord.y += 0.4;
 		vec4 milkyWay = texture2D(depthtex2, planeCoord * 0.5 + 0.5);
 		color += lightNight * milkyWay.rgb * pow6(milkyWay.a) * length(milkyWay.rgb) * visibility;
 		#else
@@ -59,7 +59,7 @@ void getNebula(inout vec3 color, in vec3 worldPos, in float VoU, inout float neb
 		#endif
 
 		#ifdef OVERWORLD
-		nebulaFactor = milkyWay.a * 0.5;
+		nebulaFactor = length(milkyWay.rgb);
 		#else
 		nebulaFactor = nebulaNoise * visibility;
 		#endif
@@ -90,14 +90,14 @@ void getRainbow(inout vec3 color, in vec3 worldPos, in float VoU, in float size,
 
 #ifdef AURORA
 float getAuroraNoise(vec2 coord) {
-	float noise = texture2D(noisetex, coord * 0.010).r * 3.0;
-		  noise+= texture2D(noisetex, coord * 0.005).r * 3.0;
+	float noise = texture2D(noisetex, coord * 0.006).b * 2.0;
+		  noise+= texture2D(noisetex, coord * 0.003).b * 4.0;
 
-	return max(abs(noise) - 2.5, 0.0);
+	return max(1.0 - 2.0 * abs(noise - 3.0), 0.0);
 }
 
 void getAurora(inout vec3 color, in vec3 worldPos) {
-	float visibility = pow4(1.0 - sunVisibility) * (1.0 - rainStrength);
+	float visibility = pow6(1.0 - sunVisibility) * (1.0 - rainStrength);
 
 	#ifdef AURORA_FULL_MOON_VISIBILITY
 	visibility *= float(moonPhase == 0);
@@ -116,26 +116,26 @@ void getAurora(inout vec3 color, in vec3 worldPos) {
 		dither = fract(dither + frameTimeCounter * 16.0);
 		#endif
 
-		int samples = 8;
+		int samples = 16;
 		float sampleStep = 1.0 / samples;
 		float currentStep = dither * sampleStep;
 
 		for(int i = 0; i < samples; i++) {
-			vec3 planeCoord = worldPos * ((12.0 + currentStep * 24.0) / worldPos.y) * 0.024;
-
+			vec3 planeCoord = worldPos * ((10.0 + currentStep * 20.0) / worldPos.y) * 0.040;
 			vec2 coord = cameraPosition.xz * 0.00005 + planeCoord.xz;
 
-			float noise = getAuroraNoise(coord);
+			float noise = getAuroraNoise(coord + frameTimeCounter * 0.001);
 			
 			if (noise > 0.0) {
-				noise *= texture2D(noisetex, coord * 0.125 + frameTimeCounter * 0.002).g * 0.3 + 0.7;
-				noise *= texture2D(noisetex, coord * 0.250 + frameTimeCounter * 0.004).b * 0.5 + 0.5;
+				noise *= texture2D(noisetex, coord * 0.125 + frameTimeCounter * 0.002).g * 0.5 + 0.5;
+				noise *= texture2D(noisetex, coord * 0.250 + frameTimeCounter * 0.003).b * 0.5 + 0.5;
 				noise = pow2(noise) * sampleStep;
-				noise *= max(1.0 - length(planeCoord.xz) * 0.175, 0.0);
+				noise *= max(1.0 - length(planeCoord.xz) * 0.125, 0.0);
 
 				vec3 auroraColor = mix(auroraLowCol, auroraHighCol, pow(currentStep, 0.5));
 				aurora += noise * auroraColor * exp2(-6.0 * i * sampleStep);
 			}
+
 			currentStep += sampleStep;
 		}
 

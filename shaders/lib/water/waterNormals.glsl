@@ -3,10 +3,10 @@ float getWaterHeightMap(vec3 worldPos, vec2 offset) {
 
 	offset /= 256.0;
 	offset *= WATER_NORMAL_VISIBILITY;
-	float noiseA = texture2D(noisetex, (worldPos.xz - frameTimeCounter * 0.50) / 512.0 + offset).g;
+	float noiseA = texture2D(noisetex, (worldPos.xz - frameTimeCounter * 0.50) / 384.0 + offset).g;
 	float noiseB = texture2D(noisetex, (worldPos.xz + frameTimeCounter * 0.75) / 128.0 + offset).g;
 
-    return mix(noiseA * noiseA, noiseB * noiseB, 0.25) * WATER_NORMAL_BUMP;
+    return mix(noiseA * noiseA, noiseB * noiseB, 0.4) * WATER_NORMAL_BUMP;
 }
 
 vec3 getParallaxWaves(vec3 worldPos, vec3 viewVector) {

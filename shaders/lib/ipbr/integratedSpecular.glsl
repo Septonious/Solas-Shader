@@ -19,7 +19,7 @@ void getIntegratedSpecular(in vec4 albedo, in vec3 normal, in vec2 worldPos, in 
     float lAlbedo = length(albedo.rgb);
 
     if (mat > 299.9 && mat < 300.1) {// Sand
-        specular = (float(albedo.b > 0.65) * 0.0625 + float(albedo.b > 0.75) * 0.125) * 0.125;
+        specular = (float(albedo.b > 0.65) * 0.125 + float(albedo.b > 0.75));
         roughness = 0.15;
     } else if (mat > 300.9 && mat < 301.1) {// Iron Block
         specular = float(pow16(albedo.r)) * 8.0;
@@ -34,7 +34,7 @@ void getIntegratedSpecular(in vec4 albedo, in vec3 normal, in vec2 worldPos, in 
         specular = pow2(lAlbedo) * 0.175;
         roughness = 1.75;
     } else if (mat > 304.9 && mat < 305.1) {// Obsidian & Polished Deepslate
-        specular = (0.1 + lAlbedo * 0.1) * 0.5;
+        specular = (0.1 + lAlbedo * 0.1) * 0.25;
         roughness = 1.25;
     } else if (mat > 305.9 && mat < 306.1) { // Grass Block & Dirt Path
         specular = 1.0;
