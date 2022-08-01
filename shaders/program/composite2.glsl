@@ -25,7 +25,7 @@ void main() {
 
 	#ifdef VC
 	vec2 newTexCoord = texCoord * VOLUMETRICS_RESOLUTION;
-    vec4 vl = getDiskBlur8(colortex3, newTexCoord, 0.5 / VOLUMETRICS_RESOLUTION);
+    vec4 vl = getDiskBlur4(colortex3, newTexCoord, 0.5 / VOLUMETRICS_RESOLUTION);
 		 vl *= vl;
 
     vec4 vc = getDiskBlur8(colortex4, newTexCoord, 1.5 / VOLUMETRICS_RESOLUTION);
