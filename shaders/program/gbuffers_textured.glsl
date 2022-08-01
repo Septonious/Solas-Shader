@@ -90,7 +90,7 @@ void main() {
 	gl_FragData[0] = albedo;
 	gl_FragData[1] = vec4(0.0, 0.0, 0.0, 1.0);
 
-	#ifdef INTEGRATED_EMISSION
+	#if defined INTEGRATED_EMISSION && defined BLOOM
 	/* DRAWBUFFERS:012 */
 	gl_FragData[2].b = emission;
 	#endif

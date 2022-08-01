@@ -130,13 +130,9 @@ void main() {
 		gl_FragData[1] = vec4(EncodeNormal(newNormal), emission, specular);
 		#endif
 	#else
-		/* DRAWBUFFERS:06 */
-		gl_FragData[1] = vec4(albedo.rgb, roughness);
-
-		#if defined BLOOM || defined INTEGRATED_SPECULAR
 		/* DRAWBUFFERS:062 */
+		gl_FragData[1] = vec4(albedo.rgb, roughness);
 		gl_FragData[2] = vec4(EncodeNormal(newNormal), emission, specular);
-		#endif
 	#endif
 }
 

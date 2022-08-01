@@ -116,7 +116,7 @@ void getAurora(inout vec3 color, in vec3 worldPos) {
 		dither = fract(dither + frameTimeCounter * 16.0);
 		#endif
 
-		int samples = 16;
+		int samples = 12;
 		float sampleStep = 1.0 / samples;
 		float currentStep = dither * sampleStep;
 
