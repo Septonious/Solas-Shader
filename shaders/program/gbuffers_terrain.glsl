@@ -25,10 +25,7 @@ in vec4 color;
 //Uniforms//
 uniform float viewWidth, viewHeight;
 uniform float nightVision;
-
-#ifdef INTEGRATED_EMISSION
 uniform float frameTimeCounter;
-#endif
 
 #ifdef OVERWORLD
 uniform float rainStrength;

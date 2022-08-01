@@ -14,9 +14,9 @@ in vec4 color;
 //Uniforms//
 uniform int blockEntityId;
 
-uniform float frameTimeCounter;
 uniform float viewWidth, viewHeight, aspectRatio;
 uniform float nightVision;
+uniform float frameTimeCounter;
 
 #ifdef OVERWORLD
 uniform float rainStrength;

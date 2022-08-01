@@ -17,6 +17,7 @@ uniform int entityId;
 
 uniform float viewWidth, viewHeight;
 uniform float nightVision;
+uniform float frameTimeCounter;
 
 #ifdef OVERWORLD
 uniform float rainStrength;

@@ -7,7 +7,6 @@ vec3 lightVec = sunVec;
 #ifdef BLOOM_COLORED_LIGHTING
 uniform sampler2D colortex7;
 const bool colortex7MipmapEnabled = true;
-const bool colortex7Clear = false;
 
 float getLuminance(vec3 color) {
 	return dot(color, vec3(0.299, 0.587, 0.114));
@@ -27,8 +26,11 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
 		  vanillaDiffuse*= vanillaDiffuse;
 
     float lViewPos = length(viewPos);
-    float dither = Bayer256(gl_FragCoord.xy) / 384.0;
-    dither = mix(dither, 0.0, clamp(lViewPos * 0.125, 0.0, 1.00));
+    float dither = Bayer64(gl_FragCoord.xy);
+
+    #ifdef TAA
+    dither = fract(dither + frameTimeCounter * 16.0) / 16.0;
+    #endif
 
     //Main Scene Lighting (Sunlight & Shadows)
     #if defined OVERWORLD || defined END
@@ -109,11 +111,10 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
 
     #elif defined BLOOM_COLORED_LIGHTING
     //BLOOM BASED COLORED LIGHTING
-    vec2 bloomCoord = gl_FragCoord.xy / vec2(viewWidth, viewHeight);
-    vec3 bloom = texture2D(colortex7, bloomCoord).rgb * float(emission == 0.0);
+    vec3 bloom = texture2D(colortex7, gl_FragCoord.xy / vec2(viewWidth, viewHeight)).rgb;
          bloom = pow4(bloom) * 256.0;
-         bloom = clamp(2.0 * bloom * pow(getLuminance(bloom) + 0.005, -0.5), 0.0, 1.0);
-         bloom *= (0.125 + lightmap.x * 0.875) * BLOCKLIGHT_I * BLOOM_STRENGTH;
+         bloom = clamp(bloom * pow(getLuminance(bloom) + 0.0025, -0.5), 0.0, 1.0);
+         bloom *= (0.1 + lightmap.x * 0.9) * BLOCKLIGHT_I * BLOOM_STRENGTH;
 
     vec3 blockLighting = blockLightCol * blockLightMap * 0.125 + bloom;
     

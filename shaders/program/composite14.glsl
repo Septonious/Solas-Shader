@@ -22,6 +22,10 @@ uniform sampler2D colortex5;
 #endif
 
 //Optifine Constants//
+#ifdef BLOOM
+const bool colortex7Clear = false;
+#endif
+
 #ifdef TAA
 const bool colortex5Clear = false;
 #endif

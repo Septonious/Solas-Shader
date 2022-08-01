@@ -9,7 +9,7 @@ const float shadowBlurStrength = 1.0 / shadowMapResolution;
 
 #define SHADOW_COLOR
 //#define ENTITY_SHADOWS
-#define SHADOW_SAMPLE_COUNT 2 //[1 2 3 4]
+#define SHADOW_SAMPLE_COUNT 4 //[1 2 3 4]
 //#define SHIMMER_MOD_SUPPORT
 
 //Ambient Occlusion//

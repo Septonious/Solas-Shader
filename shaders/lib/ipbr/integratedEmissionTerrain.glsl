@@ -79,13 +79,13 @@ void getIntegratedEmission(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos,
 	} else if (mat > 120.9 && mat < 121.9) { // Redstone Block
 		newEmission = 0.25 + pow16(lAlbedo) * 0.25;
 	} else if (mat > 121.9 && mat < 122.1) { // Glowstone, Fire, etc
-		newEmission = 0.25;
+		newEmission = 0.125;
 	} else if (mat > 122.9 && mat < 123.1) { // Sculks
 		newEmission = float(lAlbedo > 0.05 && albedo.r < 0.25) * 0.125;
 	} else if (mat > 123.9 && mat < 124.1) { // Redstone Lamp
 		newEmission = 1.0 + float(lAlbedo > 0.75) * 0.5;
 	} else if (mat > 124.9 && mat < 125.1) { // Sea Lantern
-		newEmission = 0.125 + float(lAlbedo > 0.95) * 0.25;
+		newEmission = 0.125 + float(lAlbedo > 0.95) * 0.125;
 	} else if (mat > 125.9 && mat < 126.1) { // Nether Wart
 		newEmission = float(lAlbedo > 0.25) * 0.25 + float(lAlbedo > 0.75) * 0.5;
 	} else if (mat > 126.9 && mat < 127.1) { // End Portal Frame
