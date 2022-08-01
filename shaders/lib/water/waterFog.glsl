@@ -9,7 +9,7 @@ vec4 getWaterFog(vec3 viewPos) {
 
          if (isEyeInWater == 1) {
             float VoS = clamp(dot(normalize(viewPos), lightVec), 0.0, 1.0);
-            waterFogColor *= 1.0 + pow6(VoS) * 3.0;
+            waterFogColor *= 1.0 + pow6(VoS) * 2.0 + pow4(VoS) * 2.0;
          }
 
          waterFogColor = mix(waterFogColor, weatherCol.rgb * 0.0125, rainStrength * 0.25);

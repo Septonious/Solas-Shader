@@ -34,13 +34,13 @@ void computeVolumetricEffects(vec4 translucent, vec3 viewPos, vec2 newTexCoord, 
 		#ifdef VL
 		vec3 shadowCol = vec3(0.0);
 
-		float vlVisibility = (0.5 - dfade * 0.4) * VL_OPACITY;
+		float vlVisibility = (0.5 - dfade * 0.25) * VL_OPACITY;
 		#endif
 
 		float lViewPos = length(viewPos.xz) * 0.000125;
 
 		float end = min(VC_DISTANCE * far, 2048.0);
-		float start = 0.25 + dither * VC_QUALITY;
+		float start = 0.001 + dither * VC_QUALITY;
 
 		for (start; start < end; start += VC_QUALITY) {
 			if (depth1 < start || (depth0 < start && translucent.rgb == vec3(0.0))) {
@@ -77,7 +77,7 @@ void computeVolumetricEffects(vec4 translucent, vec3 viewPos, vec2 newTexCoord, 
 					}
 				}
 
-				vec3 shadow = clamp(shadowCol * (8.0 + timeBrightness * 56.0) * (1.0 - shadow0) + shadow0, 0.0, 4.0 + timeBrightness * 12.0);
+				vec3 shadow = clamp(shadowCol * (8.0 + timeBrightness * 56.0) * (1.0 - shadow0) + shadow0, 0.0, 8.0 + timeBrightness * 56.0);
 				#endif
 
 				//Color Calculations
@@ -85,7 +85,7 @@ void computeVolumetricEffects(vec4 translucent, vec3 viewPos, vec2 newTexCoord, 
 
 				vec4 vlColor = vec4(0.0);
 				if (vlVisibility > 0.0 && shadow1 != 0.0) {
-					vlColor = vec4(mix(lightCol * 0.25, waterColor * 0.125, float(isEyeInWater == 1)), vlLayer) * vlVisibility;
+					vlColor = vec4(mix(lightCol * 0.25, waterColor * 0.25, float(isEyeInWater == 1)), vlLayer) * vlVisibility;
 
 					#ifdef SHADOW_COLOR
 					vlColor.rgb *= shadow;

@@ -88,11 +88,16 @@ void main() {
 	viewPos /= viewPos.w;
 
 	computeVolumetricEffects(translucent, viewPos.xyz, newTexCoord, getLinearDepth2(z0), getLinearDepth2(z1), dither, vlOut1, vlOut2);
-	vlOut1 = sqrt(vlOut1);
-	vlOut2 = sqrt(vlOut2);
 
+	#ifdef VL
+	vlOut1 = sqrt(vlOut1);
 	if (isEyeInWater != 1) vlOut1 *= ug;
+	#endif
+
+	#ifdef VC
+	vlOut2 = sqrt(vlOut2);
 	vlOut2 *= ug;
+	#endif
 
 	#if MC_VERSION >= 11900
 	vlOut1 *= 1.0 - darknessFactor;
