@@ -85,7 +85,7 @@ void computeVolumetricEffects(vec4 translucent, vec3 viewPos, vec2 newTexCoord, 
 
 				vec4 vlColor = vec4(0.0);
 				if (vlVisibility > 0.0 && shadow1 != 0.0) {
-					vlColor = vec4(mix(lightCol * 0.25, waterColor * 0.25, float(isEyeInWater == 1)), vlLayer) * vlVisibility;
+					vlColor = vec4(mix(lightCol * 0.25, waterColor * 0.25, float(isEyeInWater == 1)), vlLayer) * vlVisibility * vlLayer;
 
 					#ifdef SHADOW_COLOR
 					vlColor.rgb *= shadow;
