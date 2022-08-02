@@ -1,5 +1,5 @@
 //Jitter offset from Chocapic13
-vec2 jitterOffsets[8] = vec2[8](
+const vec2 jitterOffsets[8] = vec2[8](
 							vec2( 0.125,-0.375),
 							vec2(-0.125, 0.375),
 							vec2( 0.625, 0.125),

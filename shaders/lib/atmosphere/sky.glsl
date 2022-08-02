@@ -29,8 +29,8 @@ vec3 getAtmosphere(vec3 viewPos) {
 
     //Fake Light Scattering
     sky = mix(sky, lowScatteringColor * lowScatteringColor, horizonFactor * scatteringFactor);
-    sky = mix(sky, midScatteringColor * midScatteringColor, pow8(VoUFactor * 3.5) * scatteringFactor);
-    sky = mix(sky, highScatteringColor * highScatteringColor, (1.0 - horizonFactor) * (1.0 - pow8(VoUFactor * 3.5)) * pow4(VoUFactor * 3.0) * scatteringFactor);
+    sky = mix(sky, midScatteringColor * midScatteringColor, pow10(VoUFactor * 3.5) * scatteringFactor);
+    sky = mix(sky, highScatteringColor * highScatteringColor, (1.0 - horizonFactor) * (1.0 - pow10(VoUFactor * 3.5)) * pow6(VoUFactor * 3.5) * scatteringFactor);
 
     //Weather Sky
 	sky = mix(sky, lightColSqrt * skyDensity, rainStrength);

@@ -20,8 +20,9 @@ float calculateAmbientOcclusion(float dither) {
 	dither = fract(dither + frameTimeCounter * 16.0);
 	#endif
 
-	float currentStep = 0.2 * dither + 0.2;
+	float currentStep = 0.6 * dither + 0.4;
 
+	float angle = 0.0, dist = 0.0;
 	float fovScale = gbufferProjection[1][1] / 1.37;
 	float distScale = max((far - near) * depth0 + near, 5.0);
 	vec2 scale = AO_RADIUS * vec2(1.0 / aspectRatio, 1.0) * fovScale / distScale;
@@ -29,7 +30,6 @@ float calculateAmbientOcclusion(float dither) {
 
 	for(int i = 0; i < 4; i++) {
 		vec2 offset = offsetDist(currentStep) * scale;
-		float angle = 0.0, dist = 0.0;
 
 		for(int i = 0; i < 2; i++){
 			float sampleDepth = getLinearDepth(texture2D(depthtex0, texCoord + offset).r);

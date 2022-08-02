@@ -1,4 +1,4 @@
-vec2 neighbourhoodOffsets[8] = vec2[8](
+const vec2 neighbourhoodOffsets[8] = vec2[8](
 	vec2( 0.0, -1.0),
 	vec2(-1.0,  0.0),
 	vec2( 1.0,  0.0),
@@ -74,7 +74,7 @@ vec4 TemporalAA(inout vec3 color, float tempData, sampler2D colortex, sampler2D 
 	
 	vec2 velocity = (texCoord - prvCoord.xy) * viewResolution;
 
-	blendFactor *= exp(-length(velocity)) * 0.4 + 0.5;
+	blendFactor *= exp(-length(velocity)) * 0.5 + 0.4;
 	
 	color = mix(color, tempColor, blendFactor);
 

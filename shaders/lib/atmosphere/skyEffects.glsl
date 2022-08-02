@@ -110,13 +110,13 @@ void getAurora(inout vec3 color, in vec3 worldPos) {
 	if (visibility > 0.0) {
 		vec3 aurora = vec3(0.0);
 		
-		float dither = Bayer64(gl_FragCoord.xy);
+		float dither = Bayer64(gl_FragCoord.xy) + 4.0;
 
 		#ifdef TAA
 		dither = fract(dither + frameTimeCounter * 16.0);
 		#endif
 
-		int samples = 12;
+		int samples = 10;
 		float sampleStep = 1.0 / samples;
 		float currentStep = dither * sampleStep;
 

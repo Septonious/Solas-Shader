@@ -1,7 +1,7 @@
 float pixelHeight = 0.8 / min(360.0, viewHeight);
 float pixelWidth = pixelHeight / aspectRatio;
 
-float weight[5] = float[5](0.05, 0.15, 0.25, 0.15, 0.05);
+const float weight[5] = float[5](0.05, 0.15, 0.25, 0.15, 0.05);
 
 vec3 getBloomTile(float lod, vec2 coord, vec2 offset) {
 	vec3 bloom = vec3(0.0);

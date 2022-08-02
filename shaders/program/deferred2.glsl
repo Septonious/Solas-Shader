@@ -24,6 +24,7 @@ uniform float timeBrightness, timeAngle, rainStrength;
 #if MC_VERSION >= 11900
 uniform float darknessFactor;
 #endif
+
 uniform float viewWidth, viewHeight;
 uniform float far, frameTimeCounter;
 uniform float blindFactor;
