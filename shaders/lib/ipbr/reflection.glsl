@@ -1,12 +1,12 @@
 vec3 getReflection(vec3 viewPos, vec3 normal, vec3 color, float roughness) {
-	vec3 reflectedVector = reflect(normalize(viewPos), normal) * 100.0;
-	vec3 reflectedScreenPos = ToScreen(reflectedVector);
+	vec3 reflectedViewPos = reflect(normalize(viewPos), normal);
+	vec3 reflectedScreenPos = ToScreen(reflectedViewPos);
 	vec3 reflection = vec3(0.0);
 
 	#if REFLECTION_TYPE == 0
     bool outsideScreen = !(any(lessThan(reflectedScreenPos.xy, vec2(0.0))) || any(greaterThan(reflectedScreenPos.xy, vec2(1.0))));
 	#elif REFLECTION_TYPE == 1
-	bool outsideScreen = rayTrace(viewPos, reflectedVector, reflectedScreenPos);
+	bool outsideScreen = rayTrace(viewPos, reflectedViewPos * 256.0, reflectedScreenPos);
 	#endif
 
     #if defined OVERWORLD || defined END
@@ -18,13 +18,13 @@ vec3 getReflection(vec3 viewPos, vec3 normal, vec3 color, float roughness) {
 	vec3 reflectionFade = color;
 
     if (eBS != 0.0 && roughness <= 0.1) {
-        vec3 nViewPos = normalize(reflectedVector);
-        vec3 worldPos = mat3(gbufferModelViewInverse) * reflectedVector;
+        vec3 nViewPos = normalize(reflectedViewPos);
+        vec3 worldPos = mat3(gbufferModelViewInverse) * reflectedViewPos;
         float VoS = clamp(dot(nViewPos, sunVec), 0.0, 1.0);
         float VoM = clamp(dot(nViewPos, -sunVec), 0.0, 1.0);
         float VoU = dot(nViewPos, upVec);
 
-        reflectionFade = getAtmosphere(reflectedVector);
+        reflectionFade = getAtmosphere(reflectedViewPos);
 
 		#ifdef MILKY_WAY
 		getNebula(reflectionFade, worldPos, VoU, nebulaFactor);
@@ -58,8 +58,8 @@ vec3 getReflection(vec3 viewPos, vec3 normal, vec3 color, float roughness) {
 
 	if (eBS != 0.0 && roughness <= 0.1) {
 		#if defined END_NEBULA || defined END_STARS
-		vec3 worldPos = mat3(gbufferModelViewInverse) * reflectedVector;
-		vec3 nViewPos = normalize(reflectedVector);
+		vec3 worldPos = mat3(gbufferModelViewInverse) * reflectedViewPos;
+		vec3 nViewPos = normalize(reflectedViewPos);
 
 		float VoU = dot(nViewPos, upVec);
 		#endif

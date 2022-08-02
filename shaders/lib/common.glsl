@@ -14,7 +14,7 @@ const float shadowBlurStrength = 1.0 / shadowMapResolution;
 
 //Ambient Occlusion//
 #define AO
-#define AO_STRENGTH 0.8 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
+#define AO_STRENGTH 2.25 //[0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00]
 #define AO_RADIUS 0.8 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
 
 //Integrated PBR//
@@ -68,7 +68,7 @@ const float shadowBlurStrength = 1.0 / shadowMapResolution;
 #define VC
 #define VC_AMOUNT 1.60 //[1.00 1.10 1.20 1.30 1.40 1.50 1.60 1.70 1.80 1.90 2.00]
 #define VC_STRETCHING 12.0 //[8.0 9.0 10.0 11.0 12.0 13.0 14.0 15.0 16.0]
-#define VC_HEIGHT 220.0 //[160.0 170.0 180.0 190.0 200.0 210.0 220.0 230.0 240.0 250.0]
+#define VC_HEIGHT 200.0 //[160.0 170.0 180.0 190.0 200.0 210.0 220.0 230.0 240.0 250.0]
 #define VC_QUALITY 8 //[16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1]
 #define VC_DISTANCE 4.0 //[1.0 1.5 2.0 2.5 3.0 3.5 4.0]
 #define VC_OPACITY 0.50 //[0.10 0.15 0.20 0.25 0.30 0.35 0.40 0.45 0.50 0.55 0.60 0.65 0.70 0.75 0.80 0.85 0.90 0.95 1.00]

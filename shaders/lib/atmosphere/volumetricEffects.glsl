@@ -10,8 +10,8 @@ float get3DNoise(vec3 pos) {
 
 	vec2 noiseCoord = (floorPos.xz + fractPos.xz + floorPos.y * 16.0) * 0.015625;
 
-	float planeA = texture2D(noisetex, noiseCoord).r;
-	float planeB = texture2D(noisetex, noiseCoord + 0.25).r;
+	float planeA = texture2D(noisetex, noiseCoord).g;
+	float planeB = texture2D(noisetex, noiseCoord + 0.25).g;
 
 	return mix(planeA, planeB, fractPos.y);
 }
@@ -77,7 +77,7 @@ void computeVolumetricEffects(vec4 translucent, vec3 viewPos, vec2 newTexCoord, 
 					}
 				}
 
-				vec3 shadow = clamp(shadowCol * (8.0 + timeBrightness * 56.0) * (1.0 - shadow0) + shadow0, 0.0, 8.0 + timeBrightness * 56.0);
+				vec3 shadow = clamp(shadowCol * (8.0 + timeBrightness * 24.0) * (1.0 - shadow0) + shadow0, 0.0, 8.0 + timeBrightness * 24.0);
 				#endif
 
 				//Color Calculations
