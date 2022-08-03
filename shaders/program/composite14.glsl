@@ -22,7 +22,7 @@ uniform sampler2D colortex5;
 #endif
 
 //Optifine Constants//
-#ifdef BLOOM_COLORED_LIGHTING
+#ifdef BLOOM
 const bool colortex7Clear = false;
 #endif
 
