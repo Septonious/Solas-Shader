@@ -19,8 +19,8 @@ void getIntegratedSpecular(in vec4 albedo, in vec3 normal, in vec2 worldPos, in 
     float lAlbedo = length(albedo.rgb);
 
     if (mat > 299.9 && mat < 300.1) {// Sand
-        specular = (float(albedo.b > 0.65) * 0.125 + float(albedo.b > 0.75));
-        roughness = 0.15;
+        specular = float(albedo.b > 0.65) * 0.25 + float(albedo.b > 0.7);
+        roughness = 0.0;
     } else if (mat > 300.9 && mat < 301.1) {// Iron Block
         specular = float(pow16(albedo.r)) * 8.0;
         roughness = 0.5;
@@ -37,13 +37,13 @@ void getIntegratedSpecular(in vec4 albedo, in vec3 normal, in vec2 worldPos, in 
         specular = (0.1 + lAlbedo * 0.1) * 0.25;
         roughness = 1.25;
     } else if (mat > 305.9 && mat < 306.1) { // Grass Block & Dirt Path
-        specular = 1.0;
+        specular = 0.25;
         roughness = 0.0;
     }
 
     #if defined RAIN_PUDDLES && defined GBUFFERS_TERRAIN
-    float upNormal = clamp(dot(normal, upVec), 0.0, 0.75);
-    float puddles = wetness * pow16(lightmap.y) * (1.0 - lightmap.x) * texture2D(noisetex, (worldPos + cameraPosition.xz) * 0.00125).b * upNormal;
+    float NoU = clamp(dot(normal, upVec), 0.0, 0.75);
+    float puddles = wetness * pow16(lightmap.y) * (1.0 - lightmap.x) * texture2D(noisetex, (worldPos + cameraPosition.xz) * 0.00125).b * NoU;
 
     if (puddles > 0.0) {
         specular += puddles;

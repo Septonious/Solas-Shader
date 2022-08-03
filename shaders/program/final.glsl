@@ -35,8 +35,6 @@ uniform float aspectRatio;
 #endif
 
 //Includes//
-#include "/lib/util/bayerDithering.glsl"
-
 #ifdef SHARPENING
 #include "/lib/post/sharpenFilter.glsl"
 #endif

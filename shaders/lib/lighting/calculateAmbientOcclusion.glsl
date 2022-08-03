@@ -20,7 +20,7 @@ float calculateAmbientOcclusion(float dither) {
 	dither = fract(dither + frameTimeCounter * 16.0);
 	#endif
 
-	float currentStep = 0.4 * dither + 0.2;
+	float currentStep = 0.2 * dither + 0.2;
 
 	float angle = 0.0, dist = 0.0;
 	float fovScale = gbufferProjection[1][1] / 1.37;

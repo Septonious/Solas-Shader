@@ -1,7 +1,7 @@
 vec3 getFogColor(in vec3 atmosphereColor, in vec3 viewPos) {
     float VoL = clamp(dot(normalize(viewPos), sunVec), 0.0, 1.0);
 
-	float sunFactor = 1.0 + VoL * 0.5;
+	float sunFactor = 1.0 + VoL * 0.75;
 
 	return atmosphereColor * sunFactor;
 }
@@ -54,7 +54,7 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 atmo
 	//Nether Fog
 	#ifdef NETHER
 	vec3 fogColor = netherColSqrt.rgb * 0.25;
-	float fog = lViewPos * FOG_DENSITY * 0.0075;
+	float fog = lViewPos * FOG_DENSITY * 0.01;
 
 	#ifdef DISTANT_FADE
 	fog += 5.0 * pow4(lWorldPos / far);
