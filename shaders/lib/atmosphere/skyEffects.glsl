@@ -69,7 +69,7 @@ void getNebula(inout vec3 color, in vec3 worldPos, in float VoU, inout float neb
 
 #ifdef RAINBOW
 void getRainbow(inout vec3 color, in vec3 worldPos, in float VoU, in float size, in float rad) {
-	float visibility = pow2(sunVisibility) * (1.0 - rainStrength) * wetness * 0.75 * pow2(max(VoU, 0.0));
+	float visibility = pow2(sunVisibility) * (1.0 - rainStrength) * wetness * 0.5 * pow2(max(VoU, 0.0));
 
 	if (visibility > 0.0) {
 		vec2 planeCoord = worldPos.xy / (worldPos.y + length(worldPos.xz) * 0.65);

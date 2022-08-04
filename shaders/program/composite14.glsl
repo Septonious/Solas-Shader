@@ -7,11 +7,13 @@
 in vec2 texCoord;
 
 //Uniforms//
-#ifdef BLOOM
 uniform float viewWidth, viewHeight;
+
+#if defined BLOOM && defined TAA
+uniform float frameTimeCounter;
 #endif
 
-uniform sampler2D colortex0;
+uniform sampler2D colortex0, noisetex;
 
 #ifdef BLOOM
 uniform sampler2D depthtex0, colortex1;
@@ -44,8 +46,10 @@ void main() {
 	vec3 temporalColor = vec3(0.0);
 	vec3 bloom = vec3(0.0);
 
+	float filmGrain = texture2D(noisetex, texCoord * vec2(viewWidth, viewHeight) / 256.0).b - 0.25;
+
 	#ifdef BLOOM
-	bloom = getBloom(texCoord);
+	bloom = getBloom(texCoord, filmGrain);
 	color += bloom;
 	#endif
 
@@ -57,10 +61,12 @@ void main() {
 	color = pow(color, vec3(1.0 / 2.2));
 	ColorSaturation(color);
 
+	color += filmGrain / 128.0;
+
 	/* DRAWBUFFERS:157 */
 	gl_FragData[0].rgb = color;
 	gl_FragData[1].gba = temporalColor;
-	gl_FragData[2].rgb = pow(bloom / 256.0, vec3(0.25));
+	gl_FragData[2].rgb = pow(bloom / 128.0, vec3(0.25));
 }
 
 #endif

@@ -25,10 +25,8 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
 	float vanillaDiffuse = (0.25 * NoU + 0.75) + (0.667 - abs(NoE)) * (1.0 - abs(NoU)) * 0.15;
 		  vanillaDiffuse*= vanillaDiffuse;
 
-    float lViewPos = length(viewPos);
-
     #ifdef TAA
-    float dither = fract(Bayer64(gl_FragCoord.xy) + frameTimeCounter * 16.0) / 64.0;
+    float dither = fract(Bayer64(gl_FragCoord.xy) + frameTimeCounter * 16.0 - 0.25) / 32.0;
     #else
     float dither = 0.0;
     #endif
@@ -104,29 +102,32 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     #endif
 
     //Block Lighting//
+    #ifdef SHIMMER_MOD_SUPPORT
     float blockLightMap = (pow4(lightmap.x) * 2.0 + pow2(lightmap.x) * 0.125) * float(emission == 0.0);
+    #else
+    float blockLightMap = min(pow10(lightmap.x) * 1.75 + pow4(lightmap.x) * 0.75, 1.0) * float(emission == 0.0);
+    #endif
 
     #if defined SHIMMER_MOD_SUPPORT
     //COLORED LIGHTING USING SHIMMER MOD
     vec3 coloredLight = getColoredLighting(worldPos, blockLightMap);
     vec3 blockLighting = blockLightCol * blockLightMap + coloredLight * BLOCKLIGHT_I;
-
     #elif defined BLOOM_COLORED_LIGHTING
     //BLOOM BASED COLORED LIGHTING
     vec3 bloom = texture2D(colortex7, gl_FragCoord.xy / vec2(viewWidth, viewHeight)).rgb;
-         bloom = pow4(bloom) * 256.0;
-         bloom = clamp(2.0 * bloom * pow(getLuminance(bloom) + 0.005, -0.5), 0.0, 1.0);
-         bloom *= (0.1 + lightmap.x * 0.9) * BLOCKLIGHT_I * BLOOM_STRENGTH;
+         bloom = pow4(bloom) * 128.0;
+         bloom = clamp(bloom * pow(getLuminance(bloom) + 0.005, -0.75), 0.0, 1.0);
+         bloom *= (0.1 + blockLightMap * 1.9) * BLOOM_STRENGTH;
+         bloom *= 1.0 - clamp(length(viewPos) * 0.025, 0.0, 0.75);
 
-    vec3 blockLighting = blockLightCol * blockLightMap * 0.125 + bloom;
-    
+    vec3 blockLighting = blockLightCol * blockLightMap + bloom;
     #else
     vec3 blockLighting = blockLightCol * blockLightMap;
     #endif
     
     //Minimum & Emissive Lighting//
     vec3 minLighting = minLightCol * (1.0 - lightmap.y);
-    vec3 emissiveLighting = albedo * emission * EMISSION_STRENGTH;
+    vec3 emissiveLighting = albedo * emission * 2.0;
 
     albedo = pow(albedo, vec3(2.2));
 

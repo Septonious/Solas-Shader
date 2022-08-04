@@ -43,7 +43,7 @@ void getIntegratedSpecular(in vec4 albedo, in vec3 normal, in vec2 worldPos, in 
 
     #if defined RAIN_PUDDLES && defined GBUFFERS_TERRAIN
     float NoU = clamp(dot(normal, upVec), 0.0, 0.75);
-    float puddles = wetness * pow16(lightmap.y) * (1.0 - lightmap.x) * texture2D(noisetex, (worldPos + cameraPosition.xz) * 0.00125).b * NoU;
+    float puddles = wetness * pow16(lightmap.y) * (1.0 - lightmap.x) * (texture2D(noisetex, (worldPos + cameraPosition.xz) * 0.00125).b - 0.25) * NoU;
 
     if (puddles > 0.0) {
         specular += puddles;

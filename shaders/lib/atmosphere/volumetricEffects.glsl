@@ -10,8 +10,8 @@ float get3DNoise(vec3 pos) {
 
 	vec2 noiseCoord = (floorPos.xz + fractPos.xz + floorPos.y * 16.0) * 0.015625;
 
-	float planeA = texture2D(noisetex, noiseCoord).g;
-	float planeB = texture2D(noisetex, noiseCoord + 0.25).g;
+	float planeA = texture2D(noisetex, noiseCoord).r;
+	float planeB = texture2D(noisetex, noiseCoord + 0.25).r;
 
 	return mix(planeA, planeB, fractPos.y);
 }
@@ -26,8 +26,8 @@ float getCloudSample(vec3 pos, float cloudLayer) {
 }
 #endif
 
-void computeVolumetricEffects(vec4 translucent, vec3 viewPos, vec2 newTexCoord, float depth0, float depth1, float dither, inout vec4 vlOut1, inout vec4 vlOut2) {
-	if (clamp(texCoord, 0.0, VOLUMETRICS_RESOLUTION + 1e-3) == texCoord) {
+void computeVolumetricEffects(vec4 translucent, vec3 viewPos, vec2 newTexCoord, float depth0, float depth1, float dither, float ug, inout vec4 vlOut1, inout vec4 vlOut2) {
+	if (clamp(texCoord, 0.0, VOLUMETRICS_RESOLUTION + 1e-3) == texCoord && ug != 0.0) {
 		vec4 vl = vec4(0.0);
 		vec4 vc = vec4(0.0);
 
@@ -58,7 +58,7 @@ void computeVolumetricEffects(vec4 translucent, vec3 viewPos, vec2 newTexCoord, 
 			float shadow1 = shadow2D(shadowtex1, shadowPos).z;
 			float lWorldPos = length(worldPos.xz);
 
-			float vlLayer = 1.0 - clamp(playerPos.y * 0.001 * VL_HEIGHT, 0.0, 1.0);
+			float vlLayer = 1.0 - clamp(playerPos.y * 0.001 * VL_HEIGHT, 0.0, 1.0 - rainStrength * 0.5);
 			float cloudLayer = abs(VC_HEIGHT - playerPos.y) / VC_STRETCHING;
 			float totalVisibility = (1.0 - float(shadow1 != 1.0) * float(eyeBrightnessSmooth.y <= 150.0)) * float(lWorldPos < end) * float(cloudLayer < 2.0 || vlLayer > 0.0);
 
@@ -77,7 +77,7 @@ void computeVolumetricEffects(vec4 translucent, vec3 viewPos, vec2 newTexCoord, 
 					}
 				}
 
-				vec3 shadow = clamp(shadowCol * (8.0 + timeBrightness * 24.0) * (1.0 - shadow0) + shadow0, 0.0, 8.0 + timeBrightness * 24.0);
+				vec3 shadow = clamp(shadowCol * (8.0 + timeBrightness * 8.0) * (1.0 - shadow0) + shadow0, 0.0, 8.0 + timeBrightness * 8.0);
 				#endif
 
 				//Color Calculations
