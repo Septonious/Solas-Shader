@@ -85,7 +85,7 @@ void main() {
 
 	if (nametagText < 0.5) {
 		albedo.rgb *= albedo.rgb;
-		emission = 0.25;
+		emission = 0.125;
 	}
 
 	#ifndef ENTITY_HIGHLIGHT
@@ -99,7 +99,7 @@ void main() {
 		getIntegratedEmission(albedo.rgb, lightmap, emission);
 		#endif
 
-		getSceneLighting(albedo.rgb, viewPos, worldPos, normal, lightmap, emission, 0.0, 0.0);
+		getSceneLighting(albedo.rgb, viewPos, worldPos, normal, lightmap, emission, 0.0, 0.0, 0.0);
 	}
 	#endif
 	

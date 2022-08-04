@@ -91,7 +91,8 @@ float sunVisibility = clamp((dot(sunVec, upVec) + 0.05) * 10.0, 0.0, 1.0);
 void main() {
 	vec4 albedo = texture2D(texture, texCoord) * color;
 	vec3 newNormal = normal;
-	float subsurface = float(mat > 0.99 && mat < 1.01);
+	float foliage = float(mat > 0.99 && mat < 1.01);
+	float subsurface = foliage * 0.75 + float(mat > 1.99 && mat < 2.01) * 0.5;
 	float emission = 0.0;
 	float specular = 0.0;
 	float roughness = 0.0;
@@ -118,7 +119,7 @@ void main() {
 		getIntegratedSpecular(albedo, newNormal, worldPos.xz, lightmap, specular, roughness);
 		#endif
 
-		getSceneLighting(albedo.rgb, viewPos, worldPos, newNormal, lightmap, emission, subsurface, specular);
+		getSceneLighting(albedo.rgb, viewPos, worldPos, newNormal, lightmap, emission, subsurface, foliage, specular);
 	}
 
 	/* DRAWBUFFERS:0 */
@@ -218,8 +219,10 @@ void main() {
 	//Materials
 	mat = 0.0;
 
-	if (mc_Entity.x >= 4 && mc_Entity.x <= 13) {
+	if (mc_Entity.x >= 4 && mc_Entity.x <= 11 && mc_Entity.x != 9 && mc_Entity.x != 10) {
 		mat = 1.0;
+	} else if (mc_Entity.x == 9 || mc_Entity.x == 10){
+		mat = 2.0;
 	} else {
 		mat = float(mc_Entity.x);
 	}

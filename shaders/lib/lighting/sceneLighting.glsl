@@ -17,7 +17,13 @@ float getLuminance(vec3 color) {
 #include "/lib/lighting/shimmerModSupport.glsl"
 #endif
 
-void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in vec3 normal, in vec2 lightmap, in float emission, in float subsurface, in float specular) {
+void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in vec3 normal, in vec2 lightmap, in float emission, in float subsurface, in float foliage, in float specular) {
+    #ifdef GBUFFERS_TERRAIN
+	if (foliage > 0.5){
+		normal = vec3(1.0);
+	}
+    #endif
+
 	float NoL = clamp(dot(normal, lightVec), 0.0, 1.0);
 	float NoU = clamp(dot(normal, upVec), -1.0, 1.0);
 	float NoE = clamp(dot(normal, eastVec), -1.0, 1.0);
@@ -26,7 +32,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
 		  vanillaDiffuse*= vanillaDiffuse;
 
     #ifdef TAA
-    float dither = fract(Bayer64(gl_FragCoord.xy) + frameTimeCounter * 16.0 - 0.25) / 32.0;
+    float dither = fract(Bayer64(gl_FragCoord.xy) + frameTimeCounter * 16.0) / 16.0;
     #else
     float dither = 0.0;
     #endif
@@ -54,10 +60,16 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
             //Shadow bias without peter-panning
             vec3 bias = worldNormal * min(0.12 + length(worldPos) / 200.0, 0.5) * (2.0 - max(NoL, 0.0));
 
+            #ifdef GBUFFERS_TERRAIN
+            if (foliage > 0.0) {
+                bias *= 0.125;
+            }
+            #endif
+
             //Fix light leaking in caves
             vec3 edgeFactor = 0.2 * (0.5 - fract(worldPosM + cameraPosition + worldNormal * 0.01));
             #ifndef GBUFFERS_TEXTURED
-                if (lightmap.y < 0.999) worldPosM += (1.0 - pow2(pow2(max(color.a, lightmap.y)))) * edgeFactor;
+                if (lightmap.y < 0.999) worldPosM += (1.0 - pow4(max(color.a, lightmap.y))) * edgeFactor;
                 #ifdef GBUFFERS_WATER
                     bias *= 0.5;
                     worldPosM += (1.0 - lightmap.y) * edgeFactor;
@@ -68,7 +80,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
             #endif
 
             worldPosM += bias;
-                        
+
             shadow = getShadow(worldPosM, dither);
         }
     }
@@ -79,7 +91,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     if (subsurface > 0.0 || specular > 0.0) {
         float VoL = clamp(dot(normalize(viewPos), lightVec), 0.0, 1.0);
         VoL = pow6(VoL) + pow24(VoL);
-        scattering = clamp(VoL * subsurface * 2.0 + VoL * specular, 0.0, 1.0);
+        scattering = clamp(VoL * subsurface + VoL * specular, 0.0, 1.0);
         NoL = mix(NoL, 1.0, subsurface);
         NoL = mix(NoL, 1.0, scattering);
     }
@@ -105,7 +117,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     #ifdef SHIMMER_MOD_SUPPORT
     float blockLightMap = (pow4(lightmap.x) * 2.0 + pow2(lightmap.x) * 0.125) * float(emission == 0.0);
     #else
-    float blockLightMap = min(pow10(lightmap.x) * 1.75 + pow4(lightmap.x) * 0.75, 1.0) * float(emission == 0.0);
+    float blockLightMap = min(pow12(lightmap.x) * 1.75 + pow3(lightmap.x) * 0.75, 1.0) * float(emission == 0.0);
     #endif
 
     #if defined SHIMMER_MOD_SUPPORT

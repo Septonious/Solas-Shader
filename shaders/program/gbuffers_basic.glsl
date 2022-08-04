@@ -62,7 +62,7 @@ void main() {
 		vec3 worldPos = ToWorld(viewPos);
 		vec2 lightmap = clamp(lightMapCoord, 0.0, 1.0);
 
-		getSceneLighting(albedo.rgb, viewPos, worldPos, normal, lightmap, 0.0, 0.0, 0.0);
+		getSceneLighting(albedo.rgb, viewPos, worldPos, normal, lightmap, 0.0, 0.0, 0.0, 0.0);
 	}
 
 	/* DRAWBUFFERS:0 */

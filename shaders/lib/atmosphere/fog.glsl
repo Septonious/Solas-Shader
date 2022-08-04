@@ -1,9 +1,5 @@
 vec3 getFogColor(in vec3 atmosphereColor, in vec3 viewPos) {
-    float VoL = clamp(dot(normalize(viewPos), sunVec), 0.0, 1.0);
-
-	float sunFactor = 1.0 + VoL * 0.75;
-
-	return atmosphereColor * sunFactor;
+	return mix(lightColSqrt, atmosphereColor, min(dfade + rainStrength, 1.0) * 0.5);
 }
 
 void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 atmosphereColor) {
@@ -16,9 +12,9 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 atmo
 	//Overworld Fog
 	#ifdef OVERWORLD
 	//Fog Altitude
-	float fogAltitude = clamp((worldPos.y + cameraPosition.y) * 0.001 * FOG_HEIGHT, 0.0, 1.0 - rainStrength);
+	float fogAltitude = clamp(sqrt((worldPos.y + cameraPosition.y) * 0.001 * FOG_HEIGHT), 0.0, 1.0 - rainStrength * 0.75);
 
-	float fog = lViewPos * FOG_DENSITY * 0.00125 * (1.0 - fogAltitude);
+	float fog = lViewPos * FOG_DENSITY * 0.0025 * (1.0 - fogAltitude);
 	fog = 1.0 - exp(-2.0 * fog);
 
 	vec3 fogColor = getFogColor(atmosphereColor, viewPos) * fog;

@@ -20,11 +20,11 @@ vec3 getAtmosphere(vec3 viewPos) {
     float sunFactor = sunVisibility * 0.5 + VoS * 0.5;
     float horizonFactor = pow16(1.0 - pow2(absVoU));
 
-    float scatteringFactor = clamp(sunVisibility * pow3(1.0 - timeBrightness) * (1.0 - rainStrength) * sunFactor, 0.0, 0.65);
-    float skyDensity = mix(exp(-absVoU), 0.6, rainStrength * 0.75);
+    float scatteringFactor = clamp(sunVisibility * pow3(1.0 - timeBrightness) * (1.0 - rainStrength) * sunFactor, 0.0, 0.75);
+    float skyDensity = mix(exp(-absVoU), 0.6, rainStrength * 0.8);
 
     //Day & Night Sky
-    vec3 daySky = mix(skyColSqrt, pow(skyColor, vec3(1.25)) * 1.25, dfade);
+    vec3 daySky = mix(skyColSqrt, pow(skyColor, vec3(1.25)) * 1.5, dfade);
     vec3 sky = mix(lightNight, daySky, sunVisibility) * skyDensity;
 
     //Fake Light Scattering

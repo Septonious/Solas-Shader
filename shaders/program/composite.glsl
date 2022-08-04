@@ -87,7 +87,7 @@ void main() {
 	vec4 viewPos = gbufferProjectionInverse * (screenPos * 2.0 - 1.0);
 	viewPos /= viewPos.w;
 
-	computeVolumetricEffects(translucent, viewPos.xyz, newTexCoord, getLinearDepth2(z0), getLinearDepth2(z1), dither, ug, vlOut1, vlOut2);
+	computeVolumetricEffects(translucent, viewPos.xyz, newTexCoord, z0, z1, dither, ug, vlOut1, vlOut2);
 
 	#ifdef VL
 	vlOut1 = sqrt(vlOut1);

@@ -83,7 +83,7 @@ void main() {
 		emission *= EMISSION_STRENGTH;
 		#endif
 
-		getSceneLighting(albedo.rgb, viewPos, worldPos, normal, lightmap, emission, 0.0, 0.0);
+		getSceneLighting(albedo.rgb, viewPos, worldPos, normal, lightmap, emission, 0.0, 0.0, 0.0);
 	}
 
 	/* DRAWBUFFERS:01 */
