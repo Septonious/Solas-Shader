@@ -15,6 +15,7 @@ uniform sampler2D texture;
 //Program//
 void main() {
     vec4 albedo = texture2D(texture, texCoord) * color;
+	albedo.rgb = vec3(0.2, 0.5, 1.0) * length(albedo.rgb);
 	albedo *= 0.35;
 
     /* DRAWBUFFERS:0 */

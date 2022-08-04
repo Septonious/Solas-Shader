@@ -8,11 +8,11 @@ vec3 FXAA311(vec3 color) {
 	
 	vec2 viewScale = 1.0 / vec2(viewWidth, viewHeight);
 	
-	float lumaCenter = GetLuminance(color);
-	float lumaDown  = GetLuminance(texture2D(colortex1, texCoord + vec2( 0.0, -1.0) * viewScale).rgb);
-	float lumaUp    = GetLuminance(texture2D(colortex1, texCoord + vec2( 0.0,  1.0) * viewScale).rgb);
-	float lumaLeft  = GetLuminance(texture2D(colortex1, texCoord + vec2(-1.0,  0.0) * viewScale).rgb);
-	float lumaRight = GetLuminance(texture2D(colortex1, texCoord + vec2( 1.0,  0.0) * viewScale).rgb);
+	float lumaCenter = getLuminance(color);
+	float lumaDown  = getLuminance(texture2D(colortex1, texCoord + vec2( 0.0, -1.0) * viewScale).rgb);
+	float lumaUp    = getLuminance(texture2D(colortex1, texCoord + vec2( 0.0,  1.0) * viewScale).rgb);
+	float lumaLeft  = getLuminance(texture2D(colortex1, texCoord + vec2(-1.0,  0.0) * viewScale).rgb);
+	float lumaRight = getLuminance(texture2D(colortex1, texCoord + vec2( 1.0,  0.0) * viewScale).rgb);
 	
 	float lumaMin = min(lumaCenter, min(min(lumaDown, lumaUp), min(lumaLeft, lumaRight)));
 	float lumaMax = max(lumaCenter, max(max(lumaDown, lumaUp), max(lumaLeft, lumaRight)));
@@ -20,10 +20,10 @@ vec3 FXAA311(vec3 color) {
 	float lumaRange = lumaMax - lumaMin;
 	
 	if (lumaRange > max(edgeThresholdMin, lumaMax * edgeThresholdMax)) {
-		float lumaDownLeft  = GetLuminance(texture2D(colortex1, texCoord + vec2(-1.0, -1.0) * viewScale).rgb);
-		float lumaUpRight   = GetLuminance(texture2D(colortex1, texCoord + vec2( 1.0,  1.0) * viewScale).rgb);
-		float lumaUpLeft    = GetLuminance(texture2D(colortex1, texCoord + vec2(-1.0,  1.0) * viewScale).rgb);
-		float lumaDownRight = GetLuminance(texture2D(colortex1, texCoord + vec2( 1.0, -1.0) * viewScale).rgb);
+		float lumaDownLeft  = getLuminance(texture2D(colortex1, texCoord + vec2(-1.0, -1.0) * viewScale).rgb);
+		float lumaUpRight   = getLuminance(texture2D(colortex1, texCoord + vec2( 1.0,  1.0) * viewScale).rgb);
+		float lumaUpLeft    = getLuminance(texture2D(colortex1, texCoord + vec2(-1.0,  1.0) * viewScale).rgb);
+		float lumaDownRight = getLuminance(texture2D(colortex1, texCoord + vec2( 1.0, -1.0) * viewScale).rgb);
 		
 		float lumaDownUp    = lumaDown + lumaUp;
 		float lumaLeftRight = lumaLeft + lumaRight;
@@ -40,7 +40,7 @@ vec3 FXAA311(vec3 color) {
 							   abs(-2.0 * lumaCenter + lumaLeftRight   ) * 2.0 +
 							   abs(-2.0 * lumaDown   + lumaDownCorners );
 		
-		bool isHorizontal = (edgeHorizontal >= edgeVertical);		
+		bool isHorizontal = edgeHorizontal >= edgeVertical;		
 		
 		float luma1 = isHorizontal ? lumaDown : lumaLeft;
 		float luma2 = isHorizontal ? lumaUp : lumaRight;
@@ -55,24 +55,27 @@ vec3 FXAA311(vec3 color) {
 		float lumaLocalAverage = 0.0;
 
 		if (is1Steepest) {
-			stepLength = - stepLength;
+			stepLength -= stepLength;
 			lumaLocalAverage = 0.5 * (luma1 + lumaCenter);
-		} else
+		} else {
 			lumaLocalAverage = 0.5 * (luma2 + lumaCenter);
-		
+		}
+
 		vec2 currentUv = texCoord;
-		if (isHorizontal)
+
+		if (isHorizontal) {
 			currentUv.y += stepLength * 0.5;
-		else
+		} else {
 			currentUv.x += stepLength * 0.5;
+		}
 		
 		vec2 offset = isHorizontal ? vec2(viewScale.x, 0.0) : vec2(0.0, viewScale.y);
 		
-		vec2 uv1 = currentUv - offset;
-		vec2 uv2 = currentUv + offset;
+		vec2 texCoord1 = currentUv - offset;
+		vec2 texCoord2 = currentUv + offset;
 
-		float lumaEnd1 = GetLuminance(texture2D(colortex1, uv1).rgb);
-		float lumaEnd2 = GetLuminance(texture2D(colortex1, uv2).rgb);
+		float lumaEnd1 = getLuminance(texture2D(colortex1, texCoord1).rgb);
+		float lumaEnd2 = getLuminance(texture2D(colortex1, texCoord2).rgb);
 		lumaEnd1 -= lumaLocalAverage;
 		lumaEnd2 -= lumaLocalAverage;
 		
@@ -80,20 +83,17 @@ vec3 FXAA311(vec3 color) {
 		bool reached2 = abs(lumaEnd2) >= gradientScaled;
 		bool reachedBoth = reached1 && reached2;
 		
-		if (!reached1)
-			uv1 -= offset;
-
-		if (!reached2)
-			uv2 += offset;
+		if (!reached1) texCoord1 -= offset;
+		if (!reached2) texCoord2 += offset;
 		
 		if (!reachedBoth) {
 			for(int i = 2; i < 12; i++) {
 				if (!reached1) {
-					lumaEnd1 = GetLuminance(texture2D(colortex1, uv1).rgb);
+					lumaEnd1 = getLuminance(texture2D(colortex1, texCoord1).rgb);
 					lumaEnd1 = lumaEnd1 - lumaLocalAverage;
 				}
 				if (!reached2) {
-					lumaEnd2 = GetLuminance(texture2D(colortex1, uv2).rgb);
+					lumaEnd2 = getLuminance(texture2D(colortex1, texCoord2).rgb);
 					lumaEnd2 = lumaEnd2 - lumaLocalAverage;
 				}
 				
@@ -102,24 +102,24 @@ vec3 FXAA311(vec3 color) {
 				reachedBoth = reached1 && reached2;
 
 				if (!reached1)
-					uv1 -= offset * quality[i];
+					texCoord1 -= offset * quality[i];
 					
 				if (!reached2)
-					uv2 += offset * quality[i];
+					texCoord2 += offset * quality[i];
 				
 				if (reachedBoth) break;
 			}
 		}
 		
-		float distance1 = isHorizontal ? (texCoord.x - uv1.x) : (texCoord.y - uv1.y);
-		float distance2 = isHorizontal ? (uv2.x - texCoord.x) : (uv2.y - texCoord.y);
+		float distance1 = isHorizontal ? (texCoord.x - texCoord1.x) : (texCoord.y - texCoord1.y);
+		float distance2 = isHorizontal ? (texCoord2.x - texCoord.x) : (texCoord2.y - texCoord.y);
 
 		bool isDirection1 = distance1 < distance2;
 		float distanceFinal = min(distance1, distance2);
 
 		float edgeThickness = (distance1 + distance2);
 
-		float pixelOffset = - distanceFinal / edgeThickness + 0.5;
+		float pixelOffset = -distanceFinal / edgeThickness + 0.5;
 		
 		bool isLumaCenterSmaller = lumaCenter < lumaLocalAverage;
 
@@ -134,15 +134,15 @@ vec3 FXAA311(vec3 color) {
 
 		finalOffset = max(finalOffset, subPixelOffsetFinal);
 		
-		
 		// Compute the final UV coordinates.
-		vec2 finalUv = texCoord;
-		if (isHorizontal)
-			finalUv.y += finalOffset * stepLength;
-		else
-			finalUv.x += finalOffset * stepLength;
+		vec2 finalTexCoord = texCoord;
+		if (isHorizontal) {
+			finalTexCoord.y += finalOffset * stepLength;
+		} else {
+			finalTexCoord.x += finalOffset * stepLength;
+		}
 
-		color = texture2D(colortex1, finalUv).rgb;
+		color = texture2D(colortex1, finalTexCoord).rgb;
 	}
 
 	return color;

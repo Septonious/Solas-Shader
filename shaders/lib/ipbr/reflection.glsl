@@ -27,22 +27,22 @@ vec3 getReflection(vec3 viewPos, vec3 normal, vec3 color, float roughness) {
         reflectionFade = getAtmosphere(reflectedViewPos);
 
 		#ifdef MILKY_WAY
-		getNebula(reflectionFade, worldPos, VoU, nebulaFactor);
+		getNebula(reflectionFade, worldPos, VoU, nebulaFactor, ug);
 		#endif
 
 		#ifdef STARS
-		getStars(reflectionFade, worldPos, VoU, nebulaFactor, 0.0);
+		getStars(reflectionFade, worldPos, VoU, nebulaFactor, 0.0, ug);
 		#endif
 
 		if (VoU > 0.0) {
 			VoU = sqrt(VoU);
 
 			#ifdef RAINBOW
-			getRainbow(reflectionFade, worldPos, VoU, 1.75, 0.05);
+			getRainbow(reflectionFade, worldPos, VoU, 1.75, 0.05, ug);
 			#endif
 
 			#ifdef AURORA
-			getAurora(reflectionFade, worldPos);
+			getAurora(reflectionFade, worldPos, ug);
 			#endif
 		}
 
@@ -65,11 +65,11 @@ vec3 getReflection(vec3 viewPos, vec3 normal, vec3 color, float roughness) {
 		#endif
 
 		#ifdef END_NEBULA
-		getNebula(reflectionFade, worldPos, VoU, nebulaFactor);
+		getNebula(reflectionFade, worldPos, VoU, nebulaFactor, 1.0);
 		#endif
 
 		#ifdef END_STARS
-		getStars(reflectionFade, worldPos, VoU, nebulaFactor, blackHoleFactor);
+		getStars(reflectionFade, worldPos, VoU, nebulaFactor, blackHoleFactor, 1.0);
 		#endif
 	}
 

@@ -34,7 +34,7 @@ void computeVolumetricEffects(vec4 translucent, vec3 viewPos, vec2 newTexCoord, 
 		#ifdef VL
 		vec3 shadowCol = vec3(0.0);
 
-		float vlVisibility = (0.5 - dfade * 0.25) * VL_OPACITY;
+		float vlVisibility = (0.25 - dfade * 0.125) * VL_OPACITY;
 		#endif
 
 		float lViewPos = length(viewPos.xz) * 0.000125;
@@ -85,7 +85,7 @@ void computeVolumetricEffects(vec4 translucent, vec3 viewPos, vec2 newTexCoord, 
 
 				vec4 vlColor = vec4(0.0);
 				if (vlVisibility > 0.0 && shadow1 != 0.0) {
-					vlColor = vec4(mix(lightCol * 0.5, waterColor, float(isEyeInWater == 1)), vlLayer) * vlVisibility * vlLayer;
+					vlColor = vec4(mix(lightCol * 0.5, waterColor, float(isEyeInWater == 1)), vlLayer * VL_OPACITY) * vlVisibility * vlLayer;
 
 					#ifdef SHADOW_COLOR
 					vlColor.rgb *= shadow;
@@ -102,7 +102,7 @@ void computeVolumetricEffects(vec4 translucent, vec3 viewPos, vec2 newTexCoord, 
 				float cloudDistantFade = 1.0 - clamp(pow4(lViewPos) + pow2(lWorldPos / far * 0.15), 0.0, 1.0);
 
 				//Color Calculations
-				float cloudLighting = clamp(smoothstep(VC_HEIGHT + VC_STRETCHING * noise, VC_HEIGHT - VC_STRETCHING * noise, playerPos.y) * 0.5 + noise * 0.5, 0.0, 1.0);
+				float cloudLighting = clamp(smoothstep(VC_HEIGHT + VC_STRETCHING * noise, VC_HEIGHT - VC_STRETCHING * noise, playerPos.y) * 0.4 + noise * 0.6, 0.0, 1.0);
 				vec4 cloudColor = vec4(mix(lightCol, ambientCol, cloudLighting), noise) * cloudDistantFade;
 					 cloudColor.rgb *= cloudColor.a;
 				#endif

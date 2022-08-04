@@ -107,7 +107,7 @@ void main() {
 		#endif
 	#else
 		/* DRAWBUFFERS:062 */
-		gl_FragData[1] = vec4(albedo.rgb, 0.001);
+		gl_FragData[1] = vec4(albedo.rgb, 1.0);
 		gl_FragData[2] = vec4(EncodeNormal(normal), emission, 1.0);
 	#endif
 }

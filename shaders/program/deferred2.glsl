@@ -118,22 +118,22 @@ void main() {
 		#ifdef OVERWORLD
 		if (ug != 0.0) {
 			#ifdef MILKY_WAY
-			getNebula(skyColor, worldPos, VoU, nebulaFactor);
+			getNebula(skyColor, worldPos, VoU, nebulaFactor, ug);
 			#endif
 
 			#ifdef STARS
-			getStars(skyColor, worldPos, VoU, nebulaFactor, 0.0);
+			getStars(skyColor, worldPos, VoU, nebulaFactor, 0.0, ug);
 			#endif
 
 			if (VoU > 0.0) {
 				VoU = sqrt(VoU);
 
 				#ifdef RAINBOW
-				getRainbow(skyColor, worldPos, VoU, 1.75, 0.05);
+				getRainbow(skyColor, worldPos, VoU, 1.75, 0.05, ug);
 				#endif
 
 				#ifdef AURORA
-				getAurora(skyColor, worldPos);
+				getAurora(skyColor, worldPos, ug);
 				#endif
 			}
 
@@ -143,11 +143,11 @@ void main() {
 
 		#ifdef END
 		#ifdef END_NEBULA
-		getNebula(skyColor, worldPos, VoU, nebulaFactor);
+		getNebula(skyColor, worldPos, VoU, nebulaFactor, 1.0);
 		#endif
 
 		#ifdef END_STARS
-		getStars(skyColor, worldPos, VoU, nebulaFactor, blackHoleFactor);
+		getStars(skyColor, worldPos, VoU, nebulaFactor, blackHoleFactor, 1.0);
 		#endif
 		#endif
 

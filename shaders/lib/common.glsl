@@ -36,7 +36,7 @@ const float shadowBlurStrength = 1.0 / shadowMapResolution;
 //Bloom//
 #define BLOOM_COLORED_LIGHTING
 #define BLOOM
-#define BLOOM_STRENGTH 4.25 //[1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00 4.25 4.50 4.75 5.00 5.25 5.50 5.75 6.00 6.25 6.50 6.75 7.00 7.25 7.50 7.75 8.00]
+#define BLOOM_STRENGTH 3.25 //[1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00 4.25 4.50 4.75 5.00 5.25 5.50 5.75 6.00 6.25 6.50 6.75 7.00 7.25 7.50 7.75 8.00]
 #define BLOOM_RADIUS 4 //[1 2 3 4]
 
 //Atmosphere//
@@ -55,13 +55,13 @@ const float shadowBlurStrength = 1.0 / shadowMapResolution;
 //Fog//
 #define DISTANT_FADE
 #define DISTANT_FADE_STYLE 0 //[0 1]
-#define FOG_DENSITY 1.0 //[0.0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2.0]
-#define FOG_HEIGHT 9.0 //[10.0 9.5 9.0 8.5 8.0 7.5 7.0 6.5 6.0 5.5 5.0 4.5 4.0 3.5 3.0 2.5 2.0 1.5 1.0]
+#define FOG_DENSITY 1.5 //[0.0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2.0]
+#define FOG_HEIGHT 8.0 //[10.0 9.5 9.0 8.5 8.0 7.5 7.0 6.5 6.0 5.5 5.0 4.5 4.0 3.5 3.0 2.5 2.0 1.5 1.0]
 
 //Volumetric Light
 #define VOLUMETRICS_RESOLUTION 0.5 //[0.5 0.6 0.7 0.8 0.9 1.0]
 #define VL
-#define VL_OPACITY 0.20 //[0.10 0.15 0.20 0.25 0.30 0.35 0.40 0.45 0.50]
+#define VL_OPACITY 0.30 //[0.10 0.15 0.20 0.25 0.30 0.35 0.40 0.45 0.50]
 #define VL_HEIGHT 6.0 //[10.0 9.5 9.0 8.5 8.0 7.5 7.0 6.5 6.0 5.5 5.0 4.5 4.0 3.5 3.0 2.5 2.0 1.5 1.0]
 
 //Volumetric Clouds
@@ -92,7 +92,7 @@ const float shadowBlurStrength = 1.0 / shadowMapResolution;
 
 #define TONEMAP_LOWER_CURVE 1.4 //[0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5]
 #define TONEMAP_UPPER_CURVE 1.4 //[0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5]
-#define TONEMAP_WHITE_CURVE 1.6  //[1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2.0 2.1 2.2 2.3 2.4 2.5]
+#define TONEMAP_WHITE_CURVE 1.5  //[1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2.0 2.1 2.2 2.3 2.4 2.5]
 
 #define EXPOSURE 0.70 //[0.00 0.10 0.20 0.30 0.40 0.50 0.60 0.70 0.80 0.90 1.00]
 #define SATURATION 1.10 //[0.00 0.05 0.10 0.15 0.20 0.25 0.30 0.35 0.40 0.45 0.50 0.55 0.60 0.65 0.70 0.75 0.80 0.85 0.90 0.95 1.00 1.05 1.10 1.15 1.20 1.25 1.30 1.35 1.40 1.45 1.50 1.55 1.60 1.65 1.70 1.75 1.80 1.85 1.90 1.95 2.00]

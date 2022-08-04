@@ -70,9 +70,11 @@ float sunVisibility = clamp((dot(sunVec, upVec) + 0.05) * 10.0, 0.0, 1.0);
 //Program//
 void main() {
 	vec4 albedo = texture2D(texture, texCoord) * color;
+		 albedo.a *= 1.0 - float(color.a >= 0.24 && color.a < 0.255);
 		 albedo.rgb = mix(albedo.rgb, entityColor.rgb, entityColor.a);
 
 	float lightningBolt = float(entityId == 0);
+	float nametagText = float(length(entityColor.rgb) > 0.0);
 	float emission = float(entityColor.a > 0.05) * 0.025 + lightningBolt;
 
 	if (lightningBolt > 0.5) {
@@ -81,8 +83,13 @@ void main() {
 		albedo.a = 1.0;
 	}
 
+	if (nametagText < 0.5) {
+		albedo.rgb *= albedo.rgb;
+		emission = 0.25;
+	}
+
 	#ifndef ENTITY_HIGHLIGHT
-	if (albedo.a > 0.001 && lightningBolt < 0.5) {
+	if (albedo.a > 0.001 && lightningBolt < 0.5 && nametagText > 0.5) {
 		vec3 screenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z);
 		vec3 viewPos = ToNDC(screenPos);
 		vec3 worldPos = ToWorld(viewPos);
@@ -106,7 +113,7 @@ void main() {
 		#endif
 	#else
 		/* DRAWBUFFERS:062 */
-		gl_FragData[1] = vec4(albedo.rgb, 0.001);
+		gl_FragData[1] = vec4(albedo.rgb, 1.0);
 		gl_FragData[2] = vec4(EncodeNormal(normal), emission, 1.0);
 	#endif
 }
