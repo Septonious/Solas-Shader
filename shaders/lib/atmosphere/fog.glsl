@@ -1,6 +1,8 @@
+#ifdef OVERWORLD
 vec3 getFogColor(in vec3 atmosphereColor, in vec3 viewPos) {
 	return mix(lightColSqrt, atmosphereColor, min(dfade + rainStrength, 1.0) * 0.5);
 }
+#endif
 
 void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 atmosphereColor) {
 	float lViewPos = length(viewPos);

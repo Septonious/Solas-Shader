@@ -38,7 +38,7 @@ void computeVolumetricEffects(vec4 translucent, vec3 viewPos, vec2 newTexCoord, 
 		vec3 shadowCol = vec3(0.0);
 
 		float VoL = clamp(dot(normalize(viewPos), sunVec), 0.0, 0.5);
-		float vlVisibility = float(z1 > 0.56 && z1 != 1.0) * (0.5 - dfade * 0.25) * VL_OPACITY * (0.5 + VoL);
+		float vlVisibility = float(z1 > 0.56) * (0.5 - dfade * 0.25) * VL_OPACITY * (0.5 + VoL);
 		#endif
 
 		float lViewPos = length(viewPos.xz) * 0.000125;

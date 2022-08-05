@@ -24,6 +24,20 @@ in vec4 color;
 //Uniforms//
 uniform int isEyeInWater;
 
+#ifdef INTEGRATED_SPECULAR
+#ifdef AURORA
+#ifdef AURORA_FULL_MOON_VISIBILITY
+uniform int moonPhase;
+#endif
+
+uniform float isSnowy;
+#endif
+
+#ifdef RAINBOW
+uniform float wetness;
+#endif
+#endif
+
 uniform float viewWidth, viewHeight, far;
 uniform float nightVision, blindFactor;
 uniform float frameTimeCounter;
@@ -40,24 +54,44 @@ uniform float rainStrength;
 uniform float timeBrightness, timeAngle;
 #endif
 
+#if defined OVERWORLD || ((defined OVERWORLD || defined END) && defined INTEGRATED_SPECULAR)
+uniform ivec2 eyeBrightnessSmooth;
+#endif
+
 uniform vec3 cameraPosition;
 
 #ifdef OVERWORLD
-uniform ivec2 eyeBrightnessSmooth;
-
 uniform vec3 skyColor, fogColor;
-
-uniform sampler2D depthtex1;
 #endif
 
-#ifdef WATER_NORMALS
+#if defined WATER_NORMALS || (defined INTEGRATED_SPECULAR && (defined END_NEBULA || defined AURORA))
 uniform sampler2D noisetex;
+#endif
+
+#ifdef INTEGRATED_SPECULAR
+uniform sampler2D colortex6;
+
+#ifdef MILKY_WAY
+uniform sampler2D depthtex2;
+#endif
 #endif
 
 uniform sampler2D texture;
 
+#if defined WATER_FOG || (defined INTEGRATED_SPECULAR && REFLECTION_TYPE == 1)
+uniform sampler2D depthtex1;
+#endif
+
 uniform mat4 gbufferProjectionInverse;
 uniform mat4 gbufferModelViewInverse;
+
+#ifdef INTEGRATED_SPECULAR
+#ifdef OVERWORLD
+uniform mat4 gbufferModelView;
+#endif
+
+uniform mat4 gbufferProjection;
+#endif
 
 #if defined OVERWORLD || defined END
 uniform mat4 shadowProjection;
@@ -65,16 +99,31 @@ uniform mat4 shadowModelView;
 #endif
 
 //Common Variables//
-#ifdef OVERWORLD
+#if defined OVERWORLD || ((defined OVERWORLD || defined END) && defined INTEGRATED_SPECULAR)
 float eBS = eyeBrightnessSmooth.y / 240.0;
-float ug = mix(clamp((cameraPosition.y - 56.0) / 16.0, 0.0, 1.0), 1.0, eBS);
-float sunVisibility = clamp((dot(sunVec, upVec) + 0.05) * 10.0, 0.0, 1.0);
+float ug = mix(clamp((cameraPosition.y - 56.0) / 16.0, float(isEyeInWater == 1), 1.0), 1.0, eBS);
+
+#ifdef OVERWORLD
+float sunVisibility = clamp(dot(sunVec, upVec) + 0.05, 0.0, 0.1) * 10.0;
+#endif
+#endif
+
+#if REFLECTION_TYPE == 1 && defined INTEGRATED_SPECULAR
+vec2 viewResolution = vec2(viewWidth, viewHeight);
 #endif
 
 //Includes//
 #include "/lib/util/ToNDC.glsl"
 #include "/lib/util/ToWorld.glsl"
 #include "/lib/util/bayerDithering.glsl"
+
+#ifdef INTEGRATED_SPECULAR
+#include "/lib/util/ToScreen.glsl"
+
+#if REFLECTION_TYPE == 1
+#include "/lib/util/raytracer.glsl"
+#endif
+#endif
 
 #if defined OVERWORLD || defined END
 #include "/lib/util/ToShadow.glsl"
@@ -95,8 +144,16 @@ float sunVisibility = clamp((dot(sunVec, upVec) + 0.05) * 10.0, 0.0, 1.0);
 
 #include "/lib/atmosphere/fog.glsl"
 
-#if defined BLOOM || defined INTEGRATED_SPECULAR
-#include "/lib/util/encode.glsl"
+#ifdef INTEGRATED_SPECULAR
+#ifdef OVERWORLD
+#include "/lib/atmosphere/sunMoon.glsl"
+#endif
+
+#if defined OVERWORLD || defined END
+#include "/lib/atmosphere/skyEffects.glsl"
+#endif
+
+#include "/lib/ipbr/waterReflection.glsl"
 #endif
 
 //Program//
@@ -134,7 +191,7 @@ void main() {
 		}
 		#endif
 
-		getSceneLighting(albedo.rgb, viewPos, worldPos, newNormal, lightmap, portal * pow8(length(albedo.rgb)) * 4.0, 0.0, 0.0, 0.0);
+		getSceneLighting(albedo.rgb, viewPos, worldPos, newNormal, lightmap, portal * pow8(length(albedo.rgb)) * 4.0, 0.0, 0.0, 1.0);
 
 		#if defined OVERWORLD
 		skyColor = getAtmosphere(viewPos);
@@ -142,6 +199,13 @@ void main() {
 		skyColor = netherColSqrt.rgb * 0.25;
 		#elif defined END
 		skyColor = endLightCol.rgb * 0.15;
+		#endif
+
+		#ifdef INTEGRATED_SPECULAR
+		float fresnel = clamp(1.0 + dot(newNormal, normalize(viewPos)), 0.0, 1.0);
+
+		vec3 reflection = getReflection(viewPos, newNormal, albedo.rgb);
+		albedo.rgb = mix(albedo.rgb, reflection, fresnel);
 		#endif
 
 		#ifdef OVERWORLD
@@ -162,10 +226,9 @@ void main() {
 	gl_FragData[0] = albedo;
 	gl_FragData[1] = albedo;
 
-	#if defined BLOOM || defined INTEGRATED_SPECULAR
-	/* DRAWBUFFERS:0162 */
-	gl_FragData[2].a = 0.001;
-	gl_FragData[3] = vec4(EncodeNormal(newNormal), portal, 1.0 - portal * 0.75);
+	#ifdef BLOOM
+	/* DRAWBUFFERS:012 */
+	gl_FragData[2].ba = vec2(portal, 1.0 - portal * 0.75);
 	#endif
 }
 

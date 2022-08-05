@@ -1,12 +1,12 @@
-vec3 getReflection(vec3 viewPos, vec3 normal, vec3 color, float roughness) {
-	vec3 reflectedViewPos = reflect(normalize(viewPos), normal);
+vec3 getReflection(vec3 viewPos, vec3 normal, vec3 color) {
+	vec3 reflectedViewPos = reflect(normalize(viewPos), normal) * 256.0;
 	vec3 reflectedScreenPos = ToScreen(reflectedViewPos);
 	vec3 reflection = vec3(0.0);
 
 	#if REFLECTION_TYPE == 0
     bool outsideScreen = !(any(lessThan(reflectedScreenPos.xy, vec2(0.0))) || any(greaterThan(reflectedScreenPos.xy, vec2(1.0))));
 	#elif REFLECTION_TYPE == 1
-	bool outsideScreen = rayTrace(viewPos, reflectedViewPos * 256.0, reflectedScreenPos);
+	bool outsideScreen = rayTrace(viewPos, reflectedViewPos, reflectedScreenPos);
 	#endif
 
     #if defined OVERWORLD || defined END
@@ -17,7 +17,7 @@ vec3 getReflection(vec3 viewPos, vec3 normal, vec3 color, float roughness) {
 	#if defined OVERWORLD
 	vec3 reflectionFade = color;
 
-    if (eBS != 0.0 && roughness <= 0.1) {
+    if (eBS != 0.0) {
         vec3 nViewPos = normalize(reflectedViewPos);
         vec3 worldPos = mat3(gbufferModelViewInverse) * reflectedViewPos;
         float VoS = clamp(dot(nViewPos, sunVec), 0.0, 1.0);
@@ -56,7 +56,7 @@ vec3 getReflection(vec3 viewPos, vec3 normal, vec3 color, float roughness) {
 	#elif defined END
 	vec3 reflectionFade = endLightCol * 0.15;
 
-	if (eBS != 0.0 && roughness <= 0.1) {
+	if (eBS != 0.0) {
 		#if defined END_NEBULA || defined END_STARS
 		vec3 worldPos = mat3(gbufferModelViewInverse) * reflectedViewPos;
 		vec3 nViewPos = normalize(reflectedViewPos);
@@ -77,17 +77,14 @@ vec3 getReflection(vec3 viewPos, vec3 normal, vec3 color, float roughness) {
 	#endif
 
     if (outsideScreen) {
-        reflection = texture2DLod(colortex6, reflectedScreenPos.xy, roughness).rgb;
-		reflection = pow(reflection, vec3(2.2));
+        reflection = texture2D(colortex6, reflectedScreenPos.xy).rgb;
     }
 
-	vec3 finalReflection = mix(reflectionFade * reflectionFade, reflection, float(reflection != vec3(0.0)));
-
     #if MC_VERSION >= 11900
-    finalReflection *= 1.0 - darknessFactor;
+    reflectionFade *= 1.0 - darknessFactor;
     #endif
 
-    finalReflection *= 1.0 - blindFactor;
+    reflectionFade *= 1.0 - blindFactor;
 
-    return finalReflection;
+    return mix(reflectionFade, reflection, float(reflection != vec3(0.0)));
 }

@@ -1,4 +1,4 @@
-#ifdef STARS
+#if defined STARS || defined END_STARS
 float GetNoise(vec2 pos) {
 	return fract(sin(dot(pos, vec2(12.9898, 4.1414))) * 43758.5453);
 }
@@ -26,7 +26,7 @@ void getStars(inout vec3 color, in vec3 worldPos, in float VoU, in float nebulaF
 }
 #endif
 
-#ifdef MILKY_WAY
+#if defined MILKY_WAY || defined END_NEBULA
 void getNebula(inout vec3 color, in vec3 worldPos, in float VoU, inout float nebulaFactor, in float ug) {
 	#ifdef OVERWORLD
 	float visibility = (1.0 - sunVisibility) * (1.0 - rainStrength) * sqrt(max(VoU, 0.0)) * MILKY_WAY_BRIGHTNESS * ug;

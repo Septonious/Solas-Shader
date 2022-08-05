@@ -5,7 +5,7 @@ float minOf(vec3 x) {
 // The favorite raytracer of your favorite raytracer, credits to Belmu
 bool rayTrace(vec3 viewPos, vec3 rayDir, inout vec3 rayPos) {
     bool intersect = false;
-	float dither = getBlueNoise(gl_FragCoord.xy);
+	float dither = Bayer256(gl_FragCoord.xy);
 
 	#ifdef TAA
 	dither = fract(dither + frameTimeCounter * 16.0);
@@ -16,7 +16,7 @@ bool rayTrace(vec3 viewPos, vec3 rayDir, inout vec3 rayPos) {
     rayDir*= minOf((sign(rayDir) - rayPos) / rayDir) * (1.0 / REFLECTION_RT_SAMPLE_COUNT); // Taken from the DDA algorithm
     rayPos+= rayDir * dither;
 
-    for(int i = 0; i <= REFLECTION_RT_SAMPLE_COUNT && !intersect; i++, rayPos += rayDir) {
+    for(int i = 0; i < REFLECTION_RT_SAMPLE_COUNT && !intersect; i++, rayPos += rayDir) {
         if (clamp(rayPos.xy, 0.0, 1.0) != rayPos.xy) return false;
 
         float depth = texelFetch(depthtex1, ivec2(rayPos.xy * viewResolution), 0).r;

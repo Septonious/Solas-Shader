@@ -52,7 +52,7 @@ uniform mat4 gbufferModelViewInverse;
 //Common Variables//
 #ifdef VC
 float eBS = eyeBrightnessSmooth.y / 240.0;
-float ug = mix(clamp((cameraPosition.y - 56.0) / 16.0, 0.0, 1.0), 1.0, eBS);
+float ug = mix(clamp((cameraPosition.y - 56.0) / 16.0, float(isEyeInWater == 1), 1.0), 1.0, eBS);
 float sunVisibility = clamp(dot(sunVec, upVec) + 0.05, 0.0, 0.1) * 10.0;
 #endif
 
@@ -91,7 +91,7 @@ void main() {
 
 	#ifdef VL
 	vlOut1 = sqrt(vlOut1);
-	if (isEyeInWater != 1) vlOut1 *= ug;
+	vlOut1 *= ug;
 	#endif
 
 	#ifdef VC

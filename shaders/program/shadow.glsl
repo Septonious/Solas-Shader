@@ -18,15 +18,17 @@ in vec3 worldPos;
 in vec4 color;
 
 //Uniforms//
-uniform sampler2D tex;
-
 #ifdef WATER_CAUSTICS
+uniform int isEyeInWater;
+
 uniform float frameTimeCounter;
 
 uniform vec3 cameraPosition;
 
 uniform sampler2D noisetex;
 #endif
+
+uniform sampler2D tex;
 
 //Includes//
 #ifdef WATER_CAUSTICS
@@ -45,7 +47,7 @@ void main() {
 
 	if (water > 0.9){
 		float caustics = getCaustics(worldPos + cameraPosition);
-		albedo.rgb = waterColorSqrt * caustics * WATER_CAUSTICS_STRENGTH;
+		albedo.rgb = waterColorSqrt * caustics * WATER_CAUSTICS_STRENGTH * (1.0 + float(isEyeInWater == 1));
 	}
 	#endif
 	#endif
