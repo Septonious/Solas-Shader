@@ -1,5 +1,5 @@
 vec3 getReflection(vec3 viewPos, vec3 normal, vec3 color) {
-	vec3 reflectedViewPos = reflect(normalize(viewPos), normal) * 256.0;
+	vec3 reflectedViewPos = reflect(normalize(viewPos), normal);
 	vec3 reflectedScreenPos = ToScreen(reflectedViewPos);
 	vec3 reflection = vec3(0.0);
 
