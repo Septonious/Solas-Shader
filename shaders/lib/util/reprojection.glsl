@@ -12,5 +12,6 @@ vec2 Reprojection(vec3 pos) {
 	vec4 previousPosition = viewPosPrev + vec4(cameraOffset, 0.0);
 	previousPosition = gbufferPreviousModelView * previousPosition;
 	previousPosition = gbufferPreviousProjection * previousPosition;
+	
 	return previousPosition.xy / previousPosition.w * 0.5 + 0.5;
 }

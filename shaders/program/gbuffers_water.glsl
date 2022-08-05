@@ -25,11 +25,11 @@ in vec4 color;
 uniform int isEyeInWater;
 
 #ifdef INTEGRATED_SPECULAR
-#ifdef AURORA
-#ifdef AURORA_FULL_MOON_VISIBILITY
+#ifdef OVERWORLD
 uniform int moonPhase;
 #endif
 
+#ifdef AURORA
 uniform float isSnowy;
 #endif
 
@@ -198,7 +198,7 @@ void main() {
 		#endif
 
 		#ifdef INTEGRATED_SPECULAR
-		if (isEyeInWater != 1) {
+		if (isEyeInWater != 1 && portal < 0.5) {
 			float fresnel = clamp(1.0 + pow2(dot(newNormal, normalize(viewPos))), 0.0, 0.75);
 
 			vec3 reflection = getReflection(viewPos, newNormal, albedo.rgb);

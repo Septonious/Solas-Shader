@@ -29,7 +29,7 @@ void getIntegratedEmission(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos,
 
 	if (mat > 100.9 && mat < 101.1) { // Crying Obsidian and Respawn Anchor
 		newEmission = (albedo.b - albedo.r) * albedo.r;
-        newEmission = newEmission + pow2(newEmission) * 8.0;
+        newEmission = newEmission + newEmission * newEmission * 8.0;
 	} else if (mat > 101.9 && mat < 102.1) { // Command Block
         vec3 comPos = fract(worldPos + cameraPosition);
              comPos = abs(comPos - vec3(0.5));
@@ -72,9 +72,9 @@ void getIntegratedEmission(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos,
 	} else if (mat > 117.9 && mat < 118.1) { // Enchanting Table
 		newEmission = float(lAlbedo > 0.75) * 0.125;
 	} else if (mat > 118.9 && mat < 119.1) { // Soul Campfire
-		newEmission = float(albedo.b > albedo.r || albedo.b > albedo.g) * 0.25;
+		newEmission = float(albedo.b > albedo.r || albedo.b > albedo.g) * 0.35;
 	} else if (mat > 119.9 && mat < 120.1) { // Normal Campfire && Magma Block
-		newEmission = float(albedo.r > 0.65 && albedo.b < 0.35) * 0.25;
+		newEmission = float(albedo.r > 0.65 && albedo.b < 0.35) * 0.35;
 	} else if (mat > 120.9 && mat < 121.9) { // Redstone Block
 		newEmission = 0.125 + pow16(lAlbedo) * 0.5;
 	} else if (mat > 121.9 && mat < 122.1) { // Glowstone, Fire, etc
@@ -90,7 +90,7 @@ void getIntegratedEmission(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos,
 	} else if (mat > 126.9 && mat < 127.1) { // End Portal Frame
 		newEmission = pow2(albedo.b - albedo.g) * 32.0 * float(albedo.r < 0.65);
 	} else if (mat > 127.9 && mat < 128.1) { // Dragon Egg
-		newEmission = pow2(lAlbedo) * 16.0;
+		newEmission = lAlbedo * lAlbedo * 16.0;
 	} else if (mat > 128.9 && mat < 129.1) {// End Rod
 		newEmission = pow4(lAlbedo) * 0.6;
 		albedo.rgb *= endLightColSqrt;

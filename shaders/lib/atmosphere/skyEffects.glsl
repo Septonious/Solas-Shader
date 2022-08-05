@@ -20,8 +20,9 @@ void getStars(inout vec3 color, in vec3 worldPos, in float VoU, in float nebulaF
 			  star*= GetNoise(planeCoord.xy + 0.5);
 
 		star = clamp(star - (0.875 - nebulaFactor * 0.075), 0.0, 1.0) * visibility;
-		
-		color += vec3(16.0 * (1.0 + pow2(star))) * pow2(star);
+		star *= star;
+
+		color += vec3(16.0 * (1.0 + star)) * star;
 	}
 }
 #endif
@@ -55,7 +56,7 @@ void getNebula(inout vec3 color, in vec3 worldPos, in float VoU, inout float neb
 		vec4 milkyWay = texture2D(depthtex2, planeCoord * 0.5 + 0.5);
 		color += lightNight * milkyWay.rgb * pow6(milkyWay.a) * length(milkyWay.rgb) * visibility;
 		#else
-		color += mix(mix(endAmbientCol, endAmbientColSqrt, pow2(nebulaNoise)), vec3(0.5, 0.25, 0.2) * endLightColSqrt, pow4(nebulaNoise)) * visibility * nebulaNoise;
+		color += mix(mix(endAmbientCol, endAmbientColSqrt, nebulaNoise * nebulaNoise), vec3(0.5, 0.25, 0.2) * endLightColSqrt, pow4(nebulaNoise)) * visibility * nebulaNoise;
 		#endif
 
 		#ifdef OVERWORLD
@@ -69,7 +70,7 @@ void getNebula(inout vec3 color, in vec3 worldPos, in float VoU, inout float neb
 
 #ifdef RAINBOW
 void getRainbow(inout vec3 color, in vec3 worldPos, in float VoU, in float ug, in float size, in float rad) {
-	float visibility = pow2(sunVisibility) * (1.0 - rainStrength) * wetness * 0.5 * pow2(max(VoU, 0.0)) * ug;
+	float visibility = sunVisibility * sunVisibility * (1.0 - rainStrength) * wetness * 0.5 * pow2(max(VoU, 0.0)) * ug;
 
 	if (visibility > 0.0) {
 		vec2 planeCoord = worldPos.xy / (worldPos.y + length(worldPos.xz) * 0.65);
@@ -129,7 +130,7 @@ void getAurora(inout vec3 color, in vec3 worldPos, in float ug) {
 			if (noise > 0.0) {
 				noise *= texture2D(noisetex, coord * 0.125 + frameTimeCounter * 0.002).g * 0.5 + 0.5;
 				noise *= texture2D(noisetex, coord * 0.250 + frameTimeCounter * 0.003).b * 0.5 + 0.5;
-				noise = pow2(noise) * sampleStep;
+				noise = noise * noise * sampleStep;
 				noise *= max(1.0 - length(planeCoord.xz) * 0.1, 0.0);
 
 				vec3 auroraColor = mix(auroraLowCol, auroraHighCol, pow(currentStep, 0.5));
