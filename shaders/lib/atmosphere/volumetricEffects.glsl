@@ -81,7 +81,7 @@ void computeVolumetricEffects(vec4 translucent, vec3 viewPos, vec2 newTexCoord, 
 					}
 				}
 
-				vec3 shadow = clamp(shadowCol * (8.0 + timeBrightness * 8.0) * (1.0 - shadow0) + shadow0, 0.0, 8.0 + timeBrightness * 8.0);
+				vec3 shadow = clamp(shadowCol * (8.0 + timeBrightness * 16.0) * (1.0 - shadow0) + shadow0, 0.0, 8.0 + timeBrightness * 16.0);
 				#endif
 
 				//Color Calculations

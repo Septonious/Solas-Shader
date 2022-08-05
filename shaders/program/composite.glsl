@@ -11,12 +11,10 @@ in vec3 sunVec, upVec;
 #endif
 
 //Uniforms//
+uniform int isEyeInWater;
+
 #ifdef VC
 uniform int moonPhase;
-
-#ifdef VL
-uniform int isEyeInWater;
-#endif
 
 uniform float far, near, frameTimeCounter;
 uniform float timeAngle, timeBrightness, rainStrength;

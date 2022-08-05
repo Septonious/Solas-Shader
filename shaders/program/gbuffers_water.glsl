@@ -70,10 +70,6 @@ uniform sampler2D noisetex;
 
 #ifdef INTEGRATED_SPECULAR
 uniform sampler2D colortex6;
-
-#ifdef MILKY_WAY
-uniform sampler2D depthtex2;
-#endif
 #endif
 
 uniform sampler2D texture;
@@ -202,10 +198,12 @@ void main() {
 		#endif
 
 		#ifdef INTEGRATED_SPECULAR
-		float fresnel = clamp(1.0 + dot(newNormal, normalize(viewPos)), 0.0, 1.0);
+		if (isEyeInWater != 1) {
+			float fresnel = clamp(1.0 + pow2(dot(newNormal, normalize(viewPos))), 0.0, 0.75);
 
-		vec3 reflection = getReflection(viewPos, newNormal, albedo.rgb);
-		albedo.rgb = mix(albedo.rgb, reflection, fresnel);
+			vec3 reflection = getReflection(viewPos, newNormal, albedo.rgb);
+			albedo.rgb = mix(albedo.rgb, reflection, fresnel);
+		}
 		#endif
 
 		#ifdef OVERWORLD

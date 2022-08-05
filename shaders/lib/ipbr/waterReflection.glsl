@@ -26,10 +26,6 @@ vec3 getReflection(vec3 viewPos, vec3 normal, vec3 color) {
 
         reflectionFade = getAtmosphere(reflectedViewPos);
 
-		#ifdef MILKY_WAY
-		getNebula(reflectionFade, worldPos, VoU, nebulaFactor, ug);
-		#endif
-
 		#ifdef STARS
 		getStars(reflectionFade, worldPos, VoU, nebulaFactor, 0.0, ug);
 		#endif
