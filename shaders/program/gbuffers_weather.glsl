@@ -24,7 +24,7 @@ void main() {
 	}
 
     /* DRAWBUFFERS:01 */
-    gl_FragData[0] = albedo * 0.5;
+    gl_FragData[0] = albedo * 0.75;
 	gl_FragData[1] = vec4(0.0, 0.0, 0.0, 1.0);
 }
 

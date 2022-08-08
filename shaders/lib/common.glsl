@@ -91,8 +91,8 @@ const float shadowBlurStrength = 1.0 / shadowMapResolution;
 #define CHROMATIC_ABERRATION_STRENGTH 1.00 //[0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00]
 #define SHARPENING
 
-#define TONEMAP_LOWER_CURVE 1.4 //[0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5]
-#define TONEMAP_UPPER_CURVE 1.4 //[0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5]
+#define TONEMAP_LOWER_CURVE 1.5 //[0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5]
+#define TONEMAP_UPPER_CURVE 1.5 //[0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5]
 #define TONEMAP_WHITE_CURVE 1.5  //[1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2.0 2.1 2.2 2.3 2.4 2.5]
 
 #define EXPOSURE 0.70 //[0.00 0.10 0.20 0.30 0.40 0.50 0.60 0.70 0.80 0.90 1.00]

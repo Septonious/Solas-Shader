@@ -47,7 +47,7 @@ void computeVolumetricEffects(vec4 translucent, vec3 viewPos, vec2 newTexCoord, 
 		float start = dither * VC_QUALITY;
 
 		for (start; start < end; start += VC_QUALITY) {
-			if (linearDepth1 < start || (linearDepth0 < start && translucent.rgb == vec3(0.0)) || vc.a > 0.99 || vl.a > 0.99) {
+			if (linearDepth1 < start || (linearDepth0 < start && (translucent.a == 1.0 || translucent.rgb == vec3(0.0))) || vc.a > 0.99 || vl.a > 0.99) {
 				break;
 			}
 
