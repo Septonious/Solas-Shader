@@ -92,7 +92,7 @@ void main() {
 
 	#if defined INTEGRATED_EMISSION && defined BLOOM
 	/* DRAWBUFFERS:012 */
-	gl_FragData[2].b = emission;
+	gl_FragData[2].b = emission * 0.01;
 	#endif
 }
 

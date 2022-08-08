@@ -46,10 +46,10 @@ void main() {
 	vec3 temporalColor = vec3(0.0);
 	vec3 bloom = vec3(0.0);
 
-	float filmGrain = texture2D(noisetex, texCoord * vec2(viewWidth, viewHeight) / 256.0).b - 0.25;
+	float filmGrain = texture2D(noisetex, texCoord * vec2(viewWidth, viewHeight) / 256.0).g - 0.25;
 
 	#ifdef BLOOM
-	bloom = getBloom(texCoord, filmGrain);
+	bloom = getBloom(texCoord, filmGrain - 0.25);
 	color += bloom;
 	#endif
 

@@ -62,7 +62,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
 
             #ifdef GBUFFERS_TERRAIN
             if (foliage > 0.0) {
-                bias *= 0.125;
+                bias *= 0.25;
             }
             #endif
 
@@ -129,17 +129,17 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     vec3 bloom = texture2D(colortex7, gl_FragCoord.xy / vec2(viewWidth, viewHeight)).rgb;
          bloom = pow4(bloom) * 128.0;
          bloom = clamp(bloom * pow(getLuminance(bloom) + 0.005, -0.75), 0.0, 1.0);
-         bloom *= (0.2 + lightmap.x * 1.3) * BLOOM_STRENGTH;
+         bloom *= (0.2 + lightmap.x * 1.8) * BLOOM_STRENGTH;
          bloom *= 1.0 - clamp(length(viewPos) * 0.025, 0.0, 0.75);
 
-    vec3 blockLighting = blockLightCol * blockLightMap + bloom;
+    vec3 blockLighting = blockLightCol * blockLightMap + bloom * float(emission == 0.0);
     #else
     vec3 blockLighting = blockLightCol * blockLightMap;
     #endif
     
     //Minimum & Emissive Lighting//
     vec3 minLighting = minLightCol * (1.0 - lightmap.y);
-    vec3 emissiveLighting = albedo * emission * 2.0;
+    vec3 emissiveLighting = albedo * emission;
 
     albedo = pow(albedo, vec3(2.2));
 

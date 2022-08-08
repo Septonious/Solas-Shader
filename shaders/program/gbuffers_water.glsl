@@ -226,7 +226,7 @@ void main() {
 
 	#ifdef BLOOM
 	/* DRAWBUFFERS:012 */
-	gl_FragData[2].ba = vec2(portal, 1.0 - portal * 0.75);
+	gl_FragData[2].b = portal * 0.01;
 	#endif
 }
 
