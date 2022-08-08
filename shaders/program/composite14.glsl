@@ -46,10 +46,10 @@ void main() {
 	vec3 temporalColor = vec3(0.0);
 	vec3 bloom = vec3(0.0);
 
-	float filmGrain = texture2D(noisetex, texCoord * vec2(viewWidth, viewHeight) / 256.0).g - 0.25;
+	float filmGrain = texture2D(noisetex, texCoord * vec2(viewWidth, viewHeight) / 256.0).g;
 
 	#ifdef BLOOM
-	bloom = getBloom(texCoord, filmGrain - 0.25);
+	bloom = getBloom(texCoord, filmGrain - 0.5);
 	color += bloom;
 	#endif
 
@@ -61,12 +61,12 @@ void main() {
 	color = pow(color, vec3(1.0 / 2.2));
 	ColorSaturation(color);
 
-	color += filmGrain / 128.0;
+	color += (filmGrain - 0.25) / 64.0;
 
 	/* DRAWBUFFERS:157 */
 	gl_FragData[0].rgb = color;
 	gl_FragData[1].gba = temporalColor;
-	gl_FragData[2].rgb = pow(bloom / 128.0, vec3(0.25));
+	gl_FragData[2].rgb = pow(bloom / 512.0, vec3(0.125));
 }
 
 #endif

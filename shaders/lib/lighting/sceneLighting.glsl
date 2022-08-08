@@ -127,10 +127,10 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     #elif defined BLOOM_COLORED_LIGHTING
     //BLOOM BASED COLORED LIGHTING
     vec3 bloom = texture2D(colortex7, gl_FragCoord.xy / vec2(viewWidth, viewHeight)).rgb;
-         bloom = pow4(bloom) * 128.0;
-         bloom = clamp(1.5 * bloom * pow(getLuminance(bloom) + 0.0025, -0.75), 0.0, 1.0);
-         bloom *= (0.2 + blockLightMap * 1.8) * BLOOM_STRENGTH;
-         bloom *= 1.0 - clamp(length(viewPos) * 0.025, 0.0, 0.75);
+         bloom = pow8(bloom) * 512.0;
+         bloom = clamp(bloom * pow(getLuminance(bloom) + 0.005, -0.75), 0.0, 1.0);
+         bloom *= (0.5 + blockLightMap * 1.5) * BLOOM_STRENGTH;
+         bloom *= 1.0 - clamp(length(viewPos) * 0.025, 0.0, 0.9);
 
     vec3 blockLighting = blockLightCol * blockLightMap + bloom * float(emission == 0.0);
     #else
