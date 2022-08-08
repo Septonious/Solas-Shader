@@ -13,7 +13,7 @@ const vec3 ambientLateEvening   = vec3(AMBIENT_LER, AMBIENT_LEG, AMBIENT_LEB) * 
 const vec3 ambientNight         = vec3(AMBIENT_NR, AMBIENT_NG, AMBIENT_NB) * AMBIENT_NI / 255.0;
 
 float mefade = 1.0 - clamp(abs(timeAngle - 0.5) * 8.0 - 1.5, 0.0, 1.0);
-float dfade = 1.0 - (1.0 - timeBrightness);
+float dfade = sqrt(timeBrightness);
 float sqrtdfade = sqrt(dfade);
 
 vec3 morningLightColor = mix(lightEarlyMorning, lightMorning, sqrtdfade);

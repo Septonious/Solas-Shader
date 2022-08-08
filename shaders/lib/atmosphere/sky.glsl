@@ -17,20 +17,20 @@ vec3 getAtmosphere(vec3 viewPos) {
     float absVoU = abs(VoU);
     float VoUFactor = absVoU - sqrt(absVoU);
 
-    float sunFactor = sunVisibility * 0.6 + VoS * 0.4;
-    float horizonFactor = pow32(1.0 - absVoU * absVoU);
+    float sunFactor = sunVisibility * 0.4 + VoS * 0.4;
+    float horizonFactor = pow16(1.0 - absVoU * absVoU);
 
-    float scatteringFactor = clamp(sunVisibility * (1.0 - rainStrength) * sunFactor, 0.0, 0.75 * pow4(1.0 - timeBrightness));
-    float skyDensity = mix(exp(-absVoU), 0.6, rainStrength * 0.8);
+    float scatteringFactor = clamp(sunVisibility * (1.0 - rainStrength) * sunFactor, 0.0, (1.0 - dfade) * 0.75);
+    float skyDensity = mix(exp(-absVoU), 0.6, rainStrength * rainStrength * 0.8);
 
     //Day & Night Sky
     vec3 daySky = mix(skyColSqrt, pow(skyColor, vec3(1.25)) * 1.5, dfade);
     vec3 sky = mix(lightNight, daySky, sunVisibility) * skyDensity;
 
     //Fake Light Scattering
-    sky = mix(sky, lowScatteringColor * lowScatteringColor, horizonFactor * scatteringFactor);
-    sky = mix(sky, midScatteringColor * midScatteringColor, pow10(VoUFactor * 3.5) * scatteringFactor);
-    sky = mix(sky, highScatteringColor * highScatteringColor, (1.0 - horizonFactor) * (1.0 - pow10(VoUFactor * 3.5)) * pow6(VoUFactor * 3.5) * scatteringFactor);
+    sky = mix(sky, mix(lowScatteringColor, lightCol, sqrtdfade), horizonFactor * scatteringFactor);
+    sky = mix(sky, mix(midScatteringColor, lightCol, sqrtdfade), pow10(VoUFactor * 3.5) * scatteringFactor);
+    sky = mix(sky, highScatteringColor, (1.0 - horizonFactor) * (1.0 - pow10(VoUFactor * 3.5)) * pow6(VoUFactor * 3.5) * scatteringFactor);
 
     //Weather Sky
 	sky = mix(sky, lightColSqrt * skyDensity, rainStrength);

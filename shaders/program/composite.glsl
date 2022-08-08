@@ -14,7 +14,7 @@ in vec3 sunVec, upVec;
 uniform int isEyeInWater;
 
 #ifdef VC
-uniform int moonPhase;
+uniform int worldDay;
 
 uniform float far, near, frameTimeCounter;
 uniform float timeAngle, timeBrightness, rainStrength;

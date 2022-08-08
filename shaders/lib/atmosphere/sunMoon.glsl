@@ -4,8 +4,8 @@ void getSunMoon(inout vec3 color, in vec3 nViewPos, in vec3 lightSun, in vec3 li
 	if (visibility > 0.0) {
 		float sun = pow16(pow32(VoS));
 		float moon = pow32(pow32(VoM));
-		float sunGlare = pow24(VoS);
-		float moonGlare = pow24(VoM);
+		float sunGlare = pow24(VoS) + pow32(VoS);
+		float moonGlare = pow24(VoM) + pow32(VoM);
 
 		if (moon > 0.0 && moonPhase > 0) { // Moon phases, uses the same method as Complementary v4
 			float phaseFactor = float(moonPhase != 4) * (1.0 - float(moonPhase > 4) * 2.0) * 0.00175;
@@ -20,7 +20,7 @@ void getSunMoon(inout vec3 color, in vec3 nViewPos, in vec3 lightSun, in vec3 li
 		
 		vec3 sunAndMoon = sun * lightSun * sunVisibility + moon * lightNight * 10.0 * (1.0 - sunVisibility);
 			 sunAndMoon*= pow16(length(sunAndMoon));
-			 sunAndMoon+= sunGlare * lightSun * 0.25 * sunVisibility + moonGlare * lightNight * 0.25 * (1.0 - sunVisibility);
+			 sunAndMoon+= sunGlare * lightSun * 0.125 * sunVisibility + moonGlare * lightNight * 0.125 * (1.0 - sunVisibility);
 
 		color += clamp(sunAndMoon, 0.0, 1.0) * visibility;
 	}

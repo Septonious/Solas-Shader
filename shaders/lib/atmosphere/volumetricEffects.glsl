@@ -1,8 +1,8 @@
 #ifdef VC
-float amount = mix(VC_AMOUNT * (1.0 + moonPhase / 21.0), 2.0, rainStrength);
+float amount = mix(VC_AMOUNT * (1.0 + worldDay / 21.0), 2.0, rainStrength);
 
 float get3DNoise(vec3 pos) {
-	pos *= 0.4 + moonPhase / 21.0;
+	pos *= 0.4 + worldDay / 21.0;
 	pos.xz *= 0.4;
 
 	vec3 floorPos = floor(pos);
@@ -38,7 +38,7 @@ void computeVolumetricEffects(vec4 translucent, vec3 viewPos, vec2 newTexCoord, 
 		vec3 shadowCol = vec3(0.0);
 
 		float VoL = clamp(dot(normalize(viewPos), sunVec), 0.0, 0.5);
-		float vlVisibility = float(z0 > 0.56) * (0.4 - dfade * 0.2) * VL_OPACITY * (0.5 + VoL);
+		float vlVisibility = float(z0 > 0.56) * (0.4 - timeBrightness * 0.2) * VL_OPACITY * (0.5 + VoL);
 		#endif
 
 		float lViewPos = length(viewPos.xz) * 0.000125;
@@ -62,7 +62,7 @@ void computeVolumetricEffects(vec4 translucent, vec3 viewPos, vec2 newTexCoord, 
 			float shadow1 = shadow2D(shadowtex1, shadowPos).z;
 			float lWorldPos = length(worldPos.xz);
 
-			float vlLayer = 1.0 - clamp(sqrt(playerPos.y * 0.001 * VL_HEIGHT), 0.0, 1.0);
+			float vlLayer = 1.0 - clamp(playerPos.y * 0.001 * VL_HEIGHT, 0.0, 1.0);
 			float cloudLayer = abs(VC_HEIGHT - playerPos.y) / VC_STRETCHING;
 			float totalVisibility = (1.0 - float(shadow1 != 1.0) * float(eyeBrightnessSmooth.y <= 150.0)) * float(lWorldPos < end) * float(cloudLayer < 2.0 || vlLayer > 0.0);
 
