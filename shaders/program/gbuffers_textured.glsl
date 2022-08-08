@@ -80,7 +80,6 @@ void main() {
 					emission = max(pow2(albedo.r), 0.1);
 			}
 		}
-		emission *= EMISSION_STRENGTH;
 		#endif
 
 		getSceneLighting(albedo.rgb, viewPos, worldPos, normal, lightmap, emission, 0.0, 0.0, 0.0);

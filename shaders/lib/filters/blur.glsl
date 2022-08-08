@@ -40,7 +40,7 @@ const vec2 blurOffsets16[16] = vec2[16](
 vec4 getDiskBlur4(sampler2D colortex, vec2 coord, float strength) {
 	vec4 blur = vec4(0.0);
 
-	for(int i = 0; i < 4; i++) {
+	for (int i = 0; i < 4; i++) {
 		vec2 pixelOffset = blurOffsets4[i] * pixelSize * strength;
 		blur += texture2D(colortex, coord + pixelOffset);
 	}
@@ -53,7 +53,7 @@ vec4 getDiskBlur4(sampler2D colortex, vec2 coord, float strength) {
 vec4 getDiskBlur8(sampler2D colortex, vec2 coord, float strength) {
 	vec4 blur = vec4(0.0);
 
-	for(int i = 0; i < 8; i++) {
+	for (int i = 0; i < 8; i++) {
 		vec2 pixelOffset = blurOffsets8[i] * pixelSize * strength;
 		blur += texture2D(colortex, coord + pixelOffset);
 	}
@@ -66,7 +66,7 @@ vec4 getDiskBlur8(sampler2D colortex, vec2 coord, float strength) {
 vec4 getDiskBlur16(sampler2D colortex, vec2 coord, float strength) {
 	vec4 blur = vec4(0.0);
 
-	for(int i = 0; i < 16; i++) {
+	for (int i = 0; i < 16; i++) {
 		vec2 pixelOffset = blurOffsets16[i] * pixelSize * strength;
 		blur += texture2D(colortex, coord + pixelOffset);
 	}

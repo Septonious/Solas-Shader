@@ -38,7 +38,7 @@ const float shadowBlurStrength = 1.0 / shadowMapResolution;
 #define BLOOM
 #define BLOOM_STRENGTH 4.00 //[1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00 4.25 4.50 4.75 5.00 5.25 5.50 5.75 6.00 6.25 6.50 6.75 7.00 7.25 7.50 7.75 8.00]
 #define BLOOM_RADIUS 4 //[1 2 3 4]
-#define BLOOM_SAMPLES 3 //[1 2 3 4 5 6 7 8]
+#define BLOOM_SAMPLES 4 //[1 2 3 4 5 6 7 8]
 
 //Atmosphere//
 #define SKY_GROUND

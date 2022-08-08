@@ -199,7 +199,7 @@ void main() {
 
 		#ifdef INTEGRATED_SPECULAR
 		if (isEyeInWater != 1 && portal < 0.5) {
-			float fresnel = clamp(1.0 + pow2(dot(newNormal, normalize(viewPos))), 0.0, 0.1 + water * WATER_A);
+			float fresnel = clamp(1.0 + pow2(dot(newNormal, normalize(viewPos))), 0.0, 0.1 + water * 0.8);
 
 			vec3 reflection = getReflection(viewPos, newNormal, albedo.rgb);
 			albedo.rgb = mix(albedo.rgb, reflection, fresnel);

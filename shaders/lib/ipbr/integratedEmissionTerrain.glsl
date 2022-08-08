@@ -44,15 +44,16 @@ void getIntegratedEmission(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos,
         }
 
 	} else if (mat > 102.9 && mat < 103.1) { // Warped Stem & Hyphae
-        newEmission = float(albedo.r < 0.1) * 0.5;
+        newEmission = float(lAlbedo > 0.5) * 0.25;
 	} else if (mat > 103.9 && mat < 104.1) { // Crimson Stem & Hyphae
-		newEmission = float(lAlbedo > 0.48 && albedo.b < 0.25) * 0.5;
+		newEmission = float(lAlbedo > 0.48 && albedo.b < 0.25) * 0.25;
 	} else if (mat > 104.9 && mat < 105.1) { // Warped Nether Warts
 		newEmission = float(lAlbedo > 0.75) * 0.025;
 	} else if (mat > 105.9 && mat < 106.1) { // Warped Nylium
 		newEmission = float(albedo.g > albedo.b && albedo.g > albedo.r) * pow3(float(albedo.g - albedo.b));
 	} else if (mat > 107.9 && mat < 108.1) { // Amethyst
 		newEmission = 0.25;
+		albedo = pow(albedo, vec3(1.25));
 	} else if (mat > 109.9 && mat < 110.1) { // Glow Lichen
 		newEmission = (0.0125 + pow16(lAlbedo)) * (1.0 - lightmap.y * 0.75) * 0.5;
 	} else if (mat > 110.9 && mat < 111.1) { // Redstone Things
@@ -78,7 +79,7 @@ void getIntegratedEmission(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos,
 	} else if (mat > 120.9 && mat < 121.9) { // Redstone Block
 		newEmission = 0.125 + pow16(lAlbedo) * 0.5;
 	} else if (mat > 121.9 && mat < 122.1) { // Glowstone, Fire, etc
-		newEmission = 0.5;
+		newEmission = 0.25;
 	} else if (mat > 122.9 && mat < 123.1) { // Sculks
 		newEmission = float(lAlbedo > 0.05 && albedo.r < 0.25) * 0.5;
 	} else if (mat > 123.9 && mat < 124.1) { // Redstone Lamp
@@ -86,7 +87,7 @@ void getIntegratedEmission(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos,
 	} else if (mat > 124.9 && mat < 125.1) { // Sea Lantern
 		newEmission = 0.5;
 	} else if (mat > 125.9 && mat < 126.1) { // Nether Wart
-		newEmission = float(lAlbedo > 0.25) * 0.25 + float(lAlbedo > 0.75) * 0.5;
+		newEmission = float(lAlbedo > 0.25) * 0.2 + float(lAlbedo > 0.75) * 0.2;
 	} else if (mat > 126.9 && mat < 127.1) { // End Portal Frame
 		newEmission = pow2(albedo.b - albedo.g) * 32.0 * float(albedo.r < 0.65);
 	} else if (mat > 127.9 && mat < 128.1) { // Dragon Egg
@@ -118,7 +119,7 @@ void getIntegratedEmission(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos,
 	if (isPlant > 0.9 && isPlant < 1.1){ // Flowers
 		if (albedo.b > albedo.g || albedo.r > albedo.g) {
 			newEmission = 0.125 * lAlbedo * (1.0 - rainStrength);
-			newEmission = mix(newEmission * 2.0, newEmission * 0.5, clamp(lViewPos * 0.125, 0.0, 1.00));
+			newEmission = mix(newEmission, newEmission * 0.25, clamp(lViewPos * 0.125, 0.0, 1.00));
 		}
 	}
 	#endif
