@@ -74,7 +74,7 @@ void main() {
 		 albedo.rgb = mix(albedo.rgb, entityColor.rgb, entityColor.a);
 
 	float lightningBolt = float(entityId == 0);
-	float nametagText = float(length(entityColor.rgb) > 0.0);
+	//float nametagText = float(length(entityColor.rgb) > 0.0);
 	float emission = float(entityColor.a > 0.05) * 0.025 + lightningBolt;
 
 	if (lightningBolt > 0.5) {
@@ -84,7 +84,7 @@ void main() {
 	}
 
 	#ifndef ENTITY_HIGHLIGHT
-	if (albedo.a > 0.001 && lightningBolt < 0.5 && nametagText > 0.5) {
+	if (albedo.a > 0.001 && lightningBolt < 0.5) {
 		vec3 screenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z);
 		vec3 viewPos = ToNDC(screenPos);
 		vec3 worldPos = ToWorld(viewPos);
