@@ -25,14 +25,23 @@ void main() {
 
 	#ifdef VC
 	vec2 newTexCoord = texCoord * VOLUMETRICS_RESOLUTION;
-    vec4 vl = getDiskBlur4(colortex3, newTexCoord, 1.0 / VOLUMETRICS_RESOLUTION);
+
+    vec4 vl1 = texture2D(colortex3, newTexCoord + vec2( 0.0,  1.5 / viewHeight));
+    vec4 vl2 = texture2D(colortex3, newTexCoord + vec2( 0.0, -1.5 / viewHeight));
+    vec4 vl3 = texture2D(colortex3, newTexCoord + vec2( 1.5 / viewWidth,   0.0));
+    vec4 vl4 = texture2D(colortex3, newTexCoord + vec2(-1.5 / viewWidth,   0.0));
+    vec4 vl = (vl1 + vl2 + vl3 + vl4) * 0.25;
 		 vl *= vl;
 
-    vec4 vc = getDiskBlur8(colortex4, newTexCoord, 1.5 / VOLUMETRICS_RESOLUTION);
+    vec4 vc1 = texture2D(colortex4, newTexCoord + vec2( 0.0,  1.5 / viewHeight));
+    vec4 vc2 = texture2D(colortex4, newTexCoord + vec2( 0.0, -1.5 / viewHeight));
+    vec4 vc3 = texture2D(colortex4, newTexCoord + vec2( 1.5 / viewWidth,   0.0));
+    vec4 vc4 = texture2D(colortex4, newTexCoord + vec2(-1.5 / viewWidth,   0.0));
+    vec4 vc = (vc1 + vc2 + vc3 + vc4) * 0.25;
 		 vc *= vc;
 
-	color = mix(color, vc.rgb, pow2(vc.a) * VC_OPACITY);
-	color = mix(color, vl.rgb, vl.a);
+	color = mix(color, vc.rgb, pow4(vc.a) * VC_OPACITY);
+	color = mix(color, vl.rgb, pow4(vl.a) * VL_OPACITY);
 	#endif
 
 	/* DRAWBUFFERS:0 */

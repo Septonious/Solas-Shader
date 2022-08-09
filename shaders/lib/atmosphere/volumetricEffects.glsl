@@ -1,8 +1,10 @@
 #ifdef VC
-float amount = mix(VC_AMOUNT * (1.0 + worldDay / 21.0), 2.0, rainStrength);
+int day = worldDay % 72 / 8 / 21;
+
+float amount = mix(VC_AMOUNT * (1.0 + day), 2.0, rainStrength);
 
 float get3DNoise(vec3 pos) {
-	pos *= 0.4 + worldDay / 21.0;
+	pos *= 0.4 + day;
 	pos.xz *= 0.4;
 
 	vec3 floorPos = floor(pos);
@@ -37,8 +39,8 @@ void computeVolumetricEffects(vec4 translucent, vec3 viewPos, vec2 newTexCoord, 
 		#ifdef VL
 		vec3 shadowCol = vec3(0.0);
 
-		float VoL = clamp(dot(normalize(viewPos), sunVec), 0.0, 0.5);
-		float vlVisibility = float(z0 > 0.56) * (0.4 - timeBrightness * 0.2) * VL_OPACITY * (0.5 + VoL);
+		float VoS = clamp(dot(normalize(viewPos), sunVec), -0.5, 0.0);
+		float vlVisibility = float(z0 > 0.56) * (0.2 - timeBrightness * 0.1) * (1.0 + VoS);
 		#endif
 
 		float lViewPos = length(viewPos.xz) * 0.000125;
@@ -47,7 +49,7 @@ void computeVolumetricEffects(vec4 translucent, vec3 viewPos, vec2 newTexCoord, 
 		float start = dither * VC_QUALITY;
 
 		for (start; start < end; start += VC_QUALITY) {
-			if (linearDepth1 < start || (linearDepth0 < start && (translucent.a == 1.0 || translucent.rgb == vec3(0.0))) || vc.a > 0.99 || vl.a > 0.99) {
+			if (linearDepth1 < start || (linearDepth0 < start && translucent.rgb == vec3(0.0)) || vc.a > 0.99 || vl.a > 0.99) {
 				break;
 			}
 
@@ -108,8 +110,9 @@ void computeVolumetricEffects(vec4 translucent, vec3 viewPos, vec2 newTexCoord, 
 
 				//Color Calculations
 				float cloudLighting = clamp(smoothstep(VC_HEIGHT + VC_STRETCHING * noise, VC_HEIGHT - VC_STRETCHING * noise, playerPos.y) * 0.4 + noise * 0.6, 0.0, 1.0);
-				vec4 cloudColor = vec4(mix(lightCol, ambientCol, cloudLighting), noise) * cloudDistantFade;
+				vec4 cloudColor = vec4(mix(lightCol, ambientCol, cloudLighting), noise);
 					 cloudColor.rgb *= cloudColor.a;
+					 cloudColor.a *= pow(cloudDistantFade, 0.125);
 				#endif
 
 				//Trabslucency Blending
@@ -135,7 +138,8 @@ void computeVolumetricEffects(vec4 translucent, vec3 viewPos, vec2 newTexCoord, 
 		}
 
 		#ifdef VC
-		vc.rgb = mix(vc.rgb, vc.rgb * skyColor * 1.5, timeBrightness * (1.0 - rainStrength));
+		vc.rgb = mix(vc.rgb, vc.rgb * 0.5, (1.0 - rainStrength) * (1.0 - timeBrightness));
+		vc.rgb = mix(vc.rgb, vc.rgb * skyColor * skyColor * 2.0, timeBrightness * (1.0 - rainStrength));
 		#endif
 
 		vlOut1 = vl;

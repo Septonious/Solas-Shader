@@ -74,7 +74,7 @@ vec4 TemporalAA(inout vec3 color, float tempData, sampler2D colortex, sampler2D 
 	
 	vec2 velocity = (texCoord - prvCoord.xy) * viewResolution;
 
-	blendFactor *= exp(-length(velocity)) * 0.4 + 0.5;
+	blendFactor *= exp(-length(velocity)) * 0.5 + 0.5;
 	
 	color = mix(color, tempColor, blendFactor);
 

@@ -128,10 +128,6 @@ void main() {
     color = gl_Color;
 
 	gl_Position = ftransform();
-
-	#ifdef TAA
-	gl_Position.xy = TAAJitter(gl_Position.xy, gl_Position.w);
-	#endif
 }
 
 #endif
