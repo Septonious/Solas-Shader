@@ -83,11 +83,6 @@ void main() {
 		albedo.a = 1.0;
 	}
 
-	if (nametagText < 0.5) {
-		albedo.rgb *= albedo.rgb;
-		emission = 0.125;
-	}
-
 	#ifndef ENTITY_HIGHLIGHT
 	if (albedo.a > 0.001 && lightningBolt < 0.5 && nametagText > 0.5) {
 		vec3 screenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z);
