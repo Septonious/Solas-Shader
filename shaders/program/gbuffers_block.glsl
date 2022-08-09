@@ -72,7 +72,7 @@ void main() {
 		vec2 lightmap = clamp(lightMapCoord, 0.0, 1.0);
 
 		if (blockEntityId == 21) {
-			emission = pow2(length(albedo.rgb)) * float(albedo.r < albedo.g);
+			emission = pow2(length(albedo.rgb)) * float(albedo.r < albedo.g) * 2.0;
 		}
 
 		if (blockEntityId == 22) {

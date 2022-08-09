@@ -7,11 +7,7 @@
 
 //Varyings//
 in float mat;
-
-#ifdef INTEGRATED_EMISSION
 in float isPlant;
-#endif
-
 in vec2 texCoord, lightMapCoord;
 in vec3 sunVec, upVec, eastVec;
 in vec3 normal;
@@ -53,6 +49,12 @@ uniform mat4 shadowProjection;
 uniform mat4 shadowModelView;
 #endif
 
+//Optifine Constants//
+#ifdef INTEGRATED_SPECULAR
+const bool colortex5Clear = false;
+const bool colortex2Clear = false;
+#endif
+
 //Common Variables//
 #ifdef OVERWORLD
 float sunVisibility = clamp((dot(sunVec, upVec) + 0.05) * 10.0, 0.0, 1.0);
@@ -91,13 +93,15 @@ float sunVisibility = clamp((dot(sunVec, upVec) + 0.05) * 10.0, 0.0, 1.0);
 void main() {
 	vec4 albedo = texture2D(texture, texCoord) * color;
 	vec3 newNormal = normal;
-	float foliage = float(mat > 0.99 && mat < 1.01);
-	float subsurface = foliage * 0.75 + float(mat > 1.99 && mat < 2.01) * 0.5;
+
 	float emission = 0.0;
 	float specular = 0.0;
 	float roughness = 0.0;
 
 	if (albedo.a > 0.001) {
+		float foliage = float(mat > 0.99 && mat < 1.01);
+		float subsurface = foliage * 0.75 + float(mat > 1.99 && mat < 2.01) * 0.5;
+
 		vec3 screenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z);
 		vec3 viewPos = ToNDC(screenPos);
 		vec3 worldPos = ToWorld(viewPos);
@@ -145,11 +149,7 @@ void main() {
 
 //Varyings//
 out float mat;
-
-#ifdef INTEGRATED_EMISSION
 out float isPlant;
-#endif
-
 out vec2 texCoord, lightMapCoord;
 out vec3 sunVec, upVec, eastVec;
 out vec3 normal;
@@ -218,6 +218,7 @@ void main() {
 
 	//Materials
 	mat = 0.0;
+	isPlant = 0.0;
 
 	if (mc_Entity.x >= 4 && mc_Entity.x <= 11 && mc_Entity.x != 9 && mc_Entity.x != 10) {
 		mat = 1.0;
@@ -228,10 +229,8 @@ void main() {
 	}
 
 	#ifdef INTEGRATED_EMISSION
-	isPlant = 0.0;
-
 	#if defined EMISSIVE_FLOWERS && defined OVERWORLD
-	if (mc_Entity.x >= 5 && mc_Entity.x <= 7) isPlant = 1.0;
+	if (mc_Entity.x == 5) isPlant = 1.0;
 	#endif
 	#endif
 

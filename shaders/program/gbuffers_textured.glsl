@@ -82,17 +82,12 @@ void main() {
 		}
 		#endif
 
-		getSceneLighting(albedo.rgb, viewPos, worldPos, normal, lightmap, emission, 0.0, 0.0, 0.0);
+		getSceneLighting(albedo.rgb, viewPos, worldPos, normal, lightmap, emission * 4.0, 0.0, 0.0, 0.0);
 	}
 
 	/* DRAWBUFFERS:01 */
 	gl_FragData[0] = albedo;
 	gl_FragData[1] = vec4(0.0, 0.0, 0.0, 1.0);
-
-	#if defined INTEGRATED_EMISSION && defined BLOOM
-	/* DRAWBUFFERS:012 */
-	gl_FragData[2].b = emission * 0.01;
-	#endif
 }
 
 #endif

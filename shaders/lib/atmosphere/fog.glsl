@@ -10,15 +10,15 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 atmo
 	//Fog Altitude
 	float fogAltitude = clamp((worldPos.y + cameraPosition.y) * 0.001 * FOG_HEIGHT, 0.0, 1.0 - rainStrength * 0.75);
 
-	float fog = lViewPos * FOG_DENSITY * 0.000025 * (1.0 - pow(fogAltitude, 0.5)) * (1.0 + rainStrength);
-	fog = 1.0 - exp(-128.0 * fog);
+	float fog = lViewPos * FOG_DENSITY * 0.00005 * (1.0 - pow(fogAltitude, 0.5)) * (1.0 + rainStrength);
+	fog = 1.0 - exp(-64.0 * fog);
 
 	vec3 fogColor = atmosphereColor * fog;
 	
 	//Distant Fade
 	#ifdef DISTANT_FADE
 	if (isEyeInWater == 0) {
-		float vanillaFog = pow4(lViewPos * 0.000125);
+		float vanillaFog = pow4(lViewPos * 0.00005);
 
 		#if DISTANT_FADE_STYLE == 0
 		vanillaFog += pow8(lWorldPos / far);
@@ -45,7 +45,7 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 atmo
 	//Nether Fog
 	#ifdef NETHER
 	vec3 fogColor = netherColSqrt.rgb * 0.25;
-	float fog = lViewPos * FOG_DENSITY * 0.01;
+	float fog = lViewPos * 0.025;
 
 	#ifdef DISTANT_FADE
 	fog += 5.0 * pow4(lWorldPos / far);

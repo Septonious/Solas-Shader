@@ -69,7 +69,7 @@ uniform sampler2D noisetex;
 #endif
 
 #ifdef INTEGRATED_SPECULAR
-uniform sampler2D colortex6;
+uniform sampler2D gaux3;
 #endif
 
 uniform sampler2D texture;
@@ -155,11 +155,6 @@ vec2 viewResolution = vec2(viewWidth, viewHeight);
 //Program//
 void main() {
 	vec4 albedo = texture2D(texture, texCoord) * color;
-	vec3 skyColor = vec3(0.0);
-	vec3 newNormal = normal;
-	vec3 screenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z);
-	vec3 viewPos = ToNDC(screenPos);
-	vec3 worldPos = ToWorld(viewPos);
 
 	float water = float(mat > 0.9 && mat < 1.1);
 	float portal = float(mat > 1.9 && mat < 2.1);
@@ -172,6 +167,13 @@ void main() {
 	}
 
 	if (albedo.a > 0.001) {
+		vec3 skyColor = vec3(0.0);
+		vec3 newNormal = normal;
+
+		vec3 screenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z);
+		vec3 viewPos = ToNDC(screenPos);
+		vec3 worldPos = ToWorld(viewPos);
+
 		vec2 lightmap = clamp(lightMapCoord, 0.0, 1.0);
 
 		#ifdef WATER_NORMALS

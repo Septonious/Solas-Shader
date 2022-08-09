@@ -73,7 +73,7 @@ vec3 getReflection(vec3 viewPos, vec3 normal, vec3 color) {
 	#endif
 
     if (outsideScreen) {
-        reflection = texture2D(colortex6, reflectedScreenPos.xy).rgb;
+        reflection = texture2D(gaux3, reflectedScreenPos.xy).rgb;
     }
 
     #if MC_VERSION >= 11900

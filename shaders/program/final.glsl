@@ -35,7 +35,7 @@ uniform float aspectRatio;
 #endif
 
 //Includes//
-#ifdef SHARPENING
+#if defined SHARPENING && MC_VERSION >= 11200
 #include "/lib/post/sharpenFilter.glsl"
 #endif
 
@@ -47,7 +47,7 @@ uniform float aspectRatio;
 void main() {
 	vec3 color = texture2D(colortex1, texCoord).rgb;
 
-	#ifdef SHARPENING
+	#if defined SHARPENING && MC_VERSION >= 11200
 	sharpenFilter(colortex1, color, texCoord);
 	#endif
 

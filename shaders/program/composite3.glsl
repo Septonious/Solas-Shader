@@ -64,12 +64,12 @@ void main() {
 	vec3 color = texture2D(colortex0, texCoord).rgb;
 
 	#ifdef WATER_FOG
-	float z0 = texture2D(depthtex0, texCoord).r;
-	vec4 screenPos = vec4(texCoord, z0, 1.0);
-	vec4 viewPos = gbufferProjectionInverse * (screenPos * 2.0 - 1.0);
-	viewPos /= viewPos.w;
-
 	if (isEyeInWater == 1){
+		float z0 = texture2D(depthtex0, texCoord).r;
+		vec4 screenPos = vec4(texCoord, z0, 1.0);
+		vec4 viewPos = gbufferProjectionInverse * (screenPos * 2.0 - 1.0);
+		viewPos /= viewPos.w;
+
 		vec4 waterFog = getWaterFog(viewPos.xyz);
 		color = mix(sqrt(color), sqrt(waterFog.rgb), waterFog.a);
 		color *= color;

@@ -48,7 +48,7 @@ void main() {
 	#endif
 
 	color = mix(color, vc.rgb, pow4(vc.a) * VC_OPACITY);
-	color = mix(color, vl.rgb, pow4(vl.a) * VL_OPACITY);
+	color = mix(color, vl.rgb, pow4(vl.a) * VL_OPACITY * VL_OPACITY);
 	#endif
 
 	/* DRAWBUFFERS:0 */
