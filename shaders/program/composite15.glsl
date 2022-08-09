@@ -27,6 +27,10 @@ uniform vec3 cameraPosition, previousCameraPosition;
 uniform mat4 gbufferPreviousProjection, gbufferProjectionInverse;
 uniform mat4 gbufferPreviousModelView, gbufferModelViewInverse;
 
+#ifdef VC
+uniform sampler2D colortex4;
+#endif
+
 uniform sampler2D colortex5;
 uniform sampler2D depthtex1;
 #endif

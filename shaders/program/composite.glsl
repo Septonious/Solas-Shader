@@ -6,14 +6,14 @@
 //Varyings//
 in vec2 texCoord;
 
-#ifdef VC
+#if defined VC || defined VL
 in vec3 sunVec, upVec;
 #endif
 
 //Uniforms//
 uniform int isEyeInWater;
 
-#ifdef VC
+#if defined VC || defined VL
 uniform int worldDay;
 
 uniform float far, near, frameTimeCounter;
@@ -31,7 +31,7 @@ uniform vec3 cameraPosition, skyColor;
 
 uniform sampler2D colortex0;
 
-#ifdef VC
+#if defined VC || defined VL
 uniform sampler2D noisetex;
 uniform sampler2D depthtex0, depthtex1;
 uniform sampler2D colortex1;
@@ -39,7 +39,7 @@ uniform sampler2DShadow shadowtex0, shadowtex1;
 
 uniform mat4 gbufferProjectionInverse;
 
-#if defined VC && defined SHADOW_COLOR
+#if (defined VC || defined VL) && defined SHADOW_COLOR
 uniform sampler2D shadowcolor0;
 #endif
 
@@ -48,14 +48,14 @@ uniform mat4 gbufferModelViewInverse;
 #endif
 
 //Common Variables//
-#ifdef VC
+#if defined VC || defined VL
 float eBS = eyeBrightnessSmooth.y / 240.0;
 float ug = mix(clamp((cameraPosition.y - 56.0) / 16.0, float(isEyeInWater == 1), 1.0), 1.0, eBS);
 float sunVisibility = clamp(dot(sunVec, upVec) + 0.05, 0.0, 0.1) * 10.0;
 #endif
 
 //Includes//
-#ifdef VC
+#if defined VC || defined VL
 #include "/lib/color/lightColor.glsl"
 #include "/lib/util/blueNoiseDithering.glsl"
 #include "/lib/atmosphere/spaceConversion.glsl"
@@ -68,7 +68,7 @@ void main() {
 	vec4 vlOut1 = vec4(0.0);
 	vec4 vlOut2 = vec4(0.0);
 
-	#ifdef VC
+	#if defined VC || defined VL
 	float dither = getBlueNoise(gl_FragCoord.xy);
 
 	#ifdef TAA
@@ -121,12 +121,12 @@ void main() {
 //Varyings//
 out vec2 texCoord;
 
-#ifdef VC
+#if defined VC || defined VL
 out vec3 sunVec, upVec;
 #endif
 
 //Uniforms//
-#ifdef VC
+#if defined VC || defined VL
 uniform float timeAngle;
 
 uniform mat4 gbufferModelView;
@@ -138,7 +138,7 @@ void main() {
 	texCoord = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;
 	
 	//Sun Vector
-	#ifdef VC
+	#if defined VC || defined VL
 	const vec2 sunRotationData = vec2(cos(sunPathRotation * 0.01745329251994), -sin(sunPathRotation * 0.01745329251994));
 	float ang = fract(timeAngle - 0.25);
 	ang = (ang + (cos(ang * 3.14159265358979) * -0.5 + 0.5 - ang) / 3.0) * 6.28318530717959;
