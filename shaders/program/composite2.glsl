@@ -56,7 +56,7 @@ void main() {
 
 	#if defined VC && defined TAA
 	/* DRAWBUFFERS:04 */
-	gl_FragData[1] = vc;
+	gl_FragData[1].a = vc.a;
 	#endif
 }
 

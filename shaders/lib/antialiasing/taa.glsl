@@ -64,7 +64,7 @@ vec4 TemporalAA(inout vec3 color, float tempData, sampler2D colortex, sampler2D 
 	vec2 viewResolution = vec2(viewWidth, viewHeight);
 
 	#ifdef VC
-	float cloud = texture2D(colortex4, texCoord).a;
+	float cloud = float(texture2D(colortex4, texCoord).a > 0.0);
 	#endif
 
 	if (tempColor == vec3(0.0)) return vec4(tempData, color);
