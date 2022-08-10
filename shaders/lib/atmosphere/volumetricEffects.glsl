@@ -39,8 +39,7 @@ void computeVolumetricEffects(vec4 translucent, vec3 viewPos, vec2 newTexCoord, 
 		#ifdef VL
 		vec3 shadowCol = vec3(0.0);
 
-		float VoS = clamp(dot(normalize(viewPos), sunVec), 0.0, 0.5);
-		float vlVisibility = float(z0 > 0.56) * (0.4 - timeBrightness * 0.2) * (0.5 + VoS);
+		float vlVisibility = float(z0 > 0.56) * VL_OPACITY;
 		#endif
 
 		float lViewPos = length(viewPos.xz) * 0.000125;
@@ -49,7 +48,7 @@ void computeVolumetricEffects(vec4 translucent, vec3 viewPos, vec2 newTexCoord, 
 		float start = dither * VC_QUALITY;
 
 		for (start; start < end; start += VC_QUALITY) {
-			if (linearDepth1 < start || (linearDepth0 < start && translucent.rgb == vec3(0.0)) || vc.a > 0.99 || vl.a > 0.99) {
+			if (linearDepth1 < start || (linearDepth0 < start && translucent.rgb == vec3(0.0))) {
 				break;
 			}
 

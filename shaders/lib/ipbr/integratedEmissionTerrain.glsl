@@ -28,8 +28,7 @@ void getIntegratedEmission(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos,
 	#endif
 
 	if (mat > 100.9 && mat < 101.1) { // Crying Obsidian and Respawn Anchor
-		newEmission = (albedo.b - albedo.r) * albedo.r;
-        newEmission = newEmission + newEmission * newEmission * 8.0;
+		newEmission = (albedo.b - albedo.r) * albedo.r * 2.0;
 	} else if (mat > 101.9 && mat < 102.1) { // Command Block
         vec3 comPos = fract(worldPos + cameraPosition);
              comPos = abs(comPos - vec3(0.5));

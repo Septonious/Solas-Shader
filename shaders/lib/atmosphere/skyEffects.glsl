@@ -14,7 +14,7 @@ void getStars(inout vec3 color, in vec3 worldPos, in float VoU, in float nebulaF
 		vec2 planeCoord = worldPos.xz / (length(worldPos.y) + length(worldPos.xz));
 			 planeCoord+= frameTimeCounter * 0.001 * (1.0 + blackHoleFactor * 100.0);
 			 planeCoord+= cameraPosition.xz * 0.0001;
-			 planeCoord = floor(planeCoord * 400.0) / 400.0;
+			 planeCoord = floor(planeCoord * 384.0) / 384.0;
 
 		float star = GetNoise(planeCoord.xy);
 			  star*= GetNoise(planeCoord.xy + 0.5);

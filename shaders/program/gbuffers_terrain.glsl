@@ -49,12 +49,6 @@ uniform mat4 shadowProjection;
 uniform mat4 shadowModelView;
 #endif
 
-//Optifine Constants//
-#ifdef INTEGRATED_SPECULAR
-const bool colortex5Clear = false;
-const bool colortex2Clear = false;
-#endif
-
 //Common Variables//
 #ifdef OVERWORLD
 float sunVisibility = clamp((dot(sunVec, upVec) + 0.05) * 10.0, 0.0, 1.0);
@@ -132,12 +126,12 @@ void main() {
 	#ifndef INTEGRATED_SPECULAR
 		#ifdef BLOOM
 		/* DRAWBUFFERS:02 */
-		gl_FragData[1] = vec4(EncodeNormal(newNormal), emission * 0.01, specular);
+		gl_FragData[1] = vec4(EncodeNormal(newNormal), emission, specular);
 		#endif
 	#else
 		/* DRAWBUFFERS:062 */
 		gl_FragData[1] = vec4(albedo.rgb, roughness);
-		gl_FragData[2] = vec4(EncodeNormal(newNormal), emission * 0.01, specular);
+		gl_FragData[2] = vec4(EncodeNormal(newNormal), emission, specular);
 	#endif
 }
 

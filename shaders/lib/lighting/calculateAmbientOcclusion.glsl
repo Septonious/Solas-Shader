@@ -27,11 +27,11 @@ float calculateAmbientOcclusion(float dither) {
 	vec2 scale = AO_RADIUS * vec2(1.0 / aspectRatio, 1.0) * fovScale / distScale;
 	float mult = (0.7 / AO_RADIUS) * (far - near) * (hand > 0.5 ? 1024.0 : 1.0);
 
-	for(int i = 0; i < 4; i++) {
+	for (int i = 0; i < 4; i++) {
 		vec2 offset = offsetDist(currentStep) * scale;
 		float angle = 0.0, dist = 0.0;
 		
-		for(int i = 0; i < 2; i++){
+		for (int i = 0; i < 2; i++){
 			float sampleDepth = getLinearDepth(texture2D(depthtex0, texCoord + offset).r);
 			float sample = (z0 - sampleDepth) * mult;
 			angle += clamp(0.5 - sample, 0.0, 1.0);

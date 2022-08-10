@@ -6,18 +6,11 @@ float getLinearDepth2(float depth) {
     return 2.0 * near * far / (far + near - (2.0 * depth - 1.0) * (far - near));
 }
 
-vec4 getViewSpace(float depth, vec2 coord) {
+vec3 calculateWorldPos(float depth, vec2 coord) {
 	vec4 viewPos = gbufferProjectionInverse * (vec4(coord, depth, 1.0) * 2.0 - 1.0);
 	viewPos /= viewPos.w;
-
-	return viewPos;
-}
-
-vec3 calculateWorldPos(float depth, vec2 coord) {
-	vec4 viewPos = getViewSpace(depth, coord);
-	vec3 worldPos = mat3(gbufferModelViewInverse) * viewPos.xyz + gbufferModelViewInverse[3].xyz;
 	
-	return worldPos;
+	return mat3(gbufferModelViewInverse) * viewPos.xyz + gbufferModelViewInverse[3].xyz;
 }
 
 #define diagonal3(m) vec3((m)[0].x, (m)[1].y, m[2].z)

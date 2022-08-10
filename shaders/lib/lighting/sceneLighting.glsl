@@ -99,7 +99,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     
     #ifdef OVERWORLD
     float rainFactor = 1.0 - rainStrength * 0.75;
-    vec3 sceneLighting = mix(ambientCol, lightCol, fullShadow * rainFactor) * pow4(lightmap.y) * (2.0 - sunVisibility);
+    vec3 sceneLighting = mix(ambientCol, lightCol, fullShadow * rainFactor) * pow4(lightmap.y);
     sceneLighting *= 1.0 + scattering * shadow;
     #endif
 
@@ -116,7 +116,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     #ifdef SHIMMER_MOD_SUPPORT
     float blockLightMap = (pow4(lightmap.x) * 2.0 + pow2(lightmap.x) * 0.125) * float(emission == 0.0);
     #else
-    float blockLightMap = min(pow12(lightmap.x) * 1.75 + pow2(lightmap.x) * 0.75, 1.0) * float(emission == 0.0);
+    float blockLightMap = min(pow4(lightmap.x), 1.0) * float(emission == 0.0);
     #endif
 
     #if defined SHIMMER_MOD_SUPPORT
@@ -126,9 +126,9 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     #elif defined BLOOM_COLORED_LIGHTING
     //BLOOM BASED COLORED LIGHTING
     vec3 bloom = texture2D(gaux4, gl_FragCoord.xy / vec2(viewWidth, viewHeight)).rgb;
-         bloom = pow8(bloom) * 512.0;
-         bloom = clamp(bloom * pow(getLuminance(bloom) + 0.00125, -0.75), 0.0, 1.0);
-         bloom *= (0.1 + blockLightMap * 0.9) * BLOOM_STRENGTH;
+         bloom = pow4(bloom) * 256.0;
+         bloom = clamp(bloom * pow(getLuminance(bloom) + 0.0025, -0.5), 0.0, 1.0);
+         bloom *= (0.2 + blockLightMap * 1.8) * BLOOM_STRENGTH;
          bloom *= 1.0 - clamp(length(viewPos) * 0.025, 0.0, 0.9);
 
     vec3 blockLighting = blockLightCol * blockLightMap + bloom * float(emission == 0.0);

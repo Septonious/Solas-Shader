@@ -50,7 +50,7 @@ void main() {
 
 	#ifdef BLOOM
 	bloom = getBloom(texCoord, filmGrain - 0.5);
-	color += bloom * 0.25;
+	color += bloom * 0.5;
 	#endif
 
 	#ifdef TAA
@@ -66,7 +66,7 @@ void main() {
 	/* DRAWBUFFERS:157 */
 	gl_FragData[0].rgb = color;
 	gl_FragData[1].gba = temporalColor;
-	gl_FragData[2].rgb = pow(bloom / 512.0, vec3(0.125));
+	gl_FragData[2].rgb = pow(bloom / 256.0, vec3(0.25));
 }
 
 #endif

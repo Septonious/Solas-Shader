@@ -30,11 +30,7 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 atmo
 		fog = mix(fog, 1.0, vanillaFog);
 		
 		if (fog > 0.0) {
-			#ifdef NEBULA
 			fogColor = mix(fogColor, atmosphereColor, vanillaFog) / fog;
-			#else
-			fogColor = mix(fogColor, atmosphereColor, vanillaFog) / fog;
-			#endif
 		}
 	}
 	#endif

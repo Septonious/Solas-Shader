@@ -11,11 +11,11 @@ in vec2 texCoord;
 uniform float viewWidth, viewHeight;
 
 #ifdef VL
-uniform sampler2D colortex4;
+uniform sampler2D colortex3;
 #endif
 
 #ifdef VC
-uniform sampler2D colortex3;
+uniform sampler2D colortex4;
 #endif
 #endif
 
@@ -47,6 +47,10 @@ void main() {
 		 vc *= vc;
 	#endif
 
+	#ifdef TAA
+	float alpha = vl.a + vc.a;
+	#endif
+
 	color = mix(color, vc.rgb, pow4(vc.a) * VC_OPACITY);
 	color = mix(color, vl.rgb, pow4(vl.a) * VL_OPACITY * VL_OPACITY);
 	#endif
@@ -54,9 +58,9 @@ void main() {
 	/* DRAWBUFFERS:0 */
 	gl_FragData[0].rgb = color;
 
-	#if defined VC && defined TAA
+	#if (defined VL || defined VC) && defined TAA
 	/* DRAWBUFFERS:04 */
-	gl_FragData[1].a = vc.a;
+	gl_FragData[1].a = alpha;
 	#endif
 }
 
