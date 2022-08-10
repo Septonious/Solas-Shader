@@ -74,7 +74,7 @@ void main() {
 
 	float lightningBolt = float(entityId == 0);
 	//float nametagText = float(length(entityColor.rgb) > 0.0);
-	float emission = float(entityColor.a > 0.05) * 0.025 + lightningBolt;
+	float emission = float(entityColor.a > 0.05) * 0.025 + lightningBolt * 0.25;
 
 	if (lightningBolt > 0.5) {
 		albedo.rgb = vec3(1.0);

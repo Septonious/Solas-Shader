@@ -36,6 +36,8 @@ void computeVolumetricEffects(vec4 translucent, vec3 viewPos, vec2 newTexCoord, 
 		float linearDepth0 = getLinearDepth2(z0);
 		float linearDepth1 = getLinearDepth2(z1);
 
+		float VoS = 1.0 + clamp(dot(normalize(viewPos), sunVec), -0.5, 0.0);
+		lightCol *= VoS;
 		#ifdef VL
 		vec3 shadowCol = vec3(0.0);
 
@@ -44,7 +46,7 @@ void computeVolumetricEffects(vec4 translucent, vec3 viewPos, vec2 newTexCoord, 
 
 		float lViewPos = length(viewPos.xz) * 0.000125;
 
-		float end = min(VC_DISTANCE * far, 2048.0);
+		float end = min(VC_DISTANCE * far, 1024.0);
 		float start = dither * VC_QUALITY;
 
 		for (start; start < end; start += VC_QUALITY) {
@@ -137,7 +139,7 @@ void computeVolumetricEffects(vec4 translucent, vec3 viewPos, vec2 newTexCoord, 
 		}
 
 		#ifdef VC
-		vc.rgb = mix(vc.rgb, vc.rgb * 0.5, (1.0 - rainStrength) * (1.0 - timeBrightness));
+		vc.rgb = mix(vc.rgb, vc.rgb * 0.65, (1.0 - rainStrength) * (1.0 - timeBrightness));
 		vc.rgb = mix(vc.rgb, vc.rgb * skyColor * skyColor * 2.0, timeBrightness * (1.0 - rainStrength));
 		#endif
 

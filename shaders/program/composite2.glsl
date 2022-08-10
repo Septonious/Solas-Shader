@@ -47,10 +47,6 @@ void main() {
 		 vc *= vc;
 	#endif
 
-	#ifdef TAA
-	float alpha = vl.a + vc.a;
-	#endif
-
 	color = mix(color, vc.rgb, pow4(vc.a) * VC_OPACITY);
 	color = mix(color, vl.rgb, pow4(vl.a) * VL_OPACITY * VL_OPACITY);
 	#endif
@@ -58,9 +54,9 @@ void main() {
 	/* DRAWBUFFERS:0 */
 	gl_FragData[0].rgb = color;
 
-	#if (defined VL || defined VC) && defined TAA
+	#if defined VC && defined TAA
 	/* DRAWBUFFERS:04 */
-	gl_FragData[1].a = alpha;
+	gl_FragData[1].a = pow4(vc.a);
 	#endif
 }
 

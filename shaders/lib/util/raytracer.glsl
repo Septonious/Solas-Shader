@@ -11,8 +11,6 @@ bool rayTrace(vec3 viewPos, vec3 rayDir, inout vec3 rayPos) {
 	dither = fract(dither + frameTimeCounter * 16.0);
 	#endif
 
-    rayDir *= 0.125;
-    rayPos *= 0.125;
     rayPos = ToScreen(viewPos);
     rayDir = ToScreen(viewPos + rayDir) - rayPos;
     rayDir*= minOf((sign(rayDir) - rayPos) / rayDir) * (1.0 / REFLECTION_RT_SAMPLE_COUNT); // Taken from the DDA algorithm

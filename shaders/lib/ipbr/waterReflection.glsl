@@ -4,7 +4,7 @@ vec3 getReflection(vec3 viewPos, vec3 normal, vec3 color) {
 	vec3 reflection = vec3(0.0);
 
 	#if REFLECTION_TYPE == 0
-    bool outsideScreen = !(any(lessThan(reflectedScreenPos.xy, vec2(0.0))) || any(greaterThan(reflectedScreenPos.xy, vec2(1.0))));
+    bool outsideScreen = !(any(lessThan(reflectedScreenPos.xy * 100.0, vec2(0.0))) || any(greaterThan(reflectedScreenPos.xy * 100.0, vec2(1.0))));
 	#elif REFLECTION_TYPE == 1
 	bool outsideScreen = rayTrace(viewPos, reflectedViewPos, reflectedScreenPos);
 	#endif

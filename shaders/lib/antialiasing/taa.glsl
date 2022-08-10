@@ -81,7 +81,7 @@ vec4 TemporalAA(inout vec3 color, float tempData, sampler2D colortex, sampler2D 
 	blendFactor *= exp(-length(velocity)) * 0.4 + 0.5;
 
 	#ifdef VC
-	blendFactor = mix(blendFactor, 0.99, cloud);
+	blendFactor = mix(blendFactor, 0.95, cloud);
 	#endif
 	
 	color = mix(color, tempColor, blendFactor);

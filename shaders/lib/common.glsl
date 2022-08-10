@@ -56,7 +56,7 @@ const float shadowBlurStrength = 1.0 / shadowMapResolution;
 //Fog//
 #define DISTANT_FADE
 #define DISTANT_FADE_STYLE 0 //[0 1]
-#define FOG_DENSITY 1.75 //[0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00]
+#define FOG_DENSITY 1.50 //[0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00]
 #define FOG_HEIGHT 7.0 //[10.0 9.5 9.0 8.5 8.0 7.5 7.0 6.5 6.0 5.5 5.0 4.5 4.0 3.5 3.0 2.5 2.0 1.5 1.0]
 
 //Volumetric Light
