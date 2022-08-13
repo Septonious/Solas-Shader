@@ -11,9 +11,8 @@ in vec3 sunVec, upVec;
 #endif
 
 //Uniforms//
-uniform int isEyeInWater;
-
 #if defined VC || defined VL
+uniform int isEyeInWater;
 uniform int worldDay;
 
 uniform float far, near, frameTimeCounter;
@@ -88,12 +87,12 @@ void main() {
 	computeVolumetricEffects(translucent, viewPos.xyz, newTexCoord, z0, z1, dither, ug, vlOut1, vlOut2);
 
 	#ifdef VL
-	vlOut1 = sqrt(vlOut1);
+	vlOut1 = pow(vlOut1 / 64.0, vec4(0.25));
 	vlOut1 *= ug;
 	#endif
 
 	#ifdef VC
-	vlOut2 = sqrt(vlOut2);
+	vlOut2 = pow(vlOut2 / 64.0, vec4(0.25));
 	vlOut2 *= ug;
 	#endif
 

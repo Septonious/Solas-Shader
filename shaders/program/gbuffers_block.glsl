@@ -93,7 +93,7 @@ void main() {
 			float portal3 = texture2D(texture,  portalCoordPlayerPos.gr * 1.25 + vec2(0.0, frameTimeCounter * 0.003)).r * 1.25;
 			
 			albedo.rgb = pow2(portalNoise) * endAmbientCol + portal3 * vec3(0.3, 0.2, 0.5) + portal2 * vec3(0.4, 0.2, 0.4) + portal1 * vec3(0.2, 0.4, 0.4) + portal0 * vec3(0.2, 0.3, 0.5);
-			emission = pow4(length(albedo.rgb)) * 16.0;
+			emission = length(albedo.rgb) * 4.0;
 		}
 	}
 
@@ -103,12 +103,12 @@ void main() {
 	#ifndef INTEGRATED_SPECULAR
 		#ifdef BLOOM
 		/* DRAWBUFFERS:02 */
-		gl_FragData[1] = vec4(EncodeNormal(normal), emission, 1.0);
+		gl_FragData[1] = vec4(EncodeNormal(normal), emission * 0.01, 1.0);
 		#endif
 	#else
 		/* DRAWBUFFERS:062 */
 		gl_FragData[1] = vec4(albedo.rgb, 1.0);
-		gl_FragData[2] = vec4(EncodeNormal(normal), emission, 1.0);
+		gl_FragData[2] = vec4(EncodeNormal(normal), emission * 0.01, 1.0);
 	#endif
 }
 

@@ -74,7 +74,7 @@ void main() {
 
 	float lightningBolt = float(entityId == 0);
 	//float nametagText = float(length(entityColor.rgb) > 0.0);
-	float emission = float(entityColor.a > 0.05) * 0.025 + lightningBolt * 0.25;
+	float emission = 0.0;
 
 	if (lightningBolt > 0.5) {
 		albedo.rgb = vec3(1.0);
@@ -93,7 +93,7 @@ void main() {
 		getIntegratedEmission(albedo.rgb, lightmap, emission);
 		#endif
 
-		getSceneLighting(albedo.rgb, viewPos, worldPos, normal, lightmap, emission, 0.0, 0.0, 0.0);
+		getSceneLighting(albedo.rgb, viewPos, worldPos, normal, lightmap, emission + float(entityColor.a > 0.05) * 0.025 + lightningBolt * 0.25, 0.0, 0.0, 0.0);
 	}
 	#endif
 	
@@ -103,12 +103,12 @@ void main() {
 	#ifndef INTEGRATED_SPECULAR
 		#ifdef BLOOM
 		/* DRAWBUFFERS:02 */
-		gl_FragData[1] = vec4(EncodeNormal(normal), emission, 1.0);
+		gl_FragData[1] = vec4(EncodeNormal(normal), emission * 0.01, 1.0);
 		#endif
 	#else
 		/* DRAWBUFFERS:062 */
 		gl_FragData[1] = vec4(albedo.rgb, 1.0);
-		gl_FragData[2] = vec4(EncodeNormal(normal), emission, 1.0);
+		gl_FragData[2] = vec4(EncodeNormal(normal), emission * 0.01, 1.0);
 	#endif
 }
 

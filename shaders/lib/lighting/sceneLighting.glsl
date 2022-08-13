@@ -31,7 +31,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
 		  vanillaDiffuse*= vanillaDiffuse;
 
     #ifdef TAA
-    float dither = fract(Bayer64(gl_FragCoord.xy) + frameTimeCounter * 16.0) / 16.0;
+    float dither = fract(Bayer64(gl_FragCoord.xy) + frameTimeCounter * 16.0) / (2.0 * SHADOW_SAMPLE_COUNT);
     #else
     float dither = 0.0;
     #endif

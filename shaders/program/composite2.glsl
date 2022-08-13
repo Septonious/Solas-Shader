@@ -35,7 +35,7 @@ void main() {
     vec4 vl3 = texture2D(colortex3, newTexCoord + vec2( 1.0 / viewWidth,   0.0));
     vec4 vl4 = texture2D(colortex3, newTexCoord + vec2(-1.0 / viewWidth,   0.0));
     	 vl = (vl1 + vl2 + vl3 + vl4) * 0.25;
-		 vl *= vl;
+		 vl = pow4(vl) * 64.0;
 	#endif
 
 	#ifdef VC
@@ -44,7 +44,7 @@ void main() {
     vec4 vc3 = texture2D(colortex4, newTexCoord + vec2( 1.0 / viewWidth,   0.0));
     vec4 vc4 = texture2D(colortex4, newTexCoord + vec2(-1.0 / viewWidth,   0.0));
     	 vc = (vc1 + vc2 + vc3 + vc4) * 0.25;
-		 vc *= vc;
+		 vc = pow4(vc) * 64.0;
 	#endif
 
 	color = mix(color, vc.rgb, pow4(vc.a) * VC_OPACITY);

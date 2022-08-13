@@ -4,11 +4,11 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 atmo
 	#ifdef DISTANT_FADE
 	float lWorldPos = length(worldPos.xz);
     #endif
-	
+
 	//Overworld Fog
 	#ifdef OVERWORLD
 	//Fog Altitude
-	float fogAltitude = clamp((worldPos.y + cameraPosition.y) * 0.001 * FOG_HEIGHT, 0.0, 1.0 - rainStrength * 0.75);
+	float fogAltitude = clamp(pow16((worldPos.y + cameraPosition.y + 1000.0 - FOG_HEIGHT) * 0.001), 0.0, 1.0 - rainStrength * 0.75);
 
 	float fog = lViewPos * FOG_DENSITY * 0.00005 * (1.0 - pow(fogAltitude, 0.5)) * (1.0 + rainStrength);
 	fog = 1.0 - exp(-64.0 * fog);

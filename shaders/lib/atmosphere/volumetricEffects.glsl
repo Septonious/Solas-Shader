@@ -36,12 +36,10 @@ void computeVolumetricEffects(vec4 translucent, vec3 viewPos, vec2 newTexCoord, 
 		float linearDepth0 = getLinearDepth2(z0);
 		float linearDepth1 = getLinearDepth2(z1);
 
-		float VoS = 1.0 + clamp(dot(normalize(viewPos), sunVec), -0.5, 0.0);
-		lightCol *= VoS;
 		#ifdef VL
 		vec3 shadowCol = vec3(0.0);
 
-		float vlVisibility = float(z0 > 0.56) * VL_OPACITY;
+		float vlVisibility = float(z0 > 0.56) * (1.0 - timeBrightness * 0.5) * VL_OPACITY;
 		#endif
 
 		float lViewPos = length(viewPos.xz) * 0.000125;
@@ -65,7 +63,7 @@ void computeVolumetricEffects(vec4 translucent, vec3 viewPos, vec2 newTexCoord, 
 			float shadow1 = shadow2D(shadowtex1, shadowPos).z;
 			float lWorldPos = length(worldPos.xz);
 
-			float vlLayer = 1.0 - clamp(playerPos.y * 0.001 * VL_HEIGHT, 0.0, 1.0);
+			float vlLayer = 1.0 - clamp(pow16((playerPos.y + 1000.0 - VL_HEIGHT) * 0.001), 0.0, 1.0);
 			float cloudLayer = abs(VC_HEIGHT - playerPos.y) / VC_STRETCHING;
 			float totalVisibility = (1.0 - float(shadow1 != 1.0) * float(eyeBrightnessSmooth.y <= 150.0)) * float(lWorldPos < end) * float(cloudLayer < 2.0 || vlLayer > 0.0);
 
@@ -92,8 +90,8 @@ void computeVolumetricEffects(vec4 translucent, vec3 viewPos, vec2 newTexCoord, 
 
 				vec4 vlColor = vec4(0.0);
 				if (vlVisibility > 0.0 && vlLayer > 0.0 && shadow1 != 0.0) {
-					vlColor = vec4(mix(lightCol, waterColor, float(isEyeInWater == 1)), vlLayer * vlVisibility);
-					vlColor.rgb *= vlVisibility * vlLayer;
+					vlColor = vec4(mix(lightCol, waterColor, float(isEyeInWater == 1)), vlVisibility * vlLayer);
+					vlColor.rgb *= vlColor.a;
 
 					#ifdef SHADOW_COLOR
 					vlColor.rgb *= shadow;
@@ -119,11 +117,11 @@ void computeVolumetricEffects(vec4 translucent, vec3 viewPos, vec2 newTexCoord, 
 				//Trabslucency Blending
 				if (linearDepth0 < start) {
 					#ifdef VL
-					vlColor.rgb *= translucent.rgb * translucent.rgb;
+					vlColor.rgb *= translucent.rgb;
 					#endif
 
 					#ifdef VC
-					cloudColor.rgb *= translucent.rgb * translucent.rgb;
+					cloudColor.rgb *= translucent.rgb;
 					#endif
 				}
 

@@ -59,7 +59,7 @@ void getIntegratedEmission(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos,
 	} else if (mat > 112.9 && mat < 113.1) { // Brewing Stand
 		newEmission = float(albedo.r > 0.5 && albedo.b < 0.4) * 0.25;
 	} else if (mat > 113.9 && mat < 114.1) { // Glow berries
-		newEmission = float(albedo.r > 0.5);
+		newEmission = float(albedo.r > 0.5) * 0.5;
 	} else if (mat > 114.9 && mat < 115.1) { // Torch & Shroomlight
 		newEmission = float(lAlbedo > 0.99) * 0.4;
 	} else if (mat > 115.9 && mat < 116.1) { // Furnaces
@@ -67,7 +67,7 @@ void getIntegratedEmission(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos,
 	} else if (mat > 116.9 && mat < 117.1) { // Chorus
 		newEmission = float(albedo.g > 0.55);
 	} else if (mat > 117.9 && mat < 118.1) { // Enchanting Table
-		newEmission = float(lAlbedo > 0.75) * 0.2 + float(albedo.r > 0.1 && albedo.r < 0.3 && albedo.g < 0.2) * 2.0;
+		newEmission = float(lAlbedo > 0.75) * 0.25;
 	} else if (mat > 118.9 && mat < 119.1) { // Soul Campfire
 		newEmission = float(albedo.b > albedo.r || albedo.b > albedo.g) * 0.5;
 	} else if (mat > 119.9 && mat < 120.1) { // Normal Campfire && Magma Block
@@ -83,7 +83,7 @@ void getIntegratedEmission(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos,
 	} else if (mat > 125.9 && mat < 126.1) { // Nether Wart
 		newEmission = float(lAlbedo > 0.25) * 0.2 + float(lAlbedo > 0.75) * 0.2;
 	} else if (mat > 126.9 && mat < 127.1) { // End Portal Frame
-		newEmission = pow2(albedo.b - albedo.g) * 32.0 * float(albedo.r < 0.65);
+		newEmission = pow2(albedo.b - albedo.g) * 6.0 * float(albedo.r < 0.65);
 	} else if (mat > 127.9 && mat < 128.1) { // Dragon Egg
 		newEmission = lAlbedo * lAlbedo * 16.0;
 	} else if (mat > 128.9 && mat < 129.1) {// End Rod
@@ -91,6 +91,8 @@ void getIntegratedEmission(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos,
 		albedo.rgb *= endLightColSqrt;
 	} else if (mat > 129.9 && mat < 130.1) { // Powered Rail
 		newEmission = float(albedo.r > 0.5 && albedo.g < 0.25) * 0.05;
+	} else if (mat > 130.9 && mat < 131.1) { // Fire
+		newEmission = 0.2 - pow8(lAlbedo) * 0.1;
 	}
 
 	#ifdef EMISSIVE_CONCRETE

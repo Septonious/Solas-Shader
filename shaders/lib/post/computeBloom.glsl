@@ -16,7 +16,7 @@ vec3 getBloomTile(float lod, vec2 coord, vec2 offset) {
 			for(int j = -BLOOM_SAMPLES; j <= BLOOM_SAMPLES; j++) {
 				vec2 pixelOffset = vec2(i * pixelWidth, j * pixelHeight);
 				vec2 sampleCoord = coord + pixelOffset * scale;
-				float isEmissive = texture2D(colortex2, sampleCoord).b;
+				float isEmissive = texture2D(colortex2, sampleCoord).b * 100.0;
 
 				if (isEmissive > 0.0) bloom += texture2D(colortex0, sampleCoord).rgb * gaussian2D(vec2(i, j)) * isEmissive;
 			}
