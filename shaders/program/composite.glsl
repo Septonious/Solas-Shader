@@ -15,7 +15,7 @@ in vec3 sunVec, upVec;
 uniform int isEyeInWater;
 uniform int worldDay;
 
-uniform float far, near, frameTimeCounter;
+uniform float far, frameTimeCounter;
 uniform float timeAngle, timeBrightness, rainStrength;
 uniform float blindFactor;
 
@@ -32,18 +32,15 @@ uniform sampler2D colortex0;
 
 #if defined VC || defined VL
 uniform sampler2D noisetex;
-uniform sampler2D depthtex0, depthtex1;
-uniform sampler2D colortex1;
+uniform sampler2D depthtex0;
 uniform sampler2DShadow shadowtex0, shadowtex1;
-
-uniform mat4 gbufferProjectionInverse;
 
 #if (defined VC || defined VL) && defined SHADOW_COLOR
 uniform sampler2D shadowcolor0;
 #endif
 
 uniform mat4 shadowModelView, shadowProjection;
-uniform mat4 gbufferModelViewInverse;
+uniform mat4 gbufferProjectionInverse, gbufferModelViewInverse;
 #endif
 
 //Common Variables//
@@ -74,17 +71,7 @@ void main() {
 	dither = fract(dither + frameTimeCounter * 16.0);
 	#endif
 
-	vec2 newTexCoord = texCoord * VOLUMETRICS_RENDER_SCALE;
-	vec4 translucent = texture2D(colortex1, newTexCoord);
-
-	float z0 = texture2D(depthtex0, newTexCoord).r;
-	float z1 = texture2D(depthtex1, newTexCoord).r;
-
-	vec4 screenPos = vec4(newTexCoord, z0, 1.0);
-	vec4 viewPos = gbufferProjectionInverse * (screenPos * 2.0 - 1.0);
-	viewPos /= viewPos.w;
-
-	computeVolumetricEffects(translucent, viewPos.xyz, newTexCoord, z0, z1, dither, ug, vlOut1, vlOut2);
+	computeVolumetricEffects(texCoord * VOLUMETRICS_RENDER_SCALE, dither, ug, vlOut1, vlOut2);
 
 	#ifdef VL
 	vlOut1 = pow(vlOut1 / 64.0, vec4(0.25));

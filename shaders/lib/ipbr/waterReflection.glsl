@@ -11,7 +11,6 @@ vec3 getReflection(vec3 viewPos, vec3 normal, vec3 color) {
 
     #if defined OVERWORLD || defined END
     float nebulaFactor = 0.0;
-    float blackHoleFactor = 0.0;
     #endif
 
 	#if defined OVERWORLD
@@ -27,7 +26,7 @@ vec3 getReflection(vec3 viewPos, vec3 normal, vec3 color) {
         reflectionFade = getAtmosphere(reflectedViewPos);
 
 		#ifdef STARS
-		getStars(reflectionFade, worldPos, VoU, nebulaFactor, 0.0, ug);
+		getStars(reflectionFade, worldPos, VoU, nebulaFactor, ug);
 		#endif
 
 		if (VoU > 0.0) {
@@ -56,7 +55,7 @@ vec3 getReflection(vec3 viewPos, vec3 normal, vec3 color) {
 		#if defined END_NEBULA || defined END_STARS
 		vec3 worldPos = mat3(gbufferModelViewInverse) * reflectedViewPos;
 		vec3 nViewPos = normalize(reflectedViewPos);
-
+		float VoS = clamp(dot(nViewPos, sunVec), 0.0, 1.0);
 		float VoU = dot(nViewPos, upVec);
 		#endif
 
@@ -65,7 +64,11 @@ vec3 getReflection(vec3 viewPos, vec3 normal, vec3 color) {
 		#endif
 
 		#ifdef END_STARS
-		getStars(reflectionFade, worldPos, VoU, nebulaFactor, blackHoleFactor, 1.0);
+		getStars(reflectionFade, worldPos, VoU, nebulaFactor, 1.0);
+		#endif
+
+		#ifdef END_VORTEX
+		getEndVortex(reflectionFade, worldPos, VoU, VoS);
 		#endif
 	}
 

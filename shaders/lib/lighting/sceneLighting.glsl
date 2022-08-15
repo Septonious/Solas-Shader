@@ -61,7 +61,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
 
             #ifdef GBUFFERS_TERRAIN
             if (foliage > 0.0) {
-                bias *= 0.25;
+                bias *= 0.5;
             }
             #endif
 
@@ -104,7 +104,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     #endif
 
     #ifdef END
-    vec3 sceneLighting = mix(endAmbientCol, endLightCol, fullShadow) * 0.125;
+    vec3 sceneLighting = mix(endAmbientCol, endLightCol, fullShadow) * 0.25;
     #endif
     #endif
 

@@ -106,7 +106,6 @@ void main() {
 
 	#if defined OVERWORLD || defined END
 	float nebulaFactor = 0.0;
-	float blackHoleFactor = 0.0;
 
 	vec3 nViewPos = normalize(viewPos.xyz);
 	float VoU = dot(nViewPos, upVec);
@@ -122,7 +121,7 @@ void main() {
 			#endif
 
 			#ifdef STARS
-			getStars(skyColor, worldPos, VoU, nebulaFactor, 0.0, ug);
+			getStars(skyColor, worldPos, VoU, nebulaFactor, ug);
 			#endif
 
 			if (VoU > 0.0) {
@@ -147,7 +146,11 @@ void main() {
 		#endif
 
 		#ifdef END_STARS
-		getStars(skyColor, worldPos, VoU, nebulaFactor, blackHoleFactor, 1.0);
+		getStars(skyColor, worldPos, VoU, nebulaFactor, 1.0);
+		#endif
+
+		#ifdef END_VORTEX
+		getEndVortex(skyColor, worldPos, VoU, VoS);
 		#endif
 		#endif
 

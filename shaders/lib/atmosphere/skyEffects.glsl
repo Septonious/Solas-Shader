@@ -3,16 +3,16 @@ float GetNoise(vec2 pos) {
 	return fract(sin(dot(pos, vec2(12.9898, 4.1414))) * 43758.5453);
 }
 
-void getStars(inout vec3 color, in vec3 worldPos, in float VoU, in float nebulaFactor, in float blackHoleFactor, in float ug) {
+void getStars(inout vec3 color, in vec3 worldPos, in float VoU, in float nebulaFactor, in float ug) {
 	#ifdef OVERWORLD
 	float visibility = (1.0 - sunVisibility) * (1.0 - rainStrength) * pow(VoU, 0.125) * ug;
 	#else
-	float visibility = 0.5 + nebulaFactor * 0.5;
+	float visibility = 0.75 + nebulaFactor * 0.25;
 	#endif
 
 	if (visibility > 0.0) {
 		vec2 planeCoord = worldPos.xz / (length(worldPos.y) + length(worldPos.xz));
-			 planeCoord+= frameTimeCounter * 0.001 * (1.0 + blackHoleFactor * 100.0);
+			 planeCoord+= frameTimeCounter * 0.001;
 			 planeCoord+= cameraPosition.xz * 0.0001;
 			 planeCoord = floor(planeCoord * 384.0) / 384.0;
 
@@ -23,6 +23,29 @@ void getStars(inout vec3 color, in vec3 worldPos, in float VoU, in float nebulaF
 		star *= star;
 
 		color += vec3(16.0 * (1.0 + star)) * star;
+	}
+}
+#endif
+
+#ifdef END_VORTEX
+vec3 getSpiral(vec2 coord, float VoS){
+    coord = vec2(atan(coord.y, coord.x) - frameTimeCounter * 0.125, sqrt(coord.x * coord.x + coord.y * coord.y));
+    float center = pow16(1.0 - coord.y) * 20.0;
+    float spiral = sin((coord.x + sqrt(coord.y) * END_VORTEX_WHIRL) * END_VORTEX_ARMS) + center - coord.y;
+
+    return clamp(endLightColSqrt * spiral * 0.125, 0.0, 1.0);
+}
+
+void getEndVortex(inout vec3 color, in vec3 worldPos, in float VoU, in float VoS) {
+	if (VoS > 0.0) {
+		vec3 sunVec = mat3(gbufferModelViewInverse) * sunVec;
+		vec2 sunCoord = sunVec.xz / (sunVec.y + length(sunVec));
+		vec2 planeCoord = worldPos.xz / (worldPos.y + length(worldPos)) - sunCoord;
+
+		vec3 spiral = getSpiral(planeCoord, VoS);
+		float spiralBrightness = length(spiral);
+		color = mix(color, spiral, pow2(spiralBrightness));
+		color *= 1.0 - pow16(pow32(VoS)) * 2.0;
 	}
 }
 #endif

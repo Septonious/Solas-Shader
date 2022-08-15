@@ -18,6 +18,11 @@ void main() {
 
     /* DRAWBUFFERS:0 */
     gl_FragData[0] = albedo * albedo;
+
+	#ifdef BLOOM
+	/* DRAWBUFFERS:02 */
+	gl_FragData[1].ba = vec2(0.01, 1.0);
+	#endif
 }
 
 #endif

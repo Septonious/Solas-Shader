@@ -46,6 +46,9 @@ const float shadowBlurStrength = 1.0 / shadowMapResolution;
 #define MILKY_WAY
 #define MILKY_WAY_BRIGHTNESS 2.00 //[1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00]
 #define END_NEBULA
+//#define END_VORTEX
+#define END_VORTEX_ARMS 7.0
+#define END_VORTEX_WHIRL 12.0
 #define END_BLACK_HOLE
 #define END_STARS
 #define STARS
@@ -63,16 +66,16 @@ const float shadowBlurStrength = 1.0 / shadowMapResolution;
 #define VOLUMETRICS_RESOLUTION 0.5 //[0.5 0.6 0.7 0.8 0.9 1.0]
 #define VL
 #define VL_OPACITY 0.50 //[0.10 0.15 0.20 0.25 0.30 0.35 0.40 0.45 0.50 0.55 0.60 0.65 0.70 0.75 0.80 0.85 0.90 0.95 1.00]
-#define VL_HEIGHT 120.0 //[10.0 20.0 30.0 40.0 50.0 60.0 70.0 80.0 90.0 100.0 110.0 120.0 130.0 140.0 150.0]
+#define VL_HEIGHT 110.0 //[10.0 20.0 30.0 40.0 50.0 60.0 70.0 80.0 90.0 100.0 110.0 120.0 130.0 140.0 150.0]
 
 //Volumetric Clouds
 #define VC
 #define VC_AMOUNT 1.60 //[1.00 1.10 1.20 1.30 1.40 1.50 1.60 1.70 1.80 1.90 2.00]
 #define VC_STRETCHING 10.0 //[8.0 9.0 10.0 11.0 12.0 13.0 14.0 15.0 16.0]
 #define VC_HEIGHT 200.0 //[160.0 170.0 180.0 190.0 200.0 210.0 220.0 230.0 240.0 250.0]
-#define VC_QUALITY 8 //[16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1]
-#define VC_DISTANCE 3.0 //[1.0 1.5 2.0 2.5 3.0 3.5 4.0]
-#define VC_OPACITY 0.65 //[0.10 0.15 0.20 0.25 0.30 0.35 0.40 0.45 0.50 0.55 0.60 0.65 0.70 0.75 0.80 0.85 0.90 0.95 1.00]
+#define VC_SAMPLES 15 //[8 10 12 14 16 18 20 22 24 26 28 30 32 34 36 38 40]
+#define VC_DISTANCE 25.0 //[8.0 12.0 16.0 20.0 24.0 28.0 32.0]
+#define VC_OPACITY 0.50 //[0.10 0.15 0.20 0.25 0.30 0.35 0.40 0.45 0.50 0.55 0.60 0.65 0.70 0.75 0.80 0.85 0.90 0.95 1.00]
 
 //Water//
 #define WATER_NORMALS

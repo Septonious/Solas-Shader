@@ -103,7 +103,7 @@ void main() {
 	#ifndef INTEGRATED_SPECULAR
 		#ifdef BLOOM
 		/* DRAWBUFFERS:02 */
-		gl_FragData[1] = vec4(EncodeNormal(normal), emission * 0.01, 1.0);
+		gl_FragData[1].ba = vec2(emission * 0.01, emission);
 		#endif
 	#else
 		/* DRAWBUFFERS:062 */
