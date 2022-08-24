@@ -19,10 +19,10 @@ void getStars(inout vec3 color, in vec3 worldPos, in float VoU, in float nebulaF
 		float star = GetNoise(planeCoord.xy);
 			  star*= GetNoise(planeCoord.xy + 0.5);
 
-		star = clamp(star - (0.875 - nebulaFactor * 0.075), 0.0, 1.0) * visibility;
+		star = clamp(star - (0.9 - nebulaFactor * 0.05), 0.0, 1.0) * visibility;
 		star *= star;
 
-		color += vec3(16.0 * (1.0 + star)) * star;
+		color += vec3(32.0 * star);
 	}
 }
 #endif
@@ -75,9 +75,11 @@ void getNebula(inout vec3 color, in vec3 worldPos, in float VoU, inout float neb
 		#endif
 
 		#ifdef OVERWORLD
+		planeCoord *= 0.75;
 		planeCoord.y += 0.4;
+		planeCoord.x *= 1.6;
 		vec4 milkyWay = texture2D(depthtex2, planeCoord * 0.5 + 0.5);
-		color += lightNight * milkyWay.rgb * pow6(milkyWay.a) * length(milkyWay.rgb) * visibility;
+		color += milkyWay.rgb * pow6(milkyWay.a) * length(milkyWay.rgb) * visibility;
 		#else
 		color += mix(mix(endAmbientCol, endAmbientColSqrt, nebulaNoise * nebulaNoise), vec3(0.5, 0.25, 0.2) * endLightColSqrt, pow4(nebulaNoise)) * visibility * nebulaNoise;
 		#endif

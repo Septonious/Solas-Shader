@@ -31,7 +31,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
 		  vanillaDiffuse*= vanillaDiffuse;
 
     #ifdef TAA
-    float dither = fract(Bayer64(gl_FragCoord.xy) + frameTimeCounter * 16.0) / (2.0 * SHADOW_SAMPLE_COUNT);
+    float dither = fract(Bayer64(gl_FragCoord.xy) + frameTimeCounter * 16.0) / 16.0;
     #else
     float dither = 0.0;
     #endif
@@ -39,14 +39,9 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     //Main Scene Lighting (Sunlight & Shadows)
     #if defined OVERWORLD || defined END
     specular *= clamp(NoU, 0.0, 1.0);
-    bool skyLightFactor = true;
-
-    #ifdef OVERWORLD
-    skyLightFactor = pow4(lightmap.y) > 0.001;
-    #endif
 
     vec3 shadow = vec3(0.0);
-    if (skyLightFactor && (NoL > 0.0 || subsurface > 0.0 || specular > 0.0)) {
+    if (NoL > 0.0 || subsurface > 0.0 || specular > 0.0) {
         //Shadows without peter-panning from Emin's Complementary Reimagined shaderpack, tysm for allowing me to use them ^^
         //Developed by Emin#7309 and gri573#7741
         float shadowLength = shadowDistance * 0.9166667 - length(vec4(worldPos.x, worldPos.y, worldPos.y, worldPos.z));
@@ -61,7 +56,8 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
 
             #ifdef GBUFFERS_TERRAIN
             if (foliage > 0.0) {
-                bias *= 0.5;
+                bias *= 0.25;
+                offset = 0.0010235 * lightmap.y + 0.0009765;
             }
             #endif
 
@@ -127,8 +123,8 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     //BLOOM BASED COLORED LIGHTING
     vec3 bloom = texture2D(gaux4, gl_FragCoord.xy / vec2(viewWidth, viewHeight)).rgb;
          bloom = pow4(bloom) * 256.0;
-         bloom = clamp(bloom * pow(getLuminance(bloom) + 0.0025, -0.5), 0.0, 1.0);
-         bloom *= (0.2 + blockLightMap * 1.8) * BLOOM_STRENGTH;
+         bloom = clamp(1.5 * bloom * pow(getLuminance(bloom) + 0.00125, -0.5), 0.0, 1.0);
+         bloom *= (0.1 + blockLightMap * 0.9) * BLOOM_STRENGTH;
          bloom *= 1.0 - clamp(length(viewPos) * 0.025, 0.0, 0.9);
 
     vec3 blockLighting = blockLightCol * blockLightMap + bloom * float(emission == 0.0);

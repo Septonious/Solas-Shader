@@ -5,7 +5,7 @@ float minOf(vec3 x) {
 // The favorite raytracer of your favorite raytracer, credits to Belmu
 bool rayTrace(vec3 viewPos, vec3 rayDir, inout vec3 rayPos) {
     bool intersect = false;
-	float dither = Bayer256(gl_FragCoord.xy);
+	float dither = Bayer64(gl_FragCoord.xy);
 
 	#ifdef TAA
 	dither = fract(dither + frameTimeCounter * 16.0);

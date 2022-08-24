@@ -73,16 +73,6 @@ void main() {
 
 	computeVolumetricEffects(texCoord * VOLUMETRICS_RENDER_SCALE, dither, ug, vlOut1, vlOut2);
 
-	#ifdef VL
-	vlOut1 = pow(vlOut1 / 64.0, vec4(0.25));
-	vlOut1 *= ug;
-	#endif
-
-	#ifdef VC
-	vlOut2 = pow(vlOut2 / 64.0, vec4(0.25));
-	vlOut2 *= ug;
-	#endif
-
 	#if MC_VERSION >= 11900
 	vlOut1 *= 1.0 - darknessFactor;
 	vlOut2 *= 1.0 - darknessFactor;

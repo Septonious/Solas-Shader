@@ -7,7 +7,7 @@ vec3 getAtmosphere(vec3 viewPos) {
     vec3 nViewPos = normalize(viewPos);
 
     float VoS = clamp(dot(nViewPos, sunVec), 0.0, 1.0);
-          VoS = mix(pow2(VoS), 0.35 + VoS * 0.65, sunVisibility * sunVisibility);
+          VoS = mix(pow2(VoS), 0.5 + VoS * 0.5, sunVisibility * sunVisibility);
     float VoU = dot(nViewPos, upVec);
 
     #ifdef SKY_GROUND

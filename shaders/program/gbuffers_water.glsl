@@ -189,7 +189,7 @@ void main() {
 		}
 		#endif
 
-		getSceneLighting(albedo.rgb, viewPos, worldPos, newNormal, lightmap, portal * pow8(length(albedo.rgb)) * 8.0, 0.0, 0.0, 1.0);
+		getSceneLighting(albedo.rgb, viewPos, worldPos, newNormal, lightmap, portal * pow8(length(albedo.rgb)) * 4.0, 0.0, 0.0, 1.0);
 
 		#if defined OVERWORLD
 		skyColor = getAtmosphere(viewPos);
@@ -228,7 +228,7 @@ void main() {
 
 	#ifdef BLOOM
 	/* DRAWBUFFERS:012 */
-	gl_FragData[2].ba = vec2(portal * 0.01, portal);
+	gl_FragData[2].ba = vec2(portal * 0.025, portal);
 	#endif
 }
 

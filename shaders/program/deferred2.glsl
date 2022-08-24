@@ -159,7 +159,10 @@ void main() {
 		#endif
 
 		skyColor *= 1.0 - blindFactor;
-		color = skyColor + Bayer256(gl_FragCoord.xy) / 64.0;
+		#ifdef OVERWORLD
+		skyColor += Bayer256(gl_FragCoord.xy) / 64.0;
+		#endif
+		color = skyColor;
 	} else {
 		Fog(color, viewPos.xyz, worldPos.xyz, skyColor);
 	}
