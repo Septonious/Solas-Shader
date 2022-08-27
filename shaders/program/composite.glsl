@@ -15,9 +15,13 @@ in vec3 sunVec, upVec;
 uniform int isEyeInWater;
 uniform int worldDay;
 
-uniform float far, frameTimeCounter;
-uniform float timeAngle, timeBrightness, rainStrength;
-uniform float blindFactor;
+#ifdef VL
+uniform float near;
+#endif
+
+uniform float far;
+uniform float frameTimeCounter;
+uniform float timeAngle, timeBrightness, rainStrength, blindFactor;
 
 #if MC_VERSION >= 11900
 uniform float darknessFactor;
@@ -33,6 +37,12 @@ uniform sampler2D colortex0;
 #if defined VC || defined VL
 uniform sampler2D noisetex;
 uniform sampler2D depthtex0;
+
+#ifdef VL
+uniform sampler2D depthtex1;
+uniform sampler2D colortex1;
+#endif
+
 uniform sampler2DShadow shadowtex0, shadowtex1;
 
 #if (defined VC || defined VL) && defined SHADOW_COLOR
@@ -61,8 +71,8 @@ float sunVisibility = clamp(dot(sunVec, upVec) + 0.05, 0.0, 0.1) * 10.0;
 //Program//
 void main() {
 	vec3 color = pow(texture2D(colortex0, texCoord).rgb, vec3(2.2));
-	vec4 vlOut1 = vec4(0.0);
-	vec4 vlOut2 = vec4(0.0);
+	vec4 vl = vec4(0.0);
+	vec4 vc = vec4(0.0);
 
 	#if defined VC || defined VL
 	float dither = getBlueNoise(gl_FragCoord.xy);
@@ -71,21 +81,20 @@ void main() {
 	dither = fract(dither + frameTimeCounter * 16.0);
 	#endif
 
-	computeVolumetricEffects(texCoord * VOLUMETRICS_RENDER_SCALE, dither, ug, vlOut1, vlOut2);
-
-	#if MC_VERSION >= 11900
-	vlOut1 *= 1.0 - darknessFactor;
-	vlOut2 *= 1.0 - darknessFactor;
+	#ifdef VC
+	computeVolumetricClouds(dither, ug, vc);
 	#endif
 
-	vlOut1 *= 1.0 - blindFactor;
-	vlOut2 *= 1.0 - blindFactor;
+	#ifdef VL
+	computeVolumetricLight(dither, ug, vl);
 	#endif
 
-	/* DRAWBUFFERS:034 */
+	color = mix(color, vc.rgb, pow4(vc.a) * VC_OPACITY);
+	color = mix(color, vl.rgb, pow4(vl.a) * VL_OPACITY);
+	#endif
+
+	/* DRAWBUFFERS:0 */
 	gl_FragData[0].rgb = color;
-	gl_FragData[1] = vlOut1;
-	gl_FragData[2] = vlOut2;
 }
 
 #endif

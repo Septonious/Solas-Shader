@@ -8,22 +8,25 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 atmo
 	//Overworld Fog
 	#ifdef OVERWORLD
 	//Fog Altitude
-	float fogAltitude = clamp(pow16((worldPos.y + cameraPosition.y + 1000.0 - FOG_HEIGHT) * 0.001), 0.0, 1.0 - rainStrength * 0.75);
+	float fogAltitude = clamp(pow16((worldPos.y + cameraPosition.y + 1000.0 - FOG_HEIGHT) * 0.001), 0.0, 1.0);
 
-	float fog = lViewPos * FOG_DENSITY * 0.00005 * (1.0 - pow(fogAltitude, 0.5)) * (1.0 + rainStrength);
-	fog = 1.0 - exp(-64.0 * fog);
+	float fog = length(viewPos) * FOG_DENSITY / 256.0;
+	float clearDay = sunVisibility * (1.0 - rainStrength * 0.5);
+	fog *= mix(1.0, (0.5 * rainStrength + 0.5) / (4.0 * clearDay + 1.0) * eBS, eBS);
+	fog = 1.0 - exp(-6.0 * pow(fog, 0.15 * clearDay * eBS + 1.25));
+	fog *= 1.0 - fogAltitude;
 
-	vec3 fogColor = atmosphereColor * fog;
+	vec3 fogColor = atmosphereColor * fog * 2.0;
 	
 	//Distant Fade
 	#ifdef DISTANT_FADE
 	if (isEyeInWater == 0) {
-		float vanillaFog = pow4(lViewPos * 0.00005);
+		float vanillaFog = pow4(lViewPos * 0.000025);
 
 		#if DISTANT_FADE_STYLE == 0
-		vanillaFog += pow8(lWorldPos / far);
+		vanillaFog += pow12(lWorldPos / far);
 		#elif DISTANT_FADE_STYLE == 1
-		vanillaFog += pow8(lViewPos / far);
+		vanillaFog += pow12(lViewPos / far);
 		#endif
 
 		vanillaFog = clamp(vanillaFog, 0.0, 1.0);

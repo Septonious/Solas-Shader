@@ -7,7 +7,7 @@ vec3 getAtmosphere(vec3 viewPos) {
     vec3 nViewPos = normalize(viewPos);
 
     float VoS = clamp(dot(nViewPos, sunVec), 0.0, 1.0);
-          VoS = mix(pow2(VoS), 0.5 + VoS * 0.5, sunVisibility * sunVisibility);
+          VoS = mix(pow2(VoS), 0.35 + VoS * 0.65, sunVisibility * sunVisibility);
     float VoU = dot(nViewPos, upVec);
 
     #ifdef SKY_GROUND
@@ -22,7 +22,7 @@ vec3 getAtmosphere(vec3 viewPos) {
     float scatteringFactor = clamp(sunVisibility * (1.0 - rainStrength) * VoS, 0.0, (1.0 - dfade) * 0.75 * sunVisibility * VoS);
     float skyDensity = exp(-absVoU);
           skyDensity = mix(skyDensity, 0.35, 0.5 - sunVisibility * 0.5);
-          skyDensity = mix(skyDensity, 0.6, rainStrength * rainStrength * 0.8);
+          skyDensity = mix(skyDensity, 0.7, rainStrength * rainStrength * 0.8);
 
     //Day & Night Sky
     vec3 daySky = mix(skyColSqrt, pow(skyColor, vec3(1.25)) * 1.5, dfade);

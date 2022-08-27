@@ -4,8 +4,8 @@ int day = worldDay % 72 / 8 / 21;
 float amount = mix(VC_AMOUNT * (1.0 + day), 2.0, rainStrength);
 
 float get3DNoise(vec3 pos) {
-	pos *= 0.4 + day;
-	pos.xz *= 0.4;
+	pos *= 0.5 + clamp(float(day), 0.0, 0.5);
+	pos.xz *= 0.5;
 
 	vec3 floorPos = floor(pos);
 	vec3 fractPos = fract(pos);
@@ -18,17 +18,23 @@ float get3DNoise(vec3 pos) {
 	return mix(planeA, planeB, fractPos.y);
 }
 
-void computeVolumetricEffects(in vec2 newTexCoord, in float dither, in float ug, inout vec4 vlOut1, inout vec4 vlOut2) {
-	float z0 = texture2D(depthtex0, newTexCoord).r;
+void computeVolumetricClouds(in float dither, in float ug, inout vec4 vc) {
+	//Depts
+	float z0 = texture2D(depthtex0, texCoord).r;
 
-	if (clamp(texCoord, 0.0, VOLUMETRICS_RESOLUTION + 1e-3) == texCoord && ug != 0.0 && z0 > 0.56) {
-		vec4 vc = vec4(0.0);
+	float visibility = ug * float(z0 > 0.56);
 
+	#if MC_VERSION >= 11900
+	visibility *= 1.0 - darknessFactor;
+	#endif
+
+	visibility *= 1.0 - blindFactor;
+
+	if (visibility > 0.0) {
 		//Positions
-		vec4 screenPos = vec4(newTexCoord, z0, 1.0);
+		vec4 screenPos = vec4(texCoord, z0, 1.0);
 		vec4 viewPos = gbufferProjectionInverse * (screenPos * 2.0 - 1.0);
 		viewPos /= viewPos.w;
-
 		vec3 nWorldPos = normalize(mat3(gbufferModelViewInverse) * viewPos.xyz);
 
 		float lViewPos = length(viewPos);
@@ -72,7 +78,7 @@ void computeVolumetricEffects(in vec2 newTexCoord, in float dither, in float ug,
 			//Shaping & Lighting
 			if (cloudVisibility > 0.0) {
 				//Cloud Noise
-				float noise = get3DNoise(rayPos * 0.625 + frameTimeCounter * 0.20) * 1.0;
+				float noise = get3DNoise(rayPos * 0.500 + frameTimeCounter * 0.20) * 1.0;
 					  noise+= get3DNoise(rayPos * 0.250 + frameTimeCounter * 0.15) * 1.5;
 					  noise+= get3DNoise(rayPos * 0.125 + frameTimeCounter * 0.10) * 3.0;
 					  noise+= get3DNoise(rayPos * 0.025 + frameTimeCounter * 0.05) * 9.0;
@@ -92,8 +98,97 @@ void computeVolumetricEffects(in vec2 newTexCoord, in float dither, in float ug,
 		//Why not tint out clouds with the sky color?
 		vc.rgb = mix(vc.rgb, vc.rgb * 0.65, (1.0 - rainStrength) * (1.0 - timeBrightness));
 		vc.rgb = mix(vc.rgb, vc.rgb * skyColor * skyColor * 2.0, timeBrightness * (1.0 - rainStrength));
+		vc *= ug;
+	}
+}
+#endif
 
-		vlOut2 = pow(vc / 64.0, vec4(0.25)) * ug;
+#ifdef VL
+void computeVolumetricLight(in float dither, in float ug, inout vec4 vl) {
+	//Depths
+	float z0 = texture2D(depthtex0, texCoord).r;
+	float z1 = texture2D(depthtex1, texCoord).r;
+
+	//Positions
+	vec4 screenPos = vec4(texCoord, z0, 1.0);
+	vec4 viewPos = gbufferProjectionInverse * (screenPos * 2.0 - 1.0);
+	viewPos /= viewPos.w;
+	vec3 nViewPos = normalize(viewPos.xyz);
+
+	float VoU = 1.0 - clamp(dot(nViewPos, upVec), 0.0, 1.0);
+	float VoS = mix(clamp(dot(nViewPos, sunVec), 1.0 - timeBrightness, 1.0), 1.0, float(isEyeInWater == 1));
+	float visibility = ug * float(z0 > 0.56) * 0.75 * VL_OPACITY * VoU * VoS;
+
+	#if MC_VERSION >= 11900
+	visibility *= 1.0 - darknessFactor;
+	#endif
+
+	visibility *= 1.0 - blindFactor;
+
+	if (visibility > 0.0) {
+		#ifdef SHADOW_COLOR
+		vec3 shadowCol = vec3(0.0);
+		#endif
+
+		vec4 translucent = texture2D(colortex1, texCoord);
+
+		float lViewPos = length(viewPos);
+		float linearDepth0 = getLinearDepth2(z0);
+		float linearDepth1 = getLinearDepth2(z1);
+
+		//Ray marching and main calculations
+		for (int i = 0; i < VL_SAMPLES; i++) {
+			float currentDepth = (i + dither) * (10.0 - float(isEyeInWater == 1.0) * 5.0);
+
+			if (linearDepth1 < currentDepth || (linearDepth0 < currentDepth && translucent.rgb == vec3(0.0))) {
+				break;
+			}
+
+			vec3 worldPos = calculateWorldPos(getLogarithmicDepth(currentDepth), texCoord);
+
+			float lWorldPos = length(worldPos);
+
+			if (VoU == 0.0 || lWorldPos > far) break;
+
+			vec3 shadowPos = calculateShadowPos(worldPos);
+			float shadow1 = shadow2D(shadowtex1, shadowPos).z;
+			float shadow0 = shadow2D(shadowtex0, shadowPos).z;
+
+			//Distant Fade
+			float fogFade = 1.0 - clamp(pow4(lViewPos * 0.000125) + pow8(lWorldPos / far), 0.0, 1.0);
+
+			//Colored Shadows
+			#ifdef SHADOW_COLOR
+			if (shadow0 < 1.0) {
+				if (shadow1 > 0.0) {
+					shadowCol = texture2D(shadowcolor0, shadowPos.xy).rgb;
+					shadowCol *= shadowCol * shadow1;
+				}
+			}
+
+			vec3 shadow = clamp(shadowCol * (4.0 + timeBrightness * 24.0) * (1.0 - shadow0) + shadow0, 0.0, 28.0);
+			#endif
+
+			//Color Calculations
+			visibility *= fogFade;
+
+			vec4 vlColor = vec4(0.0);
+			if (visibility > 0.0 && shadow1 != 0.0) {
+				vlColor = vec4(mix(lightCol, waterColor, float(isEyeInWater == 1)), visibility);
+				vlColor.rgb *= vlColor.a;
+
+				#ifdef SHADOW_COLOR
+				vlColor.rgb *= shadow;
+				#endif
+			}
+
+			//Trabslucency Blending
+			if (linearDepth0 < currentDepth) {
+				vlColor.rgb *= translucent.rgb;
+			}
+
+			vl += vlColor * (1.0 - vl.a);
+		}
 	}
 }
 #endif
