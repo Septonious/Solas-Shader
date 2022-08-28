@@ -94,7 +94,7 @@ void main() {
 
 	if (albedo.a > 0.001) {
 		float foliage = float(mat > 0.99 && mat < 1.01);
-		float subsurface = foliage * 0.75 + float(mat > 1.99 && mat < 2.01) * 0.75;
+		float subsurface = foliage * 0.5 + float(mat > 1.99 && mat < 2.01);
 
 		vec3 screenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z);
 		vec3 viewPos = ToNDC(screenPos);

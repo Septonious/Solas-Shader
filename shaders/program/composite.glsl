@@ -38,6 +38,10 @@ uniform sampler2D colortex0;
 uniform sampler2D noisetex;
 uniform sampler2D depthtex0;
 
+#if defined VC && defined BLOCKY_CLOUDS
+uniform sampler2D shadowcolor1;
+#endif
+
 #ifdef VL
 uniform sampler2D depthtex1;
 uniform sampler2D colortex1;

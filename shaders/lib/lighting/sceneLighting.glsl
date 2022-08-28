@@ -54,13 +54,6 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
             //Shadow bias without peter-panning
             vec3 bias = worldNormal * min(0.12 + length(worldPos) / 200.0, 0.5) * (2.0 - max(NoL, 0.0));
 
-            #ifdef GBUFFERS_TERRAIN
-            if (foliage > 0.0) {
-                bias *= 0.25;
-                offset = 0.0010235 * lightmap.y + 0.0009765;
-            }
-            #endif
-
             //Fix light leaking in caves
             vec3 edgeFactor = 0.2 * (0.5 - fract(worldPosM + cameraPosition + worldNormal * 0.01));
             #ifndef GBUFFERS_TEXTURED
@@ -68,6 +61,12 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
                 #ifdef GBUFFERS_WATER
                     bias *= 0.5;
                     worldPosM += (1.0 - lightmap.y) * edgeFactor;
+                #endif
+
+                #ifdef GBUFFERS_TERRAIN
+                if (subsurface > 0.0) {
+                    bias *= 0.5;
+                }
                 #endif
             #else
                 vec3 centerWorldPos = floor(worldPosM + cameraPosition) - cameraPosition + 0.5;
@@ -86,7 +85,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     if (subsurface > 0.0 || specular > 0.0) {
         float VoL = clamp(dot(normalize(viewPos), lightVec), 0.0, 1.0);
         VoL = pow4(VoL) + pow16(VoL);
-        scattering = clamp(VoL * subsurface + VoL * specular, 0.0, 4.0);
+        scattering = clamp(VoL * subsurface + VoL * specular, 0.0, 1.0);
         NoL = mix(NoL, 1.0, subsurface);
         NoL = mix(NoL, 1.0, scattering);
     }
@@ -95,7 +94,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     
     #ifdef OVERWORLD
     float rainFactor = 1.0 - rainStrength * 0.75;
-    vec3 sceneLighting = mix(ambientCol, lightCol, fullShadow * rainFactor) * pow4(lightmap.y);
+    vec3 sceneLighting = mix(ambientCol, lightCol, fullShadow * rainFactor) * lightmap.y;
     sceneLighting *= 1.0 + scattering * shadow;
     #endif
 

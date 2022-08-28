@@ -3,6 +3,7 @@ int day = worldDay % 72 / 8 / 21;
 
 float amount = mix(VC_AMOUNT * (1.0 + day), 2.0, rainStrength);
 
+#ifndef BLOCKY_CLOUDS
 float get3DNoise(vec3 pos) {
 	pos *= 0.5 + clamp(float(day), 0.0, 0.5);
 	pos.xz *= 0.5;
@@ -17,6 +18,22 @@ float get3DNoise(vec3 pos) {
 
 	return mix(planeA, planeB, fractPos.y);
 }
+#else
+float get3DNoise(vec3 pos) {
+	pos *= 0.5;
+	pos.xz *= 0.5;
+
+	vec3 floorPos = floor(pos);
+	vec3 fractPos = fract(pos);
+
+	vec2 noiseCoord = (floorPos.xz + fractPos.xz + floorPos.y * 16.0) * 0.015625;
+
+	float planeA = texture2D(shadowcolor1, noiseCoord).a;
+	float planeB = texture2D(shadowcolor1, noiseCoord + 0.25).a;
+
+	return mix(planeA, planeB, fractPos.y);
+}
+#endif
 
 void computeVolumetricClouds(in float dither, in float ug, inout vec4 vc) {
 	//Depts
@@ -38,6 +55,8 @@ void computeVolumetricClouds(in float dither, in float ug, inout vec4 vc) {
 		vec3 nWorldPos = normalize(mat3(gbufferModelViewInverse) * viewPos.xyz);
 
 		float lViewPos = length(viewPos);
+		float VoS = clamp(abs(dot(normalize(viewPos.xyz), sunVec)), 0.0, 1.0);
+		lightCol.rgb *= 1.0 + pow4(VoS);
 
 		//We want to march between two planes which we set here
 		float lowerPlane = (VC_HEIGHT + VC_STRETCHING - cameraPosition.y) / nWorldPos.y;
@@ -78,10 +97,15 @@ void computeVolumetricClouds(in float dither, in float ug, inout vec4 vc) {
 			//Shaping & Lighting
 			if (cloudVisibility > 0.0) {
 				//Cloud Noise
+				#ifndef BLOCKY_CLOUDS
 				float noise = get3DNoise(rayPos * 0.500 + frameTimeCounter * 0.20) * 1.0;
 					  noise+= get3DNoise(rayPos * 0.250 + frameTimeCounter * 0.15) * 1.5;
 					  noise+= get3DNoise(rayPos * 0.125 + frameTimeCounter * 0.10) * 3.0;
 					  noise+= get3DNoise(rayPos * 0.025 + frameTimeCounter * 0.05) * 9.0;
+				#else
+				float noise = get3DNoise(rayPos * 0.025) * 250.0;
+				#endif
+
 				noise = clamp(noise * amount - (10.0 + cloudLayer * 5.0), 0.0, 1.0);
 
 				//Color Calculations
@@ -116,7 +140,7 @@ void computeVolumetricLight(in float dither, in float ug, inout vec4 vl) {
 	vec3 nViewPos = normalize(viewPos.xyz);
 
 	float VoU = 1.0 - clamp(dot(nViewPos, upVec), 0.0, 1.0);
-	float VoS = mix(clamp(dot(nViewPos, sunVec), 1.0 - timeBrightness, 1.0), 1.0, float(isEyeInWater == 1));
+	float VoS = mix(clamp(dot(nViewPos, sunVec), 1.0 - pow2(timeBrightness), 1.0), 1.0, float(isEyeInWater == 1));
 	float visibility = ug * float(z0 > 0.56) * 0.75 * VL_OPACITY * VoU * VoS;
 
 	#if MC_VERSION >= 11900
@@ -166,7 +190,7 @@ void computeVolumetricLight(in float dither, in float ug, inout vec4 vl) {
 				}
 			}
 
-			vec3 shadow = clamp(shadowCol * (4.0 + timeBrightness * 24.0) * (1.0 - shadow0) + shadow0, 0.0, 28.0);
+			vec3 shadow = clamp(shadowCol * (2.0 + timeBrightness * 8.0) * (1.0 - shadow0) + shadow0, 0.0, 10.0);
 			#endif
 
 			//Color Calculations

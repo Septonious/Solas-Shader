@@ -4,6 +4,7 @@
 //vec3 downScatteringColor = vec3(1.55, 0.60, 0.05);
 
 vec3 getAtmosphere(vec3 viewPos) {
+    sunVisibility = sqrt(sunVisibility);
     vec3 nViewPos = normalize(viewPos);
 
     float VoS = clamp(dot(nViewPos, sunVec), 0.0, 1.0);

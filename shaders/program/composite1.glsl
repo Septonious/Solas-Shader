@@ -8,6 +8,8 @@ in vec2 texCoord;
 
 //Uniforms//
 #ifdef INTEGRATED_SPECULAR
+uniform int isEyeInWater;
+
 #if REFLECTION_TYPE == 1
 uniform float viewHeight, viewWidth;
 #endif
@@ -64,7 +66,7 @@ void main() {
 
 	vec4 terrainData = texture2D(colortex2, texCoord);
 	vec3 normal = DecodeNormal(terrainData.rg);
-	float roughness = min(mix(texture2D(colortex6, texCoord).a * 100.0, 0.1, float(z0 < z1)), 10.0);
+	float roughness = min(mix(texture2D(colortex6, texCoord).a * 100.0, 0.1, float(z0 < z1) * float(isEyeInWater == 0)), 10.0);
 	float specular = terrainData.a;
 
 	if (terrainData.a > 0.05 && roughness >= 0.1 && roughness < 10.0 && z0 > 0.56) {

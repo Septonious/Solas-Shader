@@ -2,10 +2,10 @@ float getNoise(vec3 pos){
 	pos.xz += pos.y;
 
 	float noise  = texture2D(noisetex, (pos.xz - frameTimeCounter * 0.2) * 0.001).r;
-		  noise += texture2D(noisetex, (pos.xz + frameTimeCounter * 0.3) * 0.005).r * 0.75;
-		  noise += texture2D(noisetex, (pos.xz - frameTimeCounter * 0.4) * 0.010).r * 0.50;
+		  noise += texture2D(noisetex, (pos.xz + frameTimeCounter * 0.3) * 0.004).r * 0.50;
+		  noise += texture2D(noisetex, (pos.xz - frameTimeCounter * 0.4) * 0.012).r * 0.25;
 
-	return noise * 3.0;
+	return noise * 5.0;
 }
 
 float getCaustics(vec3 pos){
