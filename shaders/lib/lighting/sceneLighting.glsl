@@ -55,7 +55,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
             vec3 bias = worldNormal * min(0.12 + length(worldPos) / 200.0, 0.5) * (2.0 - max(NoL, 0.0));
 
             //Fix light leaking in caves
-            vec3 edgeFactor = 0.2 * (0.5 - fract(worldPosM + cameraPosition + worldNormal * 0.01));
+            vec3 edgeFactor = 0.25 * (0.5 - fract(worldPosM + cameraPosition + worldNormal * 0.01));
             #ifndef GBUFFERS_TEXTURED
                 if (lightmap.y < 0.999) worldPosM += (1.0 - pow4(max(color.a, lightmap.y))) * edgeFactor;
                 #ifdef GBUFFERS_WATER
@@ -64,7 +64,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
                 #endif
 
                 #ifdef GBUFFERS_TERRAIN
-                if (subsurface > 0.0) {
+                if (foliage > 0.0) {
                     bias *= 0.5;
                 }
                 #endif
@@ -94,6 +94,12 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     
     #ifdef OVERWORLD
     float rainFactor = 1.0 - rainStrength * 0.75;
+
+    #ifdef FAKE_GI
+    float DoU = clamp(dot(normal, -upVec), 0.0, 1.0);
+    ambientCol = mix(ambientCol, lightCol, DoU * pow24(lightmap.y) * pow4(timeBrightness) * FAKE_GI_STRENGTH);
+    #endif
+
     vec3 sceneLighting = mix(ambientCol, lightCol, fullShadow * rainFactor) * lightmap.y;
     sceneLighting *= 1.0 + scattering * shadow;
     #endif
@@ -122,9 +128,9 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     //BLOOM BASED COLORED LIGHTING
     vec3 bloom = texture2D(gaux4, gl_FragCoord.xy / vec2(viewWidth, viewHeight)).rgb;
          bloom = pow4(bloom) * 256.0;
-         bloom = clamp(bloom * pow(getLuminance(bloom) + 0.00125, -0.5), 0.0, 1.0);
+         bloom = clamp(bloom * pow(getLuminance(bloom) + 0.001, -0.5), 0.0, 1.0);
          bloom *= (0.1 + blockLightMap * 0.9) * BLOOM_STRENGTH;
-         bloom *= 1.0 - clamp(length(viewPos) * 0.025, 0.0, 0.9);
+         bloom *= 1.0 - clamp(length(viewPos) * 0.025, 0.0, 0.95);
 
     vec3 blockLighting = blockLightCol * blockLightMap + bloom * float(emission == 0.0);
     #else

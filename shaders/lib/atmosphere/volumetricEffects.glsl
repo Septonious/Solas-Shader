@@ -103,7 +103,7 @@ void computeVolumetricClouds(in float dither, in float ug, inout vec4 vc) {
 					  noise+= get3DNoise(rayPos * 0.125 + frameTimeCounter * 0.10) * 3.0;
 					  noise+= get3DNoise(rayPos * 0.025 + frameTimeCounter * 0.05) * 9.0;
 				#else
-				float noise = get3DNoise(rayPos * 0.025) * 250.0;
+				float noise = get3DNoise(rayPos * 0.045) * 350.0;
 				#endif
 
 				noise = clamp(noise * amount - (10.0 + cloudLayer * 5.0), 0.0, 1.0);
@@ -162,7 +162,7 @@ void computeVolumetricLight(in float dither, in float ug, inout vec4 vl) {
 
 		//Ray marching and main calculations
 		for (int i = 0; i < VL_SAMPLES; i++) {
-			float currentDepth = (i + dither) * (10.0 - float(isEyeInWater == 1.0) * 5.0);
+			float currentDepth = (i + dither) * (10.0 - float(isEyeInWater == 1.0) * 7.0);
 
 			if (linearDepth1 < currentDepth || (linearDepth0 < currentDepth && translucent.rgb == vec3(0.0))) {
 				break;
