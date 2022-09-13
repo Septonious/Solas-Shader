@@ -8,7 +8,7 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 const float shadowBlurStrength = 1.0 / shadowMapResolution;
 
 #define GLOBAL_ILLUMINATION
-#define GLOBAL_ILLUMINATION_STRENGTH 0.5 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
+#define GLOBAL_ILLUMINATION_STRENGTH 0.4 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
 #define SHADOW_COLOR
 //#define ENTITY_SHADOWS
 #define SHADOW_SAMPLE_COUNT 3 //[1 2 3 4]
@@ -36,7 +36,7 @@ const float shadowBlurStrength = 1.0 / shadowMapResolution;
 #define REFLECTION_TYPE 1 //[0 1]
 
 //Bloom//
-#define BLOOM_COLORED_LIGHTING
+//#define BLOOM_COLORED_LIGHTING
 #define BLOOM
 #define BLOOM_STRENGTH 1.50 //[1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00]
 #define BLOOM_RADIUS 4 //[1 2 3 4]

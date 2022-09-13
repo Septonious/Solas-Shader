@@ -4,7 +4,7 @@ vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.
 vec3 lightVec = sunVec;
 #endif
 
-#ifdef BLOOM_COLORED_LIGHTING
+#if defined BLOOM_COLORED_LIGHTING || defined GLOBAL_ILLUMINATION
 uniform sampler2D gaux4;
 
 float getLuminance(vec3 color) {

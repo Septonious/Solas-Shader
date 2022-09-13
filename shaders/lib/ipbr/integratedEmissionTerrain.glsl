@@ -98,7 +98,7 @@ void getIntegratedEmission(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos,
 	} else if (mat > 129.9 && mat < 130.1) { // Powered Rail
 		newEmission = float(albedo.r > 0.5 && albedo.g < 0.25) * 0.05;
 	} else if (mat > 130.9 && mat < 131.1) { // Fire
-		newEmission = 0.2 - pow8(lAlbedo) * 0.1;
+		newEmission = 0.3 - pow8(lAlbedo) * 0.15;
 	}
 
 	#ifdef EMISSIVE_CONCRETE
