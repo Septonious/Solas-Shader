@@ -12,21 +12,22 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 atmo
 
 	float fog = length(viewPos) * FOG_DENSITY / 128.0;
 	float clearDay = sunVisibility * (1.0 - rainStrength * 0.5);
-	fog *= mix(1.0, (0.5 * rainStrength + 0.5) / (4.0 * clearDay + 1.0) * eBS, eBS);
-	fog = 1.0 - exp(-8.0 * pow(fog, 0.15 * clearDay * eBS + 1.25));
+	fog *= (0.5 * rainStrength + 0.5) / (4.0 * clearDay + 1.0);
+	fog = 1.0 - exp(-16.0 * pow(fog, 0.15 * clearDay * eBS + 1.25));
 	fog *= 1.0 - fogAltitude;
+	fog = pow(fog, 1.25);
 
-	vec3 fogColor = mix(atmosphereColor, sqrt(skyColor), (sunVisibility - timeBrightness) * 0.75) * fog;
+	vec3 fogColor = mix(atmosphereColor, skyColor, (sunVisibility - pow2(timeBrightness)) * 0.9) * fog * 1.5;
 	
 	//Distant Fade
 	#ifdef DISTANT_FADE
 	if (isEyeInWater == 0) {
-		float vanillaFog = pow4(lViewPos * 0.000025);
+		float vanillaFog = pow3(lViewPos * 0.0025);
 
 		#if DISTANT_FADE_STYLE == 0
-		vanillaFog += pow12(lWorldPos / far);
+		vanillaFog += pow6(lWorldPos / far * 0.75);
 		#elif DISTANT_FADE_STYLE == 1
-		vanillaFog += pow12(lViewPos / far);
+		vanillaFog += pow6(lViewPos / far * 0.75);
 		#endif
 
 		vanillaFog = clamp(vanillaFog, 0.0, 1.0);

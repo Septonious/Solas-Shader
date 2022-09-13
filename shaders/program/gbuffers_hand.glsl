@@ -38,7 +38,7 @@ uniform mat4 shadowModelView;
 
 //Common Variables//
 #ifdef OVERWORLD
-float sunVisibility = clamp((dot(sunVec, upVec) + 0.05) * 10.0, 0.0, 1.0);
+float sunVisibility = clamp(dot(sunVec, upVec) + 0.025, 0.0, 0.1) * 10.0;
 #endif
 
 //Includes//

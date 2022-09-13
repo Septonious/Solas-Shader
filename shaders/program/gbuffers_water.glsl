@@ -100,7 +100,7 @@ float eBS = eyeBrightnessSmooth.y / 240.0;
 float ug = mix(clamp((cameraPosition.y - 56.0) / 16.0, float(isEyeInWater == 1), 1.0), 1.0, eBS);
 
 #ifdef OVERWORLD
-float sunVisibility = clamp(dot(sunVec, upVec) + 0.05, 0.0, 0.1) * 10.0;
+float sunVisibility = clamp(dot(sunVec, upVec) + 0.025, 0.0, 0.1) * 10.0;
 #endif
 #endif
 
@@ -129,7 +129,7 @@ vec2 viewResolution = vec2(viewWidth, viewHeight);
 #include "/lib/color/dimensionColor.glsl"
 #include "/lib/lighting/sceneLighting.glsl"
 
-#ifdef OVERWORLD
+#if defined OVERWORLD && defined WATER_FOG
 #include "/lib/atmosphere/sky.glsl"
 #include "/lib/water/waterFog.glsl"
 #endif
@@ -201,21 +201,20 @@ void main() {
 
 		#ifdef INTEGRATED_SPECULAR
 		if (isEyeInWater != 1 && portal < 0.5) {
-			float fresnel = clamp(1.0 + pow4(dot(newNormal, normalize(viewPos))), 0.0, 0.1 + water * 0.9);
+			float fresnel = clamp(1.0 + pow4(dot(newNormal, normalize(viewPos))), 0.0, 0.2 + water * 0.8);
 
-			vec3 reflection = getReflection(viewPos, newNormal, albedo.rgb);
-			albedo.rgb = mix(albedo.rgb, reflection, fresnel);
+			getReflection(fresnel, lightmap.y, viewPos, newNormal, albedo.rgb);
 		}
 		#endif
 
-		#ifdef OVERWORLD
-		if (isEyeInWater == 0 && lightmap.y > 0.0 && water > 0.9) {
+		#if defined OVERWORLD && defined WATER_FOG
+		if (isEyeInWater == 0 && water > 0.9) {
 			float oDepth = texture2D(depthtex1, screenPos.xy).r;
 			vec3 oScreenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), oDepth);
 			vec3 oViewPos = ToNDC(oScreenPos);
 
-			vec4 waterFog = getWaterFog(viewPos.xyz - oViewPos) * lightmap.y;
-			albedo = mix(waterFog, vec4(albedo.rgb, 1.0), albedo.a);
+			vec4 waterFog = getWaterFog(viewPos.xyz - oViewPos);
+			albedo.rgb = mix(waterFog.rgb * (3.0 + waterFog.a), albedo.rgb, albedo.a);
 		}
 		#endif
 

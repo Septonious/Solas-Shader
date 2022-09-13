@@ -13,8 +13,9 @@ float getLinearDepth2(float depth) {
 vec3 calculateWorldPos(float depth, vec2 coord) {
 	vec4 viewPos = gbufferProjectionInverse * (vec4(coord, depth, 1.0) * 2.0 - 1.0);
 	viewPos /= viewPos.w;
-	
-	return mat3(gbufferModelViewInverse) * viewPos.xyz + gbufferModelViewInverse[3].xyz;
+
+	vec4 wpos = gbufferModelViewInverse * viewPos;
+	return (wpos / wpos.w).xyz;
 }
 #endif
 

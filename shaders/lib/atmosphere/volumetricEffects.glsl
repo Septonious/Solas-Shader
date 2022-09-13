@@ -1,20 +1,21 @@
 #ifdef VC
-int day = worldDay % 72 / 8 / 21;
+//int day = worldDay % 72 / 8;
 
-float amount = mix(VC_AMOUNT * (1.0 + day), 2.0, rainStrength);
+//float amount = mix(VC_AMOUNT * (0.95 + clamp(day * 0.15, 0.0, 0.15)), 2.0, rainStrength);
 
 #ifndef BLOCKY_CLOUDS
 float get3DNoise(vec3 pos) {
-	pos *= 0.5 + clamp(float(day), 0.0, 0.5);
-	pos.xz *= 0.5;
+	//pos *= 0.4 + clamp(day * 0.2, 0.0, 0.2);
+	pos *= 0.4;
+	pos.xz *= 0.4;
 
 	vec3 floorPos = floor(pos);
 	vec3 fractPos = fract(pos);
 
 	vec2 noiseCoord = (floorPos.xz + fractPos.xz + floorPos.y * 16.0) * 0.015625;
 
-	float planeA = texture2D(noisetex, noiseCoord).r;
-	float planeB = texture2D(noisetex, noiseCoord + 0.25).r;
+	float planeA = texture2D(shadowcolor1, noiseCoord).r;
+	float planeB = texture2D(shadowcolor1, noiseCoord + 0.25).r;
 
 	return mix(planeA, planeB, fractPos.y);
 }
@@ -35,9 +36,16 @@ float get3DNoise(vec3 pos) {
 }
 #endif
 
+float getCloudLighting(vec3 rayPos, float noise) {
+	float cloudLighting = clamp(sqrt(smoothstep(VC_HEIGHT + VC_STRETCHING * noise, VC_HEIGHT - VC_STRETCHING * noise, rayPos.y)) * 0.6 + noise * 0.4, 0.0, 1.0);
+
+	return cloudLighting;
+}
+
 void computeVolumetricClouds(in float dither, in float ug, inout vec4 vc) {
 	//Depts
 	float z0 = texture2D(depthtex0, texCoord).r;
+	float z1 = texture2D(depthtex1, texCoord).r;
 
 	float visibility = ug * float(z0 > 0.56);
 
@@ -55,8 +63,8 @@ void computeVolumetricClouds(in float dither, in float ug, inout vec4 vc) {
 		vec3 nWorldPos = normalize(mat3(gbufferModelViewInverse) * viewPos.xyz);
 
 		float lViewPos = length(viewPos);
-		float VoS = clamp(abs(dot(normalize(viewPos.xyz), sunVec)), 0.0, 1.0);
-		lightCol.rgb *= 1.0 + pow4(VoS);
+		float VoS = clamp(abs(dot(normalize(viewPos.xyz), sunVec)), 0.0, 1.0 - rainStrength);
+		lightCol.rgb *= 1.0 + pow2(VoS);
 
 		//We want to march between two planes which we set here
 		float lowerPlane = (VC_HEIGHT + VC_STRETCHING - cameraPosition.y) / nWorldPos.y;
@@ -78,7 +86,7 @@ void computeVolumetricClouds(in float dither, in float ug, inout vec4 vc) {
 			vec3 worldPos = rayPos - cameraPosition;
 			float lWorldPos = length(worldPos);
 
-			if (lWorldPos > VC_DISTANCE || lWorldPos > lViewPos) break;
+			if (lWorldPos > VC_DISTANCE || lViewPos < lWorldPos) break;
 
 			float cloudLayer = abs(VC_HEIGHT - rayPos.y) / VC_STRETCHING;
 
@@ -98,21 +106,27 @@ void computeVolumetricClouds(in float dither, in float ug, inout vec4 vc) {
 			if (cloudVisibility > 0.0) {
 				//Cloud Noise
 				#ifndef BLOCKY_CLOUDS
-				float noise = get3DNoise(rayPos * 0.500 + frameTimeCounter * 0.20) * 1.0;
-					  noise+= get3DNoise(rayPos * 0.250 + frameTimeCounter * 0.15) * 1.5;
-					  noise+= get3DNoise(rayPos * 0.125 + frameTimeCounter * 0.10) * 3.0;
-					  noise+= get3DNoise(rayPos * 0.025 + frameTimeCounter * 0.05) * 9.0;
+				float noise = get3DNoise(rayPos * 0.5000 + frameTimeCounter * 0.20);
+					  noise+= get3DNoise(rayPos * 0.2350 + frameTimeCounter * 0.15) * 1.75;
+					  noise+= get3DNoise(rayPos * 0.1100 + frameTimeCounter * 0.10) * 3.50;
+					  noise+= get3DNoise(rayPos * 0.0521 + frameTimeCounter * 0.05) * 6.75;
 				#else
-				float noise = get3DNoise(rayPos * 0.045) * 350.0;
+				float noise = get3DNoise(floor(rayPos) * 0.035) * 1000.0;
 				#endif
 
-				noise = clamp(noise * amount - (10.0 + cloudLayer * 5.0), 0.0, 1.0);
+				//noise = clamp(noise * amount - (10.0 + cloudLayer * 5.0), 0.0, 1.0);
+				noise = clamp(noise * VC_AMOUNT - (10.0 + cloudLayer * 5.0), 0.0, 1.0);
 
 				//Color Calculations
-				float cloudLighting = clamp(smoothstep(VC_HEIGHT + VC_STRETCHING * noise, VC_HEIGHT - VC_STRETCHING * noise, rayPos.y) * 0.5 + noise * 0.5, 0.0, 1.0);
-				float cloudDistantFade = clamp((VC_DISTANCE - lWorldPos) / VC_DISTANCE, 0.125, 1.0);
+				float cloudLighting = getCloudLighting(rayPos, noise);
+				#ifdef VC_DISTANT_FADE
+				float cloudDistantFade = clamp((VC_DISTANCE - lWorldPos) / VC_DISTANCE * 3.25, 0.0, 1.0);
+				#endif
 
-				vec4 cloudColor = vec4(mix(lightCol, ambientCol, cloudLighting), noise * cloudDistantFade);
+				vec4 cloudColor = vec4(mix(lightCol, ambientCol, cloudLighting), noise);
+					 #ifdef VC_DISTANT_FADE
+					 cloudColor.a *= mix(0.125, 1.0, cloudDistantFade);
+					 #endif
 					 cloudColor.rgb *= cloudColor.a;
 
 				vc += cloudColor * (1.0 - vc.a);
@@ -120,8 +134,8 @@ void computeVolumetricClouds(in float dither, in float ug, inout vec4 vc) {
 		}
 
 		//Why not tint out clouds with the sky color?
-		vc.rgb = mix(vc.rgb, vc.rgb * 0.65, (1.0 - rainStrength) * (1.0 - timeBrightness));
-		vc.rgb = mix(vc.rgb, vc.rgb * skyColor * skyColor * 2.0, timeBrightness * (1.0 - rainStrength));
+		vc.rgb = mix(vc.rgb * (3.0 - rainStrength * 2.0), vc.rgb * skyColor * skyColor * 1.5, timeBrightness * (1.0 - rainStrength));
+		vc.rgb = mix(vc.rgb, vc.rgb * 0.25, (1.0 - rainStrength) * (1.0 - timeBrightness));
 		vc *= ug;
 	}
 }
@@ -140,8 +154,9 @@ void computeVolumetricLight(in float dither, in float ug, inout vec4 vl) {
 	vec3 nViewPos = normalize(viewPos.xyz);
 
 	float VoU = 1.0 - clamp(dot(nViewPos, upVec), 0.0, 1.0);
-	float VoS = mix(clamp(dot(nViewPos, sunVec), 1.0 - pow2(timeBrightness), 1.0), 1.0, float(isEyeInWater == 1));
-	float visibility = ug * float(z0 > 0.56) * 0.75 * VL_OPACITY * VoU * VoS;
+	float VoS = clamp(dot(nViewPos, sunVec), 0.0, 1.0);
+	float nVoS = mix(mix(VoS, 1.0, float(isEyeInWater == 1)), 0.75, 1.0 - timeBrightness);
+	float visibility = ug * float(z0 > 0.56) * VL_OPACITY * VoU * nVoS;
 
 	#if MC_VERSION >= 11900
 	visibility *= 1.0 - darknessFactor;
@@ -154,17 +169,15 @@ void computeVolumetricLight(in float dither, in float ug, inout vec4 vl) {
 		vec3 shadowCol = vec3(0.0);
 		#endif
 
-		vec4 translucent = texture2D(colortex1, texCoord);
-
 		float lViewPos = length(viewPos);
 		float linearDepth0 = getLinearDepth2(z0);
 		float linearDepth1 = getLinearDepth2(z1);
 
 		//Ray marching and main calculations
 		for (int i = 0; i < VL_SAMPLES; i++) {
-			float currentDepth = (i + dither) * (10.0 - float(isEyeInWater == 1.0) * 7.0);
+			float currentDepth = exp2(i + dither + 0.5) * 3.5;
 
-			if (linearDepth1 < currentDepth || (linearDepth0 < currentDepth && translucent.rgb == vec3(0.0))) {
+			if (linearDepth1 < currentDepth) {
 				break;
 			}
 
@@ -190,7 +203,7 @@ void computeVolumetricLight(in float dither, in float ug, inout vec4 vl) {
 				}
 			}
 
-			vec3 shadow = clamp(shadowCol * (2.0 + timeBrightness * 8.0) * (1.0 - shadow0) + shadow0, 0.0, 10.0);
+			vec3 shadow = clamp(shadowCol * (8.0 + timeBrightness * 16.0) * (1.0 - shadow0) + shadow0, 0.0, 24.0);
 			#endif
 
 			//Color Calculations
@@ -198,17 +211,12 @@ void computeVolumetricLight(in float dither, in float ug, inout vec4 vl) {
 
 			vec4 vlColor = vec4(0.0);
 			if (visibility > 0.0 && shadow1 != 0.0) {
-				vlColor = vec4(mix(lightCol, waterColor, float(isEyeInWater == 1)), visibility);
+				vlColor = vec4(mix(lightCol * (1.0 + VoS), waterColor, float(isEyeInWater == 1)), visibility);
 				vlColor.rgb *= vlColor.a;
 
 				#ifdef SHADOW_COLOR
 				vlColor.rgb *= shadow;
 				#endif
-			}
-
-			//Trabslucency Blending
-			if (linearDepth0 < currentDepth) {
-				vlColor.rgb *= translucent.rgb;
 			}
 
 			vl += vlColor * (1.0 - vl.a);

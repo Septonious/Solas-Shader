@@ -13,7 +13,7 @@ in vec3 sunVec, upVec;
 //Uniforms//
 #if defined VC || defined VL
 uniform int isEyeInWater;
-uniform int worldDay;
+//uniform int worldDay;
 
 #ifdef VL
 uniform float near;
@@ -36,18 +36,12 @@ uniform sampler2D colortex0;
 
 #if defined VC || defined VL
 uniform sampler2D noisetex;
-uniform sampler2D depthtex0;
-
-#if defined VC && defined BLOCKY_CLOUDS
-uniform sampler2D shadowcolor1;
-#endif
-
-#ifdef VL
-uniform sampler2D depthtex1;
 uniform sampler2D colortex1;
-#endif
+uniform sampler2D depthtex0, depthtex1;
 
 uniform sampler2DShadow shadowtex0, shadowtex1;
+
+uniform sampler2D shadowcolor1;
 
 #if (defined VC || defined VL) && defined SHADOW_COLOR
 uniform sampler2D shadowcolor0;
@@ -61,7 +55,7 @@ uniform mat4 gbufferProjectionInverse, gbufferModelViewInverse;
 #if defined VC || defined VL
 float eBS = eyeBrightnessSmooth.y / 240.0;
 float ug = mix(clamp((cameraPosition.y - 56.0) / 16.0, float(isEyeInWater == 1), 1.0), 1.0, eBS);
-float sunVisibility = clamp(dot(sunVec, upVec) + 0.05, 0.0, 0.1) * 10.0;
+float sunVisibility = clamp(dot(sunVec, upVec) + 0.025, 0.0, 0.1) * 10.0;
 #endif
 
 //Includes//

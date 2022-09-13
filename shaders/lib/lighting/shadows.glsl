@@ -30,8 +30,6 @@ vec3 sampleFilteredShadow(vec3 shadowPos, float shadowBlurStrength, float dither
     int shadowSamples = 1;
     #endif
 
-    dither = clamp(dither, 0.0, 1.0);
-
     for (int i = 0; i < shadowSamples; i++) {
         vec2 shadowOffset = offsetDist(float(i + dither)) * shadowBlurStrength;
         shadow0 += shadow2D(shadowtex0, vec3(shadowPos.st + shadowOffset, shadowPos.z)).x;
@@ -53,9 +51,6 @@ vec3 sampleFilteredShadow(vec3 shadowPos, float shadowBlurStrength, float dither
     return clamp(shadowCol * (1.0 - shadow0) + shadow0, 0.0, 1.0);
 }
 
-vec3 getShadow(vec3 worldPos, float dither) {
-    vec3 shadowPos = calculateShadowPos(worldPos);
-    vec3 shadow = sampleFilteredShadow(shadowPos, shadowBlurStrength, dither);
-
-    return shadow;
+vec3 getShadow(vec3 shadowPos, float dither) {
+    return sampleFilteredShadow(shadowPos, shadowBlurStrength, dither);
 }

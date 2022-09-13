@@ -13,16 +13,15 @@ const vec3 ambientLateEvening   = vec3(AMBIENT_LER, AMBIENT_LEG, AMBIENT_LEB) * 
 const vec3 ambientNight         = vec3(AMBIENT_NR, AMBIENT_NG, AMBIENT_NB) * AMBIENT_NI / 255.0;
 
 float mefade = 1.0 - clamp(abs(timeAngle - 0.5) * 8.0 - 1.5, 0.0, 1.0);
-float dfade = sqrt(timeBrightness);
-float sqrtdfade = sqrt(dfade);
+float timeBrightnessSqrt = sqrt(timeBrightness);
 
-vec3 morningLightColor = mix(lightEarlyMorning, lightMorning, sqrtdfade);
-vec3 eveningLightColor = mix(lightLateEvening, lightEvening, sqrtdfade);
-vec3 morningAmbientColor = mix(ambientEarlyMorning, ambientMorning, sqrtdfade);
-vec3 eveningAmbientColor = mix(ambientLateEvening, ambientEvening, sqrtdfade);
+vec3 morningLightColor = mix(lightEarlyMorning, lightMorning, timeBrightnessSqrt);
+vec3 eveningLightColor = mix(lightLateEvening, lightEvening, timeBrightnessSqrt);
+vec3 morningAmbientColor = mix(ambientEarlyMorning, ambientMorning, timeBrightnessSqrt);
+vec3 eveningAmbientColor = mix(ambientLateEvening, ambientEvening, timeBrightnessSqrt);
 
-vec3 lightSun = mix(mix(morningLightColor, eveningLightColor, mefade), lightDay, dfade);
-vec3 ambientSun = mix(mix(morningAmbientColor, eveningAmbientColor, mefade), ambientDay, dfade);
+vec3 lightSun = mix(mix(morningLightColor, eveningLightColor, mefade), lightDay, timeBrightness);
+vec3 ambientSun = mix(mix(morningAmbientColor, eveningAmbientColor, mefade), ambientDay, timeBrightness);
 
 vec3 lightColRaw = mix(lightNight, lightSun, sunVisibility * sunVisibility);
 vec3 lightColSqrt = mix(lightColRaw, dot(lightColRaw, vec3(0.299, 0.587, 0.114)) * weatherCol, rainStrength);

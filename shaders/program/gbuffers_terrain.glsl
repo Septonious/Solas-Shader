@@ -51,7 +51,7 @@ uniform mat4 shadowModelView;
 
 //Common Variables//
 #ifdef OVERWORLD
-float sunVisibility = clamp((dot(sunVec, upVec) + 0.05) * 10.0, 0.0, 1.0);
+float sunVisibility = clamp(dot(sunVec, upVec) + 0.025, 0.0, 0.1) * 10.0;
 #endif
 
 //Includes//
@@ -94,7 +94,7 @@ void main() {
 
 	if (albedo.a > 0.001) {
 		float foliage = float(mat > 0.99 && mat < 1.01);
-		float subsurface = foliage * 0.5 + float(mat > 1.99 && mat < 2.01);
+		float leaves = float(mat > 1.99 && mat < 2.01);
 
 		vec3 screenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z);
 		vec3 viewPos = ToNDC(screenPos);
@@ -117,7 +117,7 @@ void main() {
 		getIntegratedSpecular(albedo, newNormal, worldPos.xz, lightmap, specular, roughness);
 		#endif
 
-		getSceneLighting(albedo.rgb, viewPos, worldPos, newNormal, lightmap, emission, subsurface, foliage, specular);
+		getSceneLighting(albedo.rgb, viewPos, worldPos, newNormal, lightmap, emission, leaves, foliage, specular);
 	}
 
 	/* DRAWBUFFERS:0 */
@@ -171,6 +171,10 @@ uniform mat4 gbufferModelViewInverse;
 //Attributes//
 attribute vec4 mc_Entity;
 
+#ifdef WAVING_BLOCKS
+attribute vec4 mc_midTexCoord;
+#endif
+
 #ifdef INTEGRATED_NORMAL_MAPPING
 attribute vec4 at_tangent;
 #endif
@@ -178,6 +182,10 @@ attribute vec4 at_tangent;
 //Includes//
 #ifdef TAA
 #include "/lib/util/jitter.glsl"
+#endif
+
+#ifdef WAVING_BLOCKS
+#include "/lib/util/waving.glsl"
 #endif
 
 //Program//
@@ -221,6 +229,11 @@ void main() {
 	} else {
 		mat = float(mc_Entity.x);
 	}
+
+	#ifdef WAVING_BLOCKS
+	float istopv = gl_MultiTexCoord0.t < mc_midTexCoord.t ? 1.0 : 0.0;
+	position.xyz = getWavingBlocks(position.xyz, istopv);
+	#endif
 
 	#ifdef INTEGRATED_EMISSION
 	#if defined EMISSIVE_FLOWERS && defined OVERWORLD

@@ -43,7 +43,7 @@ uniform mat4 shadowModelView;
 
 //Common Variables//
 #ifdef OVERWORLD
-float sunVisibility = clamp((dot(sunVec, upVec) + 0.05) * 10.0, 0.0, 1.0);
+float sunVisibility = clamp(dot(sunVec, upVec) + 0.025, 0.0, 0.1) * 10.0;
 #endif
 
 //Includes//
@@ -74,7 +74,7 @@ void main() {
 
 	float lightningBolt = float(entityId == 0);
 	//float nametagText = float(length(entityColor.rgb) > 0.0);
-	float emission = entityColor.a * 0.2;
+	float emission = 0.0;
 
 	if (lightningBolt > 0.5) {
 		albedo.rgb = vec3(1.0);
@@ -93,7 +93,7 @@ void main() {
 		getIntegratedEmission(albedo.rgb, lightmap, emission);
 		#endif
 
-		getSceneLighting(albedo.rgb, viewPos, worldPos, normal, lightmap, emission + float(entityColor.a > 0.05) * 0.025 + lightningBolt * 0.25, 0.0, 0.0, 0.0);
+		getSceneLighting(albedo.rgb, viewPos, worldPos, normal, lightmap, emission + entityColor.a * 0.125 + lightningBolt * 0.25, 0.0, 0.0, 0.0);
 	}
 	#endif
 	
