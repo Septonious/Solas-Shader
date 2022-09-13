@@ -208,13 +208,13 @@ void main() {
 		#endif
 
 		#if defined OVERWORLD && defined WATER_FOG
-		if (isEyeInWater == 0 && water > 0.9) {
+		if (isEyeInWater == 0 && water > 0.9 && lightmap.y > 0.0) {
 			float oDepth = texture2D(depthtex1, screenPos.xy).r;
 			vec3 oScreenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), oDepth);
 			vec3 oViewPos = ToNDC(oScreenPos);
 
 			vec4 waterFog = getWaterFog(viewPos.xyz - oViewPos);
-			albedo.rgb = mix(waterFog.rgb * (3.0 + waterFog.a), albedo.rgb, albedo.a);
+			albedo.rgb = mix(waterFog.rgb * (3.0 + waterFog.a) * lightmap.y, albedo.rgb, albedo.a);
 		}
 		#endif
 

@@ -114,12 +114,6 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
             worldPosM += bias;
             vec3 shadowPos = calculateShadowPos(worldPosM);
 
-            if (foliage > 0.5) {
-                shadowPos.z += 0.00015;
-            } else if (leaves > 0.5) {
-                shadowPos.z -= 0.00025;
-            }
-
             shadow = getShadow(shadowPos, dither);
         }
     }
@@ -159,6 +153,6 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     albedo = sqrt(max(albedo, vec3(0.0)));
 
     #if defined GBUFFERS_TERRAIN && defined GLOBAL_ILLUMINATION
-    emission += length(mix(vec3(0.0), vec3(GLOBAL_ILLUMINATION_STRENGTH), fullShadow)) * float(length(worldPos.xz) != 1.0) * sunVisibility * (1.0 - rainStrength);
+    emission += length(mix(vec3(0.0), vec3(0.5 * GLOBAL_ILLUMINATION_STRENGTH), fullShadow)) * float(length(worldPos.xz) != 1.0) * sunVisibility * (1.0 - rainStrength);
     #endif
 }
