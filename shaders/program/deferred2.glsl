@@ -48,6 +48,10 @@ uniform vec3 cameraPosition;
 uniform sampler2D colortex0;
 uniform sampler2D depthtex0;
 
+#ifdef BLOOM
+uniform sampler2D colortex2;
+#endif
+
 #if defined END_NEBULA || defined AURORA
 uniform sampler2D noisetex;
 #endif
@@ -96,6 +100,9 @@ void main() {
 	vec3 worldPos = mat3(gbufferModelViewInverse) * viewPos.xyz;
 	vec3 skyColor = vec3(0.0);
 
+	float star = 0.0;
+	float sunMoon = 0.0;
+
 	#if defined OVERWORLD
 	skyColor = getAtmosphere(viewPos.xyz);
 	#elif defined NETHER
@@ -121,7 +128,7 @@ void main() {
 			#endif
 
 			#ifdef STARS
-			getStars(skyColor, worldPos, VoU, nebulaFactor, ug);
+			getStars(skyColor, worldPos, VoU, nebulaFactor, ug, star);
 			#endif
 
 			if (VoU > 0.0) {
@@ -136,7 +143,7 @@ void main() {
 				#endif
 			}
 
-			getSunMoon(skyColor, nViewPos, lightSun, lightNight, VoS, VoM, VoU, ug);
+			getSunMoon(skyColor, nViewPos, lightSun, lightNight, VoS, VoM, VoU, ug, sunMoon);
 		}
 		#endif
 
@@ -146,7 +153,7 @@ void main() {
 		#endif
 
 		#ifdef END_STARS
-		getStars(skyColor, worldPos, VoU, nebulaFactor, 1.0);
+		getStars(skyColor, worldPos, VoU, nebulaFactor, 1.0, star);
 		#endif
 
 		#ifdef END_VORTEX
@@ -169,6 +176,14 @@ void main() {
 
 	/* DRAWBUFFERS:0 */
 	gl_FragData[0].rgb = color;
+
+	#ifdef BLOOM
+	vec2 bloomData = texture2D(colortex2, texCoord).ba;
+		 bloomData += vec2((star * 32.0 + sunMoon * 0.5) * 0.1, float(star + sunMoon > 0.0));
+
+	/* DRAWBUFFERS:02 */
+	gl_FragData[1].ba += bloomData;
+	#endif
 }
 
 #endif

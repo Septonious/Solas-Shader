@@ -37,6 +37,11 @@ uniform sampler2D colortex0;
 #if defined VC || defined VL
 uniform sampler2D noisetex;
 uniform sampler2D colortex1;
+
+#if defined BLOOM && defined VL
+uniform sampler2D colortex2;
+#endif
+
 uniform sampler2D depthtex0, depthtex1;
 
 uniform sampler2DShadow shadowtex0, shadowtex1;
@@ -73,6 +78,8 @@ void main() {
 	vec4 vc = vec4(0.0);
 
 	#if defined VC || defined VL
+	vec3 translucent = texture2D(colortex1, texCoord).rgb;
+
 	float dither = getBlueNoise(gl_FragCoord.xy);
 
 	#ifdef TAA
@@ -80,11 +87,11 @@ void main() {
 	#endif
 
 	#ifdef VC
-	computeVolumetricClouds(dither, ug, vc);
+	computeVolumetricClouds(vc, dither, ug);
 	#endif
 
 	#ifdef VL
-	computeVolumetricLight(dither, ug, vl);
+	computeVolumetricLight(vl, translucent, dither);
 	#endif
 
 	color = mix(color, vc.rgb, pow4(vc.a) * VC_OPACITY);
@@ -93,6 +100,14 @@ void main() {
 
 	/* DRAWBUFFERS:0 */
 	gl_FragData[0].rgb = color;
+
+	#if defined BLOOM && defined VL
+	vec2 bloomData = texture2D(colortex2, texCoord).ba;
+		 bloomData += vec2(pow4(vl.a) * 0.0125, pow4(vl.a));
+
+	/* DRAWBUFFERS:02 */
+	gl_FragData[1].ba += bloomData;
+	#endif
 }
 
 #endif

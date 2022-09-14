@@ -243,6 +243,7 @@ void main() {
 
 	//Color & Position
     color = gl_Color;
+	//color.rgb = mix(vec3(0.0), color.rgb, clamp(pow(color.a, 0.25) * 1.0, 0.0, 1.0));
 
 	gl_Position = ftransform();
 

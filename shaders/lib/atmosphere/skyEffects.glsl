@@ -3,9 +3,9 @@ float GetNoise(vec2 pos) {
 	return fract(sin(dot(pos, vec2(12.9898, 4.1414))) * 43758.5453);
 }
 
-void getStars(inout vec3 color, in vec3 worldPos, in float VoU, in float nebulaFactor, in float ug) {
+void getStars(inout vec3 color, in vec3 worldPos, in float VoU, in float nebulaFactor, in float ug, inout float star) {
 	#ifdef OVERWORLD
-	float visibility = (1.0 - sunVisibility) * (1.0 - rainStrength) * pow(VoU, 0.125) * ug;
+	float visibility = (1.0 - timeBrightnessSqrt) * (1.0 - rainStrength) * pow(VoU, 0.125) * ug;
 	#else
 	float visibility = 0.75 + nebulaFactor * 0.25;
 	#endif
@@ -14,15 +14,16 @@ void getStars(inout vec3 color, in vec3 worldPos, in float VoU, in float nebulaF
 		vec2 planeCoord = worldPos.xz / (length(worldPos.y) + length(worldPos.xz));
 			 planeCoord+= frameTimeCounter * 0.001;
 			 planeCoord+= cameraPosition.xz * 0.0001;
-			 planeCoord = floor(planeCoord * 512.0) / 512.0;
+			 planeCoord = floor(planeCoord * 384.0) / 384.0;
 
-		float star = GetNoise(planeCoord.xy);
-			  star*= GetNoise(planeCoord.xy + 0.5);
+	    star = GetNoise(planeCoord.xy);
+		star*= GetNoise(planeCoord.xy + 0.1);
+		star*= GetNoise(planeCoord.xy + 0.2);
 
-		star = clamp(star - (0.9 - nebulaFactor * 0.05), 0.0, 1.0) * visibility;
-		star *= star;
+		star = max(star - (0.8 - nebulaFactor * 0.1), 0.0) * visibility;
+		star*= star;
 
-		color += vec3(64.0 * star);
+		color += vec3(48.0 * star);
 	}
 }
 #endif

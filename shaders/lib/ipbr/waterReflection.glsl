@@ -28,7 +28,8 @@ void getReflection(in float fresnel, in float skyLightMap, in vec3 viewPos, in v
         reflectionFade = getAtmosphere(reflectedViewPos);
 
 		#ifdef STARS
-		getStars(reflectionFade, worldPos, VoU, nebulaFactor, ug);
+		float star = 0.0;
+		getStars(reflectionFade, worldPos, VoU, nebulaFactor, ug, star);
 		#endif
 
 		if (VoU > 0.0) {
@@ -43,7 +44,8 @@ void getReflection(in float fresnel, in float skyLightMap, in vec3 viewPos, in v
 			#endif
 		}
 
-		getSunMoon(reflectionFade, nViewPos, lightSun, lightNight, VoS, VoM, VoU, ug);
+		float sunMoon = 0.0;
+		getSunMoon(reflectionFade, nViewPos, lightSun, lightNight, VoS, VoM, VoU, ug, sunMoon);
     }
     
 	reflectionFade *= skyLightMap;
@@ -66,7 +68,8 @@ void getReflection(in float fresnel, in float skyLightMap, in vec3 viewPos, in v
 		#endif
 
 		#ifdef END_STARS
-		getStars(reflectionFade, worldPos, VoU, nebulaFactor, 1.0);
+		float star = 0.0;
+		getStars(reflectionFade, worldPos, VoU, nebulaFactor, 1.0, star);
 		#endif
 
 		#ifdef END_VORTEX

@@ -214,7 +214,7 @@ void main() {
 			vec3 oViewPos = ToNDC(oScreenPos);
 
 			vec4 waterFog = getWaterFog(viewPos.xyz - oViewPos);
-			albedo.rgb = mix(waterFog.rgb * (3.0 + waterFog.a) * lightmap.y, albedo.rgb, albedo.a);
+			albedo.rgb = mix(waterFog.rgb * waterFog.a * 8.0 * lightmap.y, albedo.rgb, 0.75);
 		}
 		#endif
 

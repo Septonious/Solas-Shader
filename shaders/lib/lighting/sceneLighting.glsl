@@ -55,7 +55,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
         blockLighting = blockLightCol * blockLightMap + coloredLight * BLOCKLIGHT_I;
         #elif defined BLOOM_COLORED_LIGHTING
         //BLOOM BASED COLORED LIGHTING
-        blockLighting = blockLightCol * blockLightMap * (vec3(1.0) + clamp(bloom * pow(getLuminance(bloom) + 0.0025, -0.75), 0.0, 1.0) * clamp((pow2(blockLightMap) * 32.0) * 0.9 + 0.1, 0.0, 1.0)) * float(emission == 0.0);
+        blockLighting = blockLightCol * blockLightMap * (vec3(1.0) + clamp(bloom * pow(getLuminance(bloom) + 0.00125, -0.75), 0.0, 1.0) * clamp((pow2(blockLightMap) * 16.0) * 0.9 + 0.1, 0.0, 1.0) * 2.0) * float(emission == 0.0);
         #else
         blockLighting = blockLightCol * blockLightMap;
         #endif
@@ -73,9 +73,9 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     //Subsurface Scattering & Specular Highlight
     if (subsurface > 0.0 || specular > 0.0) {
         float VoL = clamp(dot(normalize(viewPos), lightVec), 0.0, 1.0);
-        VoL = pow16(VoL) + pow32(VoL);
-        scattering = VoL * subsurface + VoL * specular * 2.0;
-        NoL = mix(NoL, 1.0, subsurface * 0.5);
+        VoL = pow10(VoL) + pow32(VoL);
+        scattering = VoL * subsurface + VoL * (1.0 + specular);
+        NoL = mix(NoL, 1.0, subsurface * 0.75);
         NoL = mix(NoL, 1.0, scattering);
     }
 
@@ -124,11 +124,11 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     float rainFactor = 1.0 - rainStrength * 0.75;
 
     #ifdef GLOBAL_ILLUMINATION
-    bloom = clamp(bloom * pow(getLuminance(bloom) + 0.001, -0.8), 0.0, 1.0) * 2.0;
+    bloom = clamp(bloom * pow(getLuminance(bloom), -0.65), 0.0, 1.0) * (2.0 / GLOBAL_ILLUMINATION_STRENGTH);
     ambientCol *= vec3(1.0) + bloom * sunVisibility * (1.0 - rainStrength);
     #endif
 
-    vec3 sceneLighting = mix(ambientCol, lightCol, fullShadow * rainFactor) * lightmap.y;
+    vec3 sceneLighting = mix(ambientCol * lightmap.y, lightCol * max(lightmap.y, 0.2), fullShadow * rainFactor);
     sceneLighting *= 1.0 + scattering * shadow;
     #endif
 
@@ -152,7 +152,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
 
     albedo = sqrt(max(albedo, vec3(0.0)));
 
-    #if defined GBUFFERS_TERRAIN && defined GLOBAL_ILLUMINATION
-    emission += length(mix(vec3(0.0), vec3(0.5 * GLOBAL_ILLUMINATION_STRENGTH), fullShadow)) * float(length(worldPos.xz) != 1.0) * sunVisibility * (1.0 - rainStrength);
+    #if defined GBUFFERS_TERRAIN && defined GLOBAL_ILLUMINATION && defined OVERWORLD
+    emission += length(mix(vec3(0.0), vec3(0.5 * GLOBAL_ILLUMINATION_STRENGTH), fullShadow * rainFactor * sunVisibility));
     #endif
 }
