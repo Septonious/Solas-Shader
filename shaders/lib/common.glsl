@@ -65,7 +65,7 @@ const float shadowBlurStrength = 1.0 / shadowMapResolution;
 
 //Volumetric Light
 #define VL
-#define VL_OPACITY 0.30 //[0.10 0.15 0.20 0.25 0.30 0.35 0.40 0.45 0.50]
+#define VL_OPACITY 0.25 //[0.10 0.15 0.20 0.25 0.30 0.35 0.40 0.45 0.50]
 #define VL_SAMPLES 10 //[2 3 4 5 6 7 8 9 10 11 12 13 14 15 16]
 
 //Volumetric Clouds
