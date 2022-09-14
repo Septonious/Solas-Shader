@@ -165,6 +165,12 @@ uniform float viewWidth, viewHeight;
 uniform float timeAngle;
 #endif
 
+#ifdef WAVING_BLOCKS
+uniform float frameTimeCounter;
+
+uniform vec3 cameraPosition;
+#endif
+
 uniform mat4 gbufferModelView;
 uniform mat4 gbufferModelViewInverse;
 
@@ -230,9 +236,11 @@ void main() {
 		mat = float(mc_Entity.x);
 	}
 
+	vec4 position = gbufferModelViewInverse * gl_ModelViewMatrix * gl_Vertex;
+
 	#ifdef WAVING_BLOCKS
 	float istopv = gl_MultiTexCoord0.t < mc_midTexCoord.t ? 1.0 : 0.0;
-	position.xyz = getWavingBlocks(position.xyz, istopv);
+	position.xyz = getWavingBlocks(position.xyz, istopv, lightMapCoord.y);
 	#endif
 
 	#ifdef INTEGRATED_EMISSION
@@ -245,7 +253,7 @@ void main() {
     color = gl_Color;
 	//color.rgb = mix(vec3(0.0), color.rgb, clamp(pow(color.a, 0.25) * 1.0, 0.0, 1.0));
 
-	gl_Position = ftransform();
+	gl_Position = gl_ProjectionMatrix * gbufferModelView * position;
 
 	#ifdef TAA
 	gl_Position.xy = TAAJitter(gl_Position.xy, gl_Position.w);

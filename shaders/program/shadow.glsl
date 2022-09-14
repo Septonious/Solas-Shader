@@ -73,6 +73,12 @@ out vec3 worldPos;
 out vec4 color;
 
 //Uniforms//
+#ifdef WAVING_BLOCKS
+uniform float frameTimeCounter;
+
+uniform vec3 cameraPosition;
+#endif
+
 uniform mat4 shadowProjection, shadowProjectionInverse;
 uniform mat4 shadowModelView, shadowModelViewInverse;
 
@@ -81,10 +87,24 @@ uniform mat4 shadowModelView, shadowModelViewInverse;
 attribute vec4 mc_Entity;
 #endif
 
+#ifdef WAVING_BLOCKS
+attribute vec4 mc_midTexCoord;
+#endif
+
+//Includes//
+#ifdef WAVING_BLOCKS
+#include "/lib/util/waving.glsl"
+#endif
+
 //Program//
 void main() {
 	//Coord
 	texCoord = gl_MultiTexCoord0.xy;
+
+	#ifdef WAVING_BLOCKS
+	vec2 lightMapCoord = (gl_TextureMatrix[1] * gl_MultiTexCoord1).xy;
+	lightMapCoord = clamp((lightMapCoord - 0.03125) * 1.06667, vec2(0.0), vec2(0.9333, 1.0));
+	#endif
 
 	//Materials
 	#ifdef WATER_CAUSTICS
@@ -96,6 +116,11 @@ void main() {
 	color = gl_Color;
 
 	vec4 position = shadowModelViewInverse * shadowProjectionInverse * ftransform();
+
+	#ifdef WAVING_BLOCKS
+	float istopv = gl_MultiTexCoord0.t < mc_midTexCoord.t ? 1.0 : 0.0;
+	position.xyz = getWavingBlocks(position.xyz, istopv, lightMapCoord.y);
+	#endif
 
 	#ifdef WATER_CAUSTICS
 	worldPos = position.xyz;

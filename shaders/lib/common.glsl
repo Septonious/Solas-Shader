@@ -73,11 +73,7 @@ const float shadowBlurStrength = 1.0 / shadowMapResolution;
 //#define BLOCKY_CLOUDS
 #define VC_DISTANT_FADE
 #define VC_AMOUNT 1.70 //[1.00 1.10 1.20 1.30 1.40 1.50 1.60 1.70 1.80 1.90 2.00]
-#ifndef BLOCKY_CLOUDS
 #define VC_STRETCHING 38.0 //[8.0 14.0 20.0 26.0 32.0 38.0 44.0]
-#else
-#define VC_STRETCHING 12.0 //[2.0 4.0 6.0 8.0 10.0 12.0 14.0 16.0]
-#endif
 #define VC_HEIGHT 190.0 //[160.0 170.0 180.0 190.0 200.0 210.0 220.0 230.0 240.0 250.0]
 #define VC_SAMPLES 10 //[8 9 10 11 12 13 14 15 16]
 #define VC_DISTANCE 900.0 //[400.0 500.0 600.0 700.0 800.0 900.0 1000.0]
@@ -92,6 +88,11 @@ const float shadowBlurStrength = 1.0 / shadowMapResolution;
 #define WATER_CAUSTICS_STRENGTH 1.25 //[0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00]
 #define WATER_FOG
 #define WATER_FOG_DENSITY 0.6 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
+
+//Waving Stuff//
+#define WAVING_BLOCKS
+#define WAVING_PLANTS
+#define WAVING_LEAVES
 
 //Post Processing//
 //#define FXAA
@@ -330,6 +331,7 @@ const vec3 weatherCol = vec3(WEATHER_RR, WEATHER_RG, WEATHER_RB) / 255.0 * WEATH
 #undef RAINBOW
 #undef VC
 #undef VL
+#undef WAVING_BLOCKS
 #endif
 
 #ifndef INTEGRATED_SPECULAR

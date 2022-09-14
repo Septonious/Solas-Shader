@@ -102,11 +102,11 @@ void main() {
 	gl_FragData[0].rgb = color;
 
 	#if defined BLOOM && defined VL
-	vec2 bloomData = texture2D(colortex2, texCoord).ba;
-		 bloomData += vec2(pow4(vl.a) * 0.0125, pow4(vl.a));
+	vec4 bloomData = texture2D(colortex2, texCoord);
+		 bloomData.ba += vec2(pow4(vl.a) * 0.0125, pow4(vl.a));
 
 	/* DRAWBUFFERS:02 */
-	gl_FragData[1].ba += bloomData;
+	gl_FragData[1] = bloomData;
 	#endif
 }
 

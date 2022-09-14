@@ -48,7 +48,7 @@ uniform vec3 cameraPosition;
 uniform sampler2D colortex0;
 uniform sampler2D depthtex0;
 
-#ifdef BLOOM
+#if defined BLOOM && defined OVERWORLD
 uniform sampler2D colortex2;
 #endif
 
@@ -177,12 +177,12 @@ void main() {
 	/* DRAWBUFFERS:0 */
 	gl_FragData[0].rgb = color;
 
-	#ifdef BLOOM
-	vec2 bloomData = texture2D(colortex2, texCoord).ba;
-		 bloomData += vec2((star * 32.0 + sunMoon * 0.5) * 0.1, float(star + sunMoon > 0.0));
+	#if defined BLOOM && defined OVERWORLD
+	vec4 bloomData = texture2D(colortex2, texCoord);
+		 bloomData.ba += vec2((star * 32.0 + sunMoon * 0.5) * 0.1, float(star + sunMoon > 0.0));
 
 	/* DRAWBUFFERS:02 */
-	gl_FragData[1].ba += bloomData;
+	gl_FragData[1] = bloomData;
 	#endif
 }
 

@@ -15,13 +15,14 @@ float getLuminance(vec3 color) {
 #ifdef SHIMMER_MOD_SUPPORT
 #include "/lib/lighting/shimmerModSupport.glsl"
 #endif
+
 #ifndef GBUFFERS_TERRAIN
 void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in vec3 normal, in vec2 lightmap, in float emission, in float leaves, in float foliage, in float specular) {
 #else
 void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in vec3 normal, in vec2 lightmap, inout float emission, in float leaves, in float foliage, in float specular) {
 #endif
     #ifdef GBUFFERS_TERRAIN
-	if (foliage > 0.5){
+	if (foliage > 0.9) {
 		normal = upVec;
 	}
     #endif
@@ -74,7 +75,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     if (subsurface > 0.0 || specular > 0.0) {
         float VoL = clamp(dot(normalize(viewPos), lightVec), 0.0, 1.0);
         VoL = pow10(VoL) + pow32(VoL);
-        scattering = VoL * subsurface + VoL * (1.0 + specular);
+        scattering = VoL * subsurface;
         NoL = mix(NoL, 1.0, subsurface * 0.75);
         NoL = mix(NoL, 1.0, scattering);
     }
