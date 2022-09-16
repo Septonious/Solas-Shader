@@ -159,7 +159,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     #if !defined GBUFFERS_WATER && defined GLOBAL_ILLUMINATION && defined OVERWORLD
     vec3 giVisibility = fullShadow * rainFactor * sunVisibility;
 
-    if (giVisibility != 0.0) {
+    if (giVisibility != vec3(0.0)) {
         emission += length(mix(vec3(0.0), vec3(0.33 * GLOBAL_ILLUMINATION_STRENGTH), giVisibility));
     }
     #endif
