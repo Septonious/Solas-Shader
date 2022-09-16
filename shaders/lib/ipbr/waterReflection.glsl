@@ -1,4 +1,4 @@
-void getReflection(in float fresnel, in float skyLightMap, in vec3 viewPos, in vec3 normal, inout vec3 color) {
+void getReflection(in float fresnel, in float skyLightMap, in vec3 viewPos, in vec3 normal, inout vec3 color, inout float emission) {
 	vec3 reflectedViewPos = reflect(normalize(viewPos), normal);
 	vec3 reflectedScreenPos = ToScreen(reflectedViewPos);
 	vec3 reflection = vec3(0.0);
@@ -30,6 +30,7 @@ void getReflection(in float fresnel, in float skyLightMap, in vec3 viewPos, in v
 		#ifdef STARS
 		float star = 0.0;
 		getStars(reflectionFade, worldPos, VoU, nebulaFactor, ug, star);
+		emission += star * 32.0;
 		#endif
 
 		if (VoU > 0.0) {
@@ -46,6 +47,7 @@ void getReflection(in float fresnel, in float skyLightMap, in vec3 viewPos, in v
 
 		float sunMoon = 0.0;
 		getSunMoon(reflectionFade, nViewPos, lightSun, lightNight, VoS, VoM, VoU, ug, sunMoon);
+		emission += sunMoon * 0.25;
     }
     
 	reflectionFade *= skyLightMap;
@@ -70,6 +72,7 @@ void getReflection(in float fresnel, in float skyLightMap, in vec3 viewPos, in v
 		#ifdef END_STARS
 		float star = 0.0;
 		getStars(reflectionFade, worldPos, VoU, nebulaFactor, 1.0, star);
+		emission += star * 32.0;
 		#endif
 
 		#ifdef END_VORTEX

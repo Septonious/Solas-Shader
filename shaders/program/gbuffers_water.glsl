@@ -158,6 +158,7 @@ void main() {
 
 	float water = float(mat > 0.9 && mat < 1.1);
 	float portal = float(mat > 1.9 && mat < 2.1);
+	float emission = portal * pow8(length(albedo.rgb));
 
 	albedo.a = mix(albedo.a, 1.0, portal);
 
@@ -185,11 +186,12 @@ void main() {
 								  tangent.y, binormal.y, normal.y,
 								  tangent.z, binormal.z, normal.z);
 
-			newNormal = clamp(normalize(getWaterNormal(worldPos, viewVector, lightmap) * tbnMatrix), vec3(-1.0), vec3(1.0));
+			float fresnel0 = clamp(1.0 + pow4(dot(newNormal, normalize(viewPos))), 0.0, 1.0);
+			newNormal = clamp(normalize(getWaterNormal(worldPos, viewVector, lightmap, fresnel0) * tbnMatrix), vec3(-1.0), vec3(1.0));
 		}
 		#endif
 
-		getSceneLighting(albedo.rgb, viewPos, worldPos, newNormal, lightmap, portal * pow8(length(albedo.rgb)) * 4.0, 0.0, 0.0, 1.0);
+		getSceneLighting(albedo.rgb, viewPos, worldPos, newNormal, lightmap, emission * 8.0, 0.0, 0.0, 1.0);
 
 		#if defined OVERWORLD
 		skyColor = getAtmosphere(viewPos);
@@ -201,9 +203,9 @@ void main() {
 
 		#ifdef INTEGRATED_SPECULAR
 		if (isEyeInWater != 1 && portal < 0.5) {
-			float fresnel = clamp(1.0 + pow4(dot(newNormal, normalize(viewPos))), 0.0, 0.2 + water * 0.8);
+			float fresnel1 = clamp(1.0 + pow4(dot(newNormal, normalize(viewPos))), 0.0, 0.2 + water * 0.8);
 
-			getReflection(fresnel, lightmap.y, viewPos, newNormal, albedo.rgb);
+			getReflection(fresnel1, lightmap.y, viewPos, newNormal, albedo.rgb, emission);
 		}
 		#endif
 
@@ -227,7 +229,7 @@ void main() {
 
 	#ifdef BLOOM
 	/* DRAWBUFFERS:012 */
-	gl_FragData[2].ba = vec2(portal * 0.025, portal);
+	gl_FragData[2].ba = vec2(emission * 0.1, emission);
 	#endif
 }
 

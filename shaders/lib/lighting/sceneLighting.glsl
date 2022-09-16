@@ -46,25 +46,23 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
 
     #if defined BLOOM_COLORED_LIGHTING || defined GLOBAL_ILLUMINATION
         vec3 bloom = texture2D(gaux4, gl_FragCoord.xy / vec2(viewWidth, viewHeight)).rgb;
-             bloom = pow8(bloom) * 256.0;
+             bloom = pow8(bloom) * 512.0;
     #endif
 
-    if (blockLightMap > 0.0) {
-        #if defined SHIMMER_MOD_SUPPORT
-        //COLORED LIGHTING USING SHIMMER MOD
-        vec3 coloredLight = getColoredLighting(worldPos, blockLightMap);
-        blockLighting = blockLightCol * blockLightMap + coloredLight * BLOCKLIGHT_I;
-        #elif defined BLOOM_COLORED_LIGHTING
-        //BLOOM BASED COLORED LIGHTING
-        blockLighting = blockLightCol * blockLightMap * (vec3(1.0) + clamp(bloom * pow(getLuminance(bloom) + 0.00125, -0.75), 0.0, 1.0) * clamp((pow2(blockLightMap) * 16.0) * 0.9 + 0.1, 0.0, 1.0) * 2.0) * float(emission == 0.0);
-        #else
-        blockLighting = blockLightCol * blockLightMap;
-        #endif
-    }
+    #if defined SHIMMER_MOD_SUPPORT
+    //COLORED LIGHTING USING SHIMMER MOD
+    vec3 coloredLight = getColoredLighting(worldPos, blockLightMap);
+    blockLighting = blockLightCol * blockLightMap + coloredLight * BLOCKLIGHT_I;
+    #elif defined BLOOM_COLORED_LIGHTING
+    //BLOOM BASED COLORED LIGHTING
+    blockLighting = blockLightCol * blockLightMap + clamp(bloom * pow(getLuminance(bloom) + 0.00125, -0.65), 0.0, 1.0) * clamp(pow2(blockLightMap) * 0.8 + 0.2, 0.0, 1.0) * float(emission == 0.0);
+    #else
+    blockLighting = blockLightCol * blockLightMap;
+    #endif
 
     //Main Scene Lighting (Sunlight & Shadows)
     #if defined OVERWORLD || defined END
-    specular *= clamp(NoU, 0.0, 1.0);
+    specular = (specular + 0.125) * clamp(NoU - 0.01, 0.0, 1.0);
 
     float subsurface = leaves + foliage;
     float scattering = 0.0;
@@ -75,9 +73,16 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     if (subsurface > 0.0 || specular > 0.0) {
         float VoL = clamp(dot(normalize(viewPos), lightVec), 0.0, 1.0);
         VoL = pow10(VoL) + pow32(VoL);
-        scattering = VoL * subsurface;
+        scattering = VoL * subsurface + VoL * (0.125 + pow4(specular));
+        scattering = clamp(scattering * 2.0, 0.0, 1.0);
         NoL = mix(NoL, 1.0, subsurface * 0.75);
         NoL = mix(NoL, 1.0, scattering);
+
+        #if defined OVERWORLD
+        lightCol *= 1.0 + scattering;
+        #elif defined END
+        endLightCol *= 1.0 + scattering;
+        #endif
     }
 
     if (NoL > 0.0 && emission < 0.001) {
@@ -124,12 +129,12 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     #ifdef OVERWORLD
     float rainFactor = 1.0 - rainStrength * 0.75;
 
-    #ifdef GLOBAL_ILLUMINATION
+    #if defined GLOBAL_ILLUMINATION && !defined GBUFFERS_WATER
     bloom = clamp(bloom * pow(getLuminance(bloom), -0.65), 0.0, 1.0) * (2.0 / GLOBAL_ILLUMINATION_STRENGTH);
     ambientCol *= vec3(1.0) + bloom * sunVisibility * (1.0 - rainStrength);
     #endif
 
-    vec3 sceneLighting = mix(ambientCol * lightmap.y, lightCol * max(lightmap.y, 0.2), fullShadow * rainFactor);
+    vec3 sceneLighting = mix(ambientCol * lightmap.y, lightCol * max(lightmap.y, 0.125), fullShadow * rainFactor);
     sceneLighting *= 1.0 + scattering * shadow;
     #endif
 
@@ -153,7 +158,11 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
 
     albedo = sqrt(max(albedo, vec3(0.0)));
 
-    #if defined GBUFFERS_TERRAIN && defined GLOBAL_ILLUMINATION && defined OVERWORLD
-    emission += length(mix(vec3(0.0), vec3(0.5 * GLOBAL_ILLUMINATION_STRENGTH), fullShadow * rainFactor * sunVisibility));
+    #if !defined GBUFFERS_WATER && defined GLOBAL_ILLUMINATION && defined OVERWORLD
+    vec3 giVisibility = fullShadow * rainFactor * sunVisibility;
+
+    if (giVisibility != 0.0) {
+        emission += length(mix(vec3(0.0), vec3(0.33 * GLOBAL_ILLUMINATION_STRENGTH), giVisibility));
+    }
     #endif
 }

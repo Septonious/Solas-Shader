@@ -3,8 +3,8 @@ float getWaterHeightMap(vec3 worldPos, vec2 offset) {
 
 	offset /= 256.0;
 	offset *= WATER_NORMAL_VISIBILITY;
-	float noiseA = texture2D(noisetex, (worldPos.xz - frameTimeCounter * 0.50) / 256.0 + offset).r;
-	float noiseB = texture2D(noisetex, (worldPos.xz + frameTimeCounter * 0.75) / 96.0 + offset).r;
+	float noiseA = texture2D(noisetex, (worldPos.xz - frameTimeCounter * 0.50) / 512.0 + offset).g;
+	float noiseB = texture2D(noisetex, (worldPos.xz + frameTimeCounter * 0.75) / 128.0 + offset).g;
 
     return mix(noiseA, noiseB, 0.5) * WATER_NORMAL_BUMP;
 }
@@ -20,9 +20,10 @@ vec3 getParallaxWaves(vec3 worldPos, vec3 viewVector) {
 	return parallaxPos;
 }
 
-vec3 getWaterNormal(vec3 worldPos, vec3 viewVector, vec2 lightmap) {
+vec3 getWaterNormal(vec3 worldPos, vec3 viewVector, vec2 lightmap, float fresnel) {
 	vec3 waterPos = getParallaxWaves(worldPos + cameraPosition, viewVector);
 
+	float normalStrength = (1.0 - fresnel) * lightmap.y;
 	float harmonic0 = getWaterHeightMap(waterPos, vec2( WATER_NORMAL_OFFSET, 0.0));
 	float harmonic1 = getWaterHeightMap(waterPos, vec2(-WATER_NORMAL_OFFSET, 0.0));
 	float harmonic2 = getWaterHeightMap(waterPos, vec2(0.0,  WATER_NORMAL_OFFSET));
@@ -33,5 +34,5 @@ vec3 getWaterNormal(vec3 worldPos, vec3 viewVector, vec2 lightmap) {
 
 	vec3 normalMap = vec3(xDelta, yDelta, 1.0 - (xDelta * xDelta + yDelta * yDelta));
 
-	return normalMap * lightmap.y + vec3(0.0, 0.0, 1.0 - lightmap.y);
+	return normalMap * lightmap.y + vec3(0.0, 0.0, 1.0 - normalStrength);
 }

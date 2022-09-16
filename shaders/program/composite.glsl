@@ -38,10 +38,6 @@ uniform sampler2D colortex0;
 uniform sampler2D noisetex;
 uniform sampler2D colortex1;
 
-#if defined BLOOM && defined VL
-uniform sampler2D colortex2;
-#endif
-
 uniform sampler2D depthtex0, depthtex1;
 
 uniform sampler2DShadow shadowtex0, shadowtex1;
@@ -100,14 +96,6 @@ void main() {
 
 	/* DRAWBUFFERS:0 */
 	gl_FragData[0].rgb = color;
-
-	#if defined BLOOM && defined VL
-	vec4 bloomData = texture2D(colortex2, texCoord);
-		 bloomData.ba += vec2(pow4(vl.a) * 0.0125, pow4(vl.a));
-
-	/* DRAWBUFFERS:02 */
-	gl_FragData[1] = bloomData;
-	#endif
 }
 
 #endif

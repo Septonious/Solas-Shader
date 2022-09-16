@@ -23,7 +23,7 @@ vec3 getBloomTile(float lod, vec2 coord, vec2 offset) {
 		}
 	}
 
-	return pow(bloom / 256.0, vec3(0.125));
+	return pow(bloom / 512.0, vec3(0.125));
 }
 
 vec3 getBlur(vec2 texCoord) {

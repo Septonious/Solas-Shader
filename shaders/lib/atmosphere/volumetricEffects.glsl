@@ -116,17 +116,17 @@ void computeVolumetricClouds(inout vec4 vc, in float dither, in float ug) {
 				#endif
 
 				//noise = clamp(noise * amount - (10.0 + cloudLayer * 5.0), 0.0, 1.0);
-				noise = clamp(noise * VC_AMOUNT - (10.0 + cloudLayer * 5.0), 0.0, 1.0);
+				noise = clamp(noise * (VC_AMOUNT * (1.0 + rainStrength * 0.15)) - (10.0 + cloudLayer * 5.0), 0.0, 1.0);
 
 				//Color Calculations
 				float cloudLighting = getCloudLighting(rayPos, noise);
 				#ifdef VC_DISTANT_FADE
-				float cloudDistantFade = clamp((VC_DISTANCE - lWorldPos) / VC_DISTANCE * 3.25, 0.0, 1.0);
+				float cloudDistantFade = clamp((VC_DISTANCE - lWorldPos) / VC_DISTANCE * 3.0, 0.0, 1.0);
 				#endif
 
 				vec4 cloudColor = vec4(mix(lightCol, ambientCol, cloudLighting), noise);
 					 #ifdef VC_DISTANT_FADE
-					 cloudColor.a *= mix(0.125, 1.0, cloudDistantFade);
+					 cloudColor.a *= mix(0.0, 1.0, cloudDistantFade);
 					 #endif
 					 cloudColor.rgb *= cloudColor.a;
 
@@ -135,7 +135,7 @@ void computeVolumetricClouds(inout vec4 vc, in float dither, in float ug) {
 		}
 
 		//Why not tint out clouds with the sky color?
-		vc.rgb = mix(vc.rgb * (3.0 - rainStrength * 2.0), vc.rgb * skyColor * skyColor * 1.5, timeBrightness * (1.0 - rainStrength));
+		vc.rgb = mix(vc.rgb * (2.5 - rainStrength * 1.5), vc.rgb * skyColor * skyColor * 1.5, timeBrightness * (1.0 - rainStrength));
 		vc.rgb = mix(vc.rgb, vc.rgb * 0.25, (1.0 - rainStrength) * (1.0 - timeBrightness));
 		vc *= ug;
 	}
@@ -154,8 +154,8 @@ void computeVolumetricLight(inout vec4 vl, in vec3 translucent, in float dither)
 	viewPos /= viewPos.w;
 	vec3 nViewPos = normalize(viewPos.xyz);
 
-	float VoU = mix(1.0, 1.0 - pow2(clamp(dot(nViewPos, upVec), 0.0, 1.0)), clamp(eBS - float(isEyeInWater == 1), 0.0, 1.0));
-	float VoS = clamp(dot(nViewPos, sunVec), 0.0, 1.0);
+	float VoU = mix(1.0, 1.0 - clamp(dot(nViewPos, upVec), 0.0, 1.0), clamp(eBS - float(isEyeInWater == 1), 0.0, 1.0));
+	float VoS = pow(clamp(dot(nViewPos, sunVec), 0.0, 1.0), 1.5);
 	float nVoS = mix(0.5, mix(VoS, 1.0, 1.0 - timeBrightness), clamp(eBS - float(isEyeInWater == 1), 0.0, 1.0));
 	float visibility = float(z0 > 0.56) * VL_OPACITY * VoU * nVoS;
 
@@ -176,7 +176,7 @@ void computeVolumetricLight(inout vec4 vl, in vec3 translucent, in float dither)
 
 		//Ray marching and main calculations
 		for (int i = 0; i < VL_SAMPLES; i++) {
-			float currentDepth = exp2(i + dither + (eBS * 1.5 - float(isEyeInWater == 1) * 1.5)) * (1.25 + eBS * 1.25);
+			float currentDepth = exp2(i + dither + (eBS * 1.75 - float(isEyeInWater == 1) * 1.75)) * (1.25 + eBS * 1.25);
 
 			if (linearDepth1 < currentDepth || (linearDepth0 < currentDepth && translucent.rgb == vec3(0.0))) {
 				break;

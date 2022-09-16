@@ -82,7 +82,7 @@ void getNebula(inout vec3 color, in vec3 worldPos, in float VoU, inout float neb
 		vec4 milkyWay = texture2D(depthtex2, planeCoord * 0.5 + 0.5);
 		color += lightNight * milkyWay.rgb * pow6(milkyWay.a) * length(milkyWay.rgb) * visibility;
 		#else
-		color += mix(mix(endAmbientCol, endAmbientColSqrt, nebulaNoise * nebulaNoise), vec3(0.5, 0.25, 0.2) * endLightColSqrt, pow4(nebulaNoise)) * visibility * nebulaNoise;
+		color += mix(mix(endAmbientCol, endAmbientColSqrt, nebulaNoise * nebulaNoise), vec3(0.5, 0.25, 0.2) * endLightColSqrt, pow4(nebulaNoise)) * visibility * nebulaNoise * 2.0;
 		#endif
 
 		#ifdef OVERWORLD

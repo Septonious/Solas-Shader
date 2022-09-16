@@ -8,7 +8,7 @@ vec3 getAtmosphere(vec3 viewPos) {
 
     float VoS = dot(nViewPos, sunVec);
           VoS = 1.0 + clamp(VoS, -1.0, 0.0);
-          VoS = mix(VoS * 0.5, 0.3 + VoS * 0.2, sunVisibility);
+          VoS = mix(VoS * 0.2, 0.25 + VoS * 0.25, sunVisibility);
     float VoU = dot(nViewPos, upVec);
 
     //Set Variables Here
@@ -19,21 +19,21 @@ vec3 getAtmosphere(vec3 viewPos) {
     float scatteringMixer = clamp(pow(exp(-24.0 * nVoU), 0.25), 0.0, 1.0);
     float scatteringFactor = clamp(sunVisibility * (1.0 - rainStrength) * VoS, 0.0, sunVisibility * (1.0 - timeBrightness) * VoS);
 
-    float skyDensity = exp(-mix(1.0, 0.65, sunVisibility) * VoU);
+    float skyDensity = exp(-mix(1.0, 0.65, sunVisibility * (1.0 - timeBrightness)) * VoU);
           skyDensity = mix(skyDensity, 0.5, 0.75 - sunVisibility * 0.25);
-          skyDensity = mix(skyDensity, 0.7, rainStrength * rainStrength * 0.8);
+          skyDensity = mix(skyDensity, 0.7, rainStrength * rainStrength * 0.7);
 
     //Day & Night Sky
-    vec3 daySky = mix(skyColSqrt, pow(skyColor, vec3(1.25)) * 1.75, timeBrightness);
+    vec3 daySky = mix(skyColSqrt, pow(skyColor, vec3(1.25)) * 2.0, timeBrightness);
     vec3 sky = mix(lightNight * 1.25, daySky, sunVisibility) * skyDensity;
 
     //Fake Light Scattering
-    vec3 scattering = mix(mix(lowScatteringColor, highScatteringColor, horizonFactor * (1.0 - scatteringMixer * 0.9) * (1.0 - sqrt(timeBrightnessSqrt))), lightColSqrt * 4.0, timeBrightness);
+    vec3 scattering = mix(mix(lowScatteringColor, highScatteringColor, horizonFactor * (1.0 - scatteringMixer * 0.75) * (1.0 - sqrt(timeBrightnessSqrt))), lightColSqrt * 3.0, timeBrightnessSqrt * 0.75);
 
-    sky = mix(sky, scattering, clamp(pow(exp(-(20.0 + sunVisibility * sunVisibility * 20.0) * nVoU), 0.25), 0.0, 1.0) * scatteringFactor);
+    sky = mix(sky, scattering, clamp(pow(exp(-(20.0 + sunVisibility * sunVisibility * 20.0) * nVoU), 0.3), 0.0, 1.0) * scatteringFactor);
 
     //Weather Sky
-	sky = mix(sky, lightColSqrt * skyDensity * 1.25, rainStrength);
+	sky = mix(sky, lightColSqrt * skyDensity, rainStrength);
 
     //Underground Sky
 	sky = mix(minLightCol, sky, ug);

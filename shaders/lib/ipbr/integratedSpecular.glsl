@@ -19,7 +19,7 @@ void getIntegratedSpecular(in vec4 albedo, in vec3 normal, in vec2 worldPos, in 
     float lAlbedo = length(albedo.rgb);
 
     if (mat > 299.9 && mat < 300.1) {// Sand
-        specular = float(albedo.b > 0.65) * 0.125 + float(albedo.b > 0.7) * 0.5;
+        specular = float(albedo.b > 0.65) * 0.5 + float(albedo.b > 0.7) * 0.5;
         roughness = 0.0;
     } else if (mat > 300.9 && mat < 301.1) {// Iron Block
         specular = float(pow16(albedo.r)) * 8.0;

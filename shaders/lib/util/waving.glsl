@@ -19,10 +19,10 @@ float get2DNoise(vec2 pos) {
 }
 
 vec3 calculateMovement(vec3 pos, float density, float speed, vec2 mult) {
-    pos = pos * density + frameTimeCounter * speed;
+    pos = pos * density + frameTimeCounter * speed * WAVING_SPEED;
     vec3 wave = vec3(get2DNoise(pos.yz), get2DNoise(pos.xz + 0.25), get2DNoise(pos.xy + 0.5));
 
-    return wave * vec3(mult, mult.x);
+    return wave * vec3(mult * WAVING_AMPLITUDE, mult.x * WAVING_AMPLITUDE);
 }
 
 vec3 getWavingBlocks(vec3 pos, float istopv, float skyLightMap) {
