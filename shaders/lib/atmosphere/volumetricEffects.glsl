@@ -156,7 +156,7 @@ void computeVolumetricLight(inout vec4 vl, in vec3 translucent, in float dither)
 
 	float VoU = mix(1.0, 1.0 - clamp(dot(nViewPos, upVec), 0.0, 1.0), clamp(eBS - float(isEyeInWater == 1), 0.0, 1.0));
 	float VoS = pow(clamp(dot(nViewPos, sunVec), 0.0, 1.0), 1.5);
-	float nVoS = mix(0.5, mix(VoS, 1.0, 1.0 - timeBrightness), clamp(eBS - float(isEyeInWater == 1), 0.0, 1.0));
+	float nVoS = mix(0.5, mix(VoS, 0.75 + sqrt(VoS) * 0.25, 1.0 - timeBrightness), clamp(eBS - float(isEyeInWater == 1), 0.0, 1.0));
 	float visibility = float(z0 > 0.56) * VL_OPACITY * VoU * nVoS;
 
 	#if MC_VERSION >= 11900
