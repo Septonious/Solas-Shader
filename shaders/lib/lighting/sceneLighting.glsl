@@ -4,7 +4,7 @@ vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.
 vec3 lightVec = sunVec;
 #endif
 
-#if defined BLOOM_COLORED_LIGHTING || defined GLOBAL_ILLUMINATION
+#if defined BLOOM_COLORED_LIGHTING || (defined GLOBAL_ILLUMINATION && !defined GBUFFERS_WATER)
 uniform sampler2D gaux4;
 
 float getLuminance(vec3 color) {
@@ -55,7 +55,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     blockLighting = blockLightCol * blockLightMap + coloredLight * BLOCKLIGHT_I;
     #elif defined BLOOM_COLORED_LIGHTING
     //BLOOM BASED COLORED LIGHTING
-    blockLighting = blockLightCol * blockLightMap + clamp(bloom * pow(getLuminance(bloom) + 0.00125, -0.65), 0.0, 1.0) * clamp(pow2(blockLightMap) * 0.8 + 0.2, 0.0, 1.0) * float(emission == 0.0);
+    blockLighting = blockLightCol * blockLightMap + COLORED_LIGHTING_STRENGTH * clamp(bloom * pow(getLuminance(bloom) + 0.00125, -COLORED_LIGHTING_RADIUS), 0.0, 1.0) * clamp(pow2(blockLightMap) * 0.8 + 0.2, 0.0, 1.0) * float(emission == 0.0);
     #else
     blockLighting = blockLightCol * blockLightMap;
     #endif
@@ -80,8 +80,6 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
 
         #if defined OVERWORLD
         lightCol *= 1.0 + scattering;
-        #elif defined END
-        endLightCol *= 1.0 + scattering;
         #endif
     }
 
@@ -130,7 +128,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     float rainFactor = 1.0 - rainStrength * 0.75;
 
     #if defined GLOBAL_ILLUMINATION && !defined GBUFFERS_WATER
-    bloom = clamp(bloom * pow(getLuminance(bloom), -0.65), 0.0, 1.0) * (2.0 / GLOBAL_ILLUMINATION_STRENGTH);
+    bloom = clamp(bloom * pow(getLuminance(bloom), -GLOBAL_ILLUMINATION_RADIUS), 0.0, 1.0) * 4.0;
     ambientCol *= vec3(1.0) + bloom * sunVisibility * (1.0 - rainStrength);
     #endif
 

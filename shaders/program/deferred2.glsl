@@ -179,7 +179,7 @@ void main() {
 
 	#if defined BLOOM && defined OVERWORLD
 	vec4 bloomData = texture2D(colortex2, texCoord);
-		 bloomData.ba += vec2((star * 32.0 + sunMoon * 0.25) * 0.1, float(star + sunMoon > 0.0));
+		 bloomData.ba += vec2((star * 32.0 + sunMoon * 0.25) * 0.1, float(star > 0.0 || sunMoon > 0.0));
 
 	/* DRAWBUFFERS:02 */
 	gl_FragData[1] = bloomData;
