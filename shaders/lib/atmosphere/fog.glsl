@@ -10,10 +10,10 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 atmo
 	//Fog Altitude
 	float fogAltitude = clamp(pow16((worldPos.y + cameraPosition.y + 1000.0 - FOG_HEIGHT) * 0.001), 0.0, 1.0);
 
-	float fog = length(viewPos) * FOG_DENSITY / 1024.0;
+	float fog = length(viewPos) * FOG_DENSITY / 256.0;
 	float clearDay = sunVisibility * (1.0 - rainStrength * 0.5);
 	fog *= (0.5 * rainStrength + 0.5) / (4.0 * clearDay + 1.0);
-	fog = 1.0 - exp(-128.0 * pow(fog, 0.15 * clearDay * eBS + 1.25));
+	fog = 1.0 - exp(-64.0 * pow(fog, 0.15 * clearDay * eBS + 1.25));
 	fog *= 1.0 - fogAltitude;
 	fog = clamp(fog, 0.0, 1.0);
 	fog = pow(fog, 1.5);
@@ -49,7 +49,7 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 atmo
 	float fog = lViewPos * 0.0125;
 
 	#ifdef DISTANT_FADE
-	fog += 5.0 * pow4(lWorldPos / far);
+	fog += 2.5 * pow4(lWorldPos / far);
 	#endif
 
 	fog = 1.0 - exp(-fog);

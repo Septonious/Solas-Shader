@@ -75,8 +75,8 @@ void getIntegratedEmission(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos,
 		newEmission = float(albedo.b > albedo.r || albedo.b > albedo.g) * 0.5;
 	} else if (mat > 119.9 && mat < 120.1) { // Normal Campfire && Magma Block
 		newEmission = float(albedo.r > 0.65 && albedo.b < 0.35) * 0.35;
-	} else if (mat > 120.9 && mat < 121.9) { // Redstone Block
-		newEmission = 0.125 + pow12(lAlbedo) * 0.875;
+	} else if (mat > 120.9 && mat < 121.9) { // Redstone Block && Lava
+		newEmission = 0.15 + pow12(lAlbedo) * 0.85;
 	} else if (mat > 121.9 && mat < 122.1) {
 		newEmission = 0.125;
 		albedo.rgb *= albedo.rgb;
