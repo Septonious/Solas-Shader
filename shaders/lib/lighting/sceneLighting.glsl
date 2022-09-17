@@ -49,11 +49,11 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
          bloom = pow8(bloom) * 512.0;
     #endif
 
-    #ifdef SHIMMER_MOD_SUPPORT
+    #if defined SHIMMER_MOD_SUPPORT
     //COLORED LIGHTING USING SHIMMER MOD
     vec3 coloredLight = getColoredLighting(worldPos, blockLightMap) * BLOCKLIGHT_I;
     blockLighting = blockLightCol * blockLightMap + coloredLight * float(emission == 0.0);
-    #elif BLOOM_COLORED_LIGHTING
+    #elif defined BLOOM_COLORED_LIGHTING
     //BLOOM BASED COLORED LIGHTING
 	vec3 coloredLight = clamp(bloom * pow(getLuminance(bloom) + 0.00125, -COLORED_LIGHTING_RADIUS), 0.0, 1.0) * (pow2(blockLightMap) * 0.8 + 0.2) * COLORED_LIGHTING_STRENGTH;
     blockLighting = blockLightCol * blockLightMap + coloredLight * float(emission == 0.0);

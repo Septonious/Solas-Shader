@@ -322,8 +322,8 @@ const float waterFogRange = 64.0 / WATER_FOG_DENSITY;
 const vec3 weatherCol = vec3(WEATHER_RR, WEATHER_RG, WEATHER_RB) / 255.0 * WEATHER_RI;
 
 //Mathematical Constants//
-#define PI 3.14159265358979
-#define TAU 6.28318530717959
+const float PI = 3.14159265358979;
+const float TAU = 6.28318530717959;
 
 ////////////// S H E N A N I G A N S //////////////
 
@@ -344,7 +344,7 @@ const vec3 weatherCol = vec3(WEATHER_RR, WEATHER_RG, WEATHER_RB) / 255.0 * WEATH
 #undef GLOBAL_ILLUMINATION
 #endif
 
-#if !defined END && !defined OVERWORLD
+#ifdef NETHER
 #undef WATER_FOG
 #endif
 
@@ -375,6 +375,9 @@ const vec3 weatherCol = vec3(WEATHER_RR, WEATHER_RG, WEATHER_RB) / 255.0 * WEATH
 #endif
 
 #ifdef GLOBAL_ILLUMINATION
+#endif
+
+#ifdef BLOOM_COLORED_LIGHTING
 #endif
 
 #ifdef GBUFFERS_WATER

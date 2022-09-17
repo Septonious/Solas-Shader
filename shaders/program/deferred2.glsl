@@ -29,7 +29,7 @@ uniform float viewWidth, viewHeight;
 uniform float far, frameTimeCounter;
 uniform float blindFactor;
 
-#ifdef (AURORA && AURORA_COLD_BIOME_VISIBILITY) || RAINBOW
+#if (defined AURORA && defined AURORA_COLD_BIOME_VISIBILITY) || defined RAINBOW
 uniform float isSnowy;
 #endif
 
