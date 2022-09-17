@@ -63,7 +63,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
 
     //Main Scene Lighting (Sunlight & Shadows)
     #if defined OVERWORLD || defined END
-    specular = (specular + 0.125) * clamp(NoU - 0.01, 0.0, 1.0);
+    specular = (specular + 0.25) * clamp(NoU - 0.01, 0.0, 1.0);
 
     float subsurface = leaves + foliage;
     float scattering = 0.0;
@@ -73,7 +73,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     //Subsurface Scattering & Specular Highlight
     if (subsurface > 0.0 || specular > 0.0) {
         float VoL = clamp(dot(normalize(viewPos), lightVec), 0.0, 1.0);
-        VoL = pow16(VoL) * 0.5 + pow32(pow16(VoL));
+        VoL = pow12(VoL) * 0.5 + pow32(pow16(VoL));
         scattering = VoL * subsurface + VoL * (0.125 + pow4(specular));
         scattering = clamp(scattering * 2.0, 0.0, 1.0);
         NoL = mix(NoL, 1.0, subsurface * 0.75);

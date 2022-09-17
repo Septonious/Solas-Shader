@@ -54,9 +54,11 @@ void computeVolumetricClouds(inout vec4 vc, in float dither, in float ug) {
 		vec3 nWorldPos = normalize(mat3(gbufferModelViewInverse) * viewPos.xyz);
 		vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.0);
 
+		float VoS = clamp(dot(normalize(viewPos.xyz), sunVec), 0.0, 1.0);
 		float lViewPos = length(viewPos);
 
 		lightCol = mix(lightCol, skyColor * skyColor, timeBrightness * (0.5 - rainStrength * 0.5));
+		lightCol *= 1.0 + pow(VoS, 1.5);
 
 		//We want to march between two planes which we set here
 		float lowerPlane = (VC_HEIGHT + VC_STRETCHING - cameraPosition.y) / nWorldPos.y;
@@ -82,9 +84,9 @@ void computeVolumetricClouds(inout vec4 vc, in float dither, in float ug) {
 
 			float cloudLayer = abs(VC_HEIGHT - rayPos.y) / VC_STRETCHING;
 
-			if (cloudLayer > 2.0) break;
+			if (cloudLayer > 1.5) break;
 
-			float cloudVisibility = float(cloudLayer < 2.0);
+			float cloudVisibility = float(cloudLayer < 1.5);
 
 			//Indoor leak prevention
 			if (eyeBrightnessSmooth.y <= 150.0) {
@@ -163,9 +165,11 @@ void computeVolumetricLight(inout vec4 vl, in vec3 translucent, in float dither)
 		float linearDepth0 = getLinearDepth2(z0);
 		float linearDepth1 = getLinearDepth2(z1);
 
+		lightCol *= 1.0 + pow(VoS, 1.25);
+
 		//Ray marching and main calculations
 		for (int i = 0; i < VL_SAMPLES; i++) {
-			float currentDepth = exp2(i + dither + (eBS * 1.75 - float(isEyeInWater == 1) * 1.75)) * (1.25 + eBS * 1.25);
+			float currentDepth = exp2(i + dither + (eBS * 1.5 - float(isEyeInWater == 1) * 1.5)) * (1.25 + eBS * 1.75);
 
 			if (linearDepth1 < currentDepth || (linearDepth0 < currentDepth && translucent.rgb == vec3(0.0))) {
 				break;
@@ -201,7 +205,7 @@ void computeVolumetricLight(inout vec4 vl, in vec3 translucent, in float dither)
 
 			vec4 vlColor = vec4(0.0);
 			if (visibility > 0.0 && shadow1 != 0.0) {
-				vlColor = vec4(lightCol * (1.0 + pow(VoS, 1.5)), visibility);
+				vlColor = vec4(lightCol, visibility);
 				vlColor.rgb *= vlColor.a;
 
 				#ifdef SHADOW_COLOR
