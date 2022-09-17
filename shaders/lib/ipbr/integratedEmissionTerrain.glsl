@@ -121,7 +121,7 @@ void getIntegratedEmission(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos,
 	if (isPlant > 0.9 && isPlant < 1.1){ // Flowers
 		if (albedo.b > albedo.g || albedo.r > albedo.g) {
 			newEmission = 0.125 * lAlbedo * (1.0 - rainStrength);
-			newEmission = mix(newEmission, newEmission * 0.25, clamp(lViewPos * 0.125, 0.0, 1.00));
+			newEmission = mix(newEmission, newEmission * 0.5, clamp(lViewPos * 0.125, 0.0, 1.00));
 		}
 	}
 	#endif

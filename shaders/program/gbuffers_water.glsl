@@ -164,7 +164,7 @@ void main() {
 
 	if (water > 0.9) {
 		albedo.a = WATER_A;
-		albedo.rgb = waterColor;
+		albedo.rgb = mix(waterColor, weatherCol.rgb * 0.25, rainStrength * 0.5);
 	}
 
 	if (albedo.a > 0.001) {
@@ -216,7 +216,7 @@ void main() {
 			vec3 oViewPos = ToNDC(oScreenPos);
 
 			vec4 waterFog = getWaterFog(viewPos.xyz - oViewPos);
-			albedo.rgb = mix(waterFog.rgb * waterFog.a * 8.0 * lightmap.y, albedo.rgb, 0.75);
+			albedo.rgb = mix(waterFog.rgb * waterFog.a * 8.0 * lightmap.y, albedo.rgb, 0.65);
 		}
 		#endif
 
@@ -304,6 +304,8 @@ void main() {
 	#endif
 
 	//Sun & Other vectors
+	sunVec = vec3(0.0);
+
     #if defined OVERWORLD
 	const vec2 sunRotationData = vec2(cos(sunPathRotation * 0.01745329251994), -sin(sunPathRotation * 0.01745329251994));
 	float ang = fract(timeAngle - 0.25);

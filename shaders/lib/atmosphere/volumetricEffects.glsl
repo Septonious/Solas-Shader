@@ -46,7 +46,7 @@ void computeVolumetricClouds(inout vec4 vc, in float dither, in float ug) {
 	visibility *= 1.0 - blindFactor;
 
 	if (visibility > 0.0) {
-		//Positions
+		//Positions & Variables
 		vec4 screenPos = vec4(texCoord, z0, 1.0);
 		vec4 viewPos = gbufferProjectionInverse * (screenPos * 2.0 - 1.0);
 		viewPos /= viewPos.w;
@@ -55,7 +55,8 @@ void computeVolumetricClouds(inout vec4 vc, in float dither, in float ug) {
 
 		float lViewPos = length(viewPos);
 		float VoS = clamp(abs(dot(normalize(viewPos.xyz), sunVec)), 0.0, 1.0 - rainStrength);
-		lightCol.rgb *= 1.0 + pow2(VoS);
+
+		lightCol = mix(lightCol, skyColor * skyColor, timeBrightness * (0.5 - rainStrength * 0.5));
 
 		//We want to march between two planes which we set here
 		float lowerPlane = (VC_HEIGHT + VC_STRETCHING - cameraPosition.y) / nWorldPos.y;
@@ -109,7 +110,7 @@ void computeVolumetricClouds(inout vec4 vc, in float dither, in float ug) {
 				noise = clamp(noise * (VC_AMOUNT * (1.0 + rainStrength * 0.15)) - (10.0 + cloudLayer * 5.0), 0.0, 1.0);
 
 				//Color Calculations
-				float cloudLighting = clamp(sqrt(smoothstep(VC_HEIGHT + VC_STRETCHING * noise, VC_HEIGHT - VC_STRETCHING * noise, rayPos.y)) * 0.6 + noise * 0.4, 0.0, 1.0);
+				float cloudLighting = clamp(pow(smoothstep(VC_HEIGHT + VC_STRETCHING * noise, VC_HEIGHT - VC_STRETCHING * noise, rayPos.y), 0.33) * 0.7 + noise * 0.3, 0.0, 1.0);
 				#ifdef VC_DISTANT_FADE
 				float cloudDistantFade = clamp((VC_DISTANCE - lWorldPos) / VC_DISTANCE * 3.0, 0.0, 1.0);
 				#endif
@@ -124,9 +125,6 @@ void computeVolumetricClouds(inout vec4 vc, in float dither, in float ug) {
 			}
 		}
 
-		//Why not tint out clouds with the sky color?
-		vc.rgb = mix(vc.rgb * (2.5 - rainStrength * 1.5), vc.rgb * skyColor * skyColor * 1.5, timeBrightness * (1.0 - rainStrength));
-		vc.rgb = mix(vc.rgb, vc.rgb * 0.25, (1.0 - rainStrength) * (1.0 - timeBrightness));
 		vc *= ug;
 	}
 }

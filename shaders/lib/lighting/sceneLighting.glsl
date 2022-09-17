@@ -55,7 +55,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     blockLighting = blockLightCol * blockLightMap + coloredLight * float(emission == 0.0);
     #elif defined BLOOM_COLORED_LIGHTING
     //BLOOM BASED COLORED LIGHTING
-	vec3 coloredLight = clamp(bloom * pow(getLuminance(bloom) + 0.00125, -COLORED_LIGHTING_RADIUS), 0.0, 1.0) * (pow2(blockLightMap) * 0.8 + 0.2) * COLORED_LIGHTING_STRENGTH;
+	vec3 coloredLight = clamp(bloom * pow(getLuminance(bloom) + 0.00125, -COLORED_LIGHTING_RADIUS), 0.0, 1.0) * (pow2(blockLightMap) * 0.9 + 0.1) * COLORED_LIGHTING_STRENGTH;
     blockLighting = blockLightCol * blockLightMap + coloredLight * float(emission == 0.0);
     #else
     blockLighting = blockLightCol * blockLightMap;
@@ -157,7 +157,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     float giVisibility = length(fullShadow * rainFactor * sunVisibility);
 
     if (giVisibility != 0.0) {
-        emission += mix(0.0, 0.33 * GLOBAL_ILLUMINATION_STRENGTH, giVisibility);
+        emission += mix(0.0, 0.33 * GLOBAL_ILLUMINATION_STRENGTH * float(emission == 0.0), giVisibility);
     }
     #endif
 }

@@ -92,6 +92,8 @@ void main() {
 	
 	//Sun & Other Vectors
 	#ifdef WATER_FOG
+	sunVec = vec3(0.0);
+
     #if defined OVERWORLD
 	const vec2 sunRotationData = vec2(cos(sunPathRotation * 0.01745329251994), -sin(sunPathRotation * 0.01745329251994));
 	float ang = fract(timeAngle - 0.25);
