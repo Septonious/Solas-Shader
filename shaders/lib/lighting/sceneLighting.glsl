@@ -41,7 +41,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     #ifdef SHIMMER_MOD_SUPPORT
     float blockLightMap = min(pow4(lightmap.x) * 2.0 + pow2(lightmap.x) * 0.125, 1.0) * float(emission == 0.0);
     #else
-    float blockLightMap = min(pow4(lightmap.x), 1.0) * float(emission == 0.0);
+    float blockLightMap = min(pow8(lightmap.x) * 1.5 + pow2(lightmap.x) * 0.5, 1.0) * float(emission == 0.0);
     #endif
 
     #if defined BLOOM_COLORED_LIGHTING || defined GLOBAL_ILLUMINATION
@@ -56,7 +56,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     #elif defined BLOOM_COLORED_LIGHTING
     //BLOOM BASED COLORED LIGHTING
 	vec3 coloredLight = clamp(bloom * pow(getLuminance(bloom) + 0.00125, -COLORED_LIGHTING_RADIUS), 0.0, 1.0) * (pow2(blockLightMap) * 0.9 + 0.1) * COLORED_LIGHTING_STRENGTH;
-    blockLighting = blockLightCol * blockLightMap + coloredLight * float(emission == 0.0);
+    blockLighting = blockLightCol * blockLightMap * (0.5 + pow4(lightmap.y) * 0.5) + coloredLight * float(emission == 0.0);
     #else
     blockLighting = blockLightCol * blockLightMap;
     #endif

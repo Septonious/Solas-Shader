@@ -77,15 +77,15 @@ void getIntegratedEmission(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos,
 		newEmission = float(albedo.r > 0.65 && albedo.b < 0.35) * 0.35;
 	} else if (mat > 120.9 && mat < 121.9) { // Redstone Block && Lava
 		newEmission = 0.15 + pow12(lAlbedo) * 0.85;
-	} else if (mat > 121.9 && mat < 122.1) {
-		newEmission = 0.125;
-		albedo.rgb *= albedo.rgb;
+	} else if (mat > 121.9 && mat < 122.1) { // Froglights
+		newEmission = (1.0 - clamp(length(pow4(albedo.rgb)), 0.0, 1.0) * 0.75) * 1.5;
+		albedo.rgb = pow4(albedo.rgb);
 	} else if (mat > 122.9 && mat < 123.1) { // Sculks
 		newEmission = float(lAlbedo > 0.05 && albedo.r < 0.25) * 0.5;
 	} else if (mat > 123.9 && mat < 124.1) { // Redstone Lamp
 		newEmission = 0.15 + float(lAlbedo > 0.75) * 0.35;
 	} else if (mat > 124.9 && mat < 125.1) { // Sea Lantern
-		newEmission = pow10(lAlbedo);
+		newEmission = pow10(lAlbedo) * 0.5;
 	} else if (mat > 125.9 && mat < 126.1) { // Nether Wart
 		newEmission = float(lAlbedo > 0.25) * 0.2 + float(lAlbedo > 0.75) * 0.2;
 	} else if (mat > 126.9 && mat < 127.1) { // End Portal Frame
@@ -98,7 +98,7 @@ void getIntegratedEmission(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos,
 	} else if (mat > 129.9 && mat < 130.1) { // Powered Rail
 		newEmission = float(albedo.r > 0.5 && albedo.g < 0.25) * 0.125;
 	} else if (mat > 130.9 && mat < 131.1) { // Fire
-		newEmission = 0.3 - pow8(lAlbedo) * 0.15;
+		newEmission = (1.0 - pow8(lAlbedo) * 0.5) * lAlbedo;
 	}
 
 	#ifdef EMISSIVE_CONCRETE

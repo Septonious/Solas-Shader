@@ -61,7 +61,7 @@ void main() {
 	color = pow(color, vec3(1.0 / 2.2));
 	ColorSaturation(color);
 
-	color += (filmGrain - 0.25) / 128.0;
+	color += filmGrain / 64.0;
 
 	/* DRAWBUFFERS:157 */
 	gl_FragData[0].rgb = color;

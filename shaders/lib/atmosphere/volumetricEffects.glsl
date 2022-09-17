@@ -52,9 +52,9 @@ void computeVolumetricClouds(inout vec4 vc, in float dither, in float ug) {
 		viewPos /= viewPos.w;
 
 		vec3 nWorldPos = normalize(mat3(gbufferModelViewInverse) * viewPos.xyz);
+		vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.0);
 
 		float lViewPos = length(viewPos);
-		float VoS = clamp(abs(dot(normalize(viewPos.xyz), sunVec)), 0.0, 1.0 - rainStrength);
 
 		lightCol = mix(lightCol, skyColor * skyColor, timeBrightness * (0.5 - rainStrength * 0.5));
 
