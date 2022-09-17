@@ -219,6 +219,8 @@ void main() {
     #elif defined END
 	const vec2 sunRotationData = vec2(cos(sunPathRotation * 0.01745329251994), -sin(sunPathRotation * 0.01745329251994));
     sunVec = normalize((gbufferModelView * vec4(vec3(0.0, sunRotationData * 2000.0), 1.0)).xyz);
+	#elif defined NETHER
+	sunVec = vec3(0.0);
     #endif
 	
 	upVec = normalize(gbufferModelView[1].xyz);

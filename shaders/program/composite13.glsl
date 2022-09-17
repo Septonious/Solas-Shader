@@ -9,6 +9,7 @@ in vec2 texCoord;
 //Uniforms//
 #ifdef BLOOM
 uniform float viewWidth, viewHeight, aspectRatio;
+
 uniform sampler2D colortex2, depthtex0;
 #endif
 

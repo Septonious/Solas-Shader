@@ -155,8 +155,8 @@ void computeVolumetricLight(inout vec4 vl, in vec3 translucent, in float dither)
 	vec3 nViewPos = normalize(viewPos.xyz);
 
 	float VoU = mix(1.0, 1.0 - clamp(dot(nViewPos, upVec), 0.0, 1.0), clamp(eBS - float(isEyeInWater == 1), 0.0, 1.0));
-	float VoS = pow(clamp(dot(nViewPos, sunVec), 0.0, 1.0), 1.5);
-	float nVoS = mix(0.5, mix(VoS, 0.75 + sqrt(VoS) * 0.25, 1.0 - timeBrightness), clamp(eBS - float(isEyeInWater == 1), 0.0, 1.0));
+	float VoS = clamp(dot(nViewPos, sunVec), 0.0, 1.0);
+	float nVoS = mix(0.5, mix(VoS * 1.25, 0.75 + VoS * 0.25, 1.0 - timeBrightness), clamp(eBS - float(isEyeInWater == 1), 0.0, 1.0));
 	float visibility = float(z0 > 0.56) * VL_OPACITY * VoU * nVoS;
 
 	#if MC_VERSION >= 11900
@@ -212,7 +212,7 @@ void computeVolumetricLight(inout vec4 vl, in vec3 translucent, in float dither)
 
 			vec4 vlColor = vec4(0.0);
 			if (visibility > 0.0 && shadow1 != 0.0) {
-				vlColor = vec4(lightCol * (1.0 + VoS), visibility);
+				vlColor = vec4(lightCol * (1.0 + pow(VoS, 1.5)), visibility);
 				vlColor.rgb *= vlColor.a;
 
 				#ifdef SHADOW_COLOR

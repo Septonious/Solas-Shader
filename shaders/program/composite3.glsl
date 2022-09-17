@@ -43,27 +43,30 @@ uniform mat4 gbufferProjectionInverse;
 
 //Common Variables//
 #ifdef WATER_FOG
+#if defined OVERWORLD || defined END
 float eBS = eyeBrightnessSmooth.y / 240.0;
 
 #ifdef OVERWORLD
 vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.0);
 #endif
 
-#if defined OVERWORLD || defined END
 float sunVisibility = clamp(dot(sunVec, upVec) + 0.025, 0.0, 0.1) * 10.0;
 #endif
 #endif
 
 //Includes//
 #ifdef WATER_FOG
+#if defined OVERWORLD || defined END
 #include "/lib/color/dimensionColor.glsl"
 #include "/lib/water/waterFog.glsl"
+#endif
 #endif
 
 void main() {
 	vec3 color = texture2D(colortex0, texCoord).rgb;
 
 	#ifdef WATER_FOG
+	#if defined OVERWORLD || defined END
 	if (isEyeInWater == 1){
 		float z0 = texture2D(depthtex0, texCoord).r;
 		vec4 screenPos = vec4(texCoord, z0, 1.0);
@@ -74,6 +77,7 @@ void main() {
 		color = mix(sqrt(color), sqrt(waterFog.rgb), waterFog.a);
 		color *= color;
 	}
+	#endif
 	#endif
 
 	/* DRAWBUFFERS:0 */

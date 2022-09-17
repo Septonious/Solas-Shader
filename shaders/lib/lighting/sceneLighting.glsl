@@ -78,7 +78,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
         NoL = mix(NoL, 1.0, subsurface * 0.75);
         NoL = mix(NoL, 1.0, scattering);
 
-        #if defined OVERWORLD
+        #ifdef OVERWORLD
         lightCol *= 1.0 + scattering;
         #endif
     }
