@@ -28,7 +28,7 @@ void main() {
     #ifdef AO
     float ao = calculateAmbientOcclusion(Bayer64(gl_FragCoord.xy));
     #else
-    float ao = 1.0;
+    float ao = 0.0;
     #endif
 
     /* DRAWBUFFERS:4 */

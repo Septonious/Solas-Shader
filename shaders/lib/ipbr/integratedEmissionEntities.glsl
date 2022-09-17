@@ -33,7 +33,7 @@ void getIntegratedEmission(in vec3 albedo, inout vec2 lightmap, inout float emis
         emission = 0.025 + float(lAlbedo > 0.99) * 0.25;
         lightmap.x *= emission;
     } else if (mat > 105.9 && mat < 106.1) { // End Crystal
-        emission = float(albedo.r > 0.5 && albedo.g < 0.55) * 0.5;
+        emission = float(albedo.r > 0.5 && albedo.g < 0.55);
         lightmap.x *= emission;
     }
 

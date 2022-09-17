@@ -11,7 +11,5 @@ const vec2 jitterOffsets[8] = vec2[8](
 						);
 							   
 vec2 TAAJitter(vec2 coord, float w) {
-	vec2 offset = jitterOffsets[framemod8] * (w / vec2(viewWidth, viewHeight));
-	
-	return coord + offset;
+	return coord + jitterOffsets[framemod8] * (w / vec2(viewWidth, viewHeight));
 }

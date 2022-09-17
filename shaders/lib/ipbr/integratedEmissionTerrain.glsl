@@ -51,7 +51,7 @@ void getIntegratedEmission(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos,
 	} else if (mat > 105.9 && mat < 106.1) { // Warped Nylium
 		newEmission = float(albedo.g > albedo.b && albedo.g > albedo.r) * pow3(float(albedo.g - albedo.b));
 	} else if (mat > 107.9 && mat < 108.1) { // Amethyst
-		newEmission = 0.5;
+		newEmission = 0.125;
 		albedo = pow(albedo, vec3(1.25));
 	} else if (mat > 109.9 && mat < 110.1) { // Glow Lichen
 		newEmission = (0.0125 + pow16(lAlbedo)) * (1.0 - lightmap.y * 0.75) * 0.5;
@@ -121,7 +121,7 @@ void getIntegratedEmission(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos,
 	if (isPlant > 0.9 && isPlant < 1.1){ // Flowers
 		if (albedo.b > albedo.g || albedo.r > albedo.g) {
 			newEmission = 0.125 * lAlbedo * (1.0 - rainStrength);
-			newEmission = mix(newEmission, newEmission * 0.5, clamp(lViewPos * 0.125, 0.0, 1.00));
+			newEmission = mix(newEmission, newEmission * 0.25, clamp(lViewPos * 0.125, 0.0, 1.00));
 		}
 	}
 	#endif

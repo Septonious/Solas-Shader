@@ -31,7 +31,7 @@ void getStars(inout vec3 color, in vec3 worldPos, in float VoU, in float nebulaF
 #ifdef END_VORTEX
 vec3 getSpiral(vec2 coord, float VoS){
     coord = vec2(atan(coord.y, coord.x) - frameTimeCounter * 0.125, sqrt(coord.x * coord.x + coord.y * coord.y));
-    float center = pow16(1.0 - coord.y) * 20.0;
+    float center = pow16(1.0 - coord.y) * 16.0;
     float spiral = sin((coord.x + sqrt(coord.y) * END_VORTEX_WHIRL) * END_VORTEX_ARMS) + center - coord.y;
 
     return clamp(endLightColSqrt * spiral * 0.125, 0.0, 1.0);
@@ -46,7 +46,7 @@ void getEndVortex(inout vec3 color, in vec3 worldPos, in float VoU, in float VoS
 		vec3 spiral = getSpiral(planeCoord, VoS);
 		float spiralBrightness = length(spiral);
 		color = mix(color, spiral, pow2(spiralBrightness));
-		color *= 1.0 - pow16(pow32(VoS)) * 2.0;
+		color *= 1.0 - pow16(pow32(VoS)) * 1.5;
 	}
 }
 #endif
@@ -95,8 +95,8 @@ void getNebula(inout vec3 color, in vec3 worldPos, in float VoU, inout float neb
 #endif
 
 #ifdef RAINBOW
-void getRainbow(inout vec3 color, in vec3 worldPos, in float VoU, in float ug, in float size, in float rad) {
-	float visibility = sunVisibility * sunVisibility * (1.0 - rainStrength) * wetness * 0.5 * pow2(max(VoU, 0.0)) * ug;
+void getRainbow(inout vec3 color, in vec3 worldPos, in float VoU, in float size, in float rad, in float ug) {
+	float visibility = sunVisibility * (1.0 - rainStrength) * wetness * pow2(max(VoU, 0.0)) * ug * (1.0 - isSnowy);
 
 	if (visibility > 0.0) {
 		vec2 planeCoord = worldPos.xy / (worldPos.y + length(worldPos.xz) * 0.65);
@@ -137,7 +137,7 @@ void getAurora(inout vec3 color, in vec3 worldPos, in float ug) {
 	if (visibility > 0.0) {
 		vec3 aurora = vec3(0.0);
 		
-		float dither = Bayer64(gl_FragCoord.xy) + 4.0;
+		float dither = Bayer64(gl_FragCoord.xy);
 
 		#ifdef TAA
 		dither = fract(dither + frameTimeCounter * 16.0);
@@ -148,7 +148,7 @@ void getAurora(inout vec3 color, in vec3 worldPos, in float ug) {
 		float currentStep = dither * sampleStep;
 
 		for(int i = 0; i < samples; i++) {
-			vec3 planeCoord = worldPos * ((10.0 + currentStep * 20.0) / worldPos.y) * 0.040;
+			vec3 planeCoord = worldPos * ((10.0 + currentStep * 20.0) / worldPos.y) * 0.04;
 			vec2 coord = cameraPosition.xz * 0.00005 + planeCoord.xz;
 
 			float noise = getAuroraNoise(coord + frameTimeCounter * 0.001);

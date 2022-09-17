@@ -1,5 +1,5 @@
-vec3 ToShadow(vec3 shadowPos) {
-	vec3 shadowpos = mat3(shadowModelView) * shadowPos + shadowModelView[3].xyz;
+vec3 ToShadow(vec3 worldPos) {
+	vec3 shadowPos = mat3(shadowModelView) * worldPos + shadowModelView[3].xyz;
 	
-	return projMAD(shadowProjection, shadowpos);
+	return projMAD(shadowProjection, shadowPos);
 }

@@ -1,7 +1,7 @@
-vec3 ToView(vec3 screen) {
-    vec4 clip = vec4(screen, 1.0) * 2.0 - 1.0;
-    clip = gbufferProjectionInverse * clip;
-    clip.xyz /= clip.w;
+vec3 ToView(vec3 screenPos) {
+    vec4 viewPos = vec4(screenPos, 1.0) * 2.0 - 1.0;
+    viewPos = gbufferProjectionInverse * viewPos;
+    viewPos.xyz /= viewPos.w;
 
-    return clip.xyz;
+    return viewPos.xyz;
 }

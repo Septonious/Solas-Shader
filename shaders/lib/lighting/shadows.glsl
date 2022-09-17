@@ -6,7 +6,8 @@ uniform sampler2D shadowcolor0;
 #endif
 
 vec2 offsetDist(float x) {
-	float n = fract(x * 8.0) * 3.1415;
+	float n = fract(x * 8.0) * PI;
+
     return vec2(cos(n), sin(n)) * x;
 }
 
@@ -49,8 +50,4 @@ vec3 sampleFilteredShadow(vec3 shadowPos, float shadowBlurStrength, float dither
     #endif
 
     return clamp(shadowCol * (1.0 - shadow0) + shadow0, 0.0, 1.0);
-}
-
-vec3 getShadow(vec3 shadowPos, float dither) {
-    return sampleFilteredShadow(shadowPos, shadowBlurStrength, dither);
 }

@@ -1,11 +1,6 @@
 #ifdef VC
-//int day = worldDay % 72 / 8;
-
-//float amount = mix(VC_AMOUNT * (0.95 + clamp(day * 0.15, 0.0, 0.15)), 2.0, rainStrength);
-
 #ifndef BLOCKY_CLOUDS
 float get3DNoise(vec3 pos) {
-	//pos *= 0.4 + clamp(day * 0.2, 0.0, 0.2);
 	pos *= 0.4;
 	pos.xz *= 0.4;
 
@@ -37,12 +32,6 @@ float get3DNoise(vec3 pos) {
 }
 #endif
 
-float getCloudLighting(vec3 rayPos, float noise) {
-	float cloudLighting = clamp(sqrt(smoothstep(VC_HEIGHT + VC_STRETCHING * noise, VC_HEIGHT - VC_STRETCHING * noise, rayPos.y)) * 0.6 + noise * 0.4, 0.0, 1.0);
-
-	return cloudLighting;
-}
-
 void computeVolumetricClouds(inout vec4 vc, in float dither, in float ug) {
 	//Depts
 	float z0 = texture2D(depthtex0, texCoord).r;
@@ -61,6 +50,7 @@ void computeVolumetricClouds(inout vec4 vc, in float dither, in float ug) {
 		vec4 screenPos = vec4(texCoord, z0, 1.0);
 		vec4 viewPos = gbufferProjectionInverse * (screenPos * 2.0 - 1.0);
 		viewPos /= viewPos.w;
+
 		vec3 nWorldPos = normalize(mat3(gbufferModelViewInverse) * viewPos.xyz);
 
 		float lViewPos = length(viewPos);
@@ -119,7 +109,7 @@ void computeVolumetricClouds(inout vec4 vc, in float dither, in float ug) {
 				noise = clamp(noise * (VC_AMOUNT * (1.0 + rainStrength * 0.15)) - (10.0 + cloudLayer * 5.0), 0.0, 1.0);
 
 				//Color Calculations
-				float cloudLighting = getCloudLighting(rayPos, noise);
+				float cloudLighting = clamp(sqrt(smoothstep(VC_HEIGHT + VC_STRETCHING * noise, VC_HEIGHT - VC_STRETCHING * noise, rayPos.y)) * 0.6 + noise * 0.4, 0.0, 1.0);
 				#ifdef VC_DISTANT_FADE
 				float cloudDistantFade = clamp((VC_DISTANCE - lWorldPos) / VC_DISTANCE * 3.0, 0.0, 1.0);
 				#endif
@@ -152,6 +142,7 @@ void computeVolumetricLight(inout vec4 vl, in vec3 translucent, in float dither)
 	vec4 screenPos = vec4(texCoord, z0, 1.0);
 	vec4 viewPos = gbufferProjectionInverse * (screenPos * 2.0 - 1.0);
 	viewPos /= viewPos.w;
+
 	vec3 nViewPos = normalize(viewPos.xyz);
 
 	float VoU = mix(1.0, 1.0 - clamp(dot(nViewPos, upVec), 0.0, 1.0), clamp(eBS - float(isEyeInWater == 1), 0.0, 1.0));

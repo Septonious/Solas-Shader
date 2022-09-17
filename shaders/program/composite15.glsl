@@ -19,8 +19,6 @@ uniform float viewWidth, viewHeight;
 uniform float aspectRatio;
 #endif
 
-uniform sampler2D colortex1;
-
 #ifdef TAA
 uniform vec3 cameraPosition, previousCameraPosition;
 
@@ -30,6 +28,8 @@ uniform mat4 gbufferPreviousModelView, gbufferModelViewInverse;
 uniform sampler2D colortex5;
 uniform sampler2D depthtex1;
 #endif
+
+uniform sampler2D colortex1;
 
 //Common Functions//
 #ifdef FXAA

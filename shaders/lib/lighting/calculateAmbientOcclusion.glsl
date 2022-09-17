@@ -3,7 +3,8 @@ float getLinearDepth(float depth) {
 }
 
 vec2 offsetDist(float x) {
-	float n = fract(x * 8.0) * 3.1415;
+	float n = fract(x * 8.0) * PI;
+
     return vec2(cos(n), sin(n)) * x;
 }
 
