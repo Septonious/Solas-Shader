@@ -133,7 +133,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     ambientCol *= vec3(1.0) + bloom * sunVisibility * rainFactor;
     #endif
 
-    vec3 sceneLighting = mix(ambientCol * lightmap.y, lightCol * max(lightmap.y, 0.125), fullShadow * rainFactor);
+    vec3 sceneLighting = mix(ambientCol * pow4(lightmap.y), lightCol * max(lightmap.y, 0.125), fullShadow * rainFactor);
     sceneLighting *= 1.0 + scattering * shadow;
     #endif
 

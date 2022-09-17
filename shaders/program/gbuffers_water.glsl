@@ -164,7 +164,11 @@ void main() {
 
 	if (water > 0.9) {
 		albedo.a = WATER_A;
+		#ifdef OVERWORLD
 		albedo.rgb = mix(waterColor, weatherCol.rgb * 0.25, rainStrength * 0.5);
+		#else
+		albedo.rgb = waterColor;
+		#endif
 	}
 
 	if (albedo.a > 0.001) {
