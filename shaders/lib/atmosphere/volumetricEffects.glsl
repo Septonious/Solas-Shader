@@ -58,7 +58,7 @@ void computeVolumetricClouds(inout vec4 vc, in float dither, in float ug) {
 		float lViewPos = length(viewPos);
 
 		lightCol = mix(lightCol, skyColor * skyColor, timeBrightness * (0.5 - rainStrength * 0.5));
-		lightCol *= 1.0 + pow(VoS, 1.5);
+		lightCol *= 1.0 + pow(VoS, 1.5) * 1.5;
 
 		//We want to march between two planes which we set here
 		float lowerPlane = (VC_HEIGHT + VC_STRETCHING - cameraPosition.y) / nWorldPos.y;
@@ -133,7 +133,7 @@ void computeVolumetricClouds(inout vec4 vc, in float dither, in float ug) {
 #endif
 
 #ifdef VL
-void computeVolumetricLight(inout vec4 vl, in vec3 translucent, in float dither) {
+void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither) {
 	//Depths
 	float z0 = texture2D(depthtex0, texCoord).r;
 	float z1 = texture2D(depthtex1, texCoord).r;
@@ -145,10 +145,15 @@ void computeVolumetricLight(inout vec4 vl, in vec3 translucent, in float dither)
 
 	vec3 nViewPos = normalize(viewPos.xyz);
 
-	float VoU = mix(1.0, 1.0 - clamp(dot(nViewPos, upVec), 0.0, 1.0), clamp(eBS - float(isEyeInWater == 1), 0.0, 1.0));
-	float VoS = clamp(dot(nViewPos, sunVec), 0.0, 1.0);
-	float nVoS = mix(0.5, mix(VoS * 1.25, 0.75 + VoS * 0.25, 1.0 - timeBrightness), clamp(eBS - float(isEyeInWater == 1), 0.0, 1.0));
-	float visibility = float(z0 > 0.56) * VL_OPACITY * VoU * nVoS;
+	float VoU = max(dot(nViewPos, upVec), 0.0);
+	float nVoU = pow3(1.0 - VoU);
+		  nVoU = mix(0.75, nVoU, clamp(eBS * eBS - float(isEyeInWater == 1), 0.0, 1.0));
+
+	float VoS = pow(clamp(dot(nViewPos, sunVec), 0.0, 1.0), 1.25);
+	float nVoS = mix(0.3 + VoS * 0.7, VoS, timeBrightness);
+		  nVoS = mix(0.7 + VoS * 0.3, nVoS, max(eBS * eBS - float(isEyeInWater == 1), 0.0));
+
+	float visibility = float(z0 > 0.56) * nVoU * nVoS * 0.05;
 
 	#if MC_VERSION >= 11900
 	visibility *= 1.0 - darknessFactor;
@@ -165,11 +170,9 @@ void computeVolumetricLight(inout vec4 vl, in vec3 translucent, in float dither)
 		float linearDepth0 = getLinearDepth2(z0);
 		float linearDepth1 = getLinearDepth2(z1);
 
-		lightCol *= 1.0 + pow(VoS, 1.25);
-
 		//Ray marching and main calculations
 		for (int i = 0; i < VL_SAMPLES; i++) {
-			float currentDepth = exp2(i + dither + (eBS * 1.5 - float(isEyeInWater == 1) * 1.5)) * (1.25 + eBS * 1.75);
+			float currentDepth = pow(i + dither + 2.0, 1.75) * 8.0;
 
 			if (linearDepth1 < currentDepth || (linearDepth0 < currentDepth && translucent.rgb == vec3(0.0))) {
 				break;
@@ -179,47 +182,42 @@ void computeVolumetricLight(inout vec4 vl, in vec3 translucent, in float dither)
 
 			float lWorldPos = length(worldPos);
 
-			if (VoU == 0.0 || lWorldPos > far) break;
+			if (nVoU == 0.0 || lWorldPos > far) break;
 
 			vec3 shadowPos = calculateShadowPos(worldPos);
-			float shadow1 = shadow2D(shadowtex1, shadowPos).z;
-			float shadow0 = shadow2D(shadowtex0, shadowPos).z;
 
-			//Distant Fade
-			float fogFade = 1.0 - clamp(pow4(lViewPos * 0.000125) + pow8(lWorldPos / far), 0.0, 1.0);
+			if (length(shadowPos.xy * 2.0 - 1.0) < 1.0) {
+				float shadow1 = shadow2D(shadowtex1, shadowPos).z;
+				float shadow0 = shadow2D(shadowtex0, shadowPos).z;
 
-			//Colored Shadows
-			#ifdef SHADOW_COLOR
-			if (shadow0 < 1.0) {
-				if (shadow1 > 0.0) {
-					shadowCol = texture2D(shadowcolor0, shadowPos.xy).rgb;
-					shadowCol *= shadowCol * shadow1;
-				}
-			}
+				//Distant Fade
+				float fogFade = 1.0 - clamp(pow4(lViewPos * 0.000125) + pow8(lWorldPos / far), 0.0, 1.0);
+				visibility *= fogFade;
 
-			vec3 shadow = clamp(shadowCol * (32.0 + timeBrightness * 64.0 + float(isEyeInWater == 1) * 128.0) * (1.0 - shadow0) + shadow0, 0.0, 128.0);
-			#endif
-
-			//Color Calculations
-			visibility *= fogFade;
-
-			vec4 vlColor = vec4(0.0);
-			if (visibility > 0.0 && shadow1 != 0.0) {
-				vlColor = vec4(lightCol, visibility);
-				vlColor.rgb *= vlColor.a;
-
+				//Colored Shadows
 				#ifdef SHADOW_COLOR
-				vlColor.rgb *= shadow;
+				if (shadow0 < 1.0) {
+					if (shadow1 > 0.0) {
+						shadowCol = texture2D(shadowcolor0, shadowPos.xy).rgb;
+						shadowCol *= shadowCol * shadow1;
+						shadowCol *= 32.0 + timeBrightness * 64.0 + float(isEyeInWater == 1) * 128.0;
+					}
+				}
 				#endif
-			}
 
-			//Translucency Blending
-			if (linearDepth0 < currentDepth) {
-				vlColor.rgb = mix(vlColor.rgb, translucent.rgb * vlColor.a, 0.5);
-			}
+				vec3 shadow = clamp(shadowCol * (1.0 - shadow0) + shadow0, 0.0, 1.0);
 
-			vl += vlColor * (1.0 - vl.a);
+				//Translucency Blending
+				if (linearDepth0 < currentDepth) {
+					shadow *= translucent.rgb;
+				}
+
+				vl += shadow;
+			} else break;
 		}
+
+		vl *= visibility;
+		vl *= mix(lightCol, skyColor * skyColor, timeBrightness * 0.5) * VL_OPACITY;
 	}
 }
 #endif

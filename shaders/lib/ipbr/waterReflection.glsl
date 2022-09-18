@@ -48,9 +48,9 @@ void getReflection(in float fresnel, in float skyLightMap, in vec3 viewPos, in v
 		float sunMoon = 0.0;
 		getSunMoon(reflectionFade, nViewPos, lightSun, lightNight, VoS, VoM, VoU, ug, sunMoon);
 		emission += sunMoon * 0.25;
+
+		reflectionFade *= skyLightMap;
     }
-    
-	reflectionFade *= skyLightMap;
 
 	#elif defined NETHER
 	vec3 reflectionFade = netherColSqrt.rgb * 0.25;
@@ -78,9 +78,9 @@ void getReflection(in float fresnel, in float skyLightMap, in vec3 viewPos, in v
 		#ifdef END_VORTEX
 		getEndVortex(reflectionFade, worldPos, VoU, VoS);
 		#endif
-	}
 
-	reflectionFade *= skyLightMap;
+		reflectionFade *= skyLightMap;
+	}
 	#endif
 
     if (outsideScreen) {

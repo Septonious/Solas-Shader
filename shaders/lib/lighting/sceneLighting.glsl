@@ -56,7 +56,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     #elif defined BLOOM_COLORED_LIGHTING
     //BLOOM BASED COLORED LIGHTING
 	vec3 coloredLight = clamp(bloom * pow(getLuminance(bloom) + 0.00125, -COLORED_LIGHTING_RADIUS), 0.0, 1.0) * (pow2(blockLightMap) * 0.9 + 0.1) * COLORED_LIGHTING_STRENGTH;
-    blockLighting = blockLightCol * blockLightMap * (0.5 + pow4(lightmap.y) * 0.5) + coloredLight * float(emission == 0.0);
+    blockLighting = blockLightCol * blockLightMap * (0.5 + pow4(lightmap.y) * 0.5) + coloredLight;
     #else
     blockLighting = blockLightCol * blockLightMap;
     #endif

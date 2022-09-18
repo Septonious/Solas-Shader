@@ -70,7 +70,7 @@ float sunVisibility = clamp(dot(sunVec, upVec) + 0.025, 0.0, 0.1) * 10.0;
 //Program//
 void main() {
 	vec3 color = pow(texture2D(colortex0, texCoord).rgb, vec3(2.2));
-	vec4 vl = vec4(0.0);
+	vec3 vl = vec3(0.0);
 	vec4 vc = vec4(0.0);
 
 	#if defined VC || defined VL
@@ -91,7 +91,7 @@ void main() {
 	#endif
 
 	color = mix(color, vc.rgb, pow4(vc.a) * VC_OPACITY);
-	color = mix(color, vl.rgb, pow4(vl.a) * VL_OPACITY);
+	color += vl;
 	#endif
 
 	/* DRAWBUFFERS:0 */

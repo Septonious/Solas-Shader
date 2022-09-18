@@ -180,12 +180,10 @@ void main() {
 		vec3 worldPos = ToWorld(viewPos);
 
 		vec2 lightmap = clamp(lightMapCoord, 0.0, 1.0);
+		albedo *= max(lightmap.y, 0.5);
 
 		#ifdef WATER_NORMALS
 		if (water > 0.5) {
-			albedo.rgb = waterColor.rgb;
-			albedo.a = WATER_A;
-
 			mat3 tbnMatrix = mat3(tangent.x, binormal.x, normal.x,
 								  tangent.y, binormal.y, normal.y,
 								  tangent.z, binormal.z, normal.z);
