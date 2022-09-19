@@ -10,9 +10,7 @@ in vec2 texCoord;
 #ifdef INTEGRATED_SPECULAR
 uniform int isEyeInWater;
 
-#if REFLECTION_TYPE == 1
 uniform float viewHeight, viewWidth;
-#endif
 
 #ifdef TAA
 uniform float frameTimeCounter;
@@ -32,7 +30,7 @@ uniform mat4 gbufferModelViewInverse;
 #endif
 
 //Common Variables//
-#if REFLECTION_TYPE == 1 && defined INTEGRATED_SPECULAR
+#ifdef INTEGRATED_SPECULAR
 vec2 viewResolution = vec2(viewWidth, viewHeight);
 #endif
 
@@ -45,12 +43,8 @@ const bool colortex6MipmapEnabled = true;
 #ifdef INTEGRATED_SPECULAR
 #include "/lib/util/ToScreen.glsl"
 #include "/lib/util/encode.glsl"
-
-#if REFLECTION_TYPE == 1
 #include "/lib/util/bayerDithering.glsl"
 #include "/lib/util/raytracer.glsl"
-#endif
-
 #include "/lib/ipbr/simpleReflection.glsl"
 #endif
 

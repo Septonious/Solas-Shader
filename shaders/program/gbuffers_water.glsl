@@ -87,7 +87,7 @@ uniform sampler2D gaux3;
 
 uniform sampler2D texture;
 
-#if defined WATER_FOG || (defined INTEGRATED_SPECULAR && REFLECTION_TYPE == 1)
+#if defined WATER_FOG || defined INTEGRATED_SPECULAR
 uniform sampler2D depthtex1;
 #endif
 
@@ -117,7 +117,7 @@ float sunVisibility = clamp(dot(sunVec, upVec) + 0.025, 0.0, 0.1) * 10.0;
 #endif
 #endif
 
-#if REFLECTION_TYPE == 1 && defined INTEGRATED_SPECULAR
+#ifdef INTEGRATED_SPECULAR
 vec2 viewResolution = vec2(viewWidth, viewHeight);
 #endif
 
@@ -128,10 +128,7 @@ vec2 viewResolution = vec2(viewWidth, viewHeight);
 
 #ifdef INTEGRATED_SPECULAR
 #include "/lib/util/ToScreen.glsl"
-
-#if REFLECTION_TYPE == 1
 #include "/lib/util/raytracer.glsl"
-#endif
 #endif
 
 #if defined OVERWORLD || defined END
@@ -218,7 +215,7 @@ void main() {
 
 		#ifdef INTEGRATED_SPECULAR
 		if (isEyeInWater != 1 && portal < 0.5) {
-			float fresnel1 = clamp(1.0 + pow4(dot(newNormal, normalize(viewPos))), 0.0, 0.2 + water * WATER_SPECULAR_STRENGTH);
+			float fresnel1 = clamp(1.0 + pow2(dot(newNormal, normalize(viewPos))), 0.0, 0.2 + water * WATER_SPECULAR_STRENGTH);
 
 			getReflection(albedo, viewPos, newNormal, fresnel1, lightmap.y, emission);
 		}

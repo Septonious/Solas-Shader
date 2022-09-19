@@ -24,11 +24,7 @@ uniform float frameTimeCounter, timeBrightness;
 uniform vec3 fogColor;
 uniform vec3 cameraPosition;
 
-#ifdef BLOCKY_CLOUDS
 uniform sampler2D noisetex;
-#else
-uniform sampler2D shadowcolor1;
-#endif
 #endif
 
 uniform sampler2D tex;
