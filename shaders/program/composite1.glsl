@@ -62,7 +62,7 @@ void main() {
 	vec3 normal = DecodeNormal(terrainData.rg);
 
 	if (terrainData.a > 0.05 && terrainData.a < 1.0 && z0 > 0.56 && z0 >= z1) {
-		float fresnel = clamp(pow4(1.0 + dot(normal, normalize(viewPos.xyz))), 0.0, 1.0);
+		float fresnel = pow4(clamp(1.0 + dot(normal, normalize(viewPos.xyz)), 0.0, 1.0));
 
 		getReflection(viewPos.xyz, normal, color, fresnel * terrainData.a);
 	}

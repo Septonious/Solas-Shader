@@ -36,6 +36,19 @@ float get3DNoise(vec3 pos) {
 }
 #endif
 
+float getCloudNoise(vec3 rayPos) {
+	#ifndef BLOCKY_CLOUDS
+	float noise = get3DNoise(rayPos * 0.5000 + frameTimeCounter * 0.20) * 1.25;
+		  noise+= get3DNoise(rayPos * 0.2350 + frameTimeCounter * 0.15) * 1.75;
+		  noise+= get3DNoise(rayPos * 0.1100 + frameTimeCounter * 0.10) * 3.50;
+		  noise+= get3DNoise(rayPos * 0.0521 + frameTimeCounter * 0.05) * 6.75;
+	#else
+	float noise = get3DNoise(floor(rayPos) * 0.035) * 1000.0;
+	#endif
+
+	return noise;
+}
+
 void computeVolumetricClouds(inout vec4 vc, in float dither, in float ug) {
 	//Depts
 	float z0 = texture2D(depthtex0, texCoord).r;
@@ -104,20 +117,14 @@ void computeVolumetricClouds(inout vec4 vc, in float dither, in float ug) {
 			//Shaping & Lighting
 			if (cloudVisibility > 0.0) {
 				//Cloud Noise
-				#ifndef BLOCKY_CLOUDS
-				float noise = get3DNoise(rayPos * 0.5000 + frameTimeCounter * 0.20) * 1.25;
-					  noise+= get3DNoise(rayPos * 0.2350 + frameTimeCounter * 0.15) * 1.75;
-					  noise+= get3DNoise(rayPos * 0.1100 + frameTimeCounter * 0.10) * 3.50;
-					  noise+= get3DNoise(rayPos * 0.0521 + frameTimeCounter * 0.05) * 6.75;
-				#else
-				float noise = get3DNoise(floor(rayPos) * 0.035) * 1000.0;
-				#endif
+				float noise = getCloudNoise(rayPos);
 
 				//noise = clamp(noise * amount - (10.0 + cloudLayer * 5.0), 0.0, 1.0);
 				noise = clamp(noise * (VC_AMOUNT * (1.0 + rainStrength * 0.15)) - (10.0 + cloudLayer * 5.0), 0.0, 1.0);
 
 				//Color Calculations
 				float cloudLighting = clamp(smoothstep(VC_HEIGHT + stretching * noise, VC_HEIGHT - stretching * noise, rayPos.y) * 0.95 + noise * 0.35, 0.0, 1.0);
+
 				#ifdef VC_DISTANT_FADE
 				float cloudDistantFade = clamp((VC_DISTANCE - lWorldPos) / VC_DISTANCE * 3.0, 0.0, 1.0);
 				#endif

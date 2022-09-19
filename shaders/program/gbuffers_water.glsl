@@ -190,7 +190,7 @@ void main() {
 		vec3 worldPos = ToWorld(viewPos);
 
 		vec2 lightmap = clamp(lightMapCoord, 0.0, 1.0);
-		albedo *= max(lightmap.y, 0.75);
+		albedo.rgb *= max(lightmap.y, 0.75);
 
 		#ifdef WATER_NORMALS
 		if (water > 0.5) {
@@ -198,7 +198,7 @@ void main() {
 								  tangent.y, binormal.y, normal.y,
 								  tangent.z, binormal.z, normal.z);
 
-			float fresnel0 = clamp(1.0 + pow4(dot(newNormal, normalize(viewPos))), 0.0, 1.0);
+			float fresnel0 = pow2(clamp(1.0 + dot(newNormal, normalize(viewPos)), 0.0, 1.0));
 			newNormal = clamp(normalize(getWaterNormal(worldPos, viewVector, lightmap, fresnel0) * tbnMatrix), vec3(-1.0), vec3(1.0));
 		}
 		#endif
@@ -215,7 +215,7 @@ void main() {
 
 		#ifdef INTEGRATED_SPECULAR
 		if (isEyeInWater != 1 && portal < 0.5) {
-			float fresnel1 = clamp(1.0 + pow4(dot(newNormal, normalize(viewPos))), 0.0, 0.2 + water * WATER_SPECULAR_STRENGTH);
+			float fresnel1 = pow2(clamp(1.0 + dot(newNormal, normalize(viewPos)), 0.0, 1.0));
 
 			getReflection(albedo, viewPos, newNormal, fresnel1, lightmap.y, emission);
 		}
@@ -228,7 +228,7 @@ void main() {
 			vec3 oViewPos = ToNDC(oScreenPos);
 
 			vec4 waterFog = getWaterFog(viewPos.xyz - oViewPos);
-			albedo.rgb = mix(waterFog.rgb * waterFog.a * 6.0 * lightmap.y * (1.0 - rainStrength), albedo.rgb, 0.75);
+			albedo.rgb = mix(waterFog.rgb * waterFog.a * 8.0 * lightmap.y * (1.0 - rainStrength), albedo.rgb, min(albedo.a + 0.125, 1.0));
 		}
 		#endif
 

@@ -2,8 +2,6 @@ void getReflection(inout vec4 color, in vec3 viewPos, in vec3 normal, in float f
 	vec3 nViewPos = normalize(viewPos);
 	vec3 reflectedViewPos = reflect(nViewPos, normal);
 
-	skyLightMap *= pow32(skyLightMap);
-
 	float border = 0.0;
 	float dither = Bayer64(gl_FragCoord.xy);
 
@@ -104,9 +102,12 @@ void getReflection(inout vec4 color, in vec3 viewPos, in vec3 normal, in float f
 		#endif
 
 		reflectionFade *= 1.0 - blindFactor;
+
+		reflectionFade = mix(color.rgb, reflectionFade, skyLightMap);
 	}
 
 	vec3 finalReflection = max(mix(reflectionFade, reflection.rgb, reflection.a), vec3(0.0));
 			
-	color.rgb = mix(color.rgb, finalReflection, fresnel);
+	color.rgb = mix(color.rgb, finalReflection, min(fresnel * 2.0, 1.0) * WATER_SPECULAR_STRENGTH);
+	color.a = mix(color.a, 1.0, fresnel);
 }
