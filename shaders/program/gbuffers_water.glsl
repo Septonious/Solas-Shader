@@ -190,7 +190,7 @@ void main() {
 		vec3 worldPos = ToWorld(viewPos);
 
 		vec2 lightmap = clamp(lightMapCoord, 0.0, 1.0);
-		albedo *= max(lightmap.y, 0.5);
+		albedo *= max(lightmap.y, 0.75);
 
 		#ifdef WATER_NORMALS
 		if (water > 0.5) {
@@ -215,7 +215,7 @@ void main() {
 
 		#ifdef INTEGRATED_SPECULAR
 		if (isEyeInWater != 1 && portal < 0.5) {
-			float fresnel1 = clamp(1.0 + pow2(dot(newNormal, normalize(viewPos))), 0.0, 0.2 + water * WATER_SPECULAR_STRENGTH);
+			float fresnel1 = clamp(1.0 + pow4(dot(newNormal, normalize(viewPos))), 0.0, 0.2 + water * WATER_SPECULAR_STRENGTH);
 
 			getReflection(albedo, viewPos, newNormal, fresnel1, lightmap.y, emission);
 		}
