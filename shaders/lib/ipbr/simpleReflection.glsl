@@ -17,7 +17,7 @@ void getReflection(in vec3 viewPos, in vec3 normal, inout vec3 color, in float f
 		}
 	}
 
-	vec3 finalReflection = max(mix(color, reflection.rgb, reflection.a), vec3(0.0));
+	vec3 finalReflection = max(mix(color, reflection.rgb, reflection.a * 0.5), vec3(0.0));
 			
 	color.rgb = mix(color.rgb, finalReflection, fresnel);
 }
