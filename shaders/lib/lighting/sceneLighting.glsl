@@ -44,6 +44,12 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     float blockLightMap = min(pow8(lightmap.x) * 1.5 + pow2(lightmap.x) * 0.5, 1.0) * float(emission == 0.0);
     #endif
 
+	#ifdef DYNAMIC_HANDLIGHT
+	float heldLightValue = max(float(heldBlockLightValue), float(heldBlockLightValue2));
+	float handlight = clamp((heldLightValue - 2.0 * length(viewPos)) * 0.0125, 0.0, 0.75);
+	blockLightMap = max(blockLightMap, handlight);
+	#endif
+
     #if defined BLOOM_COLORED_LIGHTING || defined GLOBAL_ILLUMINATION
     vec3 bloom = texture2D(gaux4, gl_FragCoord.xy / vec2(viewWidth, viewHeight)).rgb;
          bloom = pow8(bloom) * 512.0;

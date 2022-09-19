@@ -15,6 +15,11 @@ in vec4 color;
 //Uniforms//
 uniform int entityId;
 
+#ifdef DYNAMIC_HANDLIGHT
+uniform int heldBlockLightValue;
+uniform int heldBlockLightValue2;
+#endif
+
 uniform float viewWidth, viewHeight;
 uniform float nightVision;
 uniform float frameTimeCounter;

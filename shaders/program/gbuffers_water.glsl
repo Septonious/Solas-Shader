@@ -24,6 +24,11 @@ in vec4 color;
 //Uniforms//
 uniform int isEyeInWater;
 
+#ifdef DYNAMIC_HANDLIGHT
+uniform int heldBlockLightValue;
+uniform int heldBlockLightValue2;
+#endif
+
 #ifdef INTEGRATED_SPECULAR
 #ifdef OVERWORLD
 uniform int moonPhase;

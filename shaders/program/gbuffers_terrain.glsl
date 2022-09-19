@@ -19,6 +19,11 @@ in vec3 binormal, tangent;
 in vec4 color;
 
 //Uniforms//
+#ifdef DYNAMIC_HANDLIGHT
+uniform int heldBlockLightValue;
+uniform int heldBlockLightValue2;
+#endif
+
 uniform float viewWidth, viewHeight;
 uniform float nightVision;
 uniform float frameTimeCounter;
