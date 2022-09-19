@@ -1,29 +1,53 @@
-float minOf(vec3 x) {
-	return min(x.x, min(x.y, x.z));
+vec3 ToVec3(vec4 reflectionPos) {
+    return reflectionPos.xyz / reflectionPos.w;
 }
 
-// The favorite raytracer of your favorite raytracer, credits to Belmu
-bool rayTrace(vec3 viewPos, vec3 rayDir, inout vec3 rayPos) {
-    bool intersect = false;
-	float dither = Bayer64(gl_FragCoord.xy);
+float getCoordDistance(vec2 coord) {
+	return max(abs(coord.x - 0.5), abs(coord.y - 0.5)) * 1.85;
+}
 
+vec3 rayTrace(vec3 viewPos, vec3 normal, float dither, out float border, int refinementSteps, float stepSize, float refinementMult, float refinementFactor) {
+	vec3 reflectionPos = vec3(0.0);
+	int totalRefinementSteps = 0;
+	float rayDistance = 0.0;
+	
 	#ifdef TAA
-	dither = fract(dither + frameTimeCounter * 16.0);
+	dither = fract(dither + frameTimeCounter);
 	#endif
 
-    rayPos = ToScreen(viewPos);
-    rayDir = ToScreen(viewPos + rayDir) - rayPos;
-    rayDir*= minOf((sign(rayDir) - rayPos) / rayDir) * (1.0 / REFLECTION_RT_SAMPLE_COUNT); // Taken from the DDA algorithm
-    rayPos+= rayDir * dither;
+	vec3 startPos = viewPos + normal * 0.035;
 
-    for(int i = 0; i < REFLECTION_RT_SAMPLE_COUNT && !intersect; i++, rayPos += rayDir) {
-        if (clamp(rayPos.xy, 0.0, 1.0) != rayPos.xy) return false;
+    vec3 rayDir = stepSize * reflect(normalize(viewPos), normalize(normal));
+    viewPos += rayDir;
 
-        float depth = texelFetch(depthtex1, ivec2(rayPos.xy * viewResolution), 0).r;
-        float depthLenience = max(abs(rayDir.z) * 25.0, 0.025 / pow2(viewPos.z)); // Provided by DrDesten#6282
+	vec3 rayIncrement = rayDir;
 
-        intersect = abs(depthLenience - (rayPos.z - depth)) < depthLenience && depth >= 0.56;
+    for (int i = 0; i < REFLECTION_RT_SAMPLE_COUNT; i++) {
+        reflectionPos = ToVec3(gbufferProjection * vec4(viewPos, 1.0)) * 0.5 + 0.5;
+
+		if (reflectionPos.x < -0.05 || reflectionPos.x > 1.05 || reflectionPos.y < -0.05 || reflectionPos.y > 1.05) break;
+
+		vec3 rayPos = vec3(reflectionPos.xy, texture2D(depthtex1, reflectionPos.xy).r);
+        rayPos = ToVec3(gbufferProjectionInverse * vec4(rayPos * 2.0 - 1.0, 1.0));
+		rayDistance = abs(dot(startPos - rayPos, normal));
+
+        float err = length(viewPos - rayPos);
+		float rayLength = length(rayDir) * pow(length(rayIncrement), 0.1) * 1.3;
+
+		if (err < rayLength) {
+			totalRefinementSteps++;
+			if (totalRefinementSteps >= refinementSteps) break;
+
+			rayIncrement -= rayDir;
+			rayDir *= refinementMult;
+		}
+
+        rayDir *= refinementFactor;
+        rayIncrement += rayDir;
+		viewPos = startPos + rayIncrement * (0.025 * dither + 0.975);
     }
 
-    return intersect;
+	border = getCoordDistance(reflectionPos.xy);
+
+	return reflectionPos;
 }

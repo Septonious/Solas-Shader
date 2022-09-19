@@ -3,10 +3,21 @@ float getWaterHeightMap(vec3 worldPos, vec2 offset) {
 
 	offset /= 256.0;
 	offset *= WATER_NORMAL_VISIBILITY;
+	#ifdef BLOCKY_CLOUDS
 	float noiseA = texture2D(noisetex, (worldPos.xz - frameTimeCounter * 0.7) / 512.0 + offset).g;
 	float noiseB = texture2D(noisetex, (worldPos.xz + frameTimeCounter * 0.9) / 128.0 + offset).g;
+	#else
+	float noiseA = texture2D(shadowcolor1, (worldPos.xz - frameTimeCounter * 0.7) / 256.0 + offset).r;
+	float noiseB = texture2D(shadowcolor1, (worldPos.xz + frameTimeCounter * 0.9) / 96.0 + offset).r;
+	noiseA *= noiseA;
+	noiseB *= noiseB;
+	#endif
 
+	#ifdef BLOCKY_CLOUDS
     return mix(noiseA, noiseB, 0.5) * WATER_NORMAL_BUMP;
+	#else
+	return mix(noiseA, noiseB, 0.5) * min(WATER_NORMAL_BUMP * 3.0, 2.0);
+	#endif
 }
 
 vec3 getParallaxWaves(vec3 worldPos, vec3 viewVector) {

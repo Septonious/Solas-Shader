@@ -95,7 +95,6 @@ void main() {
 
 	float emission = 0.0;
 	float specular = 0.0;
-	float roughness = 0.0;
 
 	if (albedo.a > 0.001) {
 		float foliage = float(mat > 0.99 && mat < 1.01);
@@ -119,7 +118,7 @@ void main() {
 		#endif
 
 		#ifdef INTEGRATED_SPECULAR
-		getIntegratedSpecular(albedo, newNormal, worldPos.xz, lightmap, specular, roughness);
+		getIntegratedSpecular(albedo, newNormal, worldPos.xz, lightmap, specular);
 		#endif
 
 		getSceneLighting(albedo.rgb, viewPos, worldPos, newNormal, lightmap, emission, leaves, foliage, specular);
@@ -135,7 +134,7 @@ void main() {
 		#endif
 	#else
 		/* DRAWBUFFERS:062 */
-		gl_FragData[1] = vec4(albedo.rgb, roughness);
+		gl_FragData[1] = vec4(albedo.rgb, 1.0);
 		gl_FragData[2] = vec4(EncodeNormal(newNormal), emission * 0.01, specular);
 	#endif
 }

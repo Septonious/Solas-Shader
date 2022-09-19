@@ -75,6 +75,10 @@ uniform vec3 skyColor, fogColor;
 
 #if defined WATER_NORMALS || (defined INTEGRATED_SPECULAR && (defined END_NEBULA || defined AURORA))
 uniform sampler2D noisetex;
+
+#ifndef BLOCKY_CLOUDS
+uniform sampler2D shadowcolor1;
+#endif
 #endif
 
 #ifdef INTEGRATED_SPECULAR
@@ -214,9 +218,9 @@ void main() {
 
 		#ifdef INTEGRATED_SPECULAR
 		if (isEyeInWater != 1 && portal < 0.5) {
-			float fresnel1 = clamp(1.0 + pow4(dot(newNormal, normalize(viewPos))), 0.0, 0.2 + water * 0.6);
+			float fresnel1 = clamp(1.0 + pow4(dot(newNormal, normalize(viewPos))), 0.0, 0.2 + water * WATER_SPECULAR_STRENGTH);
 
-			getReflection(fresnel1, lightmap.y, viewPos, newNormal, albedo.rgb, emission);
+			getReflection(albedo, viewPos, newNormal, fresnel1, lightmap.y, emission);
 		}
 		#endif
 
@@ -227,7 +231,7 @@ void main() {
 			vec3 oViewPos = ToNDC(oScreenPos);
 
 			vec4 waterFog = getWaterFog(viewPos.xyz - oViewPos);
-			albedo.rgb = mix(waterFog.rgb * waterFog.a * 8.0 * lightmap.y * (1.0 - rainStrength), albedo.rgb, 0.65);
+			albedo.rgb = mix(waterFog.rgb * waterFog.a * 6.0 * lightmap.y * (1.0 - rainStrength), albedo.rgb, 0.75);
 		}
 		#endif
 

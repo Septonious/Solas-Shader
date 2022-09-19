@@ -17,7 +17,7 @@ float get3DNoise(vec3 pos) {
 	return mix(planeA, planeB, fractPos.y);
 }
 #else
-const float stretching = 16.0;
+const float stretching = 12.0;
 
 float get3DNoise(vec3 pos) {
 	pos *= 0.5;

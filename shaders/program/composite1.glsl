@@ -66,14 +66,12 @@ void main() {
 
 	vec4 terrainData = texture2D(colortex2, texCoord);
 	vec3 normal = DecodeNormal(terrainData.rg);
-	float roughness = min(texture2D(colortex6, texCoord).a * 100.0, 10.0);
 	float specular = terrainData.a;
 
-	if (terrainData.a > 0.05 && roughness >= 0.1 && roughness < 10.0 && z0 > 0.56 && z0 >= z1) {
+	if (terrainData.a > 0.05 && z0 > 0.56 && z0 >= z1) {
 		float fresnel = clamp(pow4(1.0 + dot(normal, normalize(viewPos.xyz))), 0.0, 1.0);
 
-		vec3 reflection = getReflection(viewPos.xyz, normal, color, roughness);
-		color = mix(color, reflection, fresnel * terrainData.a);
+		getReflection(viewPos.xyz, normal, color, fresnel * terrainData.a);
 	}
 	#endif
 

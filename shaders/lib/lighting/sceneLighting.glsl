@@ -5,6 +5,11 @@ vec3 lightVec = sunVec;
 #endif
 
 #if defined BLOOM_COLORED_LIGHTING || defined GLOBAL_ILLUMINATION
+#ifdef GBUFFERS_WATER
+#undef GLOBAL_ILLUMINATION
+#undef BLOOM_COLORED_LIGHTING
+#endif
+
 uniform sampler2D gaux4;
 
 float getLuminance(vec3 color) {
