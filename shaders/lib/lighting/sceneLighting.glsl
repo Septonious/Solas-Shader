@@ -128,14 +128,16 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
         }
     }
 
-    vec3 fullShadow = shadow * pow(NoL, 1.15);
+    vec3 fullShadow = shadow * NoL;
     
     #ifdef OVERWORLD
     float rainFactor = 1.0 - rainStrength * 0.8;
 
-    #if defined GLOBAL_ILLUMINATION && !defined GBUFFERS_WATER
+    #ifdef GLOBAL_ILLUMINATION
     bloom = clamp(bloom * pow(getLuminance(bloom), -GLOBAL_ILLUMINATION_RADIUS), 0.0, 1.0) * 6.0;
+    #ifdef OVERWORLD
     ambientCol *= vec3(1.0) + bloom * sunVisibility * rainFactor;
+    #endif
     #endif
 
     vec3 sceneLighting = mix(ambientCol * pow4(lightmap.y), lightCol * max(lightmap.y, 0.125), fullShadow * rainFactor);
@@ -143,12 +145,22 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     #endif
 
     #ifdef END
+    #ifdef GLOBAL_ILLUMINATION
+    vec3 sceneLighting = mix(endAmbientCol * 0.25 * (vec3(1.0) + bloom * 4.0), endLightCol * 0.5, fullShadow);
+    #else
     vec3 sceneLighting = mix(endAmbientCol * 0.25, endLightCol * 0.5, fullShadow);
+    #endif
     #endif
     #endif
 
     #ifdef NETHER
     vec3 sceneLighting = pow(netherColSqrt, vec3(0.25)) * 0.125;
+    #endif
+
+    #ifdef GLOBAL_ILLUMINATION
+	albedo.rgb = mix(albedo.rgb, albedo.rgb * color.a, 1.0 - min(length(bloom), 1.0));
+    #else
+    albedo.rgb *= color.a;
     #endif
 
     albedo = pow(albedo, vec3(2.2));
@@ -158,11 +170,19 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
 
     albedo = sqrt(max(albedo, vec3(0.0)));
 
-    #if !defined GBUFFERS_WATER && defined GLOBAL_ILLUMINATION
+    #ifdef GLOBAL_ILLUMINATION
+    #ifdef OVERWORLD
     float giVisibility = length(fullShadow * rainFactor * sunVisibility);
+    #else
+    float giVisibility = length(fullShadow);
+    #endif
 
     if (giVisibility != 0.0) {
+        #ifdef OVERWORLD
         emission += mix(0.0, 0.33 * GLOBAL_ILLUMINATION_STRENGTH * float(emission == 0.0), giVisibility);
+        #else
+        emission += mix(0.0, GLOBAL_ILLUMINATION_STRENGTH * float(emission == 0.0), giVisibility);
+        #endif
     }
     #endif
 }
