@@ -1,5 +1,7 @@
 #ifdef VC
 #ifndef BLOCKY_CLOUDS
+const float stretching = VC_STRETCHING;
+
 float get3DNoise(vec3 pos) {
 	pos *= 0.4;
 	pos.xz *= 0.4;
@@ -15,6 +17,8 @@ float get3DNoise(vec3 pos) {
 	return mix(planeA, planeB, fractPos.y);
 }
 #else
+const float stretching = 16.0;
+
 float get3DNoise(vec3 pos) {
 	pos *= 0.5;
 	pos.xz *= 0.5;
@@ -54,15 +58,16 @@ void computeVolumetricClouds(inout vec4 vc, in float dither, in float ug) {
 		vec3 nWorldPos = normalize(mat3(gbufferModelViewInverse) * viewPos.xyz);
 		vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.0);
 
-		float VoS = clamp(dot(normalize(viewPos.xyz), sunVec), 0.0, 1.0);
+		float VoS = clamp(dot(normalize(viewPos.xyz), sunVec) * shadowFade, 0.0, 1.0);
 		float lViewPos = length(viewPos);
 
-		lightCol = mix(lightCol, skyColor * skyColor, timeBrightness * (0.5 - rainStrength * 0.5));
-		lightCol *= 1.0 + pow(VoS, 1.5) * 1.5;
+		lightCol = mix(lightCol, skyColor * skyColor * 2.0, timeBrightness * (0.25 - rainStrength * 0.25));
+		ambientCol = mix(ambientCol, skyColor * skyColor, sunVisibility * (0.125 - rainStrength * 0.125));
+		lightCol *= 1.0 + pow2(VoS) * 0.5;
 
 		//We want to march between two planes which we set here
-		float lowerPlane = (VC_HEIGHT + VC_STRETCHING - cameraPosition.y) / nWorldPos.y;
-		float upperPlane = (VC_HEIGHT - VC_STRETCHING - cameraPosition.y) / nWorldPos.y;
+		float lowerPlane = (VC_HEIGHT + stretching - cameraPosition.y) / nWorldPos.y;
+		float upperPlane = (VC_HEIGHT - stretching - cameraPosition.y) / nWorldPos.y;
 		float minDist = max(min(lowerPlane, upperPlane), 0.0);
 		float maxDist = min(max(lowerPlane, upperPlane), VC_DISTANCE);
 		float rayLength = maxDist - minDist;
@@ -82,11 +87,11 @@ void computeVolumetricClouds(inout vec4 vc, in float dither, in float ug) {
 
 			if (lWorldPos > VC_DISTANCE || lViewPos < lWorldPos) break;
 
-			float cloudLayer = abs(VC_HEIGHT - rayPos.y) / VC_STRETCHING;
+			float cloudLayer = abs(VC_HEIGHT - rayPos.y) / stretching;
 
-			if (cloudLayer > 1.5) break;
+			if (cloudLayer > 2.0) break;
 
-			float cloudVisibility = float(cloudLayer < 1.5);
+			float cloudVisibility = float(cloudLayer < 2.0);
 
 			//Indoor leak prevention
 			if (eyeBrightnessSmooth.y <= 150.0) {
@@ -100,7 +105,7 @@ void computeVolumetricClouds(inout vec4 vc, in float dither, in float ug) {
 			if (cloudVisibility > 0.0) {
 				//Cloud Noise
 				#ifndef BLOCKY_CLOUDS
-				float noise = get3DNoise(rayPos * 0.5000 + frameTimeCounter * 0.20);
+				float noise = get3DNoise(rayPos * 0.5000 + frameTimeCounter * 0.20) * 1.25;
 					  noise+= get3DNoise(rayPos * 0.2350 + frameTimeCounter * 0.15) * 1.75;
 					  noise+= get3DNoise(rayPos * 0.1100 + frameTimeCounter * 0.10) * 3.50;
 					  noise+= get3DNoise(rayPos * 0.0521 + frameTimeCounter * 0.05) * 6.75;
@@ -112,16 +117,16 @@ void computeVolumetricClouds(inout vec4 vc, in float dither, in float ug) {
 				noise = clamp(noise * (VC_AMOUNT * (1.0 + rainStrength * 0.15)) - (10.0 + cloudLayer * 5.0), 0.0, 1.0);
 
 				//Color Calculations
-				float cloudLighting = clamp(pow(smoothstep(VC_HEIGHT + VC_STRETCHING * noise, VC_HEIGHT - VC_STRETCHING * noise, rayPos.y), 0.33) * 0.7 + noise * 0.3, 0.0, 1.0);
+				float cloudLighting = clamp(smoothstep(VC_HEIGHT + stretching * noise, VC_HEIGHT - stretching * noise, rayPos.y) * 0.95 + noise * 0.35, 0.0, 1.0);
 				#ifdef VC_DISTANT_FADE
 				float cloudDistantFade = clamp((VC_DISTANCE - lWorldPos) / VC_DISTANCE * 3.0, 0.0, 1.0);
 				#endif
 
 				vec4 cloudColor = vec4(mix(lightCol, ambientCol, cloudLighting), noise);
-					 #ifdef VC_DISTANT_FADE
-					 cloudColor.a *= mix(0.0, 1.0, cloudDistantFade);
-					 #endif
 					 cloudColor.rgb *= cloudColor.a;
+					 #ifdef VC_DISTANT_FADE
+					 cloudColor.a *= mix(0.0, 1.0, min(cloudDistantFade + 0.25, 1.0));
+					 #endif
 
 				vc += cloudColor * (1.0 - vc.a);
 			}
@@ -147,13 +152,13 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
 
 	float VoU = max(dot(nViewPos, upVec), 0.0);
 	float nVoU = pow3(1.0 - VoU);
-		  nVoU = mix(0.75, nVoU, clamp(eBS * eBS - float(isEyeInWater == 1), 0.0, 1.0));
+		  nVoU = mix(0.5, nVoU, clamp(eBS - float(isEyeInWater == 1), 0.0, 1.0));
 
-	float VoS = pow(clamp(dot(nViewPos, sunVec), 0.0, 1.0), 1.25);
+	float VoS = pow(clamp(dot(nViewPos, sunVec), 0.0, 1.0), 1.5);
 	float nVoS = mix(0.3 + VoS * 0.7, VoS, timeBrightness);
-		  nVoS = mix(0.7 + VoS * 0.3, nVoS, max(eBS * eBS - float(isEyeInWater == 1), 0.0));
+		  nVoS = mix(0.5 + VoS * 0.5, nVoS, max(eBS - float(isEyeInWater == 1), 0.0));
 
-	float visibility = float(z0 > 0.56) * nVoU * nVoS * 0.05;
+	float visibility = float(z0 > 0.56) * nVoU * nVoS * 0.0125;
 
 	#if MC_VERSION >= 11900
 	visibility *= 1.0 - darknessFactor;
@@ -170,9 +175,11 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
 		float linearDepth0 = getLinearDepth2(z0);
 		float linearDepth1 = getLinearDepth2(z1);
 
+		float distanceFactor = mix(6.5, 3.25, eBS);
+
 		//Ray marching and main calculations
 		for (int i = 0; i < VL_SAMPLES; i++) {
-			float currentDepth = pow(i + dither + 2.0, 1.75) * 8.0;
+			float currentDepth = pow(i + dither + 0.75, 1.5) * distanceFactor;
 
 			if (linearDepth1 < currentDepth || (linearDepth0 < currentDepth && translucent.rgb == vec3(0.0))) {
 				break;
@@ -195,15 +202,7 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
 				visibility *= fogFade;
 
 				//Colored Shadows
-				#ifdef SHADOW_COLOR
-				if (shadow0 < 1.0) {
-					if (shadow1 > 0.0) {
-						shadowCol = texture2D(shadowcolor0, shadowPos.xy).rgb;
-						shadowCol *= shadowCol * shadow1;
-						shadowCol *= 32.0 + timeBrightness * 64.0 + float(isEyeInWater == 1) * 128.0;
-					}
-				}
-				#endif
+
 
 				vec3 shadow = clamp(shadowCol * (1.0 - shadow0) + shadow0, 0.0, 1.0);
 
@@ -217,7 +216,7 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
 		}
 
 		vl *= visibility;
-		vl *= mix(lightCol, skyColor * skyColor, timeBrightness * 0.5) * VL_OPACITY;
+		vl *= mix(lightCol * (1.0 + VoS), skyColor * skyColor, timeBrightness * 0.5) * VL_OPACITY;
 	}
 }
 #endif

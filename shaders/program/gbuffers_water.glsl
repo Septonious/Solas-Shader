@@ -52,6 +52,10 @@ uniform float rainStrength;
 
 #if defined OVERWORLD || defined END
 uniform float timeBrightness, timeAngle;
+
+#ifdef WATER_FOG
+uniform float shadowFade;
+#endif
 #endif
 
 #if defined OVERWORLD || ((defined OVERWORLD || defined END) && defined INTEGRATED_SPECULAR)
@@ -205,20 +209,20 @@ void main() {
 
 		#ifdef INTEGRATED_SPECULAR
 		if (isEyeInWater != 1 && portal < 0.5) {
-			float fresnel1 = clamp(1.0 + pow4(dot(newNormal, normalize(viewPos))), 0.0, 0.2 + water * 0.8);
+			float fresnel1 = clamp(1.0 + pow4(dot(newNormal, normalize(viewPos))), 0.0, 0.2 + water * 0.6);
 
 			getReflection(fresnel1, lightmap.y, viewPos, newNormal, albedo.rgb, emission);
 		}
 		#endif
 
 		#if defined OVERWORLD && defined WATER_FOG
-		if (isEyeInWater == 0 && water > 0.9 && lightmap.y > 0.0) {
+		if (isEyeInWater == 0 && water > 0.9 && lightmap.y > 0.0 && rainStrength != 1.0) {
 			float oDepth = texture2D(depthtex1, screenPos.xy).r;
 			vec3 oScreenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), oDepth);
 			vec3 oViewPos = ToNDC(oScreenPos);
 
 			vec4 waterFog = getWaterFog(viewPos.xyz - oViewPos);
-			albedo.rgb = mix(waterFog.rgb * waterFog.a * 8.0 * lightmap.y, albedo.rgb, 0.65);
+			albedo.rgb = mix(waterFog.rgb * waterFog.a * 8.0 * lightmap.y * (1.0 - rainStrength), albedo.rgb, 0.65);
 		}
 		#endif
 

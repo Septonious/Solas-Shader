@@ -29,11 +29,11 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
 
     //Vanilla Directional Lighting
 	float NoL = clamp(dot(normal, lightVec), 0.0, 1.0);
+          //NoL = clamp(NoL + pow4(NoL), 0.0, 1.0);
 	float NoU = clamp(dot(normal, upVec), -1.0, 1.0);
 	float NoE = clamp(dot(normal, eastVec), -1.0, 1.0);
 
 	float vanillaDiffuse = (0.25 * NoU + 0.75) + (0.667 - abs(NoE)) * (1.0 - abs(NoU)) * 0.15;
-		  vanillaDiffuse*= vanillaDiffuse;
 
     //Block Lighting//
     vec3 blockLighting = vec3(0.0);
@@ -63,26 +63,31 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
 
     //Main Scene Lighting (Sunlight & Shadows)
     #if defined OVERWORLD || defined END
-    specular = (specular + 0.25) * clamp(NoU - 0.01, 0.0, 1.0);
-
-    float subsurface = leaves + foliage;
     float scattering = 0.0;
 
     vec3 shadow = vec3(0.0);
 
     //Subsurface Scattering & Specular Highlight
+    #ifdef OVERWORLD
+    specular = specular * clamp(NoU - 0.01, 0.0, 1.0);
+
+    float subsurface = leaves + foliage;
+
+    //Subsurface Scattering & Specular Highlight
     if (subsurface > 0.0 || specular > 0.0) {
         float VoL = clamp(dot(normalize(viewPos), lightVec), 0.0, 1.0);
-        VoL = pow12(VoL) * 0.5 + pow32(pow16(VoL));
-        scattering = VoL * subsurface + VoL * (0.125 + pow4(specular));
+        VoL = pow16(VoL) * 0.5 + pow32(pow16(VoL));
+        scattering = VoL * subsurface * 0.25 + VoL * specular;
         scattering = clamp(scattering * 2.0, 0.0, 1.0);
-        NoL = mix(NoL, 1.0, subsurface * 0.75);
+        NoL = mix(NoL, 1.0, subsurface * 0.5);
         NoL = mix(NoL, 1.0, scattering);
 
         #ifdef OVERWORLD
         lightCol *= 1.0 + scattering;
         #endif
     }
+
+    #endif
 
     if (NoL > 0.0) {
          //Shadows without peter-panning from Emin's Complementary Reimagined shaderpack, tysm for allowing me to use them ^^
@@ -123,7 +128,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
         }
     }
 
-    vec3 fullShadow = shadow * NoL;
+    vec3 fullShadow = shadow * pow(NoL, 1.15);
     
     #ifdef OVERWORLD
     float rainFactor = 1.0 - rainStrength * 0.8;

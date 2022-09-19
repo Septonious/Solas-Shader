@@ -21,7 +21,7 @@ uniform float near;
 
 uniform float far;
 uniform float frameTimeCounter;
-uniform float timeAngle, timeBrightness, rainStrength, blindFactor;
+uniform float timeAngle, timeBrightness, rainStrength, blindFactor, shadowFade;
 
 #if MC_VERSION >= 11900
 uniform float darknessFactor;
@@ -54,7 +54,7 @@ uniform mat4 gbufferProjectionInverse, gbufferModelViewInverse;
 
 //Common Variables//
 #if defined VC || defined VL
-float eBS = eyeBrightnessSmooth.y / 240.0;
+float eBS = sqrt(eyeBrightnessSmooth.y / 240.0);
 float ug = mix(clamp((cameraPosition.y - 56.0) / 16.0, float(isEyeInWater == 1), 1.0), 1.0, eBS);
 float sunVisibility = clamp(dot(sunVec, upVec) + 0.025, 0.0, 0.1) * 10.0;
 #endif

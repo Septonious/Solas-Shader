@@ -36,6 +36,9 @@ void getIntegratedSpecular(in vec4 albedo, in vec3 normal, in vec2 worldPos, in 
     } else if (mat > 304.9 && mat < 305.1) {// Obsidian & Polished Deepslate
         specular = lAlbedo;
         roughness = 1.25;
+    } else {
+        specular = 0.5;
+        roughness = 0.0;
     }
 
     #if defined RAIN_PUDDLES && defined GBUFFERS_TERRAIN
