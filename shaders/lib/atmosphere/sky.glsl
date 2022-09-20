@@ -8,7 +8,7 @@ vec3 getAtmosphere(vec3 viewPos) {
 
     float VoS = dot(nViewPos, sunVec);
           VoS = 1.0 + clamp(VoS, -1.0, 0.0);
-          VoS = mix(VoS * 0.2, 0.2 + VoS * 0.2, sunVisibility);
+          VoS = mix(VoS * 0.25, 0.15 + VoS * 0.15, sunVisibility);
     float VoU = dot(nViewPos, upVec);
 
     //Set Variables Here

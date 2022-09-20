@@ -157,9 +157,9 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
 
     #ifdef END
     #ifdef GLOBAL_ILLUMINATION
-    vec3 sceneLighting = mix(endAmbientCol * 0.25 * (vec3(1.0) + bloom * 4.0), endLightCol * 0.5, fullShadow);
+    vec3 sceneLighting = mix(endAmbientCol * 0.25 * (vec3(1.0) + bloom), endLightCol * 0.25, fullShadow);
     #else
-    vec3 sceneLighting = mix(endAmbientCol * 0.25, endLightCol * 0.5, fullShadow);
+    vec3 sceneLighting = mix(endAmbientCol * 0.25, endLightCol * 0.25, fullShadow);
     #endif
     #endif
     #endif
@@ -189,11 +189,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     #endif
 
     if (giVisibility != 0.0) {
-        #ifdef OVERWORLD
         emission += mix(0.0, 0.33 * GLOBAL_ILLUMINATION_STRENGTH * float(emission == 0.0), giVisibility);
-        #else
-        emission += mix(0.0, GLOBAL_ILLUMINATION_STRENGTH * float(emission == 0.0), giVisibility);
-        #endif
     }
     #endif
 }

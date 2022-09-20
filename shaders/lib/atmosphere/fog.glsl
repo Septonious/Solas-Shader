@@ -24,7 +24,7 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 atmo
 	//Distant Fade
 	#ifdef DISTANT_FADE
 	if (isEyeInWater == 0) {
-		float vanillaFog = pow3(lViewPos * 0.0025);
+		float vanillaFog = pow3(lViewPos * 0.002);
 
 		#if DISTANT_FADE_STYLE == 0
 		vanillaFog += pow6(lWorldPos / far);

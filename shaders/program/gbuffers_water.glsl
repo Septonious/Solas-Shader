@@ -173,7 +173,7 @@ void main() {
 	albedo.a = mix(albedo.a, 1.0, portal);
 
 	if (water > 0.9) {
-		albedo.a = WATER_A;
+		albedo.a = mix(WATER_A, 0.95, float(isEyeInWater == 1));
 		#ifdef OVERWORLD
 		albedo.rgb = mix(waterColor, weatherCol.rgb * 0.25, rainStrength * 0.5);
 		#else
@@ -214,21 +214,21 @@ void main() {
 		#endif
 
 		#ifdef INTEGRATED_SPECULAR
-		if (isEyeInWater != 1 && portal < 0.5) {
-			float fresnel1 = pow2(clamp(1.0 + dot(newNormal, normalize(viewPos)), 0.0, 1.0));
+		if (portal < 0.5 && albedo.a < 0.95) {
+			float fresnel1 = pow2(clamp(1.0 + dot(newNormal, normalize(viewPos)), 0.0, 1.0)) * (1.0 - float(isEyeInWater == 1) * 0.75);
 
 			getReflection(albedo, viewPos, newNormal, fresnel1, lightmap.y, emission);
 		}
 		#endif
 
 		#if defined OVERWORLD && defined WATER_FOG
-		if (isEyeInWater == 0 && water > 0.9 && lightmap.y > 0.0 && rainStrength != 1.0) {
+		if (water > 0.9 && lightmap.y > 0.0 && rainStrength != 1.0) {
 			float oDepth = texture2D(depthtex1, screenPos.xy).r;
 			vec3 oScreenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), oDepth);
 			vec3 oViewPos = ToNDC(oScreenPos);
 
 			vec4 waterFog = getWaterFog(viewPos.xyz - oViewPos);
-			albedo.rgb = mix(waterFog.rgb * waterFog.a * 8.0 * lightmap.y * (1.0 - rainStrength), albedo.rgb, min(albedo.a + 0.125, 1.0));
+			albedo.rgb = mix(waterFog.rgb * waterFog.a * 8.0 * lightmap.y * (1.0 - rainStrength), albedo.rgb, min(albedo.a + 0.125, 1.0 - float(isEyeInWater == 1) * 0.5));
 		}
 		#endif
 

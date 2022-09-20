@@ -48,7 +48,7 @@ uniform vec3 cameraPosition;
 uniform sampler2D colortex0;
 uniform sampler2D depthtex0;
 
-#if defined BLOOM && defined OVERWORLD
+#if defined BLOOM && (defined OVERWORLD || defined END)
 uniform sampler2D colortex2;
 #endif
 
@@ -175,16 +175,27 @@ void main() {
 		Fog(color, viewPos.xyz, worldPos.xyz, skyColor);
 	}
 
-	/* DRAWBUFFERS:0 */
-	gl_FragData[0].rgb = color;
+	vec3 reflectionColor = vec3(0.0);
+	vec4 bloomData = vec4(0.0);
 
-	#if defined BLOOM && defined OVERWORLD
-	vec4 bloomData = texture2D(colortex2, texCoord);
-		 bloomData.ba += vec2((star * 32.0 + sunMoon * 0.25) * 0.1, float(star > 0.0 || sunMoon > 0.0));
-
-	/* DRAWBUFFERS:02 */
-	gl_FragData[1] = bloomData;
+	#ifdef INTEGRATED_SPECULAR
+	reflectionColor = pow(color.rgb, vec3(0.125)) * 0.5;
 	#endif
+
+	#if defined BLOOM && (defined OVERWORLD || defined END)
+	bloomData = texture2D(colortex2, texCoord);
+	#ifdef OVERWORLD
+		 bloomData.ba += vec2((star * 32.0 + sunMoon * 0.25) * 0.1, float(star > 0.0 || sunMoon > 0.0));
+	#else
+		 bloomData.ba += vec2((star * 32.0) * 0.1, float(star > 0.0));
+	#endif
+	#endif
+
+	/* DRAWBUFFERS:026 */
+	gl_FragData[0].rgb = color;
+	gl_FragData[1] = bloomData;
+	gl_FragData[2] = vec4(reflectionColor, float(z0 < 1.0));
+
 }
 
 #endif

@@ -71,7 +71,7 @@ void main() {
 	}
 
 	/* DRAWBUFFERS:0 */
-	gl_FragData[0] = vec4(albedo.rgb, 1.0);
+	gl_FragData[0] = color;
 }
 
 #endif

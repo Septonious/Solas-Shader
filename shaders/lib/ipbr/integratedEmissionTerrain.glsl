@@ -23,7 +23,7 @@ void getIntegratedEmission(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos,
 	#ifdef EMISSIVE_ORES
     if (mat > 99.9 && mat < 100.1) { // Glowing Ores
         float stoneDif = max(abs(albedo.r - albedo.g), max(abs(albedo.r - albedo.b), abs(albedo.g - albedo.b)));
-        newEmission = max(stoneDif, 0.0) * max(1.0 - lightmap.y, 0.25);
+        newEmission = pow2(max(stoneDif, 0.0)) * max(1.0 - lightmap.y, 0.25) * 2.0;
     } 
 	#endif
 
@@ -51,7 +51,7 @@ void getIntegratedEmission(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos,
 	} else if (mat > 105.9 && mat < 106.1) { // Warped Nylium
 		newEmission = float(albedo.g > albedo.b && albedo.g > albedo.r) * pow3(float(albedo.g - albedo.b));
 	} else if (mat > 107.9 && mat < 108.1) { // Amethyst
-		newEmission = 0.125;
+		newEmission = 0.25;
 		albedo = pow(albedo, vec3(1.25));
 	} else if (mat > 109.9 && mat < 110.1) { // Glow Lichen
 		newEmission = (0.0125 + pow16(lAlbedo)) * (1.0 - lightmap.y * 0.75) * 0.5;
@@ -68,7 +68,7 @@ void getIntegratedEmission(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos,
 	} else if (mat > 115.9 && mat < 116.1) { // Furnaces
 		newEmission = float(albedo.r > 0.8 || (albedo.r > 0.6 && albedo.b < 0.5)) * 0.75;
 	} else if (mat > 116.9 && mat < 117.1) { // Chorus
-		newEmission = float(albedo.g > 0.55);
+		newEmission = float(albedo.g > 0.55) * 0.5;
 	} else if (mat > 117.9 && mat < 118.1) { // Enchanting Table
 		newEmission = float(lAlbedo > 0.75) * 0.25;
 	} else if (mat > 118.9 && mat < 119.1) { // Soul Campfire
@@ -93,8 +93,8 @@ void getIntegratedEmission(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos,
 	} else if (mat > 127.9 && mat < 128.1) { // Dragon Egg
 		newEmission = lAlbedo * lAlbedo * 4.0;
 	} else if (mat > 128.9 && mat < 129.1) {// End Rod
-		newEmission = pow4(lAlbedo) * 0.75;
-		albedo.rgb *= endLightColSqrt;
+		newEmission = pow4(lAlbedo) * 0.5;
+		albedo.rgb *= vec3(1.1, 0.5, 1.5);
 	} else if (mat > 129.9 && mat < 130.1) { // Powered Rail
 		newEmission = float(albedo.r > 0.5 && albedo.g < 0.25) * 0.125;
 	} else if (mat > 130.9 && mat < 131.1) { // Fire

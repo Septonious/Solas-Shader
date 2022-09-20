@@ -16,7 +16,7 @@ uniform float viewHeight, viewWidth;
 uniform float frameTimeCounter;
 #endif
 
-uniform sampler2D colortex2, colortex6;
+uniform sampler2D colortex2;
 #endif
 
 uniform sampler2D colortex0;
@@ -32,11 +32,6 @@ uniform mat4 gbufferModelViewInverse;
 //Common Variables//
 #ifdef INTEGRATED_SPECULAR
 vec2 viewResolution = vec2(viewWidth, viewHeight);
-#endif
-
-//Optifine Constants//
-#ifdef INTEGRATED_SPECULAR
-const bool colortex6MipmapEnabled = true;
 #endif
 
 //Includes//
@@ -62,7 +57,7 @@ void main() {
 	vec3 normal = DecodeNormal(terrainData.rg);
 
 	if (terrainData.a > 0.05 && terrainData.a < 1.0 && z0 > 0.56 && z0 >= z1) {
-		float fresnel = pow4(clamp(1.0 + dot(normal, normalize(viewPos.xyz)), 0.0, 1.0));
+		float fresnel = pow8(clamp(1.0 + dot(normal, normalize(viewPos.xyz)), 0.0, 1.0));
 
 		getReflection(viewPos.xyz, normal, color, fresnel * terrainData.a);
 	}

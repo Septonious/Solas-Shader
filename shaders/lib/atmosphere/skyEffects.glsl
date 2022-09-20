@@ -31,10 +31,10 @@ void getStars(inout vec3 color, in vec3 worldPos, in float VoU, in float nebulaF
 #ifdef END_VORTEX
 vec3 getSpiral(vec2 coord, float VoS){
     coord = vec2(atan(coord.y, coord.x) - frameTimeCounter * 0.125, sqrt(coord.x * coord.x + coord.y * coord.y));
-    float center = pow16(1.0 - coord.y) * 16.0;
+    float center = pow32(1.0 - coord.y) * 32.0;
     float spiral = sin((coord.x + sqrt(coord.y) * END_VORTEX_WHIRL) * END_VORTEX_ARMS) + center - coord.y;
 
-    return clamp(endLightColSqrt * spiral * 0.125, 0.0, 1.0);
+    return clamp(endAmbientColSqrt * spiral * 0.25, 0.0, 1.0);
 }
 
 void getEndVortex(inout vec3 color, in vec3 worldPos, in float VoU, in float VoS) {
@@ -46,7 +46,8 @@ void getEndVortex(inout vec3 color, in vec3 worldPos, in float VoU, in float VoS
 		vec3 spiral = getSpiral(planeCoord, VoS);
 		float spiralBrightness = length(spiral);
 		color = mix(color, spiral, pow2(spiralBrightness));
-		color *= 1.0 - pow16(pow32(VoS)) * 1.5;
+		float hole = pow16(pow32(VoS));
+		color *= float(length(hole) < 0.5);
 	}
 }
 #endif
