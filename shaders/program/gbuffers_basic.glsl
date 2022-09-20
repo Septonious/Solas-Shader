@@ -71,7 +71,7 @@ void main() {
 	}
 
 	/* DRAWBUFFERS:0 */
-	gl_FragData[0] = color;
+	gl_FragData[0] = albedo;
 }
 
 #endif
