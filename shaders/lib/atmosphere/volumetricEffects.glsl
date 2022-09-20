@@ -71,12 +71,12 @@ void computeVolumetricClouds(inout vec4 vc, in float dither, in float ug) {
 		vec3 nWorldPos = normalize(mat3(gbufferModelViewInverse) * viewPos.xyz);
 		vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.0);
 
-		float VoS = clamp(dot(normalize(viewPos.xyz), sunVec) * shadowFade, 0.0, 1.0);
+		float VoL = clamp(dot(normalize(viewPos.xyz), lightVec) * shadowFade, 0.0, 1.0);
 		float lViewPos = length(viewPos);
 
 		lightCol = mix(lightCol, skyColor * skyColor * 2.0, timeBrightness * (0.25 - rainStrength * 0.25));
 		ambientCol = mix(ambientCol, skyColor * skyColor, sunVisibility * (0.125 - rainStrength * 0.125));
-		lightCol *= 1.0 + pow2(VoS) * 0.5;
+		lightCol *= 1.0 + pow2(VoL) * 0.5;
 
 		//We want to march between two planes which we set here
 		float lowerPlane = (VC_HEIGHT + stretching - cameraPosition.y) / nWorldPos.y;
@@ -123,7 +123,7 @@ void computeVolumetricClouds(inout vec4 vc, in float dither, in float ug) {
 				noise = clamp(noise * (VC_AMOUNT * (1.0 + rainStrength * 0.15)) - (10.0 + cloudLayer * 5.0), 0.0, 1.0);
 
 				//Color Calculations
-				float cloudLighting = clamp(smoothstep(VC_HEIGHT + stretching * noise, VC_HEIGHT - stretching * noise, rayPos.y) * 0.95 + noise * 0.35, 0.0, 1.0);
+				float cloudLighting = clamp(smoothstep(VC_HEIGHT + stretching * noise, VC_HEIGHT - stretching * noise, rayPos.y) * 0.85 + noise * 0.35, 0.0, 1.0);
 
 				#ifdef VC_DISTANT_FADE
 				float cloudDistantFade = clamp((VC_DISTANCE - lWorldPos) / VC_DISTANCE * 3.0, 0.0, 1.0);
@@ -158,14 +158,14 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
 	vec3 nViewPos = normalize(viewPos.xyz);
 
 	float VoU = max(dot(nViewPos, upVec), 0.0);
-	float nVoU = pow2(1.0 - VoU);
+	float nVoU = pow3(1.0 - VoU);
 		  nVoU = mix(0.5, nVoU, clamp(eBS - float(isEyeInWater == 1), 0.0, 1.0));
 
-	float VoS = pow(clamp(dot(nViewPos, sunVec), 0.0, 1.0), 1.5);
-	float nVoS = mix(0.3 + VoS * 0.7, VoS, timeBrightness);
-		  nVoS = mix(0.5 + VoS * 0.5, nVoS, max(eBS - float(isEyeInWater == 1), 0.0));
+	vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.0);
+	float VoL = pow(clamp(dot(nViewPos, lightVec), 0.0, 1.0), 1.25);
+	float nVoL = mix(0.3 + VoL * 0.7, VoL, timeBrightness);
 
-	float visibility = float(z0 > 0.56) * nVoU * nVoS * 0.0125;
+	float visibility = float(z0 > 0.56) * nVoU * nVoL * 0.05;
 
 	#if MC_VERSION >= 11900
 	visibility *= 1.0 - darknessFactor;
@@ -182,11 +182,11 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
 		float linearDepth0 = getLinearDepth2(z0);
 		float linearDepth1 = getLinearDepth2(z1);
 
-		float distanceFactor = mix(7.0, 3.5, eBS);
+		float distanceFactor = mix(2.5, 7.5, eBS);
 
 		//Ray marching and main calculations
 		for (int i = 0; i < VL_SAMPLES; i++) {
-			float currentDepth = pow(i + dither + 0.75, 1.5) * distanceFactor;
+			float currentDepth = pow(i + dither + 0.5, 1.5) * distanceFactor;
 
 			if (linearDepth1 < currentDepth || (linearDepth0 < currentDepth && translucent.rgb == vec3(0.0))) {
 				break;
@@ -199,19 +199,33 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
 			if (nVoU == 0.0 || lWorldPos > far) break;
 
 			vec3 shadowPos = calculateShadowPos(worldPos);
+			shadowPos.z += 0.0512 / shadowMapResolution;
 
 			if (length(shadowPos.xy * 2.0 - 1.0) < 1.0) {
-				float shadow1 = shadow2D(shadowtex1, shadowPos).z;
 				float shadow0 = shadow2D(shadowtex0, shadowPos).z;
 
 				//Distant Fade
-				float fogFade = 1.0 - clamp(pow4(lViewPos * 0.000125) + pow8(lWorldPos / far), 0.0, 1.0);
-				visibility *= fogFade;
+				float fogFade = pow3(lViewPos * 0.0025);
+
+				#if DISTANT_FADE_STYLE == 0
+				fogFade += pow6(lWorldPos / far);
+				#elif DISTANT_FADE_STYLE == 1
+				fogFade += pow6(lViewPos / far);
+				#endif
+
+				visibility *= 1.0 - clamp(fogFade, 0.0, 1.0);
 
 				//Colored Shadows
-
-
-				vec3 shadow = clamp(shadowCol * (1.0 - shadow0) + shadow0, 0.0, 1.0);
+				#ifdef SHADOW_COLOR
+				if (shadow0 < 1.0) {
+					float shadow1 = shadow2D(shadowtex1, shadowPos.xyz).z;
+					if (shadow1 > 0.0) {
+						shadowCol = texture2D(shadowcolor0, shadowPos.xy).rgb;
+						shadowCol *= shadowCol * shadow1;
+					}
+				}
+				#endif
+				vec3 shadow = clamp(shadowCol * (1.0 - shadow0) + shadow0, vec3(0.0), vec3(1.0));
 
 				//Translucency Blending
 				if (linearDepth0 < currentDepth) {
@@ -223,7 +237,7 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
 		}
 
 		vl *= visibility;
-		vl *= mix(lightCol * (1.0 + VoS * 2.0), skyColor * skyColor, timeBrightness * 0.5) * VL_OPACITY;
+		vl *= lightCol * VL_OPACITY;
 	}
 }
 #endif

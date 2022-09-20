@@ -91,7 +91,7 @@ void getIntegratedEmission(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos,
 	} else if (mat > 126.9 && mat < 127.1) { // End Portal Frame
 		newEmission = pow2(albedo.b - albedo.g) * 6.0 * float(albedo.r < 0.65);
 	} else if (mat > 127.9 && mat < 128.1) { // Dragon Egg
-		newEmission = lAlbedo * lAlbedo * 16.0;
+		newEmission = lAlbedo * lAlbedo * 4.0;
 	} else if (mat > 128.9 && mat < 129.1) {// End Rod
 		newEmission = pow4(lAlbedo) * 0.75;
 		albedo.rgb *= endLightColSqrt;
