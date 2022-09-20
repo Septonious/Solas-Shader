@@ -159,13 +159,12 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
 
 	float VoU = max(dot(nViewPos, upVec), 0.0);
 	float nVoU = pow3(1.0 - VoU);
-		  nVoU = mix(0.5, nVoU, clamp(eBS - float(isEyeInWater == 1), 0.0, 1.0));
 
 	vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.0);
 	float VoL = pow(clamp(dot(nViewPos, lightVec), 0.0, 1.0), 1.25);
 	float nVoL = mix(0.4 + VoL * 0.6, VoL, timeBrightness);
 
-	float visibility = float(z0 > 0.56) * nVoU * nVoL * 0.01;
+	float visibility = float(z0 > 0.56) * mix(nVoU * nVoL, 1.0, sign(isEyeInWater)) * 0.01;
 
 	#if MC_VERSION >= 11900
 	visibility *= 1.0 - darknessFactor;
@@ -214,7 +213,7 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
 					}
 				}
 				#endif
-				vec3 shadow = clamp(shadowCol * (1.0 + float(isEyeInWater == 1) * 64.0) * (1.0 - shadow0) + shadow0, vec3(0.0), vec3(64.0));
+				vec3 shadow = clamp(shadowCol * (1.0 + float(isEyeInWater == 1) * 32.0) * (1.0 - shadow0) + shadow0, vec3(0.0), vec3(1.0));
 
 				//Translucency Blending
 				if (linearDepth0 < currentDepth) {
