@@ -23,7 +23,7 @@ void getIntegratedEmission(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos,
 	#ifdef EMISSIVE_ORES
     if (mat > 99.9 && mat < 100.1) { // Glowing Ores
         float stoneDif = max(abs(albedo.r - albedo.g), max(abs(albedo.r - albedo.b), abs(albedo.g - albedo.b)));
-        newEmission = pow2(max(stoneDif, 0.0)) * max(1.0 - lightmap.y, 0.25) * 2.0;
+        newEmission = stoneDif * (1.0 - lightmap.y * 0.5) * 2.0;
     } 
 	#endif
 
@@ -126,5 +126,5 @@ void getIntegratedEmission(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos,
 	}
 	#endif
 
-	emission += newEmission * EMISSION_STRENGTH;
+	emission = clamp(emission + newEmission, 0.0, 1.0);
 }

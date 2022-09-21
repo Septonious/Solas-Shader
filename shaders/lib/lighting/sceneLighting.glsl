@@ -44,9 +44,9 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     vec3 blockLighting = vec3(0.0);
 
     #ifdef SHIMMER_MOD_SUPPORT
-    float blockLightMap = min(pow4(lightmap.x) * 2.0 + pow2(lightmap.x) * 0.125, 1.0) * float(emission == 0.0);
+    float blockLightMap = min(pow4(lightmap.x) * 2.0 + pow2(lightmap.x) * 0.125, 1.0) * (1.0 - emission);
     #else
-    float blockLightMap = min(pow8(lightmap.x) * 1.5 + pow2(lightmap.x) * 0.5, 1.0) * float(emission == 0.0);
+    float blockLightMap = min(pow8(lightmap.x) * 1.5 + pow2(lightmap.x) * 0.5, 1.0) * (1.0 - emission);
     #endif
 
 	#ifdef DYNAMIC_HANDLIGHT
@@ -63,10 +63,10 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     #if defined SHIMMER_MOD_SUPPORT
     //COLORED LIGHTING USING SHIMMER MOD
     vec3 coloredLight = getColoredLighting(worldPos, blockLightMap) * BLOCKLIGHT_I;
-    blockLighting = blockLightCol * blockLightMap + coloredLight * float(emission == 0.0);
+    blockLighting = blockLightCol * blockLightMap + coloredLight * (1.0 - emission);
     #elif defined BLOOM_COLORED_LIGHTING
     //BLOOM BASED COLORED LIGHTING
-	vec3 coloredLight = clamp(bloom * pow(getLuminance(bloom) + 0.00125, -COLORED_LIGHTING_RADIUS), 0.0, 1.0) * (pow2(blockLightMap) * 0.9 + 0.1) * COLORED_LIGHTING_STRENGTH;
+	vec3 coloredLight = clamp(bloom * pow(getLuminance(bloom) + 0.00125, -COLORED_LIGHTING_RADIUS), 0.0, 1.0) * (pow2(blockLightMap) * 0.8 + 0.2) * COLORED_LIGHTING_STRENGTH * (1.0 - emission);
     blockLighting = blockLightCol * blockLightMap * (0.5 + pow4(lightmap.y) * 0.5) + coloredLight;
     #else
     blockLighting = blockLightCol * blockLightMap;
@@ -97,7 +97,6 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
         lightCol *= 1.0 + scattering;
         #endif
     }
-
     #endif
 
     if (NoL > 0.0) {
@@ -176,7 +175,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
 
     albedo = pow(albedo, vec3(2.2));
 
-    albedo *= sceneLighting + blockLighting + (albedo * emission) + nightVision * 0.25 + (minLightCol * (1.0 - lightmap.y));
+    albedo *= sceneLighting + blockLighting + (albedo * emission * EMISSION_STRENGTH) + nightVision * 0.25 + (minLightCol * (1.0 - lightmap.y));
     albedo *= vanillaDiffuse;
 
     albedo = sqrt(max(albedo, vec3(0.0)));
