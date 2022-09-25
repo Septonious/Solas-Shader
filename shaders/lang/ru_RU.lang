@@ -1,0 +1,276 @@
+#shaders/lang/ru_RU.lang
+
+#ATMOSPHERICS
+
+screen.ATMOSPHERICS=Атмосфера
+
+
+screen.VC_CONFIG=Настройки Облаков
+
+option.VC=Объёмные Облака
+option.BLOCKY_CLOUDS=Квадратные Облака
+option.VC_DISTANT_FADE=Облачный Дальний Туман
+option.VC_AMOUNT=Количество
+option.VC_HEIGHT=Высота
+option.VC_STRETCHING=Толщина
+option.VC_SAMPLES=Качество
+option.VC_DISTANCE=Дистанция Рендера
+option.VC_OPACITY=Непрозрачность
+
+
+screen.VL_CONFIG=Настройки Солнечных Лучей
+
+option.VL=Солнечные Лучи
+option.VL_OPACITY=Непрозрачность
+option.VL_SAMPLES=Качество
+
+
+screen.FOG_CONFIG=Настройки Тумана
+
+option.DISTANT_FADE=Дальний Туман
+option.DISTANT_FADE_STYLE=Стиль Дальнего Тумана
+option.DISTANT_FADE_STYLE.comment=Сферический выглядит как ванильный туман. Цилиндрический игнорирует ось Y
+value.DISTANT_FADE_STYLE.0=Сферический
+value.DISTANT_FADE_STYLE.1=Цилиндрический
+option.FOG_DENSITY=Плотность Тумана
+option.FOG_HEIGHT=Высота Тумана
+
+
+screen.SKY_CONFIG=Настройки Неба
+
+option.STARS=Звёзды
+option.END_STARS=Звёзды в Краю
+option.MILKY_WAY=Млечный Путь
+option.MILKY_WAY_BRIGHTNESS=Яркость Млечного Пути
+option.END_NEBULA=Туманность в Краю
+option.RAINBOW=Радуга
+option.AURORA=Северное Сияние
+option.AURORA_COLD_BIOME_VISIBILITY=С.С. в холодных биомах
+option.AURORA_COLD_BIOME_VISIBILITY.comment=Переключает видимость Северного Сияния только в снежных биомах
+option.AURORA_FULL_MOON_VISIBILITY=С.С. при полной луне
+option.AURORA_FULL_MOON_VISIBILITY.comment=Переключает видимость Северного Сияния только при полной луне
+
+
+#WATER
+
+screen.WATER=Вода
+
+option.WATER_FOG=Водный Туман
+option.WATER_FOG_DENSITY=Плотность Водного Тумана
+option.WATER_CAUSTICS=Каустики
+option.WATER_CAUSTICS_STRENGTH=Видимость Каустиков
+
+option.WATER_NORMALS=Волны
+option.WATER_NORMAL_BUMP=Амплитуда Волн
+option.WATER_NORMAL_OFFSET=Смещение Волн
+option.WATER_NORMAL_VISIBILITY=Видимость Волн
+
+
+#LIGHTING
+
+screen.LIGHTING=Освещение
+
+option.shadowMapResolution=Разрешение Теней
+option.shadowDistance=Дистанция Рендера Теней
+option.sunPathRotation=Угол Солнца/Луны
+option.SHADOW_SAMPLE_COUNT=Качество Теней
+option.SHADOW_COLOR=Цветные Тени
+option.ENTITY_SHADOWS=Тени от Существ
+
+option.SHIMMER_MOD_SUPPORT=Поддержка мода Shimmer
+option.BLOOM_COLORED_LIGHTING=Цветное Освещение (ЦО) (Й жив)
+option.COLORED_LIGHTING_RADIUS=Радиус ЦО
+option.COLORED_LIGHTING_STRENGTH=Сила ЦО
+
+option.AO=Ambient Occlusion (AO)
+option.AO_STRENGTH=Сила АО
+option.AO_RADIUS=Радиус АО
+
+option.GLOBAL_ILLUMINATION=Глобальное Освещение (ГО)
+option.GLOBAL_ILLUMINATION_STRENGTH=Сила ГО
+option.GLOBAL_ILLUMINATION_RADIUS=Радиус ГО
+option.DYNAMIC_HANDLIGHT=Динамичное Освещение
+
+
+#IPBR
+
+screen.IPBR=Встроенный PBR Ресурспак
+
+option.INTEGRATED_SPECULAR=Отражения
+
+screen.ISPECULAR=Настройки Отражений
+
+option.RAIN_PUDDLES=Дождевые Лужи
+option.REFLECTION_RT_SAMPLE_COUNT=Качество Отражений
+option.SPECULAR_STRENGTH=Сила Отражений
+option.WATER_SPECULAR_STRENGTH=Сила Водных Отражений
+
+
+option.INTEGRATED_EMISSION=Светящиеся Объекты
+
+screen.IEMISSION=Настройки Светящихся Объектов
+
+option.EMISSIVE_FLOWERS=Светящиеся Цветы
+option.EMISSIVE_OERS=Светящиеся Руды
+option.EMISSIVE_DEBRIS=Светящиеся Древние Обломки
+option.EMISSIVE_POWDER_SNOW=Светящийся Рассыпчатый Снег
+option.PLAYER_BRIGHT_PARTS_HIGHLIGHT=Светящиеся Яркие Пиксели на Скине Игрока
+option.ENTITY_HIGHLIGHT=Светящиеся Существа
+option.EMISSION_STRENGTH=Яркость Свечения
+
+
+#COLOR
+
+screen.COLOR=Цвета
+
+screen.LIGHT_EM=Свет (Раннее Утро)
+option.LIGHT_EMR=Красный
+option.LIGHT_EMG=Зелёный
+option.LIGHT_EMB=Синий
+option.LIGHT_EMI=Интенсивность
+
+screen.LIGHT_M=Свет (Утро)
+option.LIGHT_MR=Красный
+option.LIGHT_MG=Зелёный
+option.LIGHT_MB=Синий
+option.LIGHT_MI=Интенсивность
+
+screen.LIGHT_D=Свет (День)
+option.LIGHT_DR=Красный
+option.LIGHT_DG=Зелёный
+option.LIGHT_DB=Синий
+option.LIGHT_DI=Интенсивность
+
+screen.LIGHT_E=Свет (Вечер)
+option.LIGHT_ER=Красный
+option.LIGHT_EG=Зелёный
+option.LIGHT_EB=Синий
+option.LIGHT_EI=Интенсивность
+
+screen.LIGHT_LE=Свет (Поздний Вечер)
+option.LIGHT_LER=Красный
+option.LIGHT_LEG=Зелёный
+option.LIGHT_LEB=Синий
+option.LIGHT_LEI=Интенсивность
+
+screen.LIGHT_N=Свет (Ночь)
+option.LIGHT_NR=Красный
+option.LIGHT_NG=Зелёный
+option.LIGHT_NB=Синий
+option.LIGHT_NI=Интенсивность
+
+
+screen.AMBIENT_EM=Тень (Раннее Утро)
+option.AMBIENT_EMR=Красный
+option.AMBIENT_EMG=Зелёный
+option.AMBIENT_EMB=Синий
+option.AMBIENT_EMI=Интенсивность
+
+screen.AMBIENT_M=Тень (Утро)
+option.AMBIENT_MR=Красный
+option.AMBIENT_MG=Зелёный
+option.AMBIENT_MB=Синий
+option.AMBIENT_MI=Интенсивность
+
+screen.AMBIENT_D=Тень (День)
+option.AMBIENT_DR=Красный
+option.AMBIENT_DG=Зелёный
+option.AMBIENT_DB=Синий
+option.AMBIENT_DI=Интенсивность
+
+screen.AMBIENT_E=Тень (Вечер)
+option.AMBIENT_ER=Красный
+option.AMBIENT_EG=Зелёный
+option.AMBIENT_EB=Синий
+option.AMBIENT_EI=Интенсивность
+
+screen.AMBIENT_LE=Тень (Поздний Вечер)
+option.AMBIENT_LER=Красный
+option.AMBIENT_LEG=Зелёный
+option.AMBIENT_LEB=Синий
+option.AMBIENT_LEI=Интенсивность
+
+screen.AMBIENT_N=Тень (Ночь)
+option.AMBIENT_NR=Красный
+option.AMBIENT_NG=Зелёный
+option.AMBIENT_NB=Синий
+option.AMBIENT_NI=Интенсивность
+
+
+screen.MINLIGHT=Минимальное Освещение
+option.MINLIGHT_R=Красный
+option.MINLIGHT_G=Зелёный
+option.MINLIGHT_B=Синий
+option.MINLIGHT_I=Интенсивность
+
+screen.BLOCKLIGHT_COLOR=Цвет Освещения от Блоков
+option.BLOCKLIGHT_R=Красный
+option.BLOCKLIGHT_G=Зелёный
+option.BLOCKLIGHT_B=Синий
+option.BLOCKLIGHT_I=Интенсивность
+
+screen.WATER_COLOR=Цвет Воды
+option.WATER_R=Красный
+option.WATER_G=Зелёный
+option.WATER_B=Синий
+option.WATER_I=Интенсивность
+option.WATER_A=Alpha
+
+screen.SKY_COLOR=Цвет Неба
+
+option.SKY_R=Красный
+option.SKY_G=Зелёный
+option.SKY_B=Синий
+option.SKY_I=Интенсивность
+
+option.SKY_LR=Красный (Нижнее Рассеивание)
+option.SKY_LG=Зелёный (Нижнее Рассеивание)
+option.SKY_LB=Синий (Нижнее Рассеивание)
+option.SKY_LI=Интенсивность (Нижнее Рассеивание)
+
+option.SKY_HR=Красный (Верхнее Рассеивание)
+option.SKY_HG=Зелёный (Верхнее Рассеивание)
+option.SKY_HB=Синий (Верхнее Рассеивание)
+option.SKY_HI=Интенсивность (Верхнее Рассеивание)
+
+
+#POST
+
+screen.POST=Постобработка
+
+option.FXAA=FXAA
+option.SHARPENING=Острота изображения
+option.CHROMATIC_ABERRATION=Хроматическая Аберрация (ХА) (чё смеёшься)
+option.CHROMATIC_ABERRATION_STRENGTH=Сила ХА
+
+option.EXPOSURE=Экспозиция
+option.EXPOSURE.comment=Регулирует яркость всех цветов.
+
+option.TONEMAP_WHITE_CURVE="Белая" Кривая Цветовой Палитры
+option.TONEMAP_WHITE_CURVE.comment=Определяет как быстро яркие цвета переходят в белый.
+
+option.TONEMAP_LOWER_CURVE=Нижняя Кривая Цветовой Палитры
+option.TONEMAP_LOWER_CURVE.comment=Регулирует контраст тёмных цветов.
+
+option.TONEMAP_UPPER_CURVE=Верхняя Кривая Цветовой Палитры
+option.TONEMAP_UPPER_CURVE.comment=Регулирует контраст ярких цветов.
+
+option.SATURATION=Насыщенность
+option.SATURATION.comment=Регулирует насыщенность всех цветов.
+
+option.VIBRANCE=Насыщенность блёклых цветов.
+
+option.BLOOM=Свечение
+option.BLOOM_STRENGTH=Сила Свечения
+option.BLOOM_SAMPLES=Качество Свечения
+
+
+#OTHER
+
+screen.OTHER=Прочее
+
+option.WAVING_BLOCKS=Развевающиеся Блоки
+option.WAVING_PLANTS=Развевающиеся Растения
+option.WAVING_LEAVES=Развевающиеся Листья
+option.WAVING_SPEED=Скорость
+option.WAVING_AMPLITUDE=Амплитуда
