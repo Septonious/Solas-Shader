@@ -249,13 +249,13 @@ option.CHROMATIC_ABERRATION_STRENGTH=Force des CA
 option.EXPOSURE=Exposition
 option.EXPOSURE.comment=Règle la luminosité globale.
 
-option.TONEMAP_WHITE_CURVE=Tonemap White Curve
+option.TONEMAP_WHITE_CURVE=Carte de Tonalité Courbe Blanche
 option.TONEMAP_WHITE_CURVE.comment=Règle la vitesse à laquelle le tonemap peut atteindre le blanc.
 
-option.TONEMAP_LOWER_CURVE=Tonemap Lower Curve
+option.TONEMAP_LOWER_CURVE=Carte de Tonalité Courbe Inférieure
 option.TONEMAP_LOWER_CURVE.comment=Ajuste le contraste des couleurs plus sombres.
 
-option.TONEMAP_UPPER_CURVE=Tonemap Upper Curve
+option.TONEMAP_UPPER_CURVE=Carte de Tonalité Courbe Supérieure
 option.TONEMAP_UPPER_CURVE.comment=Ajuste le contraste des couleurs les plus vives.
 
 option.SATURATION=Saturation
