@@ -29,10 +29,11 @@ screen.FOG=雾气配置
 
 option.DISTANT_FADE=雾气远距离淡化
 option.DISTANT_FADE_STYLE=体积云淡化样式
-value.DISTANT_FADE_STYLE.0=样式零
-value.DISTANT_FADE_STYLE.1=样式一
-option.FOG_DENSITY=密度
-option.FOG_HEIGHT=高度
+option.DISTANT_FADE_STYLE.comment=球形会像原版雾气一样工作. 圆柱形会忽略Y轴淡化.
+value.DISTANT_FADE_STYLE.0=球形
+value.DISTANT_FADE_STYLE.1=圆柱形
+option.FOG_DENSITY=雾气密度
+option.FOG_HEIGHT=雾气高度
 
 
 screen.SKY=天空配置
@@ -45,12 +46,16 @@ option.END_NEBULA=末地星云
 option.RAINBOW=彩虹
 option.AURORA=极光
 option.AURORA_COLD_BIOME_VISIBILITY=极光在积雪生物群系可见
+option.AURORA_COLD_BIOME_VISIBILITY.comment=只有当玩家在积雪生物群系中时,才会启用极光.
 option.AURORA_FULL_MOON_VISIBILITY=极光在满月夜晚可见
+option.AURORA_FULL_MOON_VISIBILITY.comment=只有当满月的时,才会启用极光.
 
 
 #WATER
 
 screen.WATER=水体
+
+option.VANILLA_WATER=原版水体
 
 option.WATER_FOG=水雾
 option.WATER_FOG_DENSITY=水雾密度
@@ -74,7 +79,8 @@ option.SHADOW_SAMPLE_COUNT=阴影采样计数
 option.SHADOW_COLOR=着色阴影
 option.ENTITY_SHADOWS=实体阴影
 
-option.SHIMMER_MOD_SUPPORT=Shimmer模组支持
+option.SHIMMER_MOD_SUPPORT=微光模组支持
+option.SHIMMER_MOD_SUPPORT.comment=增加由微光(Shimmer)模组提供的彩色照明.
 option.BLOOM_COLORED_LIGHTING=基于泛光的彩色照明
 option.COLORED_LIGHTING_RADIUS=彩色照明半径
 option.COLORED_LIGHTING_STRENGTH=彩色照明强度
@@ -109,7 +115,7 @@ screen.IEMISSION=集成自发光配置
 
 option.EMISSIVE_FLOWERS=花朵自发光
 option.EMISSIVE_ORES=矿石自发光
-option.EMISSIVE_DEBRIS=残骸自发光[暂定]
+option.EMISSIVE_DEBRIS=残骸自发光
 option.EMISSIVE_POWDER_SNOW=粉雪自发光
 option.PLAYER_BRIGHT_PARTS_HIGHLIGHT=玩家模型亮色自发光
 option.ENTITY_HIGHLIGHT=实体自发光
@@ -138,13 +144,19 @@ option.LIGHT_DG=绿色
 option.LIGHT_DB=蓝色
 option.LIGHT_DI=强度
 
-screen.LIGHT_LE=傍晚光照颜色
+screen.LIGHT_E=傍晚光照颜色
+option.LIGHT_ER=红色
+option.LIGHT_EG=绿色
+option.LIGHT_EB=蓝色
+option.LIGHT_EI=强度
+
+screen.LIGHT_LE=深夜光照颜色
 option.LIGHT_LER=红色
 option.LIGHT_LEG=绿色
 option.LIGHT_LEB=蓝色
 option.LIGHT_LEI=强度
 
-screen.LIGHT_N=夜晚光照颜色
+screen.LIGHT_N=午夜光照颜色
 option.LIGHT_NR=红色
 option.LIGHT_NG=绿色
 option.LIGHT_NB=蓝色
@@ -169,13 +181,19 @@ option.AMBIENT_DG=绿色
 option.AMBIENT_DB=蓝色
 option.AMBIENT_DI=强度
 
-screen.AMBIENT_LE=傍晚环境光颜色
+screen.AMBIENT_E=傍晚环境光颜色
+option.AMBIENT_ER=红色
+option.AMBIENT_EG=绿色
+option.AMBIENT_EB=蓝色
+option.AMBIENT_EI=强度
+
+screen.AMBIENT_LE=深夜环境光颜色
 option.AMBIENT_LER=红色
 option.AMBIENT_LEG=绿色
 option.AMBIENT_LEB=蓝色
 option.AMBIENT_LEI=强度
 
-screen.AMBIENT_N=夜晚环境光颜色
+screen.AMBIENT_N=午夜环境光颜色
 option.AMBIENT_NR=红色
 option.AMBIENT_NG=绿色
 option.AMBIENT_NB=蓝色
@@ -221,19 +239,31 @@ option.SKY_HI=天空上部 - 颜色强度
 
 #POST
 
-screen.POST=后期处理
+screen.POST=后期效果
 
 option.FXAA=快速近似抗锯齿(FXAA)
 option.SHARPENING=锐化
 option.CHROMATIC_ABERRATION=色度偏差
 option.CHROMATIC_ABERRATION_STRENGTH=色度偏差强度
 
-option.VIBRANCE=自然饱和度
-option.SATURATION=饱和度
 option.EXPOSURE=曝光
+option.EXPOSURE.comment=调整画面整体亮度.
+
 option.TONEMAP_WHITE_CURVE=色调映射白色曲线
+option.TONEMAP_WHITE_CURVE.comment=调整色调图达到白色的容易程度.
+
 option.TONEMAP_LOWER_CURVE=色调映射下部曲线
+option.TONEMAP_LOWER_CURVE.comment=调整较暗颜色的对比度.
+
 option.TONEMAP_UPPER_CURVE=色调映射上部曲线
+option.TONEMAP_UPPER_CURVE.comment=调整较亮颜色的对比度.
+
+option.VIBRANCE=自然饱和度
+option.SATURATION.comment=调整所有颜色的饱和度.
+
+option.SATURATION=饱和度
+option.VIBRANCE.comment=调整饱和度较低的颜色的饱和度，饱和度高的颜色受到的影响较小.
+
 option.BLOOM=泛光
 option.BLOOM_STRENGTH=泛光强度
 option.BLOOM_SAMPLES=泛光采样值
@@ -244,6 +274,7 @@ option.BLOOM_SAMPLES=泛光采样值
 screen.OTHER=其它
 
 option.WAVING_BLOCKS=方块摇晃
+option.WAVING_BLOCKS.comment=允许一些方块摇晃(植物,树叶等)
 option.WAVING_PLANTS=植物摇晃
 option.WAVING_LEAVES=树叶摇晃
 option.WAVING_SPEED=摇晃速度
