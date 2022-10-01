@@ -48,7 +48,7 @@ uniform vec3 cameraPosition;
 uniform sampler2D colortex0;
 uniform sampler2D depthtex0;
 
-#if defined BLOOM && (defined OVERWORLD || defined END)
+#ifdef BLOOM
 uniform sampler2D colortex2;
 #endif
 
@@ -178,16 +178,19 @@ void main() {
 	vec3 reflectionColor = vec3(0.0);
 	vec4 bloomData = vec4(0.0);
 
+	#ifdef BLOOM
+	bloomData = texture2D(colortex2, texCoord);
+	#endif
+
 	#ifdef INTEGRATED_SPECULAR
 	reflectionColor = pow(color.rgb, vec3(0.125)) * 0.5;
 	#endif
 
 	#if defined BLOOM && (defined OVERWORLD || defined END)
-	bloomData = texture2D(colortex2, texCoord);
 	#ifdef OVERWORLD
-		 bloomData.ba += vec2((star * 32.0 + sunMoon * 0.25) * 0.1, float(star > 0.0 || sunMoon > 0.0));
+		 bloomData.ba += vec2((star * 4.0 + sunMoon * 0.125) * 0.1, float(star > 0.0 || sunMoon > 0.0));
 	#else
-		 bloomData.ba += vec2((star * 32.0) * 0.1, float(star > 0.0));
+		 bloomData.ba += vec2((star * 4.0) * 0.1, float(star > 0.0));
 	#endif
 	#endif
 

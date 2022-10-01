@@ -38,10 +38,10 @@ float get3DNoise(vec3 pos) {
 
 float getCloudNoise(vec3 rayPos) {
 	#ifndef BLOCKY_CLOUDS
-	float noise = get3DNoise(rayPos * 0.5000 + frameTimeCounter * 0.20) * 1.25;
-		  noise+= get3DNoise(rayPos * 0.2350 + frameTimeCounter * 0.15) * 1.75;
-		  noise+= get3DNoise(rayPos * 0.1100 + frameTimeCounter * 0.10) * 3.50;
-		  noise+= get3DNoise(rayPos * 0.0521 + frameTimeCounter * 0.05) * 6.75;
+	float noise = get3DNoise(rayPos * 0.5000 + frameTimeCounter * 0.20);
+		  noise+= get3DNoise(rayPos * 0.2500 + frameTimeCounter * 0.15) * 1.75;
+		  noise+= get3DNoise(rayPos * 0.1250 + frameTimeCounter * 0.10) * 3.50;
+		  noise+= get3DNoise(rayPos * 0.0625 + frameTimeCounter * 0.05) * 7.00;
 	#else
 	float noise = get3DNoise(floor(rayPos) * 0.035) * 1000.0;
 	#endif
@@ -74,9 +74,9 @@ void computeVolumetricClouds(inout vec4 vc, in float dither, in float ug) {
 		float VoL = clamp(dot(normalize(viewPos.xyz), lightVec) * shadowFade, 0.0, 1.0);
 		float lViewPos = length(viewPos);
 
-		lightCol = mix(lightCol, skyColor * skyColor * 2.0, timeBrightness * 0.3);
-		ambientCol = mix(ambientCol, skyColor * skyColor, sunVisibility * 0.2);
-		lightCol *= 1.0 + pow2(VoL) * 0.5;
+		lightCol = mix(lightCol, skyColor * skyColor * 2.0, timeBrightness * 0.25);
+		ambientCol = mix(ambientCol, skyColor * skyColor, sunVisibility * 0.125);
+		lightCol *= 1.0 + pow4(VoL);
 
 		//We want to march between two planes which we set here
 		float lowerPlane = (VC_HEIGHT + stretching - cameraPosition.y) / nWorldPos.y;
@@ -118,9 +118,7 @@ void computeVolumetricClouds(inout vec4 vc, in float dither, in float ug) {
 			if (cloudVisibility > 0.0) {
 				//Cloud Noise
 				float noise = getCloudNoise(rayPos);
-
-				//noise = clamp(noise * amount - (10.0 + cloudLayer * 5.0), 0.0, 1.0);
-				noise = clamp(noise * (VC_AMOUNT * (1.0 + rainStrength * 0.15)) - (10.0 + cloudLayer * 5.0), 0.0, 1.0);
+					  noise = clamp(noise * (VC_AMOUNT * (1.0 + rainStrength * 0.15)) - (8.0 + cloudLayer * 3.0), 0.0, 1.0);
 
 				//Color Calculations
 				float cloudLighting = clamp(smoothstep(VC_HEIGHT + stretching * noise, VC_HEIGHT - stretching * noise, rayPos.y) * 0.85 + noise * 0.35, 0.0, 1.0);
@@ -162,7 +160,7 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
 
 	vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.0);
 	float VoL = pow(clamp(dot(nViewPos, lightVec), 0.0, 1.0), 1.25);
-	float nVoL = mix(0.4 + VoL * 0.6, VoL, timeBrightness);
+	float nVoL = mix(0.5 + VoL * 0.5, VoL, timeBrightness);
 
 	float visibility = float(z0 > 0.56) * mix(nVoU * nVoL, 1.0, sign(isEyeInWater)) * 0.01;
 
@@ -225,7 +223,7 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
 		}
 
 		vl *= visibility;
-		vl *= lightCol * (1.0 + pow8(VoL) * 3.0) * VL_OPACITY;
+		vl *= lightCol * (1.0 + pow8(VoL)) * VL_OPACITY;
 	}
 }
 #endif

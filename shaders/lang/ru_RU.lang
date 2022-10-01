@@ -55,6 +55,8 @@ option.AURORA_FULL_MOON_VISIBILITY.comment=Переключает видимос
 
 screen.WATER=Вода
 
+option.VANILLA_WATER=Ванильная Вода
+
 option.WATER_FOG=Водный Туман
 option.WATER_FOG_DENSITY=Плотность Водного Тумана
 option.WATER_CAUSTICS=Каустики

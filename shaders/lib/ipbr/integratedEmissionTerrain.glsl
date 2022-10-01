@@ -23,7 +23,7 @@ void getIntegratedEmission(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos,
 	#ifdef EMISSIVE_ORES
     if (mat > 99.9 && mat < 100.1) { // Glowing Ores
         float stoneDif = max(abs(albedo.r - albedo.g), max(abs(albedo.r - albedo.b), abs(albedo.g - albedo.b)));
-        newEmission = stoneDif * (1.0 - lightmap.y * 0.5) * 2.0;
+        newEmission = pow2(stoneDif) * (1.0 - lightmap.y * 0.5);
     } 
 	#endif
 
@@ -64,7 +64,7 @@ void getIntegratedEmission(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos,
 	} else if (mat > 113.9 && mat < 114.1) { // Glow berries
 		newEmission = float(albedo.r > 0.5) * 1.5;
 	} else if (mat > 114.9 && mat < 115.1) { // Torch & Shroomlight
-		newEmission = float(lAlbedo > 0.99) * 0.75;
+		newEmission = float(lAlbedo > 0.99) * 0.5;
 	} else if (mat > 115.9 && mat < 116.1) { // Furnaces
 		newEmission = float(albedo.r > 0.8 || (albedo.r > 0.6 && albedo.b < 0.5)) * 0.75;
 	} else if (mat > 116.9 && mat < 117.1) { // Chorus
@@ -78,12 +78,12 @@ void getIntegratedEmission(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos,
 	} else if (mat > 120.9 && mat < 121.9) { // Redstone Block && Lava
 		newEmission = (0.125 + pow12(lAlbedo) * 0.75) * 1.5;
 	} else if (mat > 121.9 && mat < 122.1) { // Froglights
-		newEmission = (1.0 - clamp(length(pow4(albedo.rgb)), 0.0, 1.0) * 0.75) * 1.5;
-		albedo.rgb = pow4(albedo.rgb);
+		newEmission = (1.0 - clamp(length(pow4(albedo.rgb)), 0.0, 0.99)) * 6.0;
+		albedo.rgb = pow3(albedo.rgb);
 	} else if (mat > 122.9 && mat < 123.1) { // Sculks
 		newEmission = float(lAlbedo > 0.05 && albedo.r < 0.25) * 0.5;
 	} else if (mat > 123.9 && mat < 124.1) { // Redstone Lamp
-		newEmission = 0.15 + float(lAlbedo > 0.75) * 0.35;
+		newEmission = 0.2 + float(lAlbedo > 0.75) * 0.6;
 	} else if (mat > 124.9 && mat < 125.1) { // Sea Lantern
 		newEmission = pow10(lAlbedo) * 0.5;
 	} else if (mat > 125.9 && mat < 126.1) { // Nether Wart

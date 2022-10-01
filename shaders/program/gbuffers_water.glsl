@@ -168,18 +168,20 @@ void main() {
 
 	float water = float(mat > 0.9 && mat < 1.1);
 	float portal = float(mat > 1.9 && mat < 2.1);
-	float emission = portal * pow8(length(albedo.rgb));
+	float emission = portal * pow8(length(albedo.rgb)) * 0.5;
 
 	albedo.a = mix(albedo.a, 1.0, portal);
 
+	#ifndef VANILLA_WATER
 	if (water > 0.9) {
-		albedo.a = mix(WATER_A, 0.95, float(isEyeInWater == 1));
+		albedo.a = WATER_A;
 		#ifdef OVERWORLD
 		albedo.rgb = mix(waterColor, weatherCol.rgb * 0.25, rainStrength * 0.5);
 		#else
 		albedo.rgb = waterColor;
 		#endif
 	}
+	#endif
 
 	if (albedo.a > 0.001) {
 		vec3 skyColor = vec3(0.0);

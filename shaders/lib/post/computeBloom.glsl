@@ -28,11 +28,12 @@ vec3 getBloomTile(float lod, vec2 coord, vec2 offset) {
 
 vec3 getBlur(vec2 texCoord) {
 	vec2 bloomCoord = texCoord * viewHeight * 0.8 / min(360.0, viewHeight);
-	vec3 blur =  getBloomTile(1.0, bloomCoord, vec2(0.0, 0.0));
-	     blur += getBloomTile(2.0, bloomCoord, vec2(0.6, 0.0));
-	     blur += getBloomTile(3.0, bloomCoord, vec2(0.6, 0.3));
-	     blur += getBloomTile(4.0, bloomCoord, vec2(0.0, 0.6));
-		
+	vec3 blur =  getBloomTile(1.0, bloomCoord, vec2(0.0000, 0.0000));
+	     blur += getBloomTile(2.0, bloomCoord, vec2(0.5100, 0.0000));
+	     blur += getBloomTile(3.0, bloomCoord, vec2(0.5100, 0.2600));
+	     blur += getBloomTile(4.0, bloomCoord, vec2(0.6450, 0.2600));
+	     blur += getBloomTile(5.0, bloomCoord, vec2(0.7175, 0.2600));
+
 		 blur = clamp(blur, vec3(0.0), vec3(1.0));
 
     return blur;

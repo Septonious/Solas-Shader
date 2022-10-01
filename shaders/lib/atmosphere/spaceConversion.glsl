@@ -27,6 +27,8 @@ vec3 calculateShadowPos(vec3 worldPos) {
 
     shadowPos.xy /= distortFactor;
     shadowPos.z *= 0.2;
+    shadowPos = shadowPos * 0.5 + 0.5;
+    shadowPos.z += 0.0512 / shadowMapResolution;
     
-    return shadowPos * 0.5 + 0.5;
+    return shadowPos;
 }

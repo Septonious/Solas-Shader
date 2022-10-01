@@ -50,7 +50,7 @@ void main() {
 
 	#ifdef BLOOM
 	bloom = getBloom(texCoord, filmGrain - 0.25);
-	color += bloom * 0.25;
+	color += bloom * 0.125;
 	#endif
 
 	#ifdef TAA

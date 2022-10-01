@@ -49,7 +49,7 @@ void getReflection(inout vec4 color, in vec3 viewPos, in vec3 normal, in float f
 			#ifdef STARS
 			float star = 0.0;
 			getStars(reflectionFade, worldPos, VoU, nebulaFactor, ug, star);
-			emission += star * 32.0;
+			emission += star * 4.0;
 			#endif
 
 			if (VoU > 0.0) {
@@ -66,7 +66,7 @@ void getReflection(inout vec4 color, in vec3 viewPos, in vec3 normal, in float f
 
 			float sunMoon = 0.0;
 			getSunMoon(reflectionFade, nViewPos, lightSun, lightNight, VoS, VoM, VoU, ug, sunMoon);
-			emission += sunMoon * 0.25;
+			emission += sunMoon * 0.125;
 
 			reflectionFade *= skyLightMap;
 		}
@@ -87,7 +87,7 @@ void getReflection(inout vec4 color, in vec3 viewPos, in vec3 normal, in float f
 			#ifdef END_STARS
 			float star = 0.0;
 			getStars(reflectionFade, worldPos, VoU, nebulaFactor, 1.0, star);
-			emission += star * 32.0;
+			emission += star * 4.0;
 			#endif
 
 			#ifdef END_VORTEX

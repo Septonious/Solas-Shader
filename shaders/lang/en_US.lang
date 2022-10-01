@@ -55,6 +55,8 @@ option.AURORA_FULL_MOON_VISIBILITY.comment=Enables aurora only when the Moon if 
 
 screen.WATER=Water
 
+option.VANILLA_WATER=Vanilla Water
+
 option.WATER_FOG=Water Fog
 option.WATER_FOG_DENSITY=Water Fog Density
 option.WATER_CAUSTICS=Water Caustics

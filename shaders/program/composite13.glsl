@@ -17,8 +17,8 @@ uniform sampler2D colortex0;
 
 //Optifine Constants//
 #ifdef BLOOM
-const bool colortex2MipmapEnabled = true;
 const bool colortex0MipmapEnabled = true;
+const bool colortex2MipmapEnabled = true;
 #endif
 
 //Includes//
