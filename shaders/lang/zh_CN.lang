@@ -25,7 +25,7 @@ option.VL_OPACITY=透明度
 option.VL_SAMPLES=采样值
 
 
-screen.FOG_Config=雾气配置
+screen.FOG_CONFIG=雾气配置
 
 option.DISTANT_FADE=雾气远距离淡化
 option.DISTANT_FADE_STYLE=体积云淡化样式
@@ -36,7 +36,7 @@ option.FOG_DENSITY=雾气密度
 option.FOG_HEIGHT=雾气高度
 
 
-screen.SKY_Config=天空配置
+screen.SKY_CONFIG=天空配置
 
 option.STARS=星空
 option.END_STARS=末地星空
