@@ -116,6 +116,7 @@ screen.IEMISSION=Emissives Config
 option.EMISSIVE_FLOWERS=Emissive Flowers
 option.EMISSIVE_ORES=Emissive Ores
 option.EMISSIVE_DEBRIS=Emissive Debris
+option.EMISSIVE_CONCRETE=Emissive Concrete
 option.EMISSIVE_POWDER_SNOW=Emissive Powder Snow
 option.PLAYER_BRIGHT_PARTS_HIGHLIGHT=Player Bright Parts Highlight
 option.ENTITY_HIGHLIGHT=Entity Highlight
@@ -266,7 +267,6 @@ option.VIBRANCE.comment=Adjusts saturation of less saturated colors, well satura
 
 option.BLOOM=Bloom
 option.BLOOM_STRENGTH=Bloom Strength
-option.BLOOM_SAMPLES=Bloom Samples
 
 
 #OTHER

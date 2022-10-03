@@ -1,9 +1,7 @@
 float pixelHeight = 0.8 / min(360.0, viewHeight);
 float pixelWidth = pixelHeight / aspectRatio;
 
-float gaussian2D(vec2 offset) {
-    return 0.5 * exp(-dot(offset, offset) * 0.5);
-}
+const float weight[6] = float[6](0.0556, 0.1667, 0.2777, 0.2777, 0.1667, 0.0556);
 
 vec3 getBloomTile(float lod, vec2 coord, vec2 offset) {
 	vec3 bloom = vec3(0.0);
@@ -12,13 +10,13 @@ vec3 getBloomTile(float lod, vec2 coord, vec2 offset) {
 	float padding = 0.5 + 0.005 * scale;
 
 	if (abs(coord.x - 0.5) < padding && abs(coord.y - 0.5) < padding) {
-		for(int i = -BLOOM_SAMPLES; i <= BLOOM_SAMPLES; i++) {
-			for(int j = -BLOOM_SAMPLES; j <= BLOOM_SAMPLES; j++) {
-				vec2 pixelOffset = vec2(i * pixelWidth, j * pixelHeight);
+		for(int i = 0; i < 6; i++) {
+			for(int j = 0; j < 6; j++) {
+				vec2 pixelOffset = vec2((i - 2.5) * pixelWidth, (j - 2.5) * pixelHeight);
 				vec2 sampleCoord = coord + pixelOffset * scale;
 				float isEmissive = texture2D(colortex2, sampleCoord).b * 100.0;
 
-				if (isEmissive > 0.0) bloom += texture2D(colortex0, sampleCoord).rgb * gaussian2D(vec2(i, j)) * isEmissive;
+				if (isEmissive > 0.0) bloom += texture2D(colortex0, sampleCoord).rgb * weight[i] * weight[j] * isEmissive;
 			}
 		}
 	}

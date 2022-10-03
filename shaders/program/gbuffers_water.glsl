@@ -168,7 +168,7 @@ void main() {
 
 	float water = float(mat > 0.9 && mat < 1.1);
 	float portal = float(mat > 1.9 && mat < 2.1);
-	float emission = portal * pow8(length(albedo.rgb)) * 0.5;
+	float emission = portal * pow8(length(albedo.rgb));
 
 	albedo.a = mix(albedo.a, 1.0, portal);
 
@@ -205,7 +205,7 @@ void main() {
 		}
 		#endif
 
-		getSceneLighting(albedo.rgb, viewPos, worldPos, newNormal, lightmap, emission * 8.0, 0.0, 0.0, 1.0);
+		getSceneLighting(albedo.rgb, viewPos, worldPos, newNormal, lightmap, emission, 0.0, 0.0, 1.0);
 
 		#if defined OVERWORLD
 		skyColor = getAtmosphere(viewPos);
@@ -239,7 +239,7 @@ void main() {
 
 	/* DRAWBUFFERS:01 */
 	gl_FragData[0] = albedo;
-	gl_FragData[1] = albedo;
+	gl_FragData[1] = vec4(0.0, 0.0, 0.0, 1.0);
 
 	#ifdef BLOOM
 	/* DRAWBUFFERS:012 */

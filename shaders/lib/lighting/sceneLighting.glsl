@@ -51,13 +51,13 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
 
 	#ifdef DYNAMIC_HANDLIGHT
 	float heldLightValue = max(float(heldBlockLightValue), float(heldBlockLightValue2));
-	float handlight = clamp((heldLightValue - 2.0 * length(viewPos)) * 0.0125, 0.0, 0.75);
+	float handlight = clamp((heldLightValue - 3.0 * length(viewPos)) * 0.0125, 0.0, 1.0);
 	blockLightMap = max(blockLightMap, handlight);
 	#endif
 
     #if defined BLOOM_COLORED_LIGHTING || defined GLOBAL_ILLUMINATION
     vec3 bloom = texture2D(gaux4, gl_FragCoord.xy / vec2(viewWidth, viewHeight)).rgb;
-         bloom = pow8(bloom) * 512.0;
+         bloom = pow16(bloom) * 256.0;
     #endif
 
     #if defined SHIMMER_MOD_SUPPORT
@@ -66,7 +66,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     blockLighting = blockLightCol * blockLightMap + coloredLight * (1.0 - emission);
     #elif defined BLOOM_COLORED_LIGHTING
     //BLOOM BASED COLORED LIGHTING
-	vec3 coloredLight = clamp(bloom * pow(getLuminance(bloom) + 0.001, -COLORED_LIGHTING_RADIUS), 0.0, 1.0) * (pow2(blockLightMap) * 0.8 + 0.2) * COLORED_LIGHTING_STRENGTH * (1.0 - emission);
+	vec3 coloredLight = clamp(bloom * pow(getLuminance(bloom) + 0.001, COLORED_LIGHTING_RADIUS), 0.0, 1.0) * (pow2(blockLightMap) * 0.8 + 0.2) * COLORED_LIGHTING_STRENGTH * (1.0 - emission);
     blockLighting = blockLightCol * blockLightMap * (0.5 + pow4(lightmap.y) * 0.5) + coloredLight;
     #else
     blockLighting = blockLightCol * blockLightMap;
@@ -168,7 +168,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     #endif
 
     #ifdef GLOBAL_ILLUMINATION
-	albedo.rgb = mix(albedo.rgb, albedo.rgb * color.a, 1.0 - min(length(bloom), 1.0));
+	albedo.rgb = mix(albedo.rgb, albedo.rgb * color.a, (1.0 - min(length(bloom), 1.0)) * (1.0 - lightmap.x));
     #else
     albedo.rgb *= color.a;
     #endif
@@ -188,7 +188,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     #endif
 
     if (giVisibility != 0.0) {
-        emission += mix(0.0, 0.1 * GLOBAL_ILLUMINATION_STRENGTH * float(emission == 0.0), giVisibility);
+        emission += mix(0.0, 0.125 * GLOBAL_ILLUMINATION_STRENGTH * float(emission == 0.0), giVisibility);
     }
     #endif
 }

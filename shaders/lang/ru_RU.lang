@@ -115,6 +115,7 @@ screen.IEMISSION=Настройки Светящихся Объектов
 option.EMISSIVE_FLOWERS=Светящиеся Цветы
 option.EMISSIVE_OERS=Светящиеся Руды
 option.EMISSIVE_DEBRIS=Светящиеся Древние Обломки
+option.EMISSIVE_CONCRETE=Светящийся Бетон
 option.EMISSIVE_POWDER_SNOW=Светящийся Рассыпчатый Снег
 option.PLAYER_BRIGHT_PARTS_HIGHLIGHT=Светящиеся Яркие Пиксели на Скине Игрока
 option.ENTITY_HIGHLIGHT=Светящиеся Существа
@@ -264,7 +265,6 @@ option.VIBRANCE=Насыщенность блёклых цветов.
 
 option.BLOOM=Свечение
 option.BLOOM_STRENGTH=Сила Свечения
-option.BLOOM_SAMPLES=Качество Свечения
 
 
 #OTHER
