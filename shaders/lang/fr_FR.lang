@@ -1,0 +1,281 @@
+#shaders/lang/fr_FR.lang
+
+#ATMOSPHERICS
+
+screen.ATMOSPHERICS=Atmosphériques
+
+
+screen.VC_CONFIG=Configuration des Nuages Volumétriques
+
+option.VC=Nuages Volumétriques
+option.BLOCKY_CLOUDS=Nuage Cubiques
+option.VC_DISTANT_FADE=Distance de Fondu des Nuage
+option.VC_AMOUNT=Quantité
+option.VC_HEIGHT=Hauteur
+option.VC_STRETCHING=Étirements
+option.VC_SAMPLES=Échantillons
+option.VC_DISTANCE=Distance de Rendue
+option.VC_OPACITY=Opacité
+
+
+screen.VL_CONFIG=Configuration des Lumières Volumétrique
+
+option.VL=Lumière Volumétrique
+option.VL_OPACITY=Opacité
+option.VL_SAMPLES=Échantillons
+
+
+screen.FOG_CONFIG=Configuration du Brouillard
+
+option.DISTANT_FADE=Distance de Disparittion
+option.DISTANT_FADE_STYLE=Style de Disparittion
+option.DISTANT_FADE_STYLE.comment=Sphérique fonctionne comme le brouillard de Minecraft. Cylindrique ignore l'axe Y.
+value.DISTANT_FADE_STYLE.0=Sphérique
+value.DISTANT_FADE_STYLE.1=Cylindrique
+option.FOG_DENSITY=Densité du Brouillard
+option.FOG_HEIGHT=Hauteur du Brouillard
+
+
+screen.SKY_CONFIG=Configuration du ciel
+
+option.STARS=Étoiles
+option.END_STARS=Étoiles de l'End
+option.MILKY_WAY=Voie lactée
+option.MILKY_WAY_BRIGHTNESS=Luminosité de la Voie lactée
+option.END_NEBULA=Nébuleuse de l'End
+option.RAINBOW=Arc en Ciel
+option.AURORA=Aurore Boréale
+option.AURORA_COLD_BIOME_VISIBILITY=Visibilité des Aurore
+option.AURORA_COLD_BIOME_VISIBILITY.comment=Active les aurores uniquement lorsque le joueur se trouve dans un biome froid.
+option.AURORA_FULL_MOON_VISIBILITY=Visibilité des Aurore pendant la Pleine Lune
+option.AURORA_FULL_MOON_VISIBILITY.comment=Active les aurores uniquement pendant les Pleine Lune.
+
+
+#WATER
+
+screen.WATER=Eau
+
+option.VANILLA_WATER=Eau de Minecraft
+
+option.WATER_FOG=Brume d'Eau
+option.WATER_FOG_DENSITY=Densité de la Brume
+option.WATER_CAUSTICS=Caustique d'Eau
+option.WATER_CAUSTICS_STRENGTH=Force des Caustique
+
+option.WATER_NORMALS=Vagues d'Eau
+option.WATER_NORMAL_BUMP=Bosse des Vagues
+option.WATER_NORMAL_OFFSET=Décalage des Vagues
+option.WATER_NORMAL_VISIBILITY=Visibilité des Vagues
+
+
+#LIGHTING
+
+screen.LIGHTING=Éclairage
+
+option.shadowMapResolution=Résolution des Ombres
+option.shadowDistance=Distance des Ombres
+option.sunPathRotation=Angle du Soleil
+option.SHADOW_SAMPLE_COUNT=Échantillons d'Ombres
+option.SHADOW_COLOR=Ombres Colorées
+option.ENTITY_SHADOWS=Ombres d'Entités
+
+option.SHIMMER_MOD_SUPPORT=Support du Mod Shimmer
+option.SHIMMER_MOD_SUPPORT.comment=Ajoute un éclairage coloré fourni par le Mod Shimmer.
+option.BLOOM_COLORED_LIGHTING=Éclairage Coloré du Bloom (BCL)
+option.COLORED_LIGHTING_RADIUS=Rayon du BCL
+option.COLORED_LIGHTING_STRENGTH=Force du BCL
+
+option.AO=Occlusion Ambiante (AO)
+option.AO_STRENGTH=Force du AO
+option.AO_RADIUS=Rayon du AO
+
+option.GLOBAL_ILLUMINATION=Illumination Globale (GI)
+option.GLOBAL_ILLUMINATION_STRENGTH=Force du GI
+option.GLOBAL_ILLUMINATION_RADIUS=Rayon du GI
+option.DYNAMIC_HANDLIGHT=Éclairage Dynamique des Mains
+
+
+#IPBR
+
+screen.IPBR=PBR Intégré (IPBR)
+
+option.INTEGRATED_SPECULAR=Mappage Spéculaire IPBR 
+
+screen.ISPECULAR=Configuration des Spéculaire
+
+option.RAIN_PUDDLES=Flaques d'Eau
+option.REFLECTION_RT_SAMPLE_COUNT=Échantillons des Reflets
+option.SPECULAR_STRENGTH=Force des Spéculaire
+option.WATER_SPECULAR_STRENGTH=Force des Reflets de l'Eau
+
+
+option.INTEGRATED_EMISSION=IPBR Émissives
+
+screen.IEMISSION=Configuration des Émissifs
+
+option.EMISSIVE_FLOWERS=Fleurs Émissives
+option.EMISSIVE_ORES=Minerais Émissifs
+option.EMISSIVE_DEBRIS=Débris Émissifs
+option.EMISSIVE_POWDER_SNOW=Poudres de Neiges Émissives
+option.PLAYER_BRIGHT_PARTS_HIGHLIGHT=Mise en Évidence Lumineuse des Joueurs
+option.ENTITY_HIGHLIGHT=Mise en Évidence des Entités
+option.EMISSION_STRENGTH=Force des Émissifs
+
+
+#COLOR
+
+screen.COLOR=Couleurs
+
+screen.LIGHT_EM=Lumière (Début de Matinée)
+option.LIGHT_EMR=Rouge
+option.LIGHT_EMG=Vert
+option.LIGHT_EMB=Bleu
+option.LIGHT_EMI=Intensité
+
+screen.LIGHT_M=Lumière (Matin)
+option.LIGHT_MR=Rouge
+option.LIGHT_MG=Vert
+option.LIGHT_MB=Bleu
+option.LIGHT_MI=Intensité
+
+screen.LIGHT_D=Lumière (Jour)
+option.LIGHT_DR=Rouge
+option.LIGHT_DG=Vert
+option.LIGHT_DB=Bleu
+option.LIGHT_DI=Intensité
+
+screen.LIGHT_E=Lumière (Soir)
+option.LIGHT_ER=Rouge
+option.LIGHT_EG=Vert
+option.LIGHT_EB=Bleu
+option.LIGHT_EI=Intensité
+
+screen.LIGHT_LE=Lumière (Fin de Soirée)
+option.LIGHT_LER=Rouge
+option.LIGHT_LEG=Vert
+option.LIGHT_LEB=Bleu
+option.LIGHT_LEI=Intensité
+
+screen.LIGHT_N=Lumière (Nuit)
+option.LIGHT_NR=Rouge
+option.LIGHT_NG=Vert
+option.LIGHT_NB=Bleu
+option.LIGHT_NI=Intensité
+
+
+screen.AMBIENT_EM=Ambient (Début de Matinée)
+option.AMBIENT_EMR=Rouge
+option.AMBIENT_EMG=Vert
+option.AMBIENT_EMB=Bleu
+option.AMBIENT_EMI=Intensité
+
+screen.AMBIENT_M=Ambient (Matin)
+option.AMBIENT_MR=Rouge
+option.AMBIENT_MG=Vert
+option.AMBIENT_MB=Bleu
+option.AMBIENT_MI=Intensité
+
+screen.AMBIENT_D=Ambient (Jour)
+option.AMBIENT_DR=Rouge
+option.AMBIENT_DG=Vert
+option.AMBIENT_DB=Bleu
+option.AMBIENT_DI=Intensité
+
+screen.AMBIENT_E=Ambient (Soir)
+option.AMBIENT_ER=Rouge
+option.AMBIENT_EG=Vert
+option.AMBIENT_EB=Bleu
+option.AMBIENT_EI=Intensité
+
+screen.AMBIENT_LE=Ambient (Fin de Soirée)
+option.AMBIENT_LER=Rouge
+option.AMBIENT_LEG=Vert
+option.AMBIENT_LEB=Blue
+option.AMBIENT_LEI=Intensité
+
+screen.AMBIENT_N=Ambient (Nuit)
+option.AMBIENT_NR=Rouge
+option.AMBIENT_NG=Vert
+option.AMBIENT_NB=Bleu
+option.AMBIENT_NI=Intensité
+
+
+screen.MINLIGHT=Éclairage minimal
+option.MINLIGHT_R=Rouge
+option.MINLIGHT_G=Vert
+option.MINLIGHT_B=Bleu
+option.MINLIGHT_I=Intensité
+
+screen.BLOCKLIGHT_COLOR=Couleur de la Lmuière de Bloc
+option.BLOCKLIGHT_R=Rouge
+option.BLOCKLIGHT_G=Vert
+option.BLOCKLIGHT_B=Bleu
+option.BLOCKLIGHT_I=Intensité
+
+screen.WATER_COLOR=Couleur de l'Eau
+option.WATER_R=Rouge
+option.WATER_G=Vert
+option.WATER_B=Bleu
+option.WATER_I=Intensité
+option.WATER_A=Alpha
+
+screen.SKY_COLOR=Couleur du Ciel
+
+option.SKY_R=Rouge
+option.SKY_G=Vert
+option.SKY_B=Bleu
+option.SKY_I=Intensité
+
+option.SKY_LR=Rouge (Faible dispersion)
+option.SKY_LG=Vert (Faible dispersion)
+option.SKY_LB=Bleu (Faible dispersion)
+option.SKY_LI=Intensité (Faible dispersion)
+
+option.SKY_HR=Rouge (Haute dispersion)
+option.SKY_HG=Vert (Haute dispersion)
+option.SKY_HB=Bleu (Haute dispersion)
+option.SKY_HI=Intensité (Haute dispersion)
+
+
+#POST
+
+screen.POST=Effets Secondaires
+
+option.FXAA=Anti-Crénelage Approximatif Rapide (FXAA)
+option.SHARPENING=Aiguisage (Sharpening)
+option.CHROMATIC_ABERRATION=Aberration Chromatique (CA)
+option.CHROMATIC_ABERRATION_STRENGTH=Force des CA
+
+option.EXPOSURE=Exposition
+option.EXPOSURE.comment=Règle la luminosité globale.
+
+option.TONEMAP_WHITE_CURVE=Carte de Tonalité Courbe Blanche
+option.TONEMAP_WHITE_CURVE.comment=Règle la vitesse à laquelle le tonemap peut atteindre le blanc.
+
+option.TONEMAP_LOWER_CURVE=Carte de Tonalité Courbe Inférieure
+option.TONEMAP_LOWER_CURVE.comment=Ajuste le contraste des couleurs plus sombres.
+
+option.TONEMAP_UPPER_CURVE=Carte de Tonalité Courbe Supérieure
+option.TONEMAP_UPPER_CURVE.comment=Ajuste le contraste des couleurs les plus vives.
+
+option.SATURATION=Saturation
+option.SATURATION.comment=Ajuste la saturation de toutes les couleurs.
+
+option.VIBRANCE=Vibrance
+option.VIBRANCE.comment=Ajuste la saturation des couleurs moins saturées, les couleurs bien saturées sont moins affectées.
+
+option.BLOOM=Bloom
+option.BLOOM_STRENGTH=Force du Bloom
+option.BLOOM_SAMPLES=Échantillons du Bloom
+
+
+#OTHER
+
+screen.OTHER=Autres
+
+option.WAVING_BLOCKS=Blocs Ondulants
+option.WAVING_BLOCKS.comment=Permet à certains blocs d'onduler (plantes, feuilles, etc.)
+option.WAVING_PLANTS=Plantes Ondulantes
+option.WAVING_LEAVES=Feuilles Ondulantes
+option.WAVING_SPEED=Vitesse d'Ondulation
+option.WAVING_AMPLITUDE=Waving Amplitude
