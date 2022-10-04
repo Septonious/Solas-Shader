@@ -16,6 +16,7 @@ in vec4 color;
 uniform int entityId;
 
 #ifdef DYNAMIC_HANDLIGHT
+uniform int heldItemId, heldItemId2;
 uniform int heldBlockLightValue;
 uniform int heldBlockLightValue2;
 #endif
@@ -36,6 +37,10 @@ uniform vec3 cameraPosition;
 
 uniform vec4 entityColor;
 
+#if defined BLOOM_COLORED_LIGHTING || defined GLOBAL_ILLUMINATION
+uniform sampler2D gaux4;
+#endif
+
 uniform sampler2D texture;
 
 uniform mat4 gbufferProjectionInverse;
@@ -47,6 +52,12 @@ uniform mat4 shadowModelView;
 #endif
 
 //Common Variables//
+#if defined BLOOM_COLORED_LIGHTING || defined GLOBAL_ILLUMINATION
+float getLuminance(vec3 color) {
+	return dot(color, vec3(0.299, 0.587, 0.114));
+}
+#endif
+
 #ifdef OVERWORLD
 float sunVisibility = clamp(dot(sunVec, upVec) + 0.025, 0.0, 0.1) * 10.0;
 #endif
@@ -59,6 +70,10 @@ float sunVisibility = clamp(dot(sunVec, upVec) + 0.025, 0.0, 0.1) * 10.0;
 #if defined OVERWORLD || defined END
 #include "/lib/util/ToShadow.glsl"
 #include "/lib/lighting/shadows.glsl"
+#endif
+
+#ifdef SHIMMER_MOD_SUPPORT
+#include "/lib/lighting/shimmerModSupport.glsl"
 #endif
 
 #include "/lib/color/dimensionColor.glsl"

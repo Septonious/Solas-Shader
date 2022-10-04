@@ -25,6 +25,7 @@ in vec4 color;
 uniform int isEyeInWater;
 
 #ifdef DYNAMIC_HANDLIGHT
+uniform int heldItemId, heldItemId2;
 uniform int heldBlockLightValue;
 uniform int heldBlockLightValue2;
 #endif
@@ -85,6 +86,10 @@ uniform sampler2D shadowcolor1;
 uniform sampler2D gaux3;
 #endif
 
+#if defined BLOOM_COLORED_LIGHTING || defined GLOBAL_ILLUMINATION
+uniform sampler2D gaux4;
+#endif
+
 uniform sampler2D texture;
 
 #if defined WATER_FOG || defined INTEGRATED_SPECULAR
@@ -108,6 +113,12 @@ uniform mat4 shadowModelView;
 #endif
 
 //Common Variables//
+#if defined BLOOM_COLORED_LIGHTING || defined GLOBAL_ILLUMINATION
+float getLuminance(vec3 color) {
+	return dot(color, vec3(0.299, 0.587, 0.114));
+}
+#endif
+
 #if defined OVERWORLD || ((defined OVERWORLD || defined END) && defined INTEGRATED_SPECULAR)
 float eBS = eyeBrightnessSmooth.y / 240.0;
 float ug = mix(clamp((cameraPosition.y - 56.0) / 16.0, float(isEyeInWater == 1), 1.0), 1.0, eBS);

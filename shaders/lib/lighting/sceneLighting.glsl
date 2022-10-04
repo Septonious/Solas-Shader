@@ -9,16 +9,27 @@ vec3 lightVec = sunVec;
 #undef GLOBAL_ILLUMINATION
 #undef BLOOM_COLORED_LIGHTING
 #endif
-
-uniform sampler2D gaux4;
-
-float getLuminance(vec3 color) {
-	return dot(color, vec3(0.299, 0.587, 0.114));
-}
 #endif
 
-#ifdef SHIMMER_MOD_SUPPORT
-#include "/lib/lighting/shimmerModSupport.glsl"
+#ifdef DYNAMIC_HANDLIGHT
+vec3 getHandLightColor(float handlight) {
+    vec3 handLightColor = blockLightCol;
+
+    if (handlight > 0.0) {
+        if (heldItemId == 63 || heldItemId2 == 63 || heldItemId == 51 || heldItemId2 == 51 || heldItemId == 60 || heldItemId2 == 60) handLightColor = vec3(0.23, 0.54, 0.94);
+        if (heldItemId == 62 || heldItemId2 == 62) handLightColor = vec3(0.70, 0.54, 0.33);
+        if (heldItemId == 59 || heldItemId2 == 59) handLightColor = vec3(0.78, 0.47, 0.15);
+        if (heldItemId == 58 || heldItemId2 == 58) handLightColor = vec3(1.00, 0.90, 1.10);
+        if (heldItemId == 57 || heldItemId2 == 57) handLightColor = vec3(0.31, 0.44, 0.59);
+        if (heldItemId == 56 || heldItemId2 == 56) handLightColor = vec3(0.86, 0.62, 0.31);
+        if (heldItemId == 55 || heldItemId2 == 55) handLightColor = vec3(0.73, 0.43, 0.23);
+        if (heldItemId == 54 || heldItemId2 == 54) handLightColor = vec3(1.10, 0.50, 1.50);
+        if (heldItemId == 53 || heldItemId2 == 53 || heldItemId == 61 || heldItemId2 == 61 || heldItemId == 64 || heldItemId2 == 64) handLightColor = vec3(0.86, 0.62, 0.31);
+        if (heldItemId == 52 || heldItemId2 == 52) handLightColor = vec3(1.00, 0.31, 0.07);
+    }
+
+    return mix(handLightColor * handlight, vec3(0.0), 0.25);
+}
 #endif
 
 #ifndef GBUFFERS_TERRAIN
@@ -51,8 +62,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
 
 	#ifdef DYNAMIC_HANDLIGHT
 	float heldLightValue = max(float(heldBlockLightValue), float(heldBlockLightValue2));
-	float handlight = clamp((heldLightValue - 3.0 * length(viewPos)) * 0.0125, 0.0, 1.0);
-	blockLightMap = max(blockLightMap, handlight);
+	float handlight = clamp((heldLightValue - 4.0 * length(viewPos)) * 0.025, 0.0, 1.0);
 	#endif
 
     #if defined BLOOM_COLORED_LIGHTING || defined GLOBAL_ILLUMINATION
@@ -70,6 +80,10 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     blockLighting = blockLightCol * blockLightMap * (0.5 + pow4(lightmap.y) * 0.5) + coloredLight;
     #else
     blockLighting = blockLightCol * blockLightMap;
+    #endif
+
+    #ifdef DYNAMIC_HANDLIGHT
+    blockLighting += getHandLightColor(handlight);
     #endif
 
     //Main Scene Lighting (Sunlight & Shadows)
