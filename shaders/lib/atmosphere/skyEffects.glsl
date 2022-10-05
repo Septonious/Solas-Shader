@@ -144,11 +144,11 @@ void getAurora(inout vec3 color, in vec3 worldPos, in float ug) {
 		dither = fract(dither + frameTimeCounter * 16.0);
 		#endif
 
-		int samples = 10;
+		int samples = 8;
 		float sampleStep = 1.0 / samples;
 		float currentStep = dither * sampleStep;
 
-		for(int i = 0; i < samples; i++) {
+		for (int i = 0; i < samples; i++) {
 			vec3 planeCoord = worldPos * ((10.0 + currentStep * 20.0) / worldPos.y) * 0.04;
 			vec2 coord = cameraPosition.xz * 0.00005 + planeCoord.xz;
 

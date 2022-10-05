@@ -74,8 +74,7 @@ void computeVolumetricClouds(inout vec4 vc, in float dither, in float ug) {
 		float VoL = clamp(dot(normalize(viewPos.xyz), lightVec) * shadowFade, 0.0, 1.0);
 		float lViewPos = length(viewPos);
 
-		lightCol = mix(lightCol, skyColor * skyColor * 2.0, timeBrightness * 0.25);
-		ambientCol = mix(ambientCol, skyColor * skyColor, sunVisibility * 0.125);
+		ambientCol = mix(ambientCol, skyColor, sunVisibility * 0.2 * (1.0 - rainStrength * 0.75));
 		lightCol *= 1.0 + pow4(VoL);
 
 		//We want to march between two planes which we set here

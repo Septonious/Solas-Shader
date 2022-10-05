@@ -19,6 +19,7 @@ vec3 RGBToYCoCg(vec3 col) {
 
 vec3 YCoCgToRGB(vec3 col) {
 	float n = col.r - col.b;
+
 	return vec3(n + col.g, col.r + col.b, n - col.g);
 }
 
@@ -41,7 +42,7 @@ vec3 NeighbourhoodClamping(vec3 color, vec3 tempColor, vec2 viewScale, sampler2D
 	vec3 minclr = RGBToYCoCg(color);
 	vec3 maxclr = minclr;
 
-	for(int i = 0; i < 8; i++) {
+	for (int i = 0; i < 8; i++) {
 		vec2 offset = neighbourhoodOffsets[i] * viewScale;
 		vec3 clr = texture2D(colortex, texCoord + offset).rgb;
 

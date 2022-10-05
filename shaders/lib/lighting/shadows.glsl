@@ -35,7 +35,7 @@ vec3 sampleFilteredShadow(vec3 shadowPos, float shadowBlurStrength, float dither
         vec2 shadowOffset = offsetDist(float(i + dither)) * shadowBlurStrength;
         shadow0 += shadow2D(shadowtex0, vec3(shadowPos.st + shadowOffset, shadowPos.z)).x;
     }
-    shadow0 /= float(shadowSamples);
+    shadow0 /= shadowSamples;
 
     vec3 shadowCol = vec3(0.0);
     #ifdef SHADOW_COLOR
@@ -45,7 +45,7 @@ vec3 sampleFilteredShadow(vec3 shadowPos, float shadowBlurStrength, float dither
             shadowCol += texture2D(shadowcolor0, shadowPos.st + shadowOffset).rgb *
                          shadow2D(shadowtex1, vec3(shadowPos.st + shadowOffset, shadowPos.z)).x;
         }
-        shadowCol /= float(shadowSamples);
+        shadowCol /= shadowSamples;
     }
     #endif
 

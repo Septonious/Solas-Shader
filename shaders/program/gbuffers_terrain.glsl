@@ -6,16 +6,10 @@
 #ifdef FSH
 
 //Varyings//
-in float mat;
-in float isPlant;
+in float mat, isPlant;
 in vec2 texCoord, lightMapCoord;
 in vec3 sunVec, upVec, eastVec;
 in vec3 normal;
-
-#ifdef INTEGRATED_NORMAL_MAPPING
-in vec3 binormal, tangent;
-#endif
-
 in vec4 color;
 
 //Uniforms//
@@ -87,10 +81,6 @@ float sunVisibility = clamp(dot(sunVec, upVec) + 0.025, 0.0, 0.1) * 10.0;
 #include "/lib/color/dimensionColor.glsl"
 #include "/lib/lighting/sceneLighting.glsl"
 
-#ifdef INTEGRATED_NORMAL_MAPPING
-#include "/lib/ipbr/integratedNormalMapping.glsl"
-#endif
-
 #ifdef INTEGRATED_EMISSION
 #include "/lib/ipbr/integratedEmissionTerrain.glsl"
 #endif
@@ -119,14 +109,6 @@ void main() {
 		vec3 viewPos = ToNDC(screenPos);
 		vec3 worldPos = ToWorld(viewPos);
 		vec2 lightmap = clamp(lightMapCoord, 0.0, 1.0);
-
-		#ifdef INTEGRATED_NORMAL_MAPPING
-		mat3 tbnMatrix = mat3(tangent.x, binormal.x, normal.x,
-							  tangent.y, binormal.y, normal.y,
-							  tangent.z, binormal.z, normal.z);
-
-		newNormal = clamp(normalize(getIntegratedNormalMapping(albedo.rgb) * tbnMatrix), vec3(-1.0), vec3(1.0));
-		#endif
 
 		#ifdef INTEGRATED_EMISSION
 		getIntegratedEmission(albedo.rgb, viewPos, worldPos, lightmap, emission);
@@ -160,16 +142,10 @@ void main() {
 #ifdef VSH
 
 //Varyings//
-out float mat;
-out float isPlant;
+out float mat, isPlant;
 out vec2 texCoord, lightMapCoord;
 out vec3 sunVec, upVec, eastVec;
 out vec3 normal;
-
-#ifdef INTEGRATED_NORMAL_MAPPING
-out vec3 binormal, tangent;
-#endif
-
 out vec4 color;
 
 //Uniforms//
@@ -199,10 +175,6 @@ attribute vec4 mc_Entity;
 attribute vec4 mc_midTexCoord;
 #endif
 
-#ifdef INTEGRATED_NORMAL_MAPPING
-attribute vec4 at_tangent;
-#endif
-
 //Includes//
 #ifdef TAA
 #include "/lib/util/jitter.glsl"
@@ -222,11 +194,6 @@ void main() {
 
 	//Normal
 	normal = normalize(gl_NormalMatrix * gl_Normal);
-
-	#ifdef INTEGRATED_NORMAL_MAPPING
-	binormal = normalize(gl_NormalMatrix * cross(at_tangent.xyz, gl_Normal.xyz) * at_tangent.w);
-	tangent  = normalize(gl_NormalMatrix * at_tangent.xyz);
-	#endif
 
 	//Sun & Other vectors
 	sunVec = vec3(0.0);
