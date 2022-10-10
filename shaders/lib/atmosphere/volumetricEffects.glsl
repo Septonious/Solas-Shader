@@ -49,12 +49,12 @@ float getCloudNoise(vec3 rayPos) {
 	return noise;
 }
 
-void computeVolumetricClouds(inout vec4 vc, in float dither, in float ug) {
+void computeVolumetricClouds(inout vec4 vc, in float dither, in float caveFactor) {
 	//Depts
 	float z0 = texture2D(depthtex0, texCoord).r;
 	float z1 = texture2D(depthtex1, texCoord).r;
 
-	float visibility = ug * float(z0 > 0.56);
+	float visibility = caveFactor * float(z0 > 0.56);
 
 	#if MC_VERSION >= 11900
 	visibility *= 1.0 - darknessFactor;
@@ -136,7 +136,7 @@ void computeVolumetricClouds(inout vec4 vc, in float dither, in float ug) {
 			}
 		}
 
-		vc *= ug;
+		vc *= caveFactor;
 	}
 }
 #endif

@@ -36,7 +36,7 @@ vec3 getAtmosphere(vec3 viewPos) {
 	sky = mix(sky, lightColSqrt * skyDensity, rainStrength);
 
     //Underground Sky
-	sky = mix(minLightCol, sky, ug);
+	sky = mix(minLightCol, sky, caveFactor);
 
     return sky;
 }

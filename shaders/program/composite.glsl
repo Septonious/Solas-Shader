@@ -13,7 +13,6 @@ in vec3 sunVec, upVec;
 //Uniforms//
 #if defined VC || defined VL
 uniform int isEyeInWater;
-//uniform int worldDay;
 
 #ifdef VL
 uniform float near;
@@ -21,7 +20,8 @@ uniform float near;
 
 uniform float far;
 uniform float frameTimeCounter;
-uniform float timeAngle, timeBrightness, rainStrength, blindFactor, shadowFade;
+uniform float timeAngle, timeBrightness;
+uniform float rainStrength, blindFactor, shadowFade;
 
 #if MC_VERSION >= 11900
 uniform float darknessFactor;
@@ -37,16 +37,14 @@ uniform sampler2D colortex0;
 #if defined VC || defined VL
 uniform sampler2D noisetex;
 uniform sampler2D colortex1;
-
 uniform sampler2D depthtex0, depthtex1;
-
-uniform sampler2DShadow shadowtex0, shadowtex1;
-
 uniform sampler2D shadowcolor1;
 
 #if (defined VC || defined VL) && defined SHADOW_COLOR
 uniform sampler2D shadowcolor0;
 #endif
+
+uniform sampler2DShadow shadowtex0, shadowtex1;
 
 uniform mat4 shadowModelView, shadowProjection;
 uniform mat4 gbufferProjectionInverse, gbufferModelViewInverse;
@@ -55,7 +53,7 @@ uniform mat4 gbufferProjectionInverse, gbufferModelViewInverse;
 //Common Variables//
 #if defined VC || defined VL
 float eBS = sqrt(eyeBrightnessSmooth.y / 240.0);
-float ug = mix(clamp((cameraPosition.y - 56.0) / 16.0, float(isEyeInWater == 1), 1.0), 1.0, eBS);
+float caveFactor = mix(clamp((cameraPosition.y - 56.0) / 16.0, float(isEyeInWater == 1), 1.0), 1.0, eBS);
 float sunVisibility = clamp(dot(sunVec, upVec) + 0.025, 0.0, 0.1) * 10.0;
 #endif
 
@@ -83,7 +81,7 @@ void main() {
 	#endif
 
 	#ifdef VC
-	computeVolumetricClouds(vc, dither, ug);
+	computeVolumetricClouds(vc, dither, caveFactor);
 	#endif
 
 	#ifdef VL

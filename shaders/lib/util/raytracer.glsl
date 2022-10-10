@@ -7,20 +7,17 @@ float getCoordDistance(vec2 coord) {
 }
 
 vec3 rayTrace(vec3 viewPos, vec3 normal, float dither, out float border, int refinementSteps, float stepSize, float refinementMult, float refinementFactor) {
-	vec3 reflectionPos = vec3(0.0);
-	int totalRefinementSteps = 0;
-	float rayDistance = 0.0;
-	
 	#ifdef TAA
-	dither = fract(dither + frameTimeCounter);
+	dither = fract(dither + frameTimeCounter * 16.0);
 	#endif
 
+	vec3 reflectionPos = vec3(0.0);
 	vec3 startPos = viewPos + normal * 0.035;
-
     vec3 rayDir = stepSize * reflect(normalize(viewPos), normalize(normal));
+	vec3 rayIncrement = rayDir;
     viewPos += rayDir;
 
-	vec3 rayIncrement = rayDir;
+	int refinementLoops = 0;
 
     for (int i = 0; i < REFLECTION_RT_SAMPLE_COUNT; i++) {
         reflectionPos = ToVec3(gbufferProjection * vec4(viewPos, 1.0)) * 0.5 + 0.5;
@@ -29,14 +26,13 @@ vec3 rayTrace(vec3 viewPos, vec3 normal, float dither, out float border, int ref
 
 		vec3 rayPos = vec3(reflectionPos.xy, texture2D(depthtex1, reflectionPos.xy).r);
         rayPos = ToVec3(gbufferProjectionInverse * vec4(rayPos * 2.0 - 1.0, 1.0));
-		rayDistance = abs(dot(startPos - rayPos, normal));
 
         float err = length(viewPos - rayPos);
 		float rayLength = length(rayDir) * pow(length(rayIncrement), 0.1) * 1.3;
 
 		if (err < rayLength) {
-			totalRefinementSteps++;
-			if (totalRefinementSteps >= refinementSteps) break;
+			refinementLoops++;
+			if (refinementLoops >= refinementSteps) break;
 
 			rayIncrement -= rayDir;
 			rayDir *= refinementMult;

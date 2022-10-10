@@ -3,9 +3,9 @@ float GetNoise(vec2 pos) {
 	return fract(sin(dot(pos, vec2(12.9898, 4.1414))) * 43758.5453);
 }
 
-void getStars(inout vec3 color, in vec3 worldPos, in float VoU, in float nebulaFactor, in float ug, inout float star) {
+void getStars(inout vec3 color, in vec3 worldPos, in float VoU, in float nebulaFactor, in float caveFactor, inout float star) {
 	#ifdef OVERWORLD
-	float visibility = (1.0 - timeBrightnessSqrt) * (1.0 - rainStrength) * pow(VoU, 0.125) * ug;
+	float visibility = (1.0 - timeBrightnessSqrt) * (1.0 - rainStrength) * pow(VoU, 0.125) * caveFactor;
 	#else
 	float visibility = 0.75 + nebulaFactor * 0.25;
 	#endif
@@ -53,9 +53,9 @@ void getEndVortex(inout vec3 color, in vec3 worldPos, in float VoU, in float VoS
 #endif
 
 #if (defined MILKY_WAY && !defined GBUFFERS_WATER) || defined END_NEBULA
-void getNebula(inout vec3 color, in vec3 worldPos, in float VoU, inout float nebulaFactor, in float ug) {
+void getNebula(inout vec3 color, in vec3 worldPos, in float VoU, inout float nebulaFactor, in float caveFactor) {
 	#ifdef OVERWORLD
-	float visibility = (1.0 - sunVisibility) * (1.0 - rainStrength) * sqrt(max(VoU, 0.0)) * MILKY_WAY_BRIGHTNESS * ug;
+	float visibility = (1.0 - sunVisibility) * (1.0 - rainStrength) * sqrt(max(VoU, 0.0)) * MILKY_WAY_BRIGHTNESS * caveFactor;
 	#else
 	float visibility = 1.0 - abs(VoU);
 	#endif
@@ -96,8 +96,8 @@ void getNebula(inout vec3 color, in vec3 worldPos, in float VoU, inout float neb
 #endif
 
 #ifdef RAINBOW
-void getRainbow(inout vec3 color, in vec3 worldPos, in float VoU, in float size, in float rad, in float ug) {
-	float visibility = sunVisibility * (1.0 - rainStrength) * wetness * pow2(max(VoU, 0.0)) * ug * (1.0 - isSnowy);
+void getRainbow(inout vec3 color, in vec3 worldPos, in float VoU, in float size, in float radius, in float caveFactor) {
+	float visibility = sunVisibility * (1.0 - rainStrength) * wetness * max(VoU, 0.0) * caveFactor * (1.0 - isSnowy);
 
 	if (visibility > 0.0) {
 		vec2 planeCoord = worldPos.xy / (worldPos.y + length(worldPos.xz) * 0.65);
@@ -106,9 +106,9 @@ void getRainbow(inout vec3 color, in vec3 worldPos, in float VoU, in float size,
 		float rainbowFactor = clamp(1.0 - length(rainbowCoord) / size, 0.0, 1.0);
 		
 		vec3 rainbow = 
-			(smoothstep(0.0, rad, rainbowFactor) - smoothstep(rad, rad * 2.0, rainbowFactor)) * vec3(0.5, 0.0, 0.0) +
-			(smoothstep(rad * 0.5, rad * 1.5, rainbowFactor) - smoothstep(rad * 1.5, rad * 2.5, rainbowFactor)) * vec3(0.0, 0.5, 0.0) +
-			(smoothstep(rad, rad * 2.0, rainbowFactor) - smoothstep(rad * 2.0, rad * 3.0, rainbowFactor)) * vec3(0.0, 0.0, 0.5)
+			(smoothstep(0.0, radius, rainbowFactor) - smoothstep(radius, radius * 2.0, rainbowFactor)) * vec3(0.5, 0.0, 0.0) +
+			(smoothstep(radius * 0.5, radius * 1.5, rainbowFactor) - smoothstep(radius * 1.5, radius * 2.5, rainbowFactor)) * vec3(0.0, 0.5, 0.0) +
+			(smoothstep(radius, radius * 2.0, rainbowFactor) - smoothstep(radius * 2.0, radius * 3.0, rainbowFactor)) * vec3(0.0, 0.0, 0.5)
 		;
 
 		color += rainbow * visibility;
@@ -124,8 +124,8 @@ float getAuroraNoise(vec2 coord) {
 	return max(1.0 - 2.0 * abs(noise - 3.0), 0.0);
 }
 
-void getAurora(inout vec3 color, in vec3 worldPos, in float ug) {
-	float visibility = pow6(1.0 - sunVisibility) * (1.0 - rainStrength) * ug;
+void getAurora(inout vec3 color, in vec3 worldPos, in float caveFactor) {
+	float visibility = pow6(1.0 - sunVisibility) * (1.0 - rainStrength) * caveFactor;
 
 	#ifdef AURORA_FULL_MOON_VISIBILITY
 	visibility *= float(moonPhase == 0);

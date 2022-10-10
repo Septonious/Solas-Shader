@@ -19,7 +19,7 @@ vec3 getHandLightColor(float handlight) {
         if (heldItemId == 63 || heldItemId2 == 63 || heldItemId == 51 || heldItemId2 == 51 || heldItemId == 60 || heldItemId2 == 60) handLightColor = vec3(0.23, 0.54, 0.94);
         if (heldItemId == 62 || heldItemId2 == 62) handLightColor = vec3(0.70, 0.54, 0.33);
         if (heldItemId == 59 || heldItemId2 == 59) handLightColor = vec3(0.78, 0.47, 0.15);
-        if (heldItemId == 58 || heldItemId2 == 58) handLightColor = vec3(1.00, 0.90, 1.10);
+        if (heldItemId == 58 || heldItemId2 == 58) handLightColor = vec3(0.80, 0.90, 1.20);
         if (heldItemId == 57 || heldItemId2 == 57) handLightColor = vec3(0.31, 0.44, 0.59);
         if (heldItemId == 56 || heldItemId2 == 56) handLightColor = vec3(0.86, 0.62, 0.31);
         if (heldItemId == 55 || heldItemId2 == 55) handLightColor = vec3(0.73, 0.43, 0.23);
@@ -67,7 +67,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
 
     #if defined BLOOM_COLORED_LIGHTING || defined GLOBAL_ILLUMINATION
     vec3 bloom = texture2D(gaux4, gl_FragCoord.xy / vec2(viewWidth, viewHeight)).rgb;
-         bloom = pow16(bloom) * 256.0;
+         bloom = pow8(bloom) * 256.0;
     #endif
 
     #if defined SHIMMER_MOD_SUPPORT
@@ -76,8 +76,9 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     blockLighting = blockLightCol * blockLightMap + coloredLight * (1.0 - emission);
     #elif defined BLOOM_COLORED_LIGHTING
     //BLOOM BASED COLORED LIGHTING
-	vec3 coloredLight = clamp(bloom * pow(getLuminance(bloom) + 0.001, COLORED_LIGHTING_RADIUS), 0.0, 1.0) * (pow2(blockLightMap) * 0.8 + 0.2) * COLORED_LIGHTING_STRENGTH * (1.0 - emission);
-    blockLighting = blockLightCol * blockLightMap * (0.5 + pow4(lightmap.y) * 0.5) + coloredLight;
+    float newBlockLightMap = pow4(blockLightMap) + pow(blockLightMap, 0.5) * 0.5 + 0.125;
+	vec3 coloredLight = clamp(bloom * pow(getLuminance(bloom), COLORED_LIGHTING_RADIUS) * (0.5 + sqrt(getLuminance(bloom))), 0.0, 1.0) * COLORED_LIGHTING_STRENGTH;
+    blockLighting = blockLightCol * blockLightMap * 0.5 + coloredLight * newBlockLightMap;
     #else
     blockLighting = blockLightCol * blockLightMap;
     #endif
@@ -158,7 +159,8 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     float rainFactor = 1.0 - rainStrength * 0.8;
 
     #ifdef GLOBAL_ILLUMINATION
-    bloom = clamp(bloom * pow(getLuminance(bloom), GLOBAL_ILLUMINATION_RADIUS), 0.0, 1.0) * 4.0;
+    bloom = clamp(bloom * pow(getLuminance(bloom), GLOBAL_ILLUMINATION_RADIUS), 0.0, 1.0) * 2.0;
+
     #ifdef OVERWORLD
     ambientCol *= vec3(1.0) + bloom * sunVisibility * rainFactor;
     #endif
@@ -202,7 +204,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     #endif
 
     if (giVisibility != 0.0) {
-        emission += mix(0.0, 0.125 * GLOBAL_ILLUMINATION_STRENGTH * float(emission == 0.0), giVisibility);
+        emission += mix(0.0, GLOBAL_ILLUMINATION_STRENGTH * 0.5 * float(emission == 0.0), giVisibility);
     }
     #endif
 }

@@ -41,7 +41,7 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 atmo
 	}
 	#endif
 
-	fogColor = mix(minLightCol, fogColor, ug);
+	fogColor = mix(minLightCol, fogColor, caveFactor);
 	#endif
 
 	//Nether Fog

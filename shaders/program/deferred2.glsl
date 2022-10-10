@@ -25,9 +25,9 @@ uniform float timeBrightness, timeAngle, rainStrength;
 uniform float darknessFactor;
 #endif
 
+uniform float blindFactor;
 uniform float viewWidth, viewHeight;
 uniform float far, frameTimeCounter;
-uniform float blindFactor;
 
 #if (defined AURORA && defined AURORA_COLD_BIOME_VISIBILITY) || defined RAINBOW
 uniform float isSnowy;
@@ -70,7 +70,7 @@ uniform mat4 gbufferModelView;
 //Common Variables//
 #ifdef OVERWORLD
 float eBS = eyeBrightnessSmooth.y / 240.0;
-float ug = mix(clamp((cameraPosition.y - 56.0) / 16.0, float(isEyeInWater == 1), 1.0), 1.0, eBS);
+float caveFactor = mix(clamp((cameraPosition.y - 56.0) / 16.0, float(isEyeInWater == 1), 1.0), 1.0, eBS);
 float sunVisibility = clamp(dot(sunVec, upVec) + 0.025, 0.0, 0.1) * 10.0;
 #endif
 
@@ -98,21 +98,19 @@ void main() {
 	viewPos /= viewPos.w;
 
 	vec3 worldPos = mat3(gbufferModelViewInverse) * viewPos.xyz;
-	vec3 skyColor = vec3(0.0);
-
-	float star = 0.0;
-	float sunMoon = 0.0;
 
 	#if defined OVERWORLD
-	skyColor = getAtmosphere(viewPos.xyz);
+	vec3 skyColor = getAtmosphere(viewPos.xyz);
 	#elif defined NETHER
-	skyColor = netherColSqrt.rgb * 0.25;
+	vec3 skyColor = netherColSqrt.rgb * 0.25;
 	#elif defined END
-	skyColor = endLightCol * 0.15;
+	vec3 skyColor = endLightCol * 0.15;
 	#endif
 
 	#if defined OVERWORLD || defined END
 	float nebulaFactor = 0.0;
+	float sunMoon = 0.0;
+	float star = 0.0;
 
 	vec3 nViewPos = normalize(viewPos.xyz);
 	float VoU = dot(nViewPos, upVec);
@@ -122,28 +120,24 @@ void main() {
 
 	if (z0 == 1.0) { //Sky rendering
 		#ifdef OVERWORLD
-		if (ug != 0.0) {
+		if (caveFactor != 0.0 && VoU > 0.0) {
 			#ifdef MILKY_WAY
-			getNebula(skyColor, worldPos, VoU, nebulaFactor, ug);
+			getNebula(skyColor, worldPos, VoU, nebulaFactor, caveFactor);
 			#endif
 
 			#ifdef STARS
-			getStars(skyColor, worldPos, VoU, nebulaFactor, ug, star);
+			getStars(skyColor, worldPos, VoU, nebulaFactor, caveFactor, star);
 			#endif
 
-			if (VoU > 0.0) {
-				VoU = sqrt(VoU);
+			#ifdef RAINBOW
+			getRainbow(skyColor, worldPos, VoU, 1.75, 0.05, caveFactor);
+			#endif
 
-				#ifdef RAINBOW
-				getRainbow(skyColor, worldPos, VoU, 1.75, 0.05, ug);
-				#endif
+			#ifdef AURORA
+			getAurora(skyColor, worldPos, caveFactor);
+			#endif
 
-				#ifdef AURORA
-				getAurora(skyColor, worldPos, ug);
-				#endif
-			}
-
-			getSunMoon(skyColor, nViewPos, lightSun, lightNight, VoS, VoM, VoU, ug, sunMoon);
+			getSunMoon(skyColor, nViewPos, lightSun, lightNight, VoS, VoM, VoU, caveFactor, sunMoon);
 		}
 		#endif
 
@@ -166,8 +160,9 @@ void main() {
 		#endif
 
 		skyColor *= 1.0 - blindFactor;
-		#ifdef OVERWORLD
-		skyColor += Bayer256(gl_FragCoord.xy) / 64.0;
+
+		#ifdef TAA
+		skyColor += fract(Bayer64(gl_FragCoord.xy) + frameTimeCounter * 16.0 - 0.5) / 64.0;
 		#endif
 
 		color = skyColor;
@@ -175,30 +170,36 @@ void main() {
 		Fog(color, viewPos.xyz, worldPos.xyz, skyColor);
 	}
 
-	vec3 reflectionColor = vec3(0.0);
-	vec4 bloomData = vec4(0.0);
-
 	#ifdef BLOOM
-	bloomData = texture2D(colortex2, texCoord);
+	vec4 bloomData = texture2D(colortex2, texCoord);
+
+	#ifdef OVERWORLD
+		 bloomData.ba += vec2(star * 0.4 + sunMoon * 0.0125, float(star > 0.0 || sunMoon > 0.0));
+	#elif defined END
+		 bloomData.ba += vec2(star * 0.4, float(star > 0.0));
+	#endif
 	#endif
 
 	#ifdef INTEGRATED_SPECULAR
-	reflectionColor = pow(color.rgb, vec3(0.125)) * 0.5;
+	vec3 reflectionColor = pow(color.rgb, vec3(0.125)) * 0.5;
 	#endif
 
-	#if defined BLOOM && (defined OVERWORLD || defined END)
-	#ifdef OVERWORLD
-		 bloomData.ba += vec2((star * 4.0 + sunMoon * 0.125) * 0.1, float(star > 0.0 || sunMoon > 0.0));
-	#else
-		 bloomData.ba += vec2((star * 4.0) * 0.1, float(star > 0.0));
-	#endif
-	#endif
-
-	/* DRAWBUFFERS:026 */
+	/* DRAWBUFFERS:0 */
 	gl_FragData[0].rgb = color;
-	gl_FragData[1] = bloomData;
-	gl_FragData[2] = vec4(reflectionColor, float(z0 < 1.0));
 
+	#ifndef INTEGRATED_SPECULAR
+		#ifdef BLOOM
+		/* DRAWBUFFERS:02 */
+		gl_FragData[1] = bloomData;
+		#endif
+	#else
+		/* DRAWBUFFERS:026 */
+		#ifdef BLOOM
+		gl_FragData[1] = bloomData;
+		#endif
+
+		gl_FragData[2] = vec4(reflectionColor, float(z0 < 1.0));
+	#endif
 }
 
 #endif

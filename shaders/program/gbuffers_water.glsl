@@ -121,7 +121,7 @@ float getLuminance(vec3 color) {
 
 #if defined OVERWORLD || ((defined OVERWORLD || defined END) && defined INTEGRATED_SPECULAR)
 float eBS = eyeBrightnessSmooth.y / 240.0;
-float ug = mix(clamp((cameraPosition.y - 56.0) / 16.0, float(isEyeInWater == 1), 1.0), 1.0, eBS);
+float caveFactor = mix(clamp((cameraPosition.y - 56.0) / 16.0, float(isEyeInWater == 1), 1.0), 1.0, eBS);
 
 #ifdef OVERWORLD
 float sunVisibility = clamp(dot(sunVec, upVec) + 0.025, 0.0, 0.1) * 10.0;
@@ -203,7 +203,7 @@ void main() {
 		vec3 worldPos = ToWorld(viewPos);
 
 		vec2 lightmap = clamp(lightMapCoord, 0.0, 1.0);
-		albedo.rgb *= max(lightmap.y, 0.75);
+		albedo *= max(lightmap.y, 0.5);
 
 		#ifdef WATER_NORMALS
 		if (water > 0.5) {

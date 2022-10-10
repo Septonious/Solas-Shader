@@ -1,10 +1,11 @@
-void getSunMoon(inout vec3 color, in vec3 nViewPos, in vec3 lightSun, in vec3 lightNight, in float VoS, in float VoM, in float VoU, in float ug, inout float sunMoon) {
-	float visibility = (1.0 - rainStrength) * ug;
-
-	float glare = clamp((VoS + VoM) * 0.5 + 0.5, 0.0, 1.0);
-    glare = 0.01 / (1.0 - 0.99 * glare) - 0.01;
+void getSunMoon(inout vec3 color, in vec3 nViewPos, in vec3 lightSun, in vec3 lightNight, in float VoS, in float VoM, in float VoU, in float caveFactor, inout float sunMoon) {
+	float visibility = (1.0 - rainStrength) * caveFactor;
 
 	if (visibility > 0.0) {
+		float VoSM = mix(VoM, VoS, sunVisibility);
+		float glareDisk = clamp(VoSM * 0.5 + 0.5, 0.0, 1.0);
+			  glareDisk = 0.01 / (1.0 - 0.99 * glareDisk) - 0.01;
+
 		float sun = pow32(pow32(VoS * VoS));
 		float moon = pow32(pow32(VoM));
 
@@ -21,7 +22,7 @@ void getSunMoon(inout vec3 color, in vec3 nViewPos, in vec3 lightSun, in vec3 li
 		
 		vec3 sunAndMoon = sun * lightSun * sunVisibility + moon * lightNight * 8.0 * (1.0 - sunVisibility);
 			 sunAndMoon*= pow16(length(sunAndMoon));
-			 sunAndMoon+= glare * lightSun * 0.5 * sunVisibility + glare * lightNight * 0.5 * (1.0 - sunVisibility);
+			 sunAndMoon+= glareDisk * lightCol;
 			 sunAndMoon = clamp(sunAndMoon, 0.0, 1.0) * visibility;
 			 
 		sunMoon = sun + moon;

@@ -32,6 +32,13 @@ const bool colortex7Clear = false;
 const bool colortex5Clear = false;
 #endif
 
+//Common Functions//
+#ifdef BLOOM
+float getLuminance(vec3 color) {
+	return dot(color, vec3(0.299, 0.587, 0.114));
+}
+#endif
+
 //Includes//
 #include "/lib/util/bayerDithering.glsl"
 #include "/lib/post/tonemap.glsl"
@@ -45,13 +52,14 @@ const bool colortex5Clear = false;
 void main() {
 	vec3 color = texture2D(colortex0, texCoord).rgb;
 	vec3 temporalColor = vec3(0.0);
-	vec3 bloom = vec3(0.0);
+	vec3 rawBloom = vec3(0.0);
 
 	float dither = Bayer64(gl_FragCoord.xy);
 
 	#ifdef BLOOM
-	bloom = getBloom(texCoord, dither);
-	color += bloom * 0.125;
+	rawBloom = getBloom(texCoord, dither - 0.25);
+	rawBloom *= 0.5 + getLuminance(rawBloom) * 0.5;
+	color = mix(color, rawBloom, BLOOM_STRENGTH * 0.1);
 	#endif
 
 	#ifdef TAA
@@ -67,7 +75,7 @@ void main() {
 	/* DRAWBUFFERS:157 */
 	gl_FragData[0].rgb = color;
 	gl_FragData[1].gba = temporalColor;
-	gl_FragData[2].rgb = pow(bloom / 256.0, vec3(0.0625));
+	gl_FragData[2].rgb = pow(rawBloom / 256.0, vec3(0.125));
 }
 
 #endif

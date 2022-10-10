@@ -1,14 +1,14 @@
 float pixelWidth = 1.0 / viewWidth;
 float pixelHeight = 1.0 / viewHeight;
 
-vec3 getBloomTile(float lod, vec2 coord, vec2 offset, vec2 bloomDither) {
+vec3 getBloomTile(float lod, vec2 bloomCoord, vec2 offset, vec2 bloomDither) {
 	float scale = exp2(lod);
 	float resScale = 1.25 * min(360.0, viewHeight) / viewHeight;
 	
 	vec2 centerOffset = vec2(0.125 * pixelWidth, 0.25 * pixelHeight);
-	vec3 bloom = getDiskBlur8(colortex1, (coord / scale + offset) * resScale + centerOffset + bloomDither, 4.0).rgb;
+	vec3 bloom = getDiskBlur4(colortex1, (bloomCoord / scale + offset) * resScale + centerOffset + bloomDither, 1.0).rgb;
 
-	return pow8(bloom) * 512.0;
+	return pow8(bloom) * 256.0;
 }
 
 vec3 getBloom(vec2 bloomCoord, float dither) {
@@ -24,13 +24,27 @@ vec3 getBloom(vec2 bloomCoord, float dither) {
 
 		bloomDither = vec2(dither * pixelWidth, dither * pixelHeight);
 
-		vec3 blur =  getBloomTile(1.0, bloomCoord, vec2(0.0000, 0.0000), bloomDither);
-			 blur += getBloomTile(2.0, bloomCoord, vec2(0.5100, 0.0000), bloomDither);
-			 blur += getBloomTile(3.0, bloomCoord, vec2(0.5100, 0.2600), bloomDither);
-			 blur += getBloomTile(4.0, bloomCoord, vec2(0.6450, 0.2600), bloomDither);
-			 blur += getBloomTile(5.0, bloomCoord, vec2(0.7175, 0.2600), bloomDither);
+		vec3 blur1 = getBloomTile(1.0, bloomCoord, vec2(0.0      , 0.0   ), bloomDither);
+		vec3 blur2 = getBloomTile(2.0, bloomCoord, vec2(0.51     , 0.0   ), bloomDither);
+		vec3 blur3 = getBloomTile(3.0, bloomCoord, vec2(0.51     , 0.26  ), bloomDither);
+		vec3 blur4 = getBloomTile(4.0, bloomCoord, vec2(0.645    , 0.26  ), bloomDither);
+		vec3 blur5 = getBloomTile(5.0, bloomCoord, vec2(0.7175   , 0.26  ), bloomDither);
+		vec3 blur6 = getBloomTile(6.0, bloomCoord, vec2(0.645    , 0.3325), bloomDither);
+		vec3 blur7 = getBloomTile(7.0, bloomCoord, vec2(0.670625 , 0.3325), bloomDither);
 
-		return blur * (BLOOM_STRENGTH + 2.0);
+		#if BLOOM_RADIUS == 1
+		vec3 blur = blur1;
+		#elif BLOOM_RADIUS == 2
+		vec3 blur = (blur1 * 1.18 + blur2) / 2.18;
+		#elif BLOOM_RADIUS == 3
+		vec3 blur = (blur1 * 1.57 + blur2 * 1.41 + blur3) / 3.98;
+		#elif BLOOM_RADIUS == 4
+		vec3 blur = (blur1 * 2.11 + blur2 * 1.97 + blur3 * 1.57 + blur4) / 6.65;
+		#elif BLOOM_RADIUS == 5
+		vec3 blur = (blur1 * 2.89 + blur2 * 2.74 + blur3 * 2.30 + blur4 * 1.68 + blur5) / 10.61;
+		#endif
+
+		return blur;
 	} else {
 		return vec3(0.0);
 	}

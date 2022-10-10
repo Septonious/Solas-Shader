@@ -32,60 +32,46 @@ void getReflection(inout vec4 color, in vec3 viewPos, in vec3 normal, in float f
 	#endif
 
 	if (reflection.a < 1.0) {
-		#if defined OVERWORLD || defined END
-		float nebulaFactor = 0.0;
-		#endif
+		if (skyLightMap > 0.0) {
+			#if defined OVERWORLD || (defined END && (defined END_NEBULA || defined END_STARS))
+			float nebulaFactor = 0.0;
+			float sunMoon = 0.0;
+			float star = 0.0;
 
-		#if defined OVERWORLD
-		if (skyLightMap != 0.0) {
-			vec3 nViewPos = normalize(reflectedViewPos);
 			vec3 worldPos = mat3(gbufferModelViewInverse) * reflectedViewPos;
+			vec3 nViewPos = normalize(viewPos.xyz);
+			float VoU = dot(nViewPos, upVec);
 			float VoS = clamp(dot(nViewPos, sunVec), 0.0, 1.0);
 			float VoM = clamp(dot(nViewPos, -sunVec), 0.0, 1.0);
-			float VoU = dot(nViewPos, upVec);
-
-			reflectionFade = getAtmosphere(reflectedViewPos);
-
-			#ifdef STARS
-			float star = 0.0;
-			getStars(reflectionFade, worldPos, VoU, nebulaFactor, ug, star);
-			emission += star * 4.0;
 			#endif
 
-			if (VoU > 0.0) {
-				VoU = sqrt(VoU);
+			#if defined OVERWORLD
+			reflectionFade = getAtmosphere(reflectedViewPos);
 
+			if (VoU > 0.0) {
+				#ifdef STARS
+				getStars(reflectionFade, worldPos, VoU, nebulaFactor, caveFactor, star);
+				emission += star * 4.0;
+				#endif
+					
 				#ifdef RAINBOW
-				getRainbow(reflectionFade, worldPos, VoU, 1.75, 0.05, ug);
+				getRainbow(reflectionFade, worldPos, VoU, 1.75, 0.05, caveFactor);
 				#endif
 
 				#ifdef AURORA
-				getAurora(reflectionFade, worldPos, ug);
+				getAurora(reflectionFade, worldPos, caveFactor);
 				#endif
 			}
 
-			float sunMoon = 0.0;
-			getSunMoon(reflectionFade, nViewPos, lightSun, lightNight, VoS, VoM, VoU, ug, sunMoon);
+			getSunMoon(reflectionFade, nViewPos, lightSun, lightNight, VoS, VoM, VoU, caveFactor, sunMoon);
 			emission += sunMoon * 0.125;
 
-			reflectionFade *= skyLightMap;
-		}
-
-		#elif defined END
-		if (skyLightMap != 0.0) {
-			#if defined END_NEBULA || defined END_STARS
-			vec3 worldPos = mat3(gbufferModelViewInverse) * reflectedViewPos;
-			vec3 nViewPos = normalize(reflectedViewPos);
-			float VoS = clamp(dot(nViewPos, sunVec), 0.0, 1.0);
-			float VoU = dot(nViewPos, upVec);
-			#endif
-
+			#elif defined END
 			#ifdef END_NEBULA
 			getNebula(reflectionFade, worldPos, VoU, nebulaFactor, 1.0);
 			#endif
 
 			#ifdef END_STARS
-			float star = 0.0;
 			getStars(reflectionFade, worldPos, VoU, nebulaFactor, 1.0, star);
 			emission += star * 4.0;
 			#endif
@@ -93,22 +79,21 @@ void getReflection(inout vec4 color, in vec3 viewPos, in vec3 normal, in float f
 			#ifdef END_VORTEX
 			getEndVortex(reflectionFade, worldPos, VoU, VoS);
 			#endif
+			#endif
 
 			reflectionFade *= skyLightMap;
 		}
-		#endif
 
 		#if MC_VERSION >= 11900
 		reflectionFade *= 1.0 - darknessFactor;
 		#endif
 
 		reflectionFade *= 1.0 - blindFactor;
-
 		reflectionFade = mix(color.rgb, reflectionFade, skyLightMap);
 	}
 
 	vec3 finalReflection = max(mix(reflectionFade, reflection.rgb, reflection.a), vec3(0.0));
-			
+
 	color.rgb = mix(color.rgb, finalReflection, min(fresnel * 2.0, 1.0) * WATER_SPECULAR_STRENGTH);
 	color.a = mix(color.a, 1.0, fresnel);
 }
