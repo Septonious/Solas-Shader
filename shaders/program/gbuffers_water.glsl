@@ -209,7 +209,7 @@ void main() {
 		#ifdef VC
 		float cloudDepth = texture2D(gaux1, gl_FragCoord.xy / vec2(viewWidth, viewHeight)).a;
 
-		if (cloudDepth > 0.0) discard;
+		if (cloudDepth > 0.0 && water > 0.9 && cameraPosition.y > VC_HEIGHT) discard;
 		#endif
 
 		vec2 lightmap = clamp(lightMapCoord, 0.0, 1.0);
