@@ -29,6 +29,10 @@ uniform float blindFactor;
 uniform float viewWidth, viewHeight;
 uniform float far, frameTimeCounter;
 
+#ifdef VC
+uniform float shadowFade;
+#endif
+
 #if (defined AURORA && defined AURORA_COLD_BIOME_VISIBILITY) || defined RAINBOW
 uniform float isSnowy;
 #endif
@@ -52,7 +56,7 @@ uniform sampler2D depthtex0;
 uniform sampler2D colortex2;
 #endif
 
-#if defined END_NEBULA || defined AURORA
+#if defined END_NEBULA || defined AURORA || defined VC
 uniform sampler2D noisetex;
 #endif
 
@@ -60,8 +64,15 @@ uniform sampler2D noisetex;
 uniform sampler2D depthtex2;
 #endif
 
-uniform mat4 gbufferProjectionInverse;
-uniform mat4 gbufferModelViewInverse;
+#ifdef VC
+uniform sampler2D depthtex1;
+uniform sampler2D shadowcolor1;
+uniform sampler2DShadow shadowtex0, shadowtex1;
+
+uniform mat4 shadowProjection, shadowModelView;
+#endif
+
+uniform mat4 gbufferProjectionInverse, gbufferModelViewInverse;
 
 #ifdef OVERWORLD
 uniform mat4 gbufferModelView;
@@ -78,6 +89,12 @@ float sunVisibility = clamp(dot(sunVec, upVec) + 0.025, 0.0, 0.1) * 10.0;
 #include "/lib/color/dimensionColor.glsl"
 #include "/lib/util/bayerDithering.glsl"
 
+#ifdef VC
+#include "/lib/util/blueNoiseDithering.glsl"
+#include "/lib/atmosphere/spaceConversion.glsl"
+#include "/lib/atmosphere/volumetricClouds.glsl"
+#endif
+
 #ifdef OVERWORLD
 #include "/lib/atmosphere/sky.glsl"
 #include "/lib/atmosphere/sunMoon.glsl"
@@ -92,6 +109,7 @@ float sunVisibility = clamp(dot(sunVec, upVec) + 0.025, 0.0, 0.1) * 10.0;
 void main() {
 	vec3 color = texture2D(colortex0, texCoord).rgb;
 
+	float cloudDepth = 0.0;
 	float z0 = texture2D(depthtex0, texCoord).r;
 	vec4 screenPos = vec4(texCoord, z0, 1.0);
 	vec4 viewPos = gbufferProjectionInverse * (screenPos * 2.0 - 1.0);
@@ -121,6 +139,8 @@ void main() {
 	if (z0 == 1.0) { //Sky rendering
 		#ifdef OVERWORLD
 		if (caveFactor != 0.0 && VoU > 0.0) {
+			VoU = pow2(VoU);
+
 			#ifdef MILKY_WAY
 			getNebula(skyColor, worldPos, VoU, nebulaFactor, caveFactor);
 			#endif
@@ -136,9 +156,9 @@ void main() {
 			#ifdef AURORA
 			getAurora(skyColor, worldPos, caveFactor);
 			#endif
-
-			getSunMoon(skyColor, nViewPos, lightSun, lightNight, VoS, VoM, VoU, caveFactor, sunMoon);
 		}
+
+		getSunMoon(skyColor, nViewPos, lightSun, lightNight, VoS, VoM, caveFactor, sunMoon);
 		#endif
 
 		#ifdef END
@@ -170,6 +190,20 @@ void main() {
 		Fog(color, viewPos.xyz, worldPos.xyz, skyColor);
 	}
 
+	#ifdef VC
+	vec4 vc = vec4(0.0);
+
+	float blueNoiseDither = getBlueNoise(gl_FragCoord.xy);
+
+	#ifdef TAA
+	blueNoiseDither = fract(blueNoiseDither + frameTimeCounter * 16.0);
+	#endif
+
+	computeVolumetricClouds(vc, skyColor, blueNoiseDither, caveFactor, cloudDepth);
+
+	color = mix(color, pow(vc.rgb, vec3(1.0 / 2.2)), pow4(vc.a) * VC_OPACITY);
+	#endif
+
 	#ifdef BLOOM
 	vec4 bloomData = texture2D(colortex2, texCoord);
 
@@ -184,21 +218,22 @@ void main() {
 	vec3 reflectionColor = pow(color.rgb, vec3(0.125)) * 0.5;
 	#endif
 
-	/* DRAWBUFFERS:0 */
+	/* DRAWBUFFERS:04 */
 	gl_FragData[0].rgb = color;
+	gl_FragData[1].a = cloudDepth;
 
 	#ifndef INTEGRATED_SPECULAR
 		#ifdef BLOOM
-		/* DRAWBUFFERS:02 */
-		gl_FragData[1] = bloomData;
+		/* DRAWBUFFERS:042 */
+		gl_FragData[2] = bloomData;
 		#endif
 	#else
-		/* DRAWBUFFERS:026 */
+		/* DRAWBUFFERS:0426 */
 		#ifdef BLOOM
-		gl_FragData[1] = bloomData;
+		gl_FragData[2] = bloomData;
 		#endif
 
-		gl_FragData[2] = vec4(reflectionColor, float(z0 < 1.0));
+		gl_FragData[3] = vec4(reflectionColor, float(z0 < 1.0));
 	#endif
 }
 

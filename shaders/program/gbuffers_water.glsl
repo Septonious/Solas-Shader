@@ -90,6 +90,10 @@ uniform sampler2D gaux3;
 uniform sampler2D gaux4;
 #endif
 
+#ifdef VC
+uniform sampler2D gaux1;
+#endif
+
 uniform sampler2D texture;
 
 #if defined WATER_FOG || defined INTEGRATED_SPECULAR
@@ -201,6 +205,12 @@ void main() {
 		vec3 screenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z);
 		vec3 viewPos = ToNDC(screenPos);
 		vec3 worldPos = ToWorld(viewPos);
+
+		#ifdef VC
+		float cloudDepth = texture2D(gaux1, gl_FragCoord.xy / vec2(viewWidth, viewHeight)).a;
+
+		if (cloudDepth > 0.0) discard;
+		#endif
 
 		vec2 lightmap = clamp(lightMapCoord, 0.0, 1.0);
 		albedo *= max(lightmap.y, 0.5);

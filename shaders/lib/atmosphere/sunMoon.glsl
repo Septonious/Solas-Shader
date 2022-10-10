@@ -1,4 +1,4 @@
-void getSunMoon(inout vec3 color, in vec3 nViewPos, in vec3 lightSun, in vec3 lightNight, in float VoS, in float VoM, in float VoU, in float caveFactor, inout float sunMoon) {
+void getSunMoon(inout vec3 color, in vec3 nViewPos, in vec3 lightSun, in vec3 lightNight, in float VoS, in float VoM, in float caveFactor, inout float sunMoon) {
 	float visibility = (1.0 - rainStrength) * caveFactor;
 
 	if (visibility > 0.0) {

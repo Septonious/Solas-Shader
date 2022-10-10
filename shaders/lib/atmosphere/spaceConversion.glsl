@@ -1,7 +1,7 @@
 #define diagonal3(m) vec3((m)[0].x, (m)[1].y, m[2].z)
 #define projMAD(m, v) (diagonal3(m) * (v) + (m)[3].xyz)
 
-#ifdef VL
+#if defined VL && !defined DEFERRED
 float getLogarithmicDepth(float dist) {
 	return (far * (dist - near)) / (dist * (far - near));
 }

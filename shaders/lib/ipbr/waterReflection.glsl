@@ -49,6 +49,8 @@ void getReflection(inout vec4 color, in vec3 viewPos, in vec3 normal, in float f
 			reflectionFade = getAtmosphere(reflectedViewPos);
 
 			if (VoU > 0.0) {
+				VoU = pow2(VoU);
+
 				#ifdef STARS
 				getStars(reflectionFade, worldPos, VoU, nebulaFactor, caveFactor, star);
 				emission += star * 4.0;
@@ -63,7 +65,7 @@ void getReflection(inout vec4 color, in vec3 viewPos, in vec3 normal, in float f
 				#endif
 			}
 
-			getSunMoon(reflectionFade, nViewPos, lightSun, lightNight, VoS, VoM, VoU, caveFactor, sunMoon);
+			getSunMoon(reflectionFade, nViewPos, lightSun, lightNight, VoS, VoM, caveFactor, sunMoon);
 			emission += sunMoon * 0.125;
 
 			#elif defined END

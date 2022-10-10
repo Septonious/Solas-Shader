@@ -71,7 +71,7 @@ const float shadowBlurStrength = 1.0 / shadowMapResolution;
 
 //Volumetric Light
 #define VL
-#define VL_OPACITY 0.60 //[0.10 0.15 0.20 0.25 0.30 0.35 0.40 0.45 0.50 0.55 0.60 0.65 0.70 0.75 0.80 0.85 0.90 0.95 1.00]
+#define VL_OPACITY 0.90 //[0.10 0.15 0.20 0.25 0.30 0.35 0.40 0.45 0.50 0.55 0.60 0.65 0.70 0.75 0.80 0.85 0.90 0.95 1.00]
 #define VL_SAMPLES 7 //[2 3 4 5 6 7 8 9 10 11 12 13 14 15 16]
 
 //Volumetric Clouds
@@ -83,7 +83,7 @@ const float shadowBlurStrength = 1.0 / shadowMapResolution;
 #define VC_HEIGHT 190.0 //[160.0 170.0 180.0 190.0 200.0 210.0 220.0 230.0 240.0 250.0]
 #define VC_SAMPLES 9 //[8 9 10 11 12 13 14 15 16]
 #define VC_DISTANCE 1000.0 //[400.0 500.0 600.0 700.0 800.0 900.0 1000.0]
-#define VC_OPACITY 1.00 //[0.10 0.15 0.20 0.25 0.30 0.35 0.40 0.45 0.50 0.55 0.60 0.65 0.70 0.75 0.80 0.85 0.90 0.95 1.00]
+#define VC_OPACITY 0.80 //[0.10 0.15 0.20 0.25 0.30 0.35 0.40 0.45 0.50 0.55 0.60 0.65 0.70 0.75 0.80 0.85 0.90 0.95 1.00]
 
 //Water//
 //#define VANILLA_WATER
