@@ -54,9 +54,9 @@ void getIntegratedEmission(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos,
 		newEmission = 0.25;
 		albedo = pow(albedo, vec3(1.25));
 	} else if (mat > 109.9 && mat < 110.1) { // Glow Lichen
-		newEmission = (0.0125 + pow16(lAlbedo)) * (1.0 - lightmap.y * 0.75) * 0.5;
+		newEmission = (0.0125 + pow16(lAlbedo)) * (1.0 - lightmap.y * 0.75);
 	} else if (mat > 110.9 && mat < 111.1) { // Redstone Things
-		newEmission = float(albedo.r > 0.9);
+		newEmission = float(albedo.r > 0.9) * 0.5;
 	} else if (mat > 111.9 && mat < 112.1) { // Soul Emissives
 		newEmission = float(lAlbedo > 0.9);
 	} else if (mat > 112.9 && mat < 113.1) { // Brewing Stand

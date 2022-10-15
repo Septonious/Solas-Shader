@@ -57,7 +57,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     #ifdef SHIMMER_MOD_SUPPORT
     float blockLightMap = min(pow4(lightmap.x) * 2.0 + pow2(lightmap.x) * 0.125, 1.0) * (1.0 - emission);
     #else
-    float blockLightMap = min(pow8(lightmap.x) * 1.5 + pow4(lightmap.x) * 0.5, 1.0) * (1.0 - emission);
+    float blockLightMap = min(pow8(lightmap.x) + pow4(lightmap.x) * 0.5, 1.0) * (1.0 - emission);
     #endif
 
 	#ifdef DYNAMIC_HANDLIGHT
@@ -76,9 +76,9 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     blockLighting = blockLightCol * blockLightMap + coloredLight * (1.0 - emission);
     #elif defined BLOOM_COLORED_LIGHTING
     //BLOOM BASED COLORED LIGHTING
-    float newBlockLightMap = pow4(blockLightMap) + pow(blockLightMap, 0.5) * 0.5 + 0.125;
-	vec3 coloredLight = clamp(bloom * pow(getLuminance(bloom), COLORED_LIGHTING_RADIUS) * (0.5 + sqrt(getLuminance(bloom))), 0.0, 1.0) * COLORED_LIGHTING_STRENGTH;
-    blockLighting = blockLightCol * blockLightMap * 0.5 + coloredLight * newBlockLightMap;
+	vec3 coloredLight = clamp(bloom * pow(getLuminance(bloom), COLORED_LIGHTING_RADIUS), 0.0, 1.0);
+    float bloomLightMap = clamp(pow4(blockLightMap) * 0.5 + blockLightMap * 0.3 + lightmap.x * 0.2, 0.0, 1.0);
+    blockLighting = blockLightCol * blockLightMap + coloredLight * bloomLightMap * COLORED_LIGHTING_STRENGTH;
     #else
     blockLighting = blockLightCol * blockLightMap;
     #endif
@@ -183,10 +183,10 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     vec3 sceneLighting = pow(netherColSqrt, vec3(0.25)) * 0.125;
     #endif
 
-    #ifdef GLOBAL_ILLUMINATION
-	albedo.rgb = mix(albedo.rgb, albedo.rgb * color.a, (1.0 - min(length(bloom), 1.0)) * (1.0 - lightmap.x));
+    #if defined GLOBAL_ILLUMINATION || defined BLOOM_COLORED_LIGHTING
+	albedo.rgb = mix(albedo.rgb, mix(albedo.rgb * color.a, albedo.rgb, color.a * (1.0 - AO_RADIUS)), (1.0 - getLuminance(bloom)) * (1.0 - lightmap.x));
     #else
-    albedo.rgb *= color.a;
+    albedo.rgb = mix(albedo.rgb, albedo.rgb * color.a, color.a);
     #endif
 
     albedo = pow(albedo, vec3(2.2));

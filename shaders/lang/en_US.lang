@@ -242,6 +242,11 @@ option.SKY_HI=Intensity (High Scattering)
 
 screen.POST=Post Effects
 
+option.DOF=Depth of Field
+option.DOF.comment=Blurs the object outside your player's eye focal point.
+
+option.DOF_STRENGTH=DoF Strength
+
 option.FXAA=Fast Approximate Antialiasing (FXAA)
 option.SHARPENING=Sharpening
 option.CHROMATIC_ABERRATION=Chromatic Aberration (CA)

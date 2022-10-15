@@ -183,7 +183,7 @@ void main() {
 
 	float water = float(mat > 0.9 && mat < 1.1);
 	float portal = float(mat > 1.9 && mat < 2.1);
-	float emission = portal * pow8(length(albedo.rgb));
+	float emission = portal * pow8(clamp(length(albedo.rgb), 0.0, 1.0)) * 0.5;
 
 	albedo.a = mix(albedo.a, 1.0, portal);
 
@@ -209,7 +209,7 @@ void main() {
 		#ifdef VC
 		float cloudDepth = texture2D(gaux1, gl_FragCoord.xy / vec2(viewWidth, viewHeight)).a;
 
-		if (cloudDepth > 0.0 && water > 0.9 && cameraPosition.y > VC_HEIGHT) discard;
+		if (cloudDepth > 0.0 && water > 0.9 && cameraPosition.y + VC_STRETCHING * 0.5 > VC_HEIGHT) discard;
 		#endif
 
 		vec2 lightmap = clamp(lightMapCoord, 0.0, 1.0);

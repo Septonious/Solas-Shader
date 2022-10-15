@@ -126,9 +126,8 @@ void main() {
 		gl_FragData[1] = vec4(EncodeNormal(normal), emission * 0.01, 1.0);
 		#endif
 	#else
-		/* DRAWBUFFERS:062 */
-		gl_FragData[1] = vec4(albedo.rgb, 1.0);
-		gl_FragData[2] = vec4(EncodeNormal(normal), emission * 0.01, 1.0);
+		/* DRAWBUFFERS:02 */
+		gl_FragData[1] = vec4(EncodeNormal(normal), emission * 0.01, 1.0);
 	#endif
 }
 

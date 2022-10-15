@@ -217,7 +217,7 @@ option.WATER_R=Красный
 option.WATER_G=Зелёный
 option.WATER_B=Синий
 option.WATER_I=Интенсивность
-option.WATER_A=Alpha
+option.WATER_A=Непрозрачность
 
 screen.SKY_COLOR=Цвет Неба
 
@@ -238,6 +238,11 @@ option.SKY_HI=Интенсивность (Верхнее Рассеивание)
 
 
 #POST
+
+option.DOF=Глубина Резкости (ГР)
+option.DOF.comment=Размывает объекты вне точки фокуса игрока.
+
+option.DOF_STRENGTH=Сила ГР
 
 screen.POST=Постобработка
 

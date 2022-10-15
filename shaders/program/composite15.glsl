@@ -11,12 +11,16 @@ in vec2 texCoord;
 uniform int frameCounter;
 #endif
 
-#if defined TAA || defined FXAA
+#if defined TAA || defined FXAA || defined DOF
 uniform float viewWidth, viewHeight;
 #endif
 
-#ifdef FXAA
+#if defined DOF || defined FXAA
 uniform float aspectRatio;
+#endif
+
+#ifdef DOF
+uniform float centerDepthSmooth;
 #endif
 
 #ifdef TAA
@@ -26,10 +30,24 @@ uniform mat4 gbufferPreviousProjection, gbufferProjectionInverse;
 uniform mat4 gbufferPreviousModelView, gbufferModelViewInverse;
 
 uniform sampler2D colortex5;
+#endif
+
+#if defined TAA || defined DOF
+#ifdef DOF
+uniform mat4 gbufferProjection;
+
+uniform sampler2D depthtex0;
+#endif
+
 uniform sampler2D depthtex1;
 #endif
 
 uniform sampler2D colortex1;
+
+//Optifine Constants//
+#ifdef DOF
+const bool colortex0MipmapEnabled = true;
+#endif
 
 //Common Functions//
 #ifdef FXAA
@@ -39,6 +57,10 @@ float getLuminance(vec3 color) {
 #endif
 
 //Includes//
+#ifdef DOF
+#include "/lib/post/dofBlur.glsl"
+#endif
+
 #ifdef FXAA
 #include "/lib/antialiasing/fxaa.glsl"
 #endif
@@ -50,6 +72,17 @@ float getLuminance(vec3 color) {
 
 void main() {
 	vec3 color = texture2D(colortex1, texCoord).rgb;
+
+	#ifdef DOF
+	float z0 = texture2D(depthtex0, texCoord).r;
+	float z1 = texture2D(depthtex1, texCoord).r;
+
+	vec4 screenPos = vec4(texCoord, z0, 1.0);
+	vec4 viewPos = gbufferProjectionInverse * (screenPos * 2.0 - 1.0);
+	viewPos /= viewPos.w;
+
+	color = getDepthOfField(color, viewPos.xyz, z1);
+	#endif
 
 	#ifdef FXAA
 	color = FXAA311(color);	

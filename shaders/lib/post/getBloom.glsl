@@ -24,13 +24,11 @@ vec3 getBloom(vec2 bloomCoord, float dither) {
 
 		bloomDither = vec2(dither * pixelWidth, dither * pixelHeight);
 
-		vec3 blur1 = getBloomTile(1.0, bloomCoord, vec2(0.0      , 0.0   ), bloomDither);
-		vec3 blur2 = getBloomTile(2.0, bloomCoord, vec2(0.51     , 0.0   ), bloomDither);
-		vec3 blur3 = getBloomTile(3.0, bloomCoord, vec2(0.51     , 0.26  ), bloomDither);
-		vec3 blur4 = getBloomTile(4.0, bloomCoord, vec2(0.645    , 0.26  ), bloomDither);
-		vec3 blur5 = getBloomTile(5.0, bloomCoord, vec2(0.7175   , 0.26  ), bloomDither);
-		vec3 blur6 = getBloomTile(6.0, bloomCoord, vec2(0.645    , 0.3325), bloomDither);
-		vec3 blur7 = getBloomTile(7.0, bloomCoord, vec2(0.670625 , 0.3325), bloomDither);
+		vec3 blur1 = getBloomTile(2.0, bloomCoord, vec2(0.0      , 0.0   ), bloomDither);
+		vec3 blur2 = getBloomTile(3.0, bloomCoord, vec2(0.51     , 0.0   ), bloomDither);
+		vec3 blur3 = getBloomTile(4.0, bloomCoord, vec2(0.51     , 0.26  ), bloomDither);
+		vec3 blur4 = getBloomTile(5.0, bloomCoord, vec2(0.645    , 0.26  ), bloomDither);
+		vec3 blur5 = getBloomTile(6.0, bloomCoord, vec2(0.7175   , 0.26  ), bloomDither);
 
 		#if BLOOM_RADIUS == 1
 		vec3 blur = blur1;

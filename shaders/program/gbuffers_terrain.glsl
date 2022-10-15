@@ -98,6 +98,8 @@ void main() {
 	vec4 albedo = texture2D(texture, texCoord) * color;
 	vec3 newNormal = normal;
 
+	if (mat > 198.9 && mat < 200.1) albedo = vec4(1.0);
+
 	float emission = 0.0;
 	float specular = 0.0;
 
@@ -239,6 +241,7 @@ void main() {
 	//Color & Position
     color = gl_Color;
 	if (color.a < 0.1) color.a = 1.0;
+	color.a = pow2(color.a);
 	//color.rgb = mix(vec3(0.0), color.rgb, clamp(pow(color.a, 0.25) * 1.0, 0.0, 1.0));
 
 	gl_Position = gl_ProjectionMatrix * gbufferModelView * position;

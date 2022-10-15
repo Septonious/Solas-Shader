@@ -57,9 +57,8 @@ void main() {
 	float dither = Bayer64(gl_FragCoord.xy);
 
 	#ifdef BLOOM
-	rawBloom = getBloom(texCoord, dither - 0.25);
-	rawBloom *= 0.5 + getLuminance(rawBloom) * 0.5;
-	color = mix(color, rawBloom, BLOOM_STRENGTH * 0.1);
+	rawBloom = getBloom(texCoord, dither - 0.5);
+	color = mix(color, rawBloom, BLOOM_STRENGTH * 0.1 + getLuminance(rawBloom) * 0.1);
 	#endif
 
 	#ifdef TAA
