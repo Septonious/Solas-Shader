@@ -161,7 +161,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     float rainFactor = 1.0 - rainStrength * 0.8;
 
     #ifdef GLOBAL_ILLUMINATION
-    bloom = clamp(bloom * pow(getLuminance(bloom), GLOBAL_ILLUMINATION_RADIUS), 0.0, 1.0) * 4.0;
+    bloom = clamp(2.0 * bloom * pow(getLuminance(bloom), GLOBAL_ILLUMINATION_RADIUS), 0.0, 1.0) * 8.0;
 
     #ifdef OVERWORLD
     ambientCol *= vec3(1.0) + bloom * sunVisibility * rainFactor;
@@ -186,9 +186,9 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     #endif
 
     #if defined GLOBAL_ILLUMINATION || defined BLOOM_COLORED_LIGHTING
-	albedo.rgb = mix(albedo.rgb, mix(albedo.rgb * color.a, albedo.rgb, color.a * (1.0 - AO_RADIUS)), (1.0 - getLuminance(bloom) * 0.5) * (1.0 - lightmap.x));
+	albedo.rgb = mix(albedo.rgb, albedo.rgb * color.a, color.a * (1.0 - AO_RADIUS) * (1.0 - clamp(getLuminance(bloom), 0.0, 1.0) * 0.5) * (1.0 - lightmap.x));
     #else
-    albedo.rgb = mix(albedo.rgb, albedo.rgb * color.a, color.a);
+    albedo.rgb = mix(albedo.rgb, albedo.rgb * color.a, color.a * (1.0 - AO_RADIUS));
     #endif
 
     albedo = pow(albedo, vec3(2.2));
@@ -206,7 +206,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     #endif
 
     if (giVisibility != 0.0) {
-        emission += mix(0.0, GLOBAL_ILLUMINATION_STRENGTH * 0.5 * float(emission == 0.0), giVisibility);
+        emission += mix(0.0, GLOBAL_ILLUMINATION_STRENGTH * 0.25 * float(emission == 0.0), giVisibility);
     }
     #endif
 }

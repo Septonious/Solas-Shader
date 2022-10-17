@@ -183,9 +183,7 @@ void main() {
 
 	float water = float(mat > 0.9 && mat < 1.1);
 	float portal = float(mat > 1.9 && mat < 2.1);
-	float emission = portal * pow8(clamp(length(albedo.rgb), 0.0, 1.0)) * 0.5;
-
-	albedo.a = mix(albedo.a, 1.0, portal);
+	float emission = portal * pow4(clamp(length(albedo.rgb), 0.0, 1.0)) * 0.75;
 
 	#ifndef VANILLA_WATER
 	if (water > 0.9) {
@@ -213,7 +211,7 @@ void main() {
 		#endif
 
 		vec2 lightmap = clamp(lightMapCoord, 0.0, 1.0);
-		albedo *= max(lightmap.y, 0.5);
+		if (water > 0.9) albedo *= max(lightmap.y, 0.5);
 
 		#ifdef WATER_NORMALS
 		if (water > 0.5) {

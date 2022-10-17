@@ -63,7 +63,6 @@ float sunVisibility = clamp(dot(sunVec, upVec) + 0.025, 0.0, 0.1) * 10.0;
 //Program//
 void main() {
 	vec3 color = pow(texture2D(colortex0, texCoord).rgb, vec3(2.2));
-	vec3 vl = vec3(0.0);
 
 	#ifdef VL
 	vec3 translucent = texture2D(colortex1, texCoord).rgb;
@@ -74,9 +73,7 @@ void main() {
 	blueNoiseDither = fract(blueNoiseDither + frameTimeCounter * 16.0);
 	#endif
 
-	computeVolumetricLight(vl, translucent, blueNoiseDither);
-
-	color += vl;
+	computeVolumetricLight(color, translucent, blueNoiseDither);
 	#endif
 
 	/* DRAWBUFFERS:0 */

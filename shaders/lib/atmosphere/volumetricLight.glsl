@@ -1,4 +1,6 @@
-void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither) {
+void computeVolumetricLight(inout vec3 color, in vec3 translucent, in float dither) {
+	vec3 vl = vec3(0.0);
+
 	//Depths
 	float z0 = texture2D(depthtex0, texCoord).r;
 	float z1 = texture2D(depthtex1, texCoord).r;
@@ -17,9 +19,9 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
 	float VoL = clamp(dot(nViewPos, lightVec), 0.0, 1.0);
 	float sun = clamp(VoL * 0.5 + 0.5, 0.0, 1.0);
 		  sun = (0.01 / (1.0 - 0.99 * sun) - 0.01) * 4.0;
-	float nVoL = mix(0.5 + sun * 0.5, sun, timeBrightness);
+	float nVoL = mix(0.25 + sun * 0.75, sun, timeBrightness);
 
-	float visibility = float(z0 > 0.56) * mix(nVoU * nVoL, 1.0, sign(isEyeInWater)) * 0.01;
+	float visibility = float(z0 > 0.56) * mix(nVoU * nVoL, 1.0, sign(isEyeInWater)) * 0.025;
 
 	#if MC_VERSION >= 11900
 	visibility *= 1.0 - darknessFactor;
@@ -80,6 +82,7 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
 		}
 
 		vl *= visibility;
-		vl *= lightCol * (1.0 + pow8(VoL)) * VL_OPACITY;
+		vl *= lightCol * VL_OPACITY;
+		color += vl;
 	}
 }
