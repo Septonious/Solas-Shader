@@ -208,9 +208,9 @@ void main() {
 	vec4 bloomData = texture2D(colortex2, texCoord);
 
 	#ifdef OVERWORLD
-		 bloomData.ba += vec2(star * 0.4 + sunMoon * 0.0125, float(star > 0.0 || sunMoon > 0.0));
+		 bloomData.ba += vec2(star * 0.2 + sunMoon * 0.01, float(star > 0.0 || sunMoon > 0.0));
 	#elif defined END
-		 bloomData.ba += vec2(star * 0.4, float(star > 0.0));
+		 bloomData.ba += vec2(star * 0.2, float(star > 0.0));
 	#endif
 	#endif
 

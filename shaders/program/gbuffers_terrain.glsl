@@ -95,7 +95,7 @@ float sunVisibility = clamp(dot(sunVec, upVec) + 0.025, 0.0, 0.1) * 10.0;
 
 //Program//
 void main() {
-	vec4 albedo = texture2D(texture, texCoord) * color;
+	vec4 albedo = texture2D(texture, texCoord) * vec4(color.rgb, 1.0);
 	vec3 newNormal = normal;
 
 	if (mat > 198.9 && mat < 200.1) albedo = vec4(1.0);
@@ -104,7 +104,7 @@ void main() {
 	float specular = 0.0;
 
 	if (albedo.a > 0.001) {
-		float foliage = float(mat > 0.99 && mat < 1.01);
+		float foliage = float(mat > 0.99 && mat < 1.01) + float(mat > 107.9 && mat < 108.1);
 		float leaves = float(mat > 1.99 && mat < 2.01);
 
 		vec3 screenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z);
@@ -113,7 +113,7 @@ void main() {
 		vec2 lightmap = clamp(lightMapCoord, 0.0, 1.0);
 
 		#ifdef INTEGRATED_EMISSION
-		getIntegratedEmission(albedo.rgb, viewPos, worldPos, lightmap, emission);
+		getIntegratedEmission(albedo, viewPos, worldPos, lightmap, emission);
 		#endif
 
 		#ifdef INTEGRATED_SPECULAR

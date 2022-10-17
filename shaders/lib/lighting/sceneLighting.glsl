@@ -43,6 +43,8 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
 	}
     #endif
 
+    float lViewPos = length(viewPos);
+
     //Vanilla Directional Lighting
 	float NoL = clamp(dot(normal, lightVec), 0.0, 1.0);
           //NoL = clamp(NoL + pow4(NoL), 0.0, 1.0);
@@ -62,7 +64,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
 
 	#ifdef DYNAMIC_HANDLIGHT
 	float heldLightValue = max(float(heldBlockLightValue), float(heldBlockLightValue2));
-	float handlight = clamp((heldLightValue - 4.0 * length(viewPos)) * 0.025, 0.0, 1.0);
+	float handlight = clamp((heldLightValue - 4.0 * lViewPos) * 0.025, 0.0, 1.0);
 	#endif
 
     #if defined BLOOM_COLORED_LIGHTING || defined GLOBAL_ILLUMINATION
@@ -77,7 +79,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     #elif defined BLOOM_COLORED_LIGHTING
     //BLOOM BASED COLORED LIGHTING
 	vec3 coloredLight = clamp(bloom * pow(getLuminance(bloom), COLORED_LIGHTING_RADIUS), 0.0, 1.0);
-    float bloomLightMap = clamp(pow4(blockLightMap) * 0.5 + blockLightMap * 0.3 + lightmap.x * 0.2, 0.0, 1.0);
+    float bloomLightMap = pow4(blockLightMap) * 1.6 + pow2(blockLightMap) * 0.3 + lightmap.x * 0.1 + (0.05 - clamp(lViewPos * 0.05, 0.0, 1.0) * 0.05);
     blockLighting = blockLightCol * blockLightMap + coloredLight * bloomLightMap * COLORED_LIGHTING_STRENGTH;
     #else
     blockLighting = blockLightCol * blockLightMap;
@@ -137,7 +139,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
             //Fix light leaking in caves
             vec3 edgeFactor = 0.2 * (0.5 - fract(worldPosM + cameraPosition + worldNormal * 0.01));
             #ifndef GBUFFERS_TEXTURED
-                if (lightmap.y < 0.999) worldPosM += (1.0 - pow4(max(color.a, lightmap.y))) * edgeFactor;
+                if (lightmap.y < 0.999) worldPosM += (1.0 - pow4(max(pow(color.a, 0.125), lightmap.y))) * edgeFactor;
                 #ifdef GBUFFERS_WATER
                     worldPosM += (1.0 - lightmap.y) * edgeFactor;
                 #endif
@@ -159,7 +161,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     float rainFactor = 1.0 - rainStrength * 0.8;
 
     #ifdef GLOBAL_ILLUMINATION
-    bloom = clamp(bloom * pow(getLuminance(bloom), GLOBAL_ILLUMINATION_RADIUS), 0.0, 1.0) * 2.0;
+    bloom = clamp(bloom * pow(getLuminance(bloom), GLOBAL_ILLUMINATION_RADIUS), 0.0, 1.0) * 4.0;
 
     #ifdef OVERWORLD
     ambientCol *= vec3(1.0) + bloom * sunVisibility * rainFactor;
@@ -184,7 +186,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     #endif
 
     #if defined GLOBAL_ILLUMINATION || defined BLOOM_COLORED_LIGHTING
-	albedo.rgb = mix(albedo.rgb, mix(albedo.rgb * color.a, albedo.rgb, color.a * (1.0 - AO_RADIUS)), (1.0 - getLuminance(bloom)) * (1.0 - lightmap.x));
+	albedo.rgb = mix(albedo.rgb, mix(albedo.rgb * color.a, albedo.rgb, color.a * (1.0 - AO_RADIUS)), (1.0 - getLuminance(bloom) * 0.5) * (1.0 - lightmap.x));
     #else
     albedo.rgb = mix(albedo.rgb, albedo.rgb * color.a, color.a);
     #endif

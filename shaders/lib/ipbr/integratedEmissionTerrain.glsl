@@ -15,8 +15,8 @@ no switches?
  ⠀⠀⠀⠀⠁⠇⠡⠩⡫⢿⣝⡻⡮⣒⢽⠋
 */
 
-void getIntegratedEmission(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in vec2 lightmap, inout float emission){
-	float lAlbedo = clamp(length(albedo), 0.0, 1.0);
+void getIntegratedEmission(inout vec4 albedo, in vec3 viewPos, in vec3 worldPos, in vec2 lightmap, inout float emission){
+	float lAlbedo = clamp(length(albedo.rgb), 0.0, 1.0);
 	float lViewPos = length(viewPos);
 	float newEmission = 0.0;
 
@@ -28,7 +28,7 @@ void getIntegratedEmission(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos,
 	#endif
 
 	if (mat > 100.9 && mat < 101.1) { // Crying Obsidian and Respawn Anchor
-		newEmission = lAlbedo;
+		newEmission = lAlbedo * 4.0;
 	} else if (mat > 101.9 && mat < 102.1) { // Command Block
         vec3 comPos = fract(worldPos + cameraPosition);
              comPos = abs(comPos - vec3(0.5));
@@ -51,10 +51,9 @@ void getIntegratedEmission(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos,
 	} else if (mat > 105.9 && mat < 106.1) { // Warped Nylium
 		newEmission = float(albedo.g > albedo.b && albedo.g > albedo.r) * pow3(float(albedo.g - albedo.b));
 	} else if (mat > 107.9 && mat < 108.1) { // Amethyst
-		newEmission = 0.25;
-		albedo = pow(albedo, vec3(1.25));
+		newEmission = pow4(lAlbedo) * 0.5;
 	} else if (mat > 109.9 && mat < 110.1) { // Glow Lichen
-		newEmission = (0.0125 + pow16(lAlbedo)) * (1.0 - lightmap.y * 0.75);
+		newEmission = (0.005 + pow16(lAlbedo)) * (1.0 - lightmap.y * 0.5) * 2.0;
 	} else if (mat > 110.9 && mat < 111.1) { // Redstone Things
 		newEmission = float(albedo.r > 0.9) * 0.5;
 	} else if (mat > 111.9 && mat < 112.1) { // Soul Emissives
@@ -81,7 +80,7 @@ void getIntegratedEmission(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos,
 		newEmission = (1.0 - clamp(length(pow4(albedo.rgb)), 0.0, 0.99)) * 6.0;
 		albedo.rgb = pow3(albedo.rgb);
 	} else if (mat > 122.9 && mat < 123.1) { // Sculks
-		newEmission = float(lAlbedo > 0.05 && albedo.r < 0.25) * 0.5;
+		newEmission = float(lAlbedo > 0.05 && albedo.r < 0.25) * 0.25;
 	} else if (mat > 123.9 && mat < 124.1) { // Redstone Lamp, Glowstone
 		newEmission = 0.5 + pow24(lAlbedo) * 2.0;
 	} else if (mat > 124.9 && mat < 125.1) { // Sea Lantern
