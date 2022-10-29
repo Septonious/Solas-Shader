@@ -15,6 +15,7 @@ vec3 calculateWorldPos(float depth, vec2 coord) {
 	viewPos /= viewPos.w;
 
 	vec4 wpos = gbufferModelViewInverse * viewPos;
+
 	return (wpos / wpos.w).xyz;
 }
 #endif

@@ -64,6 +64,10 @@ uniform sampler2D noisetex;
 uniform sampler2D depthtex2;
 #endif
 
+#ifdef BLOOMY_FOG
+uniform sampler2D colortex7;
+#endif
+
 #ifdef VC
 uniform sampler2D depthtex1;
 uniform sampler2D shadowcolor1;
@@ -81,8 +85,14 @@ uniform mat4 gbufferModelView;
 //Common Variables//
 #ifdef OVERWORLD
 float eBS = eyeBrightnessSmooth.y / 240.0;
-float caveFactor = mix(clamp((cameraPosition.y - 56.0) / 16.0, float(isEyeInWater == 1), 1.0), 1.0, eBS);
+float caveFactor = mix(clamp((cameraPosition.y - 56.0) / 16.0, sign(isEyeInWater), 1.0), 1.0, eBS);
 float sunVisibility = clamp(dot(sunVec, upVec) + 0.025, 0.0, 0.1) * 10.0;
+#endif
+
+#ifdef BLOOMY_FOG
+float getLuminance(vec3 color) {
+	return dot(color, vec3(0.299, 0.587, 0.114));
+}
 #endif
 
 //Includes//
@@ -208,7 +218,7 @@ void main() {
 	vec4 bloomData = texture2D(colortex2, texCoord);
 
 	#ifdef OVERWORLD
-		 bloomData.ba += vec2(star * 0.2 + sunMoon * 0.01, float(star > 0.0 || sunMoon > 0.0));
+		 bloomData.ba += vec2(star * 0.2 + sunMoon * 0.002, float(star > 0.0 || sunMoon > 0.0));
 	#elif defined END
 		 bloomData.ba += vec2(star * 0.2, float(star > 0.0));
 	#endif

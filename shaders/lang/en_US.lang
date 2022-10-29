@@ -11,6 +11,11 @@ option.VC=Volumetric Clouds
 option.BLOCKY_CLOUDS=Blocky Clouds
 option.VC_DISTANT_FADE=Clouds Distant Fade
 option.VC_AMOUNT=Amount
+value.VC_AMOUNT.0.65=Very Low
+value.VC_AMOUNT.0.70=Low
+value.VC_AMOUNT.0.75=Medium
+value.VC_AMOUNT.0.80=High
+value.VC_AMOUNT.0.85=Very High
 option.VC_HEIGHT=Height
 option.VC_STRETCHING=Stretching
 option.VC_SAMPLES=Samples
@@ -34,7 +39,9 @@ value.DISTANT_FADE_STYLE.0=Spherical
 value.DISTANT_FADE_STYLE.1=Cylindrical
 option.FOG_DENSITY=Fog Density
 option.FOG_HEIGHT=Fog Height
-
+option.BLOOMY_FOG=Bloomy Fog
+option.BLOOMY_FOG_DENSITY=Bloomy Fog Density
+option.BLOOMY_FOG.comment=Enables fog that is colored by bloom. Requires Bloom and Bloom Colored Lighting to be enabled!
 
 screen.SKY_CONFIG=Sky Config
 
@@ -87,7 +94,6 @@ option.COLORED_LIGHTING_STRENGTH=BCL Strength
 
 option.AO=Ambient Occlusion (AO)
 option.AO_STRENGTH=AO Strength
-option.AO_RADIUS=AO Radius
 
 option.GLOBAL_ILLUMINATION=Global Illumination (GI)
 option.GLOBAL_ILLUMINATION_STRENGTH=GI Strength

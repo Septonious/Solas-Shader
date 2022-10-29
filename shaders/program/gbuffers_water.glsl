@@ -86,7 +86,7 @@ uniform sampler2D shadowcolor1;
 uniform sampler2D gaux3;
 #endif
 
-#if defined BLOOM_COLORED_LIGHTING || defined GLOBAL_ILLUMINATION
+#if defined BLOOM_COLORED_LIGHTING || defined GLOBAL_ILLUMINATION || defined BLOOMY_FOG
 uniform sampler2D gaux4;
 #endif
 
@@ -117,7 +117,7 @@ uniform mat4 shadowModelView;
 #endif
 
 //Common Variables//
-#if defined BLOOM_COLORED_LIGHTING || defined GLOBAL_ILLUMINATION
+#if defined BLOOM_COLORED_LIGHTING || defined GLOBAL_ILLUMINATION || defined BLOOMY_FOG
 float getLuminance(vec3 color) {
 	return dot(color, vec3(0.299, 0.587, 0.114));
 }
@@ -183,7 +183,7 @@ void main() {
 
 	float water = float(mat > 0.9 && mat < 1.1);
 	float portal = float(mat > 1.9 && mat < 2.1);
-	float emission = portal * pow4(clamp(length(albedo.rgb), 0.0, 1.0)) * 0.75;
+	float emission = portal * pow4(clamp(length(albedo.rgb), 0.0, 1.0));
 
 	#ifndef VANILLA_WATER
 	if (water > 0.9) {

@@ -87,7 +87,6 @@ option.COLORED_LIGHTING_STRENGTH=彩色照明强度
 
 option.AO=环境光遮蔽
 option.AO_STRENGTH=环境光遮蔽强度
-option.AO_RADIUS=环境光遮蔽半径
 
 option.GLOBAL_ILLUMINATION=全局照明
 option.GLOBAL_ILLUMINATION_STRENGTH=全局照明强度

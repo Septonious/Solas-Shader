@@ -66,7 +66,7 @@ void getReflection(inout vec4 color, in vec3 viewPos, in vec3 normal, in float f
 			}
 
 			getSunMoon(reflectionFade, nViewPos, lightSun, lightNight, VoS, VoM, caveFactor, sunMoon);
-			emission += sunMoon * 0.125;
+			emission += sunMoon * 0.02;
 
 			#elif defined END
 			#ifdef END_NEBULA
@@ -96,6 +96,6 @@ void getReflection(inout vec4 color, in vec3 viewPos, in vec3 normal, in float f
 
 	vec3 finalReflection = max(mix(reflectionFade, reflection.rgb, reflection.a), vec3(0.0));
 
-	color.rgb = mix(color.rgb, finalReflection, min(fresnel * 2.0, 1.0) * WATER_SPECULAR_STRENGTH);
+	color.rgb = mix(color.rgb, finalReflection, min(fresnel * 4.0, 1.0) * WATER_SPECULAR_STRENGTH);
 	color.a = mix(color.a, 1.0, fresnel);
 }

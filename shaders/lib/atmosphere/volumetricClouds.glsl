@@ -35,7 +35,7 @@ float get3DNoise(vec3 pos) {
 }
 #endif
 
-float getCloudNoise(vec3 rayPos) {
+float getCloudNoise(vec3 rayPos, float cloudLayer) {
 	#ifndef BLOCKY_CLOUDS
 	float noise = get3DNoise(rayPos * 0.5000 + frameTimeCounter * 0.20) * 1.25;
 		  noise+= get3DNoise(rayPos * 0.2500 + frameTimeCounter * 0.15) * 1.75;
@@ -45,7 +45,11 @@ float getCloudNoise(vec3 rayPos) {
 	float noise = get3DNoise(floor(rayPos) * 0.035) * 1000.0;
 	#endif
 
-	return noise;
+	return clamp(noise * (VC_AMOUNT * (1.0 + rainStrength * 0.15)) - (4.0 + cloudLayer * 1.0), 0.0, 1.0);
+}
+
+vec3 ViewToPlayer(vec3 pos) {
+	return mat3(gbufferModelViewInverse) * pos + gbufferModelViewInverse[3].xyz;
 }
 
 void computeVolumetricClouds(inout vec4 vc, in vec3 skyColor, in float dither, in float caveFactor, inout float cloudDepth) {
@@ -72,7 +76,7 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 skyColor, in float dither, i
 		float lViewPos = length(viewPos);
 
 		ambientCol = mix(ambientCol, skyColor, sunVisibility * 0.2 * (1.0 - rainStrength * 0.75));
-		lightCol *= 1.0 + pow4(VoL);
+		lightCol = lightCol * (1.0 + pow16(VoL) * 2.0);
 
 		//We want to march between two planes which we set here
 		float lowerPlane = (VC_HEIGHT + stretching - cameraPosition.y) / nWorldPos.y;
@@ -110,10 +114,10 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 skyColor, in float dither, i
 			//Shaping & Lighting
 			if (cloudVisibility > 0.0) {
 				//Cloud Noise
-                float noise = clamp(getCloudNoise(rayPos) * (VC_AMOUNT * (1.0 + rainStrength * 0.15)) - (8.0 + cloudLayer * 3.0), 0.0, 1.0);
+                float noise = getCloudNoise(rayPos, cloudLayer);
 
 				//Color Calculations
-				float cloudLighting = clamp(smoothstep(VC_HEIGHT + stretching * noise, VC_HEIGHT - stretching * noise, rayPos.y) * 0.7 + noise * 0.5, 0.0, 1.0);
+				float cloudLighting = clamp(smoothstep(VC_HEIGHT + stretching * noise, VC_HEIGHT - stretching * noise, rayPos.y) * 0.6 + noise * 0.6, 0.0, 1.0);
 
 				#ifdef VC_DISTANT_FADE
 				float cloudDistantFade = clamp((VC_DISTANCE - lWorldPos) / VC_DISTANCE * 2.0, 0.0, 1.0);

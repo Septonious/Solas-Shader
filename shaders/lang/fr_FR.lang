@@ -87,7 +87,6 @@ option.COLORED_LIGHTING_STRENGTH=Force du BCL
 
 option.AO=Occlusion Ambiante (AO)
 option.AO_STRENGTH=Force du AO
-option.AO_RADIUS=Rayon du AO
 
 option.GLOBAL_ILLUMINATION=Illumination Globale (GI)
 option.GLOBAL_ILLUMINATION_STRENGTH=Force du GI

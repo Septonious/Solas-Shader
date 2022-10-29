@@ -10,7 +10,12 @@ screen.VC_CONFIG=Настройки Облаков
 option.VC=Объёмные Облака
 option.BLOCKY_CLOUDS=Квадратные Облака
 option.VC_DISTANT_FADE=Облачный Дальний Туман
-option.VC_AMOUNT=Количество
+option.VC_AMOUNT=Количество Облаков
+value.VC_AMOUNT.0.65=Очень Низкое
+value.VC_AMOUNT.0.70=Низкое
+value.VC_AMOUNT.0.75=Среднее
+value.VC_AMOUNT.0.80=Большое
+value.VC_AMOUNT.0.85=Очень Большое
 option.VC_HEIGHT=Высота
 option.VC_STRETCHING=Толщина
 option.VC_SAMPLES=Качество
@@ -86,7 +91,6 @@ option.COLORED_LIGHTING_STRENGTH=Сила ЦО
 
 option.AO=Ambient Occlusion (AO)
 option.AO_STRENGTH=Сила АО
-option.AO_RADIUS=Радиус АО
 
 option.GLOBAL_ILLUMINATION=Глобальное Освещение (ГО)
 option.GLOBAL_ILLUMINATION_STRENGTH=Сила ГО
