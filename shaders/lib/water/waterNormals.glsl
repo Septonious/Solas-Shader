@@ -13,11 +13,7 @@ float getWaterHeightMap(vec3 worldPos, vec2 offset) {
 	noiseB *= noiseB;
 	#endif
 
-	#ifdef BLOCKY_CLOUDS
-    return mix(noiseA, noiseB, 0.5) * WATER_NORMAL_BUMP;
-	#else
-	return mix(noiseA, noiseB, 0.5) * min(WATER_NORMAL_BUMP * 3.0, 2.0);
-	#endif
+	return mix(noiseA, noiseB, 0.5) * WATER_NORMAL_BUMP;
 }
 
 vec3 getParallaxWaves(vec3 worldPos, vec3 viewVector) {

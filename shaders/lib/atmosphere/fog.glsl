@@ -20,7 +20,7 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 atmo
 		  fog = clamp(fog, 0.0, 1.0);
 
 	#if defined BLOOM && defined BLOOMY_FOG && defined BLOOM_COLORED_LIGHTING
-	float bloomyFog = length(viewPos) * BLOOMY_FOG_DENSITY / 64.0 * (4.0 - eBS * 3.0);
+	float bloomyFog = length(viewPos) * BLOOMY_FOG_DENSITY / 64.0 * eBS;
 		  bloomyFog *= 1.0 - exp(-4.0 * bloomyFog);
 		  bloomyFog = clamp(bloomyFog * (1.0 - clamp(length(viewPos) * 0.0075, 0.0, 1.0)), 0.0, 1.0 - caveFactor);
 	#endif
@@ -34,7 +34,7 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 atmo
          bloom0 = pow8(bloom0) * 256.0;
 	#endif
 
-	vec3 bloomyFogColor = clamp(bloom0 * pow(getLuminance(bloom0), -0.5), 0.0, 1.0);
+	vec3 bloomyFogColor = clamp(bloom0 * pow(getLuminance(bloom0), -0.6), 0.0, 1.0);
 	#endif
 
 	vec3 fogColor = mix(atmosphereColor, skyColor, 0.9 * (sunVisibility - pow2(timeBrightness))) * fog;

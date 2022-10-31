@@ -37,22 +37,18 @@ float get3DNoise(vec3 pos) {
 
 float getCloudNoise(vec3 rayPos, float cloudLayer) {
 	#ifndef BLOCKY_CLOUDS
-	float noise = get3DNoise(rayPos * 0.5000 + frameTimeCounter * 0.20) * 1.25;
-		  noise+= get3DNoise(rayPos * 0.2500 + frameTimeCounter * 0.15) * 1.75;
-		  noise+= get3DNoise(rayPos * 0.1250 + frameTimeCounter * 0.10) * 3.50;
-		  noise+= get3DNoise(rayPos * 0.0625 + frameTimeCounter * 0.05) * 6.75;
+	float noise = get3DNoise(rayPos * 0.5000 + frameTimeCounter * 0.4) * 1.25;
+		  noise+= get3DNoise(rayPos * 0.2500 + frameTimeCounter * 0.3) * 1.75;
+		  noise+= get3DNoise(rayPos * 0.1250 + frameTimeCounter * 0.2) * 3.50;
+		  noise+= get3DNoise(rayPos * 0.0625 + frameTimeCounter * 0.1) * 6.75;
 	#else
 	float noise = get3DNoise(floor(rayPos) * 0.035) * 1000.0;
 	#endif
 
-	return clamp(noise * (VC_AMOUNT * (1.0 + rainStrength * 0.15)) - (4.0 + cloudLayer * 1.0), 0.0, 1.0);
+	return clamp(noise * (VC_AMOUNT * (1.0 + rainStrength * 0.1)) - (4.0 + cloudLayer), 0.0, 1.0);
 }
 
-vec3 ViewToPlayer(vec3 pos) {
-	return mat3(gbufferModelViewInverse) * pos + gbufferModelViewInverse[3].xyz;
-}
-
-void computeVolumetricClouds(inout vec4 vc, in vec3 skyColor, in float dither, in float caveFactor, inout float cloudDepth) {
+void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, in float dither, in float caveFactor, inout float cloudDepth) {
 	//Variables
 	float z0 = texture2D(depthtex0, texCoord).r;
 	float visibility = caveFactor * float(z0 > 0.56);
@@ -75,8 +71,10 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 skyColor, in float dither, i
 		float VoL = clamp(dot(normalize(viewPos.xyz), lightVec) * shadowFade, 0.0, 1.0);
 		float lViewPos = length(viewPos);
 
-		ambientCol = mix(ambientCol, skyColor, sunVisibility * 0.2 * (1.0 - rainStrength * 0.75));
-		lightCol = lightCol * (1.0 + pow16(VoL) * 2.0);
+		ambientCol = mix(ambientCol, atmosphereColor, sunVisibility * (0.2 + timeBrightness * 0.8) * (1.0 - rainStrength * 0.5)) * (1.0 - timeBrightness * 0.6);
+		lightCol = mix(lightCol, atmosphereColor, sunVisibility * 0.5);
+		
+		lightCol *= 1.0 + pow16(VoL) * 2.0;
 
 		//We want to march between two planes which we set here
 		float lowerPlane = (VC_HEIGHT + stretching - cameraPosition.y) / nWorldPos.y;
@@ -117,7 +115,7 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 skyColor, in float dither, i
                 float noise = getCloudNoise(rayPos, cloudLayer);
 
 				//Color Calculations
-				float cloudLighting = clamp(smoothstep(VC_HEIGHT + stretching * noise, VC_HEIGHT - stretching * noise, rayPos.y) * 0.6 + noise * 0.6, 0.0, 1.0);
+				float cloudLighting = clamp(smoothstep(VC_HEIGHT + stretching * noise, VC_HEIGHT - stretching * noise, rayPos.y) * 0.75 + noise * 0.6, 0.0, 1.0);
 
 				#ifdef VC_DISTANT_FADE
 				float cloudDistantFade = clamp((VC_DISTANCE - lWorldPos) / VC_DISTANCE * 2.0, 0.0, 1.0);

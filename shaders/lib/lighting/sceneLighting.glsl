@@ -187,13 +187,8 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     vec3 sceneLighting = pow(netherColSqrt, vec3(0.25)) * 0.125;
     #endif
 
-    float ao = pow(color.a, 1.5);
-
-    #if defined GLOBAL_ILLUMINATION || defined BLOOM_COLORED_LIGHTING
-    albedo.rgb = mix(albedo.rgb, albedo.rgb * ao, (1.0 - ao) * (1.0 - lightmap.x) * (1.0 - clamp(length(bloom), 0.0, 0.5)));
-    #else
+    float ao = pow2(color.a);
     albedo.rgb = mix(albedo.rgb, albedo.rgb * ao, (1.0 - ao) * (1.0 - lightmap.x));
-    #endif
 
     albedo = pow(albedo, vec3(2.2));
 
