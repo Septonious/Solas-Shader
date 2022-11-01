@@ -24,7 +24,11 @@ uniform float frameTimeCounter, timeBrightness;
 uniform vec3 fogColor;
 uniform vec3 cameraPosition;
 
+#ifdef BLOCKY_CLOUDS
 uniform sampler2D noisetex;
+#else
+uniform sampler2D shadowcolor1;
+#endif
 #endif
 
 uniform sampler2D tex;
@@ -46,7 +50,7 @@ void main() {
 
 	if (water > 0.9){
 		float caustics = getCaustics(worldPos + cameraPosition);
-		albedo.rgb = mix(vec3(1.0), waterColor, 0.75) * (0.3 + timeBrightness * 0.7) * caustics * WATER_CAUSTICS_STRENGTH * 0.25;
+		albedo.rgb = vec3(0.1 + timeBrightness * 0.2) * caustics;
 	}
 	#endif
 	#endif

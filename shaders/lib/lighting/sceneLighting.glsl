@@ -43,6 +43,8 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
 	}
     #endif
 
+    lightmap.y = pow(lightmap.y, 0.33);
+
     float lightmapYM = smoothstep1(lightmap.y);
     float lViewPos = length(viewPos);
 
@@ -117,7 +119,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     }
     #endif
 
-    if (NoL > 0.0001) {
+    if (NoL > 0.0001 && lightmap.y > 0.0001) {
         //Shadows without peter-panning from Emin's Complementary Reimagined shaderpack, tysm for allowing me to use them ^^
         //Developed by Emin#7309 and gri573#7741
         #ifdef TAA
@@ -153,7 +155,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
                 worldPosM = mix(centerworldPos, worldPosM + vec3(0.0, 0.02, 0.0), lightmapYM);
             #endif
 
-            shadow = sampleFilteredShadow(calculateShadowPos(worldPosM), offset, dither);
+            shadow = sampleFilteredShadow(calculateShadowPos(worldPosM), offset, dither) * lightmap.y;
         }
     }
 

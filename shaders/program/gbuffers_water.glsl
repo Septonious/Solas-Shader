@@ -234,14 +234,6 @@ void main() {
 		skyColor = endLightCol.rgb * 0.15;
 		#endif
 
-		#ifdef INTEGRATED_SPECULAR
-		if (portal < 0.5 && albedo.a < 0.95) {
-			float fresnel1 = pow2(clamp(1.0 + dot(newNormal, normalize(viewPos)), 0.0, 1.0)) * (1.0 - float(isEyeInWater == 1) * 0.75);
-
-			getReflection(albedo, viewPos, newNormal, fresnel1, lightmap.y, emission);
-		}
-		#endif
-
 		#if defined OVERWORLD && defined WATER_FOG
 		if (water > 0.9 && lightmap.y > 0.0 && rainStrength != 1.0) {
 			float oDepth = texture2D(depthtex1, screenPos.xy).r;
@@ -249,7 +241,16 @@ void main() {
 			vec3 oViewPos = ToNDC(oScreenPos);
 
 			vec4 waterFog = getWaterFog(viewPos.xyz - oViewPos);
-			albedo.rgb = mix(waterFog.rgb * waterFog.a * 8.0 * lightmap.y * (1.0 - rainStrength), albedo.rgb, min(albedo.a + 0.125, 1.0 - float(isEyeInWater == 1) * 0.5));
+			albedo.rgb = mix(albedo.rgb, waterFog.rgb * 32.0 * lightmap.y * (1.0 - rainStrength), waterFog.a);
+			albedo.a = mix(0.1, albedo.a, waterFog.a);
+		}
+		#endif
+
+		#ifdef INTEGRATED_SPECULAR
+		if (portal < 0.5 && albedo.a < 0.95) {
+			float fresnel1 = pow2(clamp(1.0 + dot(newNormal, normalize(viewPos)), 0.0, 1.0)) * (1.0 - float(isEyeInWater == 1) * 0.75);
+
+			getReflection(albedo, viewPos, newNormal, fresnel1, lightmap.y, emission);
 		}
 		#endif
 
@@ -319,7 +320,7 @@ void main() {
     texCoord = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;
 
 	lightMapCoord = (gl_TextureMatrix[1] * gl_MultiTexCoord1).xy;
-	lightMapCoord = clamp((lightMapCoord - 0.03125) * 1.06667, vec2(0.0), vec2(0.9333, 1.0));
+	lightMapCoord = clamp(lightMapCoord, vec2(0.0), vec2(0.9333, 1.0));
 
 	//Normal
 	normal = normalize(gl_NormalMatrix * gl_Normal);

@@ -39,7 +39,7 @@ void getReflection(inout vec4 color, in vec3 viewPos, in vec3 normal, in float f
 			float star = 0.0;
 
 			vec3 worldPos = mat3(gbufferModelViewInverse) * reflectedViewPos;
-			vec3 nViewPos = normalize(viewPos.xyz);
+			vec3 nViewPos = normalize(reflectedViewPos);
 			float VoU = dot(nViewPos, upVec);
 			float VoS = clamp(dot(nViewPos, sunVec), 0.0, 1.0);
 			float VoM = clamp(dot(nViewPos, -sunVec), 0.0, 1.0);
@@ -66,7 +66,7 @@ void getReflection(inout vec4 color, in vec3 viewPos, in vec3 normal, in float f
 			}
 
 			getSunMoon(reflectionFade, nViewPos, lightSun, lightNight, VoS, VoM, caveFactor, sunMoon);
-			emission += sunMoon * 0.02;
+			emission += sunMoon * 0.1;
 
 			#elif defined END
 			#ifdef END_NEBULA

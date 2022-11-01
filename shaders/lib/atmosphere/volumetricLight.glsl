@@ -38,7 +38,7 @@ void computeVolumetricLight(inout vec3 color, in vec3 translucent, in float dith
 		float linearDepth0 = getLinearDepth2(z0);
 		float linearDepth1 = getLinearDepth2(z1);
 
-		float distanceFactor = 3.0 + eBS * (4.0 - float(isEyeInWater == 1) * 2.0);
+		float distanceFactor = 3.0 + eBS * 4.0;
 
 		//Ray marching and main calculations
 		for (int i = 0; i < VL_SAMPLES; i++) {
