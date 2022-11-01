@@ -58,7 +58,7 @@ void main() {
 
 	#ifdef BLOOM
 	rawBloom = getBloom(texCoord, dither - 0.25);
-	color += rawBloom * BLOOM_STRENGTH * 0.25;
+	color += rawBloom * BLOOM_STRENGTH * 0.05;
 	#endif
 
 	#ifdef TAA

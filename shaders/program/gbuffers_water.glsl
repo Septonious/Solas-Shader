@@ -354,9 +354,7 @@ void main() {
 
 	//Materials
 	mat = 0.0;
-	if (mc_Entity.x == 1.0) mat = 1.0;
-	if (mc_Entity.x == 2.0) mat = 2.0;
-	if (mc_Entity.x == 3.0) mat = 3.0;
+	mat = float(mc_Entity.x);
 
 	//Color & Position
     color = gl_Color;

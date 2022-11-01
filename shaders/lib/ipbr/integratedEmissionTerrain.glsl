@@ -15,7 +15,7 @@ no switches?
  ⠀⠀⠀⠀⠁⠇⠡⠩⡫⢿⣝⡻⡮⣒⢽⠋
 */
 
-void getIntegratedEmission(inout vec4 albedo, in vec3 viewPos, in vec3 worldPos, in vec2 lightmap, inout float emission){
+void getIntegratedEmission(inout vec4 albedo, in vec3 viewPos, in vec3 worldPos, inout vec2 lightmap, inout float emission){
 	float lAlbedo = clamp(length(albedo.rgb), 0.0, 1.0);
 	float lViewPos = length(viewPos);
 	float newEmission = 0.0;
@@ -61,7 +61,8 @@ void getIntegratedEmission(inout vec4 albedo, in vec3 viewPos, in vec3 worldPos,
 	} else if (mat > 112.9 && mat < 113.1) { // Brewing Stand
 		newEmission = float(albedo.r > 0.5 && albedo.b < 0.4);
 	} else if (mat > 113.9 && mat < 114.1) { // Glow berries
-		newEmission = float(albedo.r > 0.5) * 1.5;
+		newEmission = float(albedo.r > 0.5) * 0.5;
+		albedo.rgb *= 1.0 + float(albedo.r > 0.5);
 	} else if (mat > 114.9 && mat < 115.1) { // Torch & Shroomlight
 		newEmission = 0.15 + float(lAlbedo > 0.99) * 0.85;
 	} else if (mat > 115.9 && mat < 116.1) { // Furnaces
@@ -125,5 +126,5 @@ void getIntegratedEmission(inout vec4 albedo, in vec3 viewPos, in vec3 worldPos,
 	}
 	#endif
 
-	emission = clamp(emission + newEmission, 0.0, 1.0);
+	emission = clamp(emission + newEmission, 0.0, 2.0);
 }

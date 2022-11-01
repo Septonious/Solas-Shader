@@ -11,18 +11,18 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 atmo
 	float fogAltitude = clamp(pow16((worldPos.y + cameraPosition.y + 1000.0 - FOG_HEIGHT) * 0.001), 0.0, 1.0);
 	float clearDay = sunVisibility * (1.0 - rainStrength * 0.5);
 
-	float fog = length(viewPos) * FOG_DENSITY / 1024.0;
+	float fog = length(viewPos) * FOG_DENSITY / 1024.0 * mix(0.25, 1.0, caveFactor);
 		  fog *= (0.5 * rainStrength + 0.5) / (4.0 * clearDay + 1.0);
-		  fog = 1.0 - exp(-128.0 * pow(fog, 0.15 * clearDay * max(eBS, 0.5) + 1.25));
+		  fog = 1.0 - exp(-128.0 * pow(fog, 0.15 * clearDay * eBS + 1.25));
 		  fog *= 1.0 - fogAltitude * (1.0 - rainStrength * 0.5);
 		  fog = pow(fog, 1.25);
 		  fog *= 1.0 - pow2(timeBrightness) * 0.75;
 		  fog = clamp(fog, 0.0, 1.0);
 
 	#if defined BLOOM && defined BLOOMY_FOG && defined BLOOM_COLORED_LIGHTING
-	float bloomyFog = length(viewPos) * BLOOMY_FOG_DENSITY / 64.0 * eBS;
-		  bloomyFog *= 1.0 - exp(-4.0 * bloomyFog);
-		  bloomyFog = clamp(bloomyFog * (1.0 - clamp(length(viewPos) * 0.0075, 0.0, 1.0)), 0.0, 1.0 - caveFactor);
+	float bloomyFog = length(viewPos) * BLOOMY_FOG_DENSITY * (1.0 - caveFactor) * 16.0;
+		  bloomyFog *= 1.0 - exp(-3.0 * bloomyFog);
+		  bloomyFog = clamp(bloomyFog * (1.0 - clamp(length(viewPos) * 0.005, 0.0, 1.0)), 0.0, 1.0);
 	#endif
 
 	#if defined BLOOM && defined BLOOMY_FOG && defined BLOOM_COLORED_LIGHTING
@@ -37,7 +37,7 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 atmo
 	vec3 bloomyFogColor = clamp(bloom0 * pow(getLuminance(bloom0), -0.6), 0.0, 1.0);
 	#endif
 
-	vec3 fogColor = mix(atmosphereColor, skyColor, 0.9 * (sunVisibility - pow2(timeBrightness))) * fog;
+	vec3 fogColor = mix(minLightCol, mix(atmosphereColor, skyColor, 0.9 * (sunVisibility - pow2(timeBrightness))), caveFactor) * fog;
 
 	//Distant Fade
 	#ifdef DISTANT_FADE
@@ -58,9 +58,6 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 atmo
 		}
 	}
 	#endif
-
-	//fogColor = mix(mix(ambientDay, minLightCol, 0.75), fogColor, caveFactor);
-	fogColor = mix(minLightCol, fogColor, caveFactor);
 
 	#if defined BLOOM && defined BLOOMY_FOG && defined BLOOM_COLORED_LIGHTING
 	fogColor += bloomyFogColor * bloomyFog;

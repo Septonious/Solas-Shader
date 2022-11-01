@@ -24,7 +24,6 @@ float get3DNoise(vec3 pos) {
 
 	vec3 floorPos = floor(pos);
 	vec3 fractPos = fract(pos);
-	fractPos = fractPos * fractPos * (3.0 - 2.0 * fractPos);
 
 	vec2 noiseCoord = (floorPos.xz + fractPos.xz + floorPos.y * 16.0) * 0.015625;
 
