@@ -15,10 +15,9 @@ no switches?
  ⠀⠀⠀⠀⠁⠇⠡⠩⡫⢿⣝⡻⡮⣒⢽⠋
 */
 
-void getIntegratedEmission(inout vec4 albedo, in vec3 viewPos, in vec3 worldPos, inout vec2 lightmap, inout float emission){
+void getIntegratedEmission(inout vec4 albedo, in vec3 viewPos, in vec3 worldPos, inout vec2 lightmap, inout float newEmission){
 	float lAlbedo = clamp(length(albedo.rgb), 0.0, 1.0);
 	float lViewPos = length(viewPos);
-	float newEmission = 0.0;
 
 	#ifdef EMISSIVE_ORES
     if (mat > 99.9 && mat < 100.1) { // Glowing Ores
@@ -64,7 +63,7 @@ void getIntegratedEmission(inout vec4 albedo, in vec3 viewPos, in vec3 worldPos,
 		newEmission = float(albedo.r > 0.5) * 0.5;
 		albedo.rgb *= 1.0 + float(albedo.r > 0.5);
 	} else if (mat > 114.9 && mat < 115.1) { // Torch & Shroomlight
-		newEmission = 0.15 + float(lAlbedo > 0.99) * 0.85;
+		newEmission = 0.15 + float(lAlbedo > 0.99) * 0.75;
 	} else if (mat > 115.9 && mat < 116.1) { // Furnaces
 		newEmission = float(albedo.r > 0.8 || (albedo.r > 0.6 && albedo.b < 0.5));
 	} else if (mat > 116.9 && mat < 117.1) { // Chorus
@@ -76,7 +75,7 @@ void getIntegratedEmission(inout vec4 albedo, in vec3 viewPos, in vec3 worldPos,
 	} else if (mat > 119.9 && mat < 120.1) { // Normal Campfire && Magma Block
 		newEmission = float(albedo.r > 0.65 && albedo.b < 0.35);
 	} else if (mat > 120.9 && mat < 121.9) { // Redstone Block && Lava
-		newEmission = 0.4 + pow2(lAlbedo) * 2.6;
+		newEmission = 0.2 + pow2(lAlbedo) * 0.8;
 	} else if (mat > 121.9 && mat < 122.1) { // Froglights
 		newEmission = (1.0 - clamp(length(pow4(albedo.rgb)), 0.0, 0.99)) * 6.0;
 		albedo.rgb = pow3(albedo.rgb);
@@ -126,5 +125,5 @@ void getIntegratedEmission(inout vec4 albedo, in vec3 viewPos, in vec3 worldPos,
 	}
 	#endif
 
-	emission = clamp(emission + newEmission, 0.0, 2.0);
+	newEmission = clamp(newEmission, 0.0, 1.0);
 }

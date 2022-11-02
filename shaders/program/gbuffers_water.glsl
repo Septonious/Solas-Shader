@@ -241,7 +241,7 @@ void main() {
 			vec3 oViewPos = ToNDC(oScreenPos);
 
 			vec4 waterFog = getWaterFog(viewPos.xyz - oViewPos);
-			albedo.rgb = mix(albedo.rgb, waterFog.rgb * 32.0 * lightmap.y * (1.0 - rainStrength), waterFog.a);
+			albedo.rgb = mix(albedo.rgb, waterFog.rgb * 8.0 * lightmap.y * (1.0 - rainStrength), waterFog.a);
 			albedo.a = mix(0.1, albedo.a, waterFog.a);
 		}
 		#endif
@@ -320,7 +320,7 @@ void main() {
     texCoord = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;
 
 	lightMapCoord = (gl_TextureMatrix[1] * gl_MultiTexCoord1).xy;
-	lightMapCoord = clamp(lightMapCoord, vec2(0.0), vec2(0.9333, 1.0));
+	lightMapCoord = clamp((lightMapCoord - 0.03125) * 1.06667, vec2(0.0), vec2(0.9333, 1.0));
 
 	//Normal
 	normal = normalize(gl_NormalMatrix * gl_Normal);

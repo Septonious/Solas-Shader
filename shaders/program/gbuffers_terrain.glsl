@@ -98,14 +98,13 @@ void main() {
 	vec4 albedo = texture2D(texture, texCoord) * vec4(color.rgb, 1.0);
 	vec3 newNormal = normal;
 
-	if (mat > 198.9 && mat < 200.1) albedo = vec4(1.0);
-
 	float emission = 0.0;
+	float newEmission = 0.0;
 	float specular = 0.0;
 
 	if (albedo.a > 0.001) {
 		float foliage = float(mat > 0.99 && mat < 1.01) + float(mat > 107.9 && mat < 108.1);
-		float leaves = float(mat > 1.99 && mat < 2.01);
+		float leaves = float(mat > 1.99 && mat < 2.01) * 2.0;
 
 		vec3 screenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z);
 		vec3 viewPos = ToNDC(screenPos);
@@ -113,19 +112,19 @@ void main() {
 		vec2 lightmap = clamp(lightMapCoord, 0.0, 1.0);
 
 		#ifdef INTEGRATED_EMISSION
-		getIntegratedEmission(albedo, viewPos, worldPos, lightmap, emission);
+		getIntegratedEmission(albedo, viewPos, worldPos, lightmap, newEmission);
 		#endif
 
 		#ifdef INTEGRATED_SPECULAR
 		getIntegratedSpecular(albedo, newNormal, worldPos.xz, lightmap, specular);
 		#endif
 
-		getSceneLighting(albedo.rgb, viewPos, worldPos, newNormal, lightmap, emission, leaves, foliage, specular);
+		getSceneLighting(albedo.rgb, viewPos, worldPos, newNormal, lightmap, emission, newEmission, leaves, foliage, specular);
 	}
 
 	/* DRAWBUFFERS:0 */
 	gl_FragData[0] = albedo;
-
+	emission = clamp(emission, 0.0, 1.0) + newEmission * 4.0;
 	#ifndef INTEGRATED_SPECULAR
 		#ifdef BLOOM
 		/* DRAWBUFFERS:02 */

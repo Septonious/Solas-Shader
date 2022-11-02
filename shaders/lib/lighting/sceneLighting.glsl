@@ -35,7 +35,7 @@ vec3 getHandLightColor(float handlight) {
 #ifndef GBUFFERS_TERRAIN
 void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in vec3 normal, in vec2 lightmap, in float emission, in float leaves, in float foliage, in float specular) {
 #else
-void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in vec3 normal, in vec2 lightmap, inout float emission, in float leaves, in float foliage, in float specular) {
+void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in vec3 normal, in vec2 lightmap, inout float emission, in float newEmission, in float leaves, in float foliage, in float specular) {
 #endif
     #ifdef GBUFFERS_TERRAIN
 	if (foliage > 0.9) {
@@ -43,7 +43,13 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
 	}
     #endif
 
-    lightmap.y = pow(lightmap.y, 0.33);
+    lightmap.y = pow(lightmap.y, 0.25);
+
+    #ifdef GBUFFERS_TERRAIN
+    float emission2 = clamp(emission + newEmission, 0.0, 1.0);
+    #else
+    float emission2 = emission;
+    #endif
 
     float lightmapYM = smoothstep1(lightmap.y);
     float lViewPos = length(viewPos);
@@ -60,9 +66,9 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     vec3 blockLighting = vec3(0.0);
 
     #ifdef SHIMMER_MOD_SUPPORT
-    float blockLightMap = min(pow4(lightmap.x) * 2.0 + pow2(lightmap.x) * 0.125, 1.0) * (1.0 - emission);
+    float blockLightMap = min(pow4(lightmap.x) * 2.0 + pow2(lightmap.x) * 0.125, 1.0) * (1.0 - emission2);
     #else
-    float blockLightMap = min(pow8(lightmap.x) + pow4(lightmap.x) * 0.5, 1.0) * (1.0 - emission);
+    float blockLightMap = min(pow8(lightmap.x) + pow4(lightmap.x) * 0.5, 1.0) * (1.0 - emission2);
     #endif
 
 	#ifdef DYNAMIC_HANDLIGHT
@@ -78,11 +84,11 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     #if defined SHIMMER_MOD_SUPPORT
     //COLORED LIGHTING USING SHIMMER MOD
     vec3 coloredLight = getColoredLighting(worldPos, blockLightMap) * BLOCKLIGHT_I;
-    blockLighting = blockLightCol * blockLightMap + coloredLight * (1.0 - emission);
+    blockLighting = blockLightCol * blockLightMap + coloredLight * (1.0 - emission2);
     #elif defined BLOOM_COLORED_LIGHTING
     //BLOOM BASED COLORED LIGHTING
-	vec3 coloredLight = clamp(bloom * pow(getLuminance(bloom), COLORED_LIGHTING_RADIUS), 0.0, 1.0);
-    float bloomLightMap = pow4(blockLightMap) * 1.6 + pow2(blockLightMap) * 0.3 + lightmap.x * 0.1 + (0.04 - clamp(lViewPos * 0.05, 0.0, 1.0) * 0.04);
+	vec3 coloredLight = clamp(0.1 * bloom * pow(getLuminance(bloom), COLORED_LIGHTING_RADIUS), 0.0, 1.0) * 10.0;
+    float bloomLightMap = clamp(pow4(blockLightMap) * 1.6 + pow2(blockLightMap) * 0.3 + lightmap.x * 0.1 + (0.04 - clamp(lViewPos * 0.05, 0.0, 1.0) * 0.04), 0.0, 1.0);
     blockLighting = blockLightCol * blockLightMap + coloredLight * bloomLightMap * COLORED_LIGHTING_STRENGTH;
     #else
     blockLighting = blockLightCol * blockLightMap;
@@ -100,7 +106,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
 
     //Subsurface Scattering & Specular Highlight
     #ifdef OVERWORLD
-    specular = specular * clamp(NoU - 0.01, 0.0, 1.0);
+    specular *= clamp(NoU - 0.01, 0.0, 1.0);
 
     float subsurface = leaves + foliage;
 
@@ -131,7 +137,11 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
         float shadowLength = shadowDistance * 0.9166667 - length(vec4(worldPos.x, worldPos.y, worldPos.y, worldPos.z));
 
         if (shadowLength > 0.000001) {
+            #ifdef OVERWORLD
+            float offset = 0.0009765 * (1.0 + subsurface);
+            #else
             const float offset = 0.0009765;
+            #endif
 
             vec3 worldPosM = worldPos;
 
@@ -189,12 +199,12 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     vec3 sceneLighting = pow(netherColSqrt, vec3(0.25)) * 0.125;
     #endif
 
-    float ao = pow2(color.a);
-    albedo.rgb = mix(albedo.rgb, albedo.rgb * ao, (1.0 - ao) * (1.0 - lightmap.x));
+    float ao = clamp(pow2(color.a), 0.0, 1.0);
+    albedo.rgb = mix(albedo.rgb, albedo.rgb * ao, (1.0 - ao) * (1.0 - blockLightMap * 0.5));
 
     albedo = pow(albedo, vec3(2.2));
 
-    albedo *= sceneLighting + blockLighting + (albedo * emission * EMISSION_STRENGTH) + nightVision * 0.25 + (minLightCol * (1.0 - lightmap.y));
+    albedo *= sceneLighting + blockLighting + (albedo * emission2 * EMISSION_STRENGTH) + nightVision * 0.25 + (minLightCol * (1.0 - lightmap.y));
     albedo *= vanillaDiffuse;
 
     albedo = sqrt(max(albedo, vec3(0.0)));
@@ -207,7 +217,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     #endif
 
     if (giVisibility != 0.0) {
-        emission += mix(0.0, GLOBAL_ILLUMINATION_STRENGTH * 0.25 * float(emission == 0.0), giVisibility);
+        emission += mix(0.0, GLOBAL_ILLUMINATION_STRENGTH * 0.5 * float(emission2 == 0.0), giVisibility);
     }
     #endif
 }
