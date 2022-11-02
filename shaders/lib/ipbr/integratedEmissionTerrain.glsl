@@ -17,7 +17,6 @@ no switches?
 
 void getIntegratedEmission(inout vec4 albedo, in vec3 viewPos, in vec3 worldPos, inout vec2 lightmap, inout float newEmission){
 	float lAlbedo = clamp(length(albedo.rgb), 0.0, 1.0);
-	float lViewPos = length(viewPos);
 
 	#ifdef EMISSIVE_ORES
     if (mat > 99.9 && mat < 100.1) { // Glowing Ores
@@ -120,7 +119,6 @@ void getIntegratedEmission(inout vec4 albedo, in vec3 viewPos, in vec3 worldPos,
 	if (isPlant > 0.9 && isPlant < 1.1){ // Flowers
 		if (albedo.b > albedo.g || albedo.r > albedo.g) {
 			newEmission = 0.25 * lAlbedo * (1.0 - rainStrength);
-			newEmission = mix(newEmission, newEmission * 0.5, clamp(lViewPos * 0.125, 0.0, 1.00));
 		}
 	}
 	#endif

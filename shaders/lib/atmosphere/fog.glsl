@@ -20,18 +20,18 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 atmo
 		  fog = clamp(fog, 0.0, 1.0);
 
 	#if defined BLOOM && defined BLOOMY_FOG && defined BLOOM_COLORED_LIGHTING
-	float bloomyFog = length(viewPos) * BLOOMY_FOG_DENSITY * (1.0 - caveFactor) * 16.0;
-		  bloomyFog *= 1.0 - exp(-3.0 * bloomyFog);
-		  bloomyFog = clamp(bloomyFog * (1.0 - clamp(length(viewPos) * 0.005, 0.0, 1.0)), 0.0, 1.0);
+	float bloomyFog = length(viewPos) * BLOOMY_FOG_DENSITY * (1.0 - sqrt(eBS)) * (1.0 - pow(caveFactor, 0.25)) * 32.0;
+		  bloomyFog *= 1.0 - exp(-4.0 * bloomyFog);
+		  bloomyFog = clamp(0.0625 * bloomyFog * (1.0 - clamp(length(viewPos) * 0.01, 0.0, 1.0)), 0.0, 1.0) * 16.0;
 	#endif
 
 	#if defined BLOOM && defined BLOOMY_FOG && defined BLOOM_COLORED_LIGHTING
 	#ifdef GBUFFERS_WATER
     vec3 bloom0 = texture2D(gaux4, gl_FragCoord.xy / vec2(viewWidth, viewHeight)).rgb;
-         bloom0 = pow8(bloom0) * 256.0;
+         bloom0 = pow4(bloom0) * 128.0;
 	#else
     vec3 bloom0 = texture2D(colortex7, gl_FragCoord.xy / vec2(viewWidth, viewHeight)).rgb;
-         bloom0 = pow8(bloom0) * 256.0;
+         bloom0 = pow4(bloom0) * 128.0;
 	#endif
 
 	vec3 bloomyFogColor = clamp(bloom0 * pow(getLuminance(bloom0), -0.6), 0.0, 1.0);

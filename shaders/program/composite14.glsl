@@ -58,7 +58,17 @@ void main() {
 
 	#ifdef BLOOM
 	rawBloom = getBloom(texCoord, dither - 0.25);
-	color += rawBloom * BLOOM_STRENGTH * 0.1;
+
+	#if BLOOM_CONTRAST == 0
+	color = mix(color, rawBloom, 0.1 * BLOOM_STRENGTH);
+	#else
+	vec3 bloomContrast = vec3(exp2(BLOOM_CONTRAST * 0.25));
+	color = pow(color, bloomContrast);
+
+	vec3 bloomStrength = pow(vec3(0.1 * BLOOM_STRENGTH), bloomContrast);
+	color = mix(color, pow(rawBloom, bloomContrast), bloomStrength);
+	color = pow(color, 1.0 / bloomContrast);
+	#endif
 	#endif
 
 	#ifdef TAA
@@ -74,7 +84,7 @@ void main() {
 	/* DRAWBUFFERS:157 */
 	gl_FragData[0].rgb = color;
 	gl_FragData[1].gba = temporalColor;
-	gl_FragData[2].rgb = pow(rawBloom / 256.0, vec3(0.125));
+	gl_FragData[2].rgb = pow(rawBloom / 128.0, vec3(0.25));
 }
 
 #endif

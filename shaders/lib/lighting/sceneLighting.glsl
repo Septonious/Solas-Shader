@@ -78,7 +78,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
 
     #if defined BLOOM_COLORED_LIGHTING || defined GLOBAL_ILLUMINATION
     vec3 bloom = texture2D(gaux4, gl_FragCoord.xy / vec2(viewWidth, viewHeight)).rgb;
-         bloom = pow8(bloom) * 256.0;
+         bloom = pow4(bloom) * 128.0;
     #endif
 
     #if defined SHIMMER_MOD_SUPPORT
@@ -87,7 +87,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     blockLighting = blockLightCol * blockLightMap + coloredLight * (1.0 - emission2);
     #elif defined BLOOM_COLORED_LIGHTING
     //BLOOM BASED COLORED LIGHTING
-	vec3 coloredLight = clamp(0.1 * bloom * pow(getLuminance(bloom), COLORED_LIGHTING_RADIUS), 0.0, 1.0) * 10.0;
+	vec3 coloredLight = clamp(0.0625 * bloom * pow(getLuminance(bloom), COLORED_LIGHTING_RADIUS), 0.0, 1.0) * 16.0;
     float bloomLightMap = clamp(pow4(blockLightMap) * 1.6 + pow2(blockLightMap) * 0.3 + lightmap.x * 0.1 + (0.04 - clamp(lViewPos * 0.05, 0.0, 1.0) * 0.04), 0.0, 1.0);
     blockLighting = blockLightCol * blockLightMap + coloredLight * bloomLightMap * COLORED_LIGHTING_STRENGTH;
     #else
