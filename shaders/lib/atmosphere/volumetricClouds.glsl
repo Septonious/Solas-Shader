@@ -134,5 +134,5 @@ void computeVolumetricClouds(inout vec3 color, in vec3 atmosphereColor, in float
 		cloudDepth = vc.a;
 	}
 
-	color = mix(color, pow(vc.rgb, vec3(1.0 / 2.2)), vc.a * vc.a * mix(VC_OPACITY, 0.5, rainStrength));
+	color = mix(color, pow(vc.rgb, vec3(1.0 / 2.2)), vc.a * vc.a * mix(VC_OPACITY, 0.4, rainStrength));
 }

@@ -138,9 +138,9 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
 
         if (shadowLength > 0.000001) {
             #ifdef OVERWORLD
-            float offset = 0.0009765 * (1.0 + subsurface);
+            float offset = shadowOffset * (1.0 + subsurface);
             #else
-            float offset = 0.0009765;
+            float offset = shadowOffset;
             #endif
 
             vec3 worldPosM = worldPos;
@@ -148,9 +148,12 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
             #ifndef GBUFFERS_TEXTURED
                 // Shadow bias without peter-panning
                 vec3 worldNormal = normalize(ToWorld(normal * 1000.0));
-                vec3 bias = worldNormal * min(0.12 + length(worldPos) / 200.0, 0.5) * (2.0 - NoL);
+                vec3 bias = worldNormal * min(0.1 + length(worldPos) / 200.0, 0.5) * (2.0 - NoL);
 
                 // Fix light leaking in caves
+                #ifdef DYNAMIC_SHADOW_BLUR
+                if (subsurface < 0.1) offset *= 0.5 + clamp(lViewPos * 0.05, 0.0, 3.0);
+                #endif
                 if (lightmap.y < 0.1) offset *= 1.0 - clamp(pow(color.a, 1.5) * 2.0, 0.0, 1.0);
                 
                 #ifdef GBUFFERS_WATER
@@ -198,7 +201,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     vec3 sceneLighting = pow(netherColSqrt, vec3(0.25)) * 0.125;
     #endif
 
-    albedo.rgb = mix(albedo.rgb, albedo.rgb * ao, (1.0 - ao) * (1.0 - blockLightMap * 0.5));
+    albedo.rgb = mix(albedo.rgb, albedo.rgb * ao, (1.0 - pow2(ao)) * (1.0 - blockLightMap * 0.5));
 
     albedo = pow(albedo, vec3(2.2));
 

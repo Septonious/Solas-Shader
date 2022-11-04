@@ -11,6 +11,11 @@ option.VC=体积云
 option.BLOCKY_CLOUDS=方块云
 option.VC_DISTANT_FADE=体积云远距离淡化
 option.VC_AMOUNT=数量
+value.VC_AMOUNT.0.60=很少
+value.VC_AMOUNT.0.65=少
+value.VC_AMOUNT.0.70=适量
+value.VC_AMOUNT.0.75=多
+value.VC_AMOUNT.0.80=非常多
 option.VC_HEIGHT=高度
 option.VC_STRETCHING=延展程度
 option.VC_SAMPLES=采样值
@@ -34,7 +39,9 @@ value.DISTANT_FADE_STYLE.0=球形
 value.DISTANT_FADE_STYLE.1=圆柱形
 option.FOG_DENSITY=雾气密度
 option.FOG_HEIGHT=雾气高度
-
+option.BLOOMY_FOG=泛光雾
+option.BLOOMY_FOG_DENSITY=泛光雾密度
+option.BLOOMY_FOG.comment=启用通过泛光来着色的雾气. 需要启用 泛光 和 基于泛光的彩色照明 !
 
 screen.SKY_CONFIG=天空配置
 
@@ -115,6 +122,7 @@ screen.IEMISSION=集成自发光配置
 option.EMISSIVE_FLOWERS=花朵自发光
 option.EMISSIVE_ORES=矿石自发光
 option.EMISSIVE_DEBRIS=残骸自发光
+option.EMISSIVE_CONCRETE=混凝土自发光
 option.EMISSIVE_POWDER_SNOW=粉雪自发光
 option.PLAYER_BRIGHT_PARTS_HIGHLIGHT=玩家模型亮色自发光
 option.ENTITY_HIGHLIGHT=实体自发光
@@ -240,7 +248,12 @@ option.SKY_HI=天空上部 - 颜色强度
 
 screen.POST=后期效果
 
-option.SHARPENING=锐化
+option.DOF=景深
+option.DOF.comment=模糊玩家眼睛焦点以外的物体.
+
+option.DOF_STRENGTH=景深强度
+
+option.SHARPENING=图像锐化
 option.CHROMATIC_ABERRATION=色度偏差
 option.CHROMATIC_ABERRATION_STRENGTH=色度偏差强度
 
@@ -262,10 +275,33 @@ option.SATURATION.comment=调整所有颜色的饱和度.
 option.VIBRANCE=自然饱和度
 option.VIBRANCE.comment=调整饱和度较低的颜色的饱和度，饱和度高的颜色受到的影响较小.
 
+screen.BLOOM=泛光配置
+
 option.BLOOM=泛光
 option.BLOOM_STRENGTH=泛光强度
-option.BLOOM_SAMPLES=泛光采样值
 
+option.BLOOM_TILE_SIZE=泛光块绘制尺寸
+option.BLOOM_TILE_SIZE.comment=调整每块泛光块的尺寸. 提高数值会降低精度,增大半径. 降低数值会提高精度,减小半径.
+
+option.BLOOM_CONTRAST=对比度
+option.BLOOM_CONTRAST.comment=调整泛光保留颜色的对比度或细节可见程度. 较高的值可以保持色彩对比度,较低的值可以保持细节的可见程度.
+value.BLOOM_CONTRAST.-4=-1.00
+value.BLOOM_CONTRAST.-3=-0.75
+value.BLOOM_CONTRAST.-2=-0.50
+value.BLOOM_CONTRAST.-1=-0.25
+value.BLOOM_CONTRAST.0=0.00
+value.BLOOM_CONTRAST.1=0.25
+value.BLOOM_CONTRAST.2=0.50
+value.BLOOM_CONTRAST.3=0.75
+value.BLOOM_CONTRAST.4=1.00
+
+option.BLOOM_RADIUS=半径
+option.BLOOM_RADIUS.comment=调整发光的范围.
+value.BLOOM_RADIUS.1=最小
+value.BLOOM_RADIUS.2=很小
+value.BLOOM_RADIUS.3=小
+value.BLOOM_RADIUS.4=中等
+value.BLOOM_RADIUS.5=大
 
 #OTHER
 

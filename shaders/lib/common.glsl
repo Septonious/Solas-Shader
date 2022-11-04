@@ -2,23 +2,25 @@
 
 //Shadows//
 const int shadowMapResolution = 1024; //[512 1024 1536 2048]
-const float shadowDistance = 512.0; //[128.0 256.0 512.0]
+const float shadowDistance = 256.0; //[128.0 256.0 512.0]
 const float sunPathRotation = -40.0; //[-85.0 -80.0 -75.0 -70.0 -65.0 -60.0 -55.0 -50.0 -45.0 -40.0 -35.0 -30.0 -25.0 -20.0 -15.0 -10.0 -5.0 0.0 5.0 10.0 15.0 20.0 25.0 30.0 35.0 40.0 45.0 50.0 55.0 60.0 65.0 70.0 75.0 80.0 85.0]
 const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
+const float shadowOffset = 0.25 / shadowMapResolution;
 
 #define SHADOW_COLOR
+#define DYNAMIC_SHADOW_BLUR
 //#define ENTITY_SHADOWS
-#define SHADOW_SAMPLE_COUNT 4 //[1 2 3 4 5 6]
+#define SHADOW_SAMPLE_COUNT 6 //[1 2 3 4 5 6 7 8]
 
 //GI
 #define GLOBAL_ILLUMINATION
-#define GLOBAL_ILLUMINATION_STRENGTH 0.5 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
+#define GLOBAL_ILLUMINATION_STRENGTH 0.6 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
 #define GLOBAL_ILLUMINATION_RADIUS -0.50 //[-0.50 -0.40 -0.30 -0.20 -0.10 0.10 0.20 0.30 0.40 0.50 0.60 0.70 0.80 0.90 1.00]
 
 //Colored Lighting//
 #define BLOOM_COLORED_LIGHTING
-#define COLORED_LIGHTING_STRENGTH 4.50 //[1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00 4.25 4.50 4.75 5.00 5.25 5.50 5.75 6.00 6.25 6.50 6.75 7.00 7.25 7.50 7.75 8.00]
-#define COLORED_LIGHTING_RADIUS -0.75 //[-0.80 -0.75 -0.70 -0.65 -0.60 -0.55 -0.50]
+#define COLORED_LIGHTING_STRENGTH 4.00 //[1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00 4.25 4.50 4.75 5.00 5.25 5.50 5.75 6.00 6.25 6.50 6.75 7.00 7.25 7.50 7.75 8.00]
+#define COLORED_LIGHTING_RADIUS -0.70 //[-0.80 -0.75 -0.70 -0.65 -0.60 -0.55 -0.50]
 //#define SHIMMER_MOD_SUPPORT
 
 //Integrated PBR//
@@ -330,8 +332,8 @@ const float waterFogRange = 64.0 / WATER_FOG_DENSITY;
 const vec3 weatherCol = vec3(WEATHER_RR, WEATHER_RG, WEATHER_RB) / 255.0 * WEATHER_RI;
 
 //Mathematical Constants//
-const float PI = 3.14159265358979;
-const float TAU = 6.28318530717959;
+const float PI = 3.14159265;
+const float TAU = 6.2831853;
 
 ////////////// S H E N A N I G A N S //////////////
 
