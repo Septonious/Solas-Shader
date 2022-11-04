@@ -28,7 +28,7 @@ vec3 getAtmosphere(vec3 viewPos) {
     vec3 sky = mix(lightNight, daySky, sunVisibility) * skyDensity;
 
     //Fake Light Scattering
-    vec3 scattering = mix(mix(lowScatteringColor, highScatteringColor, horizonFactor * (1.0 - scatteringMixer * 0.75) * (1.0 - timeBrightnessSqrt)), lightColSqrt * 8.0, timeBrightnessSqrt * 0.5);
+    vec3 scattering = mix(mix(lowScatteringColor, highScatteringColor, horizonFactor * (1.0 - scatteringMixer * 0.75) * (1.0 - timeBrightnessSqrt)), lightColSqrt * 8.0, timeBrightnessSqrt);
 
     sky = mix(sky, scattering, clamp(pow(exp(-(20.0 + sunVisibility * sunVisibility * 20.0) * nVoU), 0.3), 0.0, 1.0) * scatteringFactor);
 
@@ -36,7 +36,7 @@ vec3 getAtmosphere(vec3 viewPos) {
 	sky = mix(sky, lightColSqrt * skyDensity, rainStrength);
 
     //Underground Sky
-	sky = mix(minLightCol, sky, caveFactor);
+	sky = mix(caveMinLightCol, sky, caveFactor);
 
     return sky;
 }

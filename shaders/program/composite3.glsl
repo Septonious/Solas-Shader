@@ -44,6 +44,7 @@ float sunVisibility = clamp(dot(sunVec, upVec) + 0.025, 0.0, 0.1) * 10.0;
 
 //Includes//
 #ifdef WATER_FOG
+#include "/lib/util/ToView.glsl"
 #include "/lib/color/dimensionColor.glsl"
 #include "/lib/water/waterFog.glsl"
 #endif
@@ -54,11 +55,9 @@ void main() {
 	#ifdef WATER_FOG
 	if (isEyeInWater == 1){
 		float z0 = texture2D(depthtex0, texCoord).r;
-		vec4 screenPos = vec4(texCoord, z0, 1.0);
-		vec4 viewPos = gbufferProjectionInverse * (screenPos * 2.0 - 1.0);
-		viewPos /= viewPos.w;
+		vec3 viewPos = ToView(vec3(texCoord, z0));
 
-		vec4 waterFog = getWaterFog(viewPos.xyz);
+		vec4 waterFog = getWaterFog(viewPos);
 		color = mix(sqrt(color), sqrt(waterFog.rgb), waterFog.a);
 		color *= color;
 	}

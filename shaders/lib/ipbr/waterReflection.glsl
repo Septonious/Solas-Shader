@@ -66,7 +66,7 @@ void getReflection(inout vec4 color, in vec3 viewPos, in vec3 normal, in float f
 			}
 
 			getSunMoon(reflectionFade, nViewPos, lightSun, lightNight, VoS, VoM, caveFactor, sunMoon);
-			emission += sunMoon * 0.1;
+			emission += sunMoon;
 
 			#elif defined END
 			#ifdef END_NEBULA

@@ -26,6 +26,6 @@ void getSunMoon(inout vec3 color, in vec3 nViewPos, in vec3 lightSun, in vec3 li
 			 sunMoonColor = clamp(sunMoonColor, 0.0, 1.0) * visibility;
 			 
 		sunMoon = sun + moon;
-		color += mix(vec3(0.0), vec3(7.0 * sunMoonColor), sunMoon) + sunMoonColor;
+		color += mix(vec3(0.0), vec3(15.0 * sunMoonColor), sunMoon) + sunMoonColor;
 	}
 }

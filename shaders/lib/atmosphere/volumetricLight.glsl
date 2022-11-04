@@ -19,9 +19,9 @@ void computeVolumetricLight(inout vec3 color, in vec3 translucent, in float dith
 	float VoL = clamp(dot(nViewPos, lightVec), 0.0, 1.0);
 	float sun = clamp(VoL * 0.5 + 0.5, 0.0, 1.0);
 		  sun = (0.01 / (1.0 - 0.99 * sun) - 0.01) * 4.0;
-	float nVoL = mix(0.3 + sun * 0.7, sun, timeBrightness);
+	float nVoL = mix(0.3 + sun * 0.7, sun * 4.0, timeBrightness);
 
-	float visibility = float(z0 > 0.56) * mix(nVoU * nVoL, 2.0 + nVoL * 4.0, sign(isEyeInWater)) * 0.0125;
+	float visibility = float(z0 > 0.56) * mix(nVoU * nVoL, 2.0 + nVoL * 2.0, sign(isEyeInWater)) * 0.0125;
 
 	#if MC_VERSION >= 11900
 	visibility *= 1.0 - darknessFactor;
@@ -38,7 +38,7 @@ void computeVolumetricLight(inout vec3 color, in vec3 translucent, in float dith
 		float linearDepth0 = getLinearDepth2(z0);
 		float linearDepth1 = getLinearDepth2(z1);
 
-		float distanceFactor = 3.0 + eBS * 4.0 - sign(isEyeInWater) * 2.0;
+		float distanceFactor = 4.0 + eBS * 3.0 - sign(isEyeInWater) * 3.0;
 
 		//Ray marching and main calculations
 		for (int i = 0; i < VL_SAMPLES; i++) {
@@ -70,7 +70,7 @@ void computeVolumetricLight(inout vec3 color, in vec3 translucent, in float dith
 					}
 				}
 				#endif
-				vec3 shadow = clamp(shadowCol * (1.0 + float(isEyeInWater == 1) * 16.0) * (1.0 - shadow0) + shadow0, vec3(0.0), vec3(1.0));
+				vec3 shadow = clamp(shadowCol * 8.0 * (1.0 - shadow0) + shadow0, vec3(0.0), vec3(1.0));
 
 				//Translucency Blending
 				if (linearDepth0 < currentDepth) {

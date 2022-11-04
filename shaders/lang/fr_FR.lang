@@ -253,7 +253,6 @@ option.DOF.comment=Rend flou l'objet situé en dehors du point focal de l'œil d
 
 option.DOF_STRENGTH=Force du DoF
 
-option.FXAA=Anti-Crénelage Approximatif Rapide (FXAA)
 option.SHARPENING=Aiguisage (Sharpening)
 option.CHROMATIC_ABERRATION=Aberration Chromatique (CA)
 option.CHROMATIC_ABERRATION_STRENGTH=Force des CA

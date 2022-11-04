@@ -62,7 +62,7 @@ void getIntegratedEmission(inout vec4 albedo, in vec3 viewPos, in vec3 worldPos,
 		newEmission = float(albedo.r > 0.5) * 0.5;
 		albedo.rgb *= 1.0 + float(albedo.r > 0.5);
 	} else if (mat > 114.9 && mat < 115.1) { // Torch & Shroomlight
-		newEmission = 0.15 + float(lAlbedo > 0.99) * 0.75;
+		newEmission = 0.15 + float(lAlbedo > 0.99) * 0.5;
 	} else if (mat > 115.9 && mat < 116.1) { // Furnaces
 		newEmission = float(albedo.r > 0.8 || (albedo.r > 0.6 && albedo.b < 0.5));
 	} else if (mat > 116.9 && mat < 117.1) { // Chorus

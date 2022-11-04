@@ -104,7 +104,7 @@ void main() {
 
 	if (albedo.a > 0.001) {
 		float foliage = float(mat > 0.99 && mat < 1.01) + float(mat > 107.9 && mat < 108.1);
-		float leaves = float(mat > 1.99 && mat < 2.01) * 2.0;
+		float leaves = float(mat > 1.99 && mat < 2.01);
 
 		vec3 screenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z);
 		vec3 viewPos = ToNDC(screenPos);
@@ -216,7 +216,7 @@ void main() {
 	mat = 0.0;
 	isPlant = 0.0;
 
-	if (mc_Entity.x >= 4 && mc_Entity.x <= 11 && mc_Entity.x != 9 && mc_Entity.x != 10) {
+	if (mc_Entity.x >= 4 && mc_Entity.x <= 11 && mc_Entity.x != 9 && mc_Entity.x != 10 || (mc_Entity.x >= 14 && mc_Entity.x <= 15)) {
 		mat = 1.0;
 	} else if (mc_Entity.x == 9 || mc_Entity.x == 10){
 		mat = 2.0;
@@ -233,7 +233,7 @@ void main() {
 
 	#ifdef INTEGRATED_EMISSION
 	#if defined EMISSIVE_FLOWERS && defined OVERWORLD
-	if (mc_Entity.x == 5) isPlant = 1.0;
+	if (mc_Entity.x >= 5 && mc_Entity.x <= 7) isPlant = 1.0;
 	#endif
 	#endif
 

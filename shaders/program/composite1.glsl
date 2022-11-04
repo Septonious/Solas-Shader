@@ -37,6 +37,7 @@ vec2 viewResolution = vec2(viewWidth, viewHeight);
 //Includes//
 #ifdef INTEGRATED_SPECULAR
 #include "/lib/util/ToScreen.glsl"
+#include "/lib/util/ToView.glsl"
 #include "/lib/util/encode.glsl"
 #include "/lib/util/bayerDithering.glsl"
 #include "/lib/util/raytracer.glsl"
@@ -49,17 +50,15 @@ void main() {
 	#ifdef INTEGRATED_SPECULAR
 	float z0 = texture2D(depthtex0, texCoord).r;
 	float z1 = texture2D(depthtex1, texCoord).r;
-	vec4 screenPos = vec4(texCoord, z0, 1.0);
-	vec4 viewPos = gbufferProjectionInverse * (screenPos * 2.0 - 1.0);
-	viewPos /= viewPos.w;
+	vec3 viewPos = ToView(vec3(texCoord, z0));
 
 	vec4 terrainData = texture2D(colortex2, texCoord);
 	vec3 normal = DecodeNormal(terrainData.rg);
 
 	if (terrainData.a > 0.05 && terrainData.a < 1.0 && z0 > 0.56 && z0 >= z1) {
-		float fresnel = pow8(clamp(1.0 + dot(normal, normalize(viewPos.xyz)), 0.0, 1.0));
+		float fresnel = pow8(clamp(1.0 + dot(normal, normalize(viewPos)), 0.0, 1.0));
 
-		getReflection(viewPos.xyz, normal, color, fresnel * terrainData.a);
+		getReflection(viewPos, normal, color, fresnel * terrainData.a);
 	}
 	#endif
 

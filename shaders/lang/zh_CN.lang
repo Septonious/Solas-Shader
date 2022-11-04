@@ -240,7 +240,6 @@ option.SKY_HI=天空上部 - 颜色强度
 
 screen.POST=后期效果
 
-option.FXAA=快速近似抗锯齿(FXAA)
 option.SHARPENING=锐化
 option.CHROMATIC_ABERRATION=色度偏差
 option.CHROMATIC_ABERRATION_STRENGTH=色度偏差强度

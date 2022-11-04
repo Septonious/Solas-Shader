@@ -11,7 +11,7 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 atmo
 	float fogAltitude = clamp(pow16((worldPos.y + cameraPosition.y + 1000.0 - FOG_HEIGHT) * 0.001), 0.0, 1.0);
 	float clearDay = sunVisibility * (1.0 - rainStrength * 0.5);
 
-	float fog = length(viewPos) * FOG_DENSITY / 1024.0 * mix(0.25, 1.0, caveFactor);
+	float fog = length(viewPos) * FOG_DENSITY / 1024.0;
 		  fog *= (0.5 * rainStrength + 0.5) / (4.0 * clearDay + 1.0);
 		  fog = 1.0 - exp(-128.0 * pow(fog, 0.15 * clearDay * eBS + 1.25));
 		  fog *= 1.0 - fogAltitude * (1.0 - rainStrength * 0.5);
@@ -19,30 +19,15 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 atmo
 		  fog *= 1.0 - pow2(timeBrightness) * 0.75;
 		  fog = clamp(fog, 0.0, 1.0);
 
-	#if defined BLOOM && defined BLOOMY_FOG && defined BLOOM_COLORED_LIGHTING
-	float bloomyFog = length(viewPos) * BLOOMY_FOG_DENSITY * (1.0 - sqrt(eBS)) * (1.0 - pow(caveFactor, 0.25)) * 32.0;
-		  bloomyFog *= 1.0 - exp(-4.0 * bloomyFog);
-		  bloomyFog = clamp(0.0625 * bloomyFog * (1.0 - clamp(length(viewPos) * 0.01, 0.0, 1.0)), 0.0, 1.0) * 16.0;
-	#endif
+	vec3 fogColor = mix(atmosphereColor, skyColor, 0.75 * (sunVisibility - pow2(timeBrightness))) * fog;
 
-	#if defined BLOOM && defined BLOOMY_FOG && defined BLOOM_COLORED_LIGHTING
-	#ifdef GBUFFERS_WATER
-    vec3 bloom0 = texture2D(gaux4, gl_FragCoord.xy / vec2(viewWidth, viewHeight)).rgb;
-         bloom0 = pow4(bloom0) * 128.0;
-	#else
-    vec3 bloom0 = texture2D(colortex7, gl_FragCoord.xy / vec2(viewWidth, viewHeight)).rgb;
-         bloom0 = pow4(bloom0) * 128.0;
-	#endif
-
-	vec3 bloomyFogColor = clamp(bloom0 * pow(getLuminance(bloom0), -0.6), 0.0, 1.0);
-	#endif
-
-	vec3 fogColor = mix(minLightCol, mix(atmosphereColor, skyColor, 0.9 * (sunVisibility - pow2(timeBrightness))), caveFactor) * fog;
+    //Underground Fog
+	fogColor = mix(caveMinLightCol, fogColor, caveFactor);
 
 	//Distant Fade
 	#ifdef DISTANT_FADE
 	if (isEyeInWater == 0) {
-		float vanillaFog = pow3(lViewPos * 0.002);
+		float vanillaFog = pow3(lViewPos * 0.00125);
 
 		#if DISTANT_FADE_STYLE == 0
 		vanillaFog += pow6(lWorldPos / far);
@@ -50,17 +35,14 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 atmo
 		vanillaFog += pow6(lViewPos / far);
 		#endif
 
-		vanillaFog = clamp(vanillaFog, 0.0, caveFactor);
+		vanillaFog = clamp(vanillaFog, 0.0, 1.0);
 		fog = mix(fog, 1.0, vanillaFog);
-		
+		fog = mix(0.0, fog, caveFactor * eBS);
+
 		if (fog > 0.0) {
 			fogColor = mix(fogColor, atmosphereColor, vanillaFog) / fog;
 		}
 	}
-	#endif
-
-	#if defined BLOOM && defined BLOOMY_FOG && defined BLOOM_COLORED_LIGHTING
-	fogColor += bloomyFogColor * bloomyFog;
 	#endif
 	#endif
 
@@ -99,20 +81,23 @@ void getBlindFog(inout vec3 color, vec3 viewPos) {
 }
 
 //Powder Snow / Lava Fog
+#ifdef OVERWORLD
 vec3 denseFogColor[2] = vec3[2](
-	vec3(1.0, 0.2, 0.02),
-	vec3(0.1, 0.14, 0.24) * 0.5
+	vec3(1.0, 0.18, 0.02),
+	vec3(0.1, 0.14, 0.24) * clamp(timeBrightness, 0.3, 0.9)
 );
+#else
+vec3 denseFogColor[2] = vec3[2](
+	vec3(1.0, 0.18, 0.02),
+	vec3(0.1, 0.14, 0.24)
+);
+#endif
 
 void getDenseFog(inout vec3 color, vec3 viewPos) {
 	float fog = length(viewPos) * 0.5;
-	fog = (1.0 - exp(-4.0 * pow3(fog)));
+	fog = (1.0 - exp(-3.0 * pow3(fog)));
 
 	vec3 denseFogColor0 = denseFogColor[isEyeInWater - 2];
-
-	#ifdef OVERWORLD
-	denseFogColor0 *= clamp(timeBrightness, 0.3, 0.9);
-	#endif
 
 	color = mix(color, denseFogColor0, fog);
 }

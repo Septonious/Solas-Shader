@@ -253,8 +253,7 @@ option.DOF.comment=Blurs the object outside your player's eye focal point.
 
 option.DOF_STRENGTH=DoF Strength
 
-option.FXAA=Fast Approximate Antialiasing (FXAA)
-option.SHARPENING=Sharpening
+option.SHARPENING=Image Sharpening
 option.CHROMATIC_ABERRATION=Chromatic Aberration (CA)
 option.CHROMATIC_ABERRATION_STRENGTH=CA Strength
 
@@ -276,9 +275,33 @@ option.SATURATION.comment=Adjusts saturation of all colors.
 option.VIBRANCE=Vibrance
 option.VIBRANCE.comment=Adjusts saturation of less saturated colors, well saturated colors are less affected.
 
+screen.BLOOM=Bloom Config
+
 option.BLOOM=Bloom
 option.BLOOM_STRENGTH=Bloom Strength
 
+option.BLOOM_TILE_SIZE=Tile Size
+option.BLOOM_TILE_SIZE.comment=Adjusts the size of each bloom tile. Higher values give less accuracy and larger radius. Lower values give more accuracy and smaller radius.
+
+option.BLOOM_CONTRAST=Contrast
+option.BLOOM_CONTRAST.comment=Adjusts whether the bloom should preserve color contrast or detail visibility. Higher value preserves color contrast while lower value preserves detail visibility.
+value.BLOOM_CONTRAST.-4=-1.00
+value.BLOOM_CONTRAST.-3=-0.75
+value.BLOOM_CONTRAST.-2=-0.50
+value.BLOOM_CONTRAST.-1=-0.25
+value.BLOOM_CONTRAST.0=0.00
+value.BLOOM_CONTRAST.1=0.25
+value.BLOOM_CONTRAST.2=0.50
+value.BLOOM_CONTRAST.3=0.75
+value.BLOOM_CONTRAST.4=1.00
+
+option.BLOOM_RADIUS=Radius
+option.BLOOM_RADIUS.comment=Adjusts how far the glow spreads.
+value.BLOOM_RADIUS.1=Minimum
+value.BLOOM_RADIUS.2=Very Low
+value.BLOOM_RADIUS.3=Low
+value.BLOOM_RADIUS.4=Medium
+value.BLOOM_RADIUS.5=High
 
 #OTHER
 

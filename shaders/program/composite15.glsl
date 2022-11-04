@@ -59,6 +59,7 @@ float getLuminance(vec3 color) {
 //Includes//
 #ifdef DOF
 #include "/lib/post/dofBlur.glsl"
+#include "/lib/util/ToView.glsl"
 #endif
 
 #ifdef FXAA
@@ -76,12 +77,9 @@ void main() {
 	#ifdef DOF
 	float z0 = texture2D(depthtex0, texCoord).r;
 	float z1 = texture2D(depthtex1, texCoord).r;
+	vec3 viewPos = ToView(vec3(texCoord, z0));
 
-	vec4 screenPos = vec4(texCoord, z0, 1.0);
-	vec4 viewPos = gbufferProjectionInverse * (screenPos * 2.0 - 1.0);
-	viewPos /= viewPos.w;
-
-	color = getDepthOfField(color, viewPos.xyz, z1);
+	color = getDepthOfField(color, viewPos, z1);
 	#endif
 
 	#ifdef FXAA

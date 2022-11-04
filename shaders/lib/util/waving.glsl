@@ -36,8 +36,8 @@ vec3 getWavingBlocks(vec3 pos, float istopv, float skyLightMap) {
             wave += calculateMovement(worldPos, 0.75, 1.0, vec2(0.125, 0.03));
         } else if (mc_Entity.x == 5 && (istopv > 0.9|| fract(worldPos.y + 0.005) > 0.01)) { // Small Flowers
             wave += calculateMovement(worldPos, 0.65, 1.10, vec2(0.06, 0.03));
-        } else if (mc_Entity.x == 6 && (istopv > 0.9 || fract(worldPos.y + 0.005) > 0.01) || mc_Entity.x == 7) { // Large Flowers (real big)
-            wave += calculateMovement(worldPos, 0.35, 1.15, vec2(0.15, 0.06));
+        } else if (mc_Entity.x == 6 && (istopv > 0.9 || fract(worldPos.y + 0.005) > 0.01) || mc_Entity.x == 7 || mc_Entity.x == 14 || mc_Entity.x == 15) { // Large Flowers (real big)
+            wave += calculateMovement(worldPos, 0.45, 0.75, vec2(0.15, 0.06));
         } else if (mc_Entity.x == 10) { // Vines
             wave += calculateMovement(worldPos, 0.55, 0.95, vec2(0.03, 0.03)); 
         }

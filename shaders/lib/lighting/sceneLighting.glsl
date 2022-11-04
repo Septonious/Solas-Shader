@@ -51,8 +51,8 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     float emission2 = emission;
     #endif
 
-    float lightmapYM = smoothstep1(lightmap.y);
     float lViewPos = length(viewPos);
+    float ao = clamp(pow2(color.a), 0.0, 1.0);
 
     //Vanilla Directional Lighting
 	float NoL = clamp(dot(normal, lightVec), 0.0, 1.0);
@@ -88,7 +88,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     #elif defined BLOOM_COLORED_LIGHTING
     //BLOOM BASED COLORED LIGHTING
 	vec3 coloredLight = clamp(0.0625 * bloom * pow(getLuminance(bloom), COLORED_LIGHTING_RADIUS), 0.0, 1.0) * 16.0;
-    float bloomLightMap = clamp(pow4(blockLightMap) * 1.6 + pow2(blockLightMap) * 0.3 + lightmap.x * 0.1 + (0.04 - clamp(lViewPos * 0.05, 0.0, 1.0) * 0.04), 0.0, 1.0);
+    float bloomLightMap = clamp(pow4(blockLightMap) * 1.6 + pow2(blockLightMap) * 0.3 + lightmap.x * 0.1 + (0.025 - clamp(lViewPos * 0.05, 0.0, 1.0) * 0.025), 0.0, 1.0);
     blockLighting = blockLightCol * blockLightMap + coloredLight * bloomLightMap * COLORED_LIGHTING_STRENGTH;
     #else
     blockLighting = blockLightCol * blockLightMap;
@@ -140,7 +140,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
             #ifdef OVERWORLD
             float offset = 0.0009765 * (1.0 + subsurface);
             #else
-            const float offset = 0.0009765;
+            float offset = 0.0009765;
             #endif
 
             vec3 worldPosM = worldPos;
@@ -151,18 +151,17 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
                 vec3 bias = worldNormal * min(0.12 + length(worldPos) / 200.0, 0.5) * (2.0 - NoL);
 
                 // Fix light leaking in caves
-                vec3 edgeFactor = 0.2 * (0.5 - fract(worldPosM + cameraPosition + worldNormal * 0.01));
-
-                if (lightmapYM < 0.999) worldPosM += (1.0 - pow2(pow2(max(color.a, lightmapYM)))) * edgeFactor;
+                if (lightmap.y < 0.1) offset *= 1.0 - clamp(pow(color.a, 1.5) * 2.0, 0.0, 1.0);
+                
                 #ifdef GBUFFERS_WATER
                     bias *= 0.5;
-                    worldPosM += (1.0 - lightmapYM) * edgeFactor;
+                    worldPosM += 1.0 - lightmap.y;
                 #endif
 
                 worldPosM += bias;
             #else
                 vec3 centerworldPos = floor(worldPosM + cameraPosition) - cameraPosition + 0.5;
-                worldPosM = mix(centerworldPos, worldPosM + vec3(0.0, 0.02, 0.0), lightmapYM);
+                worldPosM = mix(centerworldPos, worldPosM + vec3(0.0, 0.02, 0.0), lightmap.y);
             #endif
 
             shadow = sampleFilteredShadow(calculateShadowPos(worldPosM), offset, dither) * lightmap.y;
@@ -199,7 +198,6 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     vec3 sceneLighting = pow(netherColSqrt, vec3(0.25)) * 0.125;
     #endif
 
-    float ao = clamp(pow2(color.a), 0.0, 1.0);
     albedo.rgb = mix(albedo.rgb, albedo.rgb * ao, (1.0 - ao) * (1.0 - blockLightMap * 0.5));
 
     albedo = pow(albedo, vec3(2.2));

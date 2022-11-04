@@ -250,8 +250,7 @@ option.DOF_STRENGTH=Сила ГР
 
 screen.POST=Постобработка
 
-option.FXAA=FXAA
-option.SHARPENING=Острота изображения
+option.SHARPENING=Заострение изображения
 option.CHROMATIC_ABERRATION=Хроматическая Аберрация (ХА) (чё смеёшься)
 option.CHROMATIC_ABERRATION_STRENGTH=Сила ХА
 
@@ -272,9 +271,30 @@ option.SATURATION.comment=Регулирует насыщенность всех
 
 option.VIBRANCE=Насыщенность блёклых цветов.
 
+screen.BLOOM=Настройки Свечения
+
 option.BLOOM=Свечение
 option.BLOOM_STRENGTH=Сила Свечения
 
+option.BLOOM_TILE_SIZE=Точность
+
+option.BLOOM_CONTRAST=Контраст
+value.BLOOM_CONTRAST.-4=-1.00
+value.BLOOM_CONTRAST.-3=-0.75
+value.BLOOM_CONTRAST.-2=-0.50
+value.BLOOM_CONTRAST.-1=-0.25
+value.BLOOM_CONTRAST.0=0.00
+value.BLOOM_CONTRAST.1=0.25
+value.BLOOM_CONTRAST.2=0.50
+value.BLOOM_CONTRAST.3=0.75
+value.BLOOM_CONTRAST.4=1.00
+
+option.BLOOM_RADIUS=Радиус
+value.BLOOM_RADIUS.1=Минимальный
+value.BLOOM_RADIUS.2=Очень Маленький
+value.BLOOM_RADIUS.3=Маленький
+value.BLOOM_RADIUS.4=Средний
+value.BLOOM_RADIUS.5=Большой
 
 #OTHER
 

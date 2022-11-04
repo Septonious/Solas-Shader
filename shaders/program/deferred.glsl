@@ -98,6 +98,8 @@ float getLuminance(vec3 color) {
 //Includes//
 #include "/lib/color/dimensionColor.glsl"
 #include "/lib/util/bayerDithering.glsl"
+#include "/lib/util/ToView.glsl"
+#include "/lib/util/ToWorld.glsl"
 
 #ifdef VC
 #include "/lib/util/blueNoiseDithering.glsl"
@@ -121,14 +123,11 @@ void main() {
 
 	float cloudDepth = 0.0;
 	float z0 = texture2D(depthtex0, texCoord).r;
-	vec4 screenPos = vec4(texCoord, z0, 1.0);
-	vec4 viewPos = gbufferProjectionInverse * (screenPos * 2.0 - 1.0);
-	viewPos /= viewPos.w;
-
-	vec3 worldPos = mat3(gbufferModelViewInverse) * viewPos.xyz;
+	vec3 viewPos = ToView(vec3(texCoord, z0));
+	vec3 worldPos = ToWorld(viewPos);
 
 	#if defined OVERWORLD
-	vec3 atmosphereColor = getAtmosphere(viewPos.xyz);
+	vec3 atmosphereColor = getAtmosphere(viewPos);
 	#elif defined NETHER
 	vec3 atmosphereColor = netherColSqrt.rgb * 0.25;
 	#elif defined END
@@ -142,7 +141,7 @@ void main() {
 	float sunMoon = 0.0;
 	float star = 0.0;
 
-	vec3 nViewPos = normalize(viewPos.xyz);
+	vec3 nViewPos = normalize(viewPos);
 	float VoU = dot(nViewPos, upVec);
 	float VoS = clamp(dot(nViewPos, sunVec), 0.0, 1.0);
 	float VoM = clamp(dot(nViewPos, -sunVec), 0.0, 1.0);
@@ -199,23 +198,19 @@ void main() {
 
 		color = skyColor;
 	} else {
-		Fog(color, viewPos.xyz, worldPos.xyz, skyColor);
+		Fog(color, viewPos, worldPos, skyColor);
 	}
-
+	
 	#ifdef VC
-	vec4 vc = vec4(0.0);
-
 	float blueNoiseDither = getBlueNoise(gl_FragCoord.xy);
 
 	#ifdef TAA
 	blueNoiseDither = fract(blueNoiseDither + frameTimeCounter * 16.0);
 	#endif
 
-	computeVolumetricClouds(vc, atmosphereColor, blueNoiseDither, caveFactor, cloudDepth);
-
-	color = mix(color, pow(vc.rgb, vec3(1.0 / 2.2)), pow2(vc.a) * mix(VC_OPACITY, 0.4, rainStrength));
+	computeVolumetricClouds(color, atmosphereColor, blueNoiseDither, cloudDepth);
 	#endif
-
+	
 	#ifdef BLOOM
 	vec4 bloomData = texture2D(colortex2, texCoord);
 
