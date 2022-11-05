@@ -149,9 +149,6 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
                 // Shadow bias without peter-panning
                 vec3 worldNormal = normalize(ToWorld(normal * 1000.0));
                 vec3 bias = worldNormal * min(0.1 + length(worldPos) / 200.0, 0.5) * (2.0 - NoL);
-
-                // Fix light leaking in caves
-                if (lightmap.y < 0.1) offset *= 1.0 - clamp(pow(color.a, 1.5) * 2.0, 0.0, 1.0);
                 
                 #ifdef GBUFFERS_WATER
                     bias *= 0.5;
@@ -166,7 +163,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
 
             vec3 shadowPos = calculateShadowPos(worldPosM);
 
-            shadow = computeShadow(shadowPos, offset, dither);
+            shadow = computeShadow(shadowPos, offset, dither, lightmap.y, color.a) * lightmap.y;
         }
     }
 

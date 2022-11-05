@@ -8,14 +8,14 @@ uniform sampler2D shadowcolor0;
 int shadowFilterSamples = 8;
 
 vec2 shadowOffsets[8] = vec2[8](
-    vec2(  0.000000,  0.250000 ),
-    vec2(  0.292496, -0.319290 ),
-    vec2( -0.556877,  0.048872 ),
-    vec2(  0.524917,  0.402445 ),
-    vec2( -0.130636, -0.738535 ),
-    vec2( -0.445032,  0.699604 ),
-    vec2(  0.870484, -0.234003 ),
-    vec2( -0.859268, -0.446273 )
+    vec2( 0.000000,  0.250000),
+    vec2( 0.292496, -0.319290),
+    vec2(-0.556877,  0.048872),
+    vec2( 0.524917,  0.402445),
+    vec2(-0.130636, -0.738535),
+    vec2(-0.445032,  0.699604),
+    vec2( 0.870484, -0.234003),
+    vec2(-0.859268, -0.446273)
 );
 
 vec3 calculateShadowPos(vec3 worldPos) {
@@ -32,18 +32,17 @@ vec3 calculateShadowPos(vec3 worldPos) {
 mat2 Rotate(float angle) {
     float sinAngle = sin(angle);
     float cosAngle = cos(angle);
+
     return mat2(cosAngle, -sinAngle, sinAngle, cosAngle);
 }
 
 float texture2DShadow(sampler2D shadowtex, vec3 shadowPos) {
-    float shadow = texture2D(shadowtex, shadowPos.xy).r;
-
-    return clamp((shadow - shadowPos.z) * 65536.0, 0.0, 1.0);
+    return texture2D(shadowtex, shadowPos.xy).x > shadowPos.z ? 1.0 : 0.0;
 }
 
 #ifdef VPS
 //Variable Penumbra Shadows based on Tech's Lux Shader (https://github.com/TechDevOnGitHub)
-float findBlockerDistance(vec3 shadowPos, float offset, mat2 ditherRotMat) {
+float findBlockerDistance(vec3 shadowPos, mat2 ditherRotMat, float offset, float skyLightMap) {
     float blockerDistance = 0.0;
         
     for (int i = 0; i < shadowFilterSamples; i++){
@@ -52,18 +51,21 @@ float findBlockerDistance(vec3 shadowPos, float offset, mat2 ditherRotMat) {
     }
     blockerDistance /= shadowFilterSamples;
 
-    return max(offset, blockerDistance * 0.3);
+    return mix(offset, max(offset, blockerDistance * 0.15), skyLightMap);
 }
 #endif
 
-vec3 computeShadow(vec3 shadowPos, float offset, float dither) {
+vec3 computeShadow(vec3 shadowPos, float offset, float dither, float skyLightMap, float ao) {
     float shadow0 = 0.0;
 
     mat2 ditherRotMat = Rotate(dither * TAU);
 
     #ifdef VPS
-    offset = findBlockerDistance(shadowPos, offset, ditherRotMat);
+    offset = findBlockerDistance(shadowPos, ditherRotMat, offset, skyLightMap);
     #endif
+
+    // Fix light leaking in caves
+    if (skyLightMap < 0.25 && clamp(pow(ao, 1.5) * 2.0, 0.0, 1.0) == 0.0) return vec3(0.0);
 
     for (int i = 0; i < shadowFilterSamples; i++) {
         vec2 shadowOffset = ditherRotMat * shadowOffsets[i] * offset;

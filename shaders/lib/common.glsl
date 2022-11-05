@@ -1,16 +1,15 @@
 ////////////// S H A D E R   S E T T I N G S //////////////
 
 //Shadows//
-const int shadowMapResolution = 1024; //[512 1024 1536 2048]
+const int shadowMapResolution = 1024; //[512 1024 1536 2048 3072]
 const float shadowDistance = 512.0; //[128.0 256.0 512.0]
 const float sunPathRotation = -40.0; //[-85.0 -80.0 -75.0 -70.0 -65.0 -60.0 -55.0 -50.0 -45.0 -40.0 -35.0 -30.0 -25.0 -20.0 -15.0 -10.0 -5.0 0.0 5.0 10.0 15.0 20.0 25.0 30.0 35.0 40.0 45.0 50.0 55.0 60.0 65.0 70.0 75.0 80.0 85.0]
 const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
-const float shadowOffset = 0.75 / shadowMapResolution;
+const float shadowOffset = 1.0 / shadowMapResolution;
 
 #define SHADOW_COLOR
 #define VPS
 //#define ENTITY_SHADOWS
-#define SHADOW_SAMPLE_COUNT 8 //[2 3 4 5 6 7 8]
 
 //GI
 #define GLOBAL_ILLUMINATION
@@ -116,7 +115,7 @@ const float shadowOffset = 0.75 / shadowMapResolution;
 
 #define TONEMAP_LOWER_CURVE 1.2 //[0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5]
 #define TONEMAP_UPPER_CURVE 1.2 //[0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5]
-#define TONEMAP_WHITE_CURVE 1.6  //[1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2.0 2.1 2.2 2.3 2.4 2.5]
+#define TONEMAP_WHITE_CURVE 1.8  //[1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2.0 2.1 2.2 2.3 2.4 2.5]
 
 #define EXPOSURE 0.00 //[-1.00 -0.90 -0.80 -0.70 -0.60 -0.50 -0.40 -0.30 -0.20 -0.10 0.00 0.10 0.20 0.30 0.40 0.50 0.60 0.70 0.80 0.90 1.00]
 #define SATURATION 1.05 //[0.00 0.05 0.10 0.15 0.20 0.25 0.30 0.35 0.40 0.45 0.50 0.55 0.60 0.65 0.70 0.75 0.80 0.85 0.90 0.95 1.00 1.05 1.10 1.15 1.20 1.25 1.30 1.35 1.40 1.45 1.50 1.55 1.60 1.65 1.70 1.75 1.80 1.85 1.90 1.95 2.00]

@@ -118,7 +118,9 @@ void getIntegratedEmission(inout vec4 albedo, in vec3 viewPos, in vec3 worldPos,
 	#if defined OVERWORLD && defined EMISSIVE_FLOWERS
 	if (isPlant > 0.9 && isPlant < 1.1){ // Flowers
 		if (albedo.b > albedo.g || albedo.r > albedo.g) {
-			newEmission = 0.25 * lAlbedo * (1.0 - rainStrength);
+			newEmission = 0.2 * lAlbedo * (1.0 - rainStrength);
+			newEmission *= 2.0 - clamp(length(viewPos) * 0.2, 0.0, 1.0);
+			newEmission *= 0.5 + clamp(sin(frameTimeCounter) * cos(frameTimeCounter * 0.5), 0.0, 0.5);
 		}
 	}
 	#endif

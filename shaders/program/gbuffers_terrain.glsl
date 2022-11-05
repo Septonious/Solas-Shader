@@ -33,7 +33,9 @@ uniform float timeBrightness, timeAngle;
 
 #ifdef RAIN_PUDDLES
 uniform float wetness;
+#endif
 
+#if defined RAIN_PUDDLES || defined EMISSIVE_FLOWERS
 uniform sampler2D noisetex;
 #endif
 

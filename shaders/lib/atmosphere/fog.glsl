@@ -22,7 +22,7 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 atmo
 	vec3 fogColor = mix(atmosphereColor, skyColor, 0.75 * (sunVisibility - pow2(timeBrightness))) * fog;
 
     //Underground Fog
-	fogColor = mix(caveMinLightCol, fogColor, caveFactor);
+	fogColor = mix(caveMinLightCol * fog, fogColor, caveFactor);
 
 	//Distant Fade
 	#ifdef DISTANT_FADE
@@ -38,7 +38,7 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 atmo
 		vanillaFog = clamp(vanillaFog, 0.0, 1.0);
 		fog = mix(fog, 1.0, vanillaFog);
 
-		if (fog * caveFactor > 0.0) {
+		if (fog > 0.0) {
 			fogColor = mix(fogColor, atmosphereColor, vanillaFog) / fog;
 		}
 	}
