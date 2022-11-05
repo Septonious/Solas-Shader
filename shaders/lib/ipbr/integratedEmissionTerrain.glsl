@@ -79,7 +79,7 @@ void getIntegratedEmission(inout vec4 albedo, in vec3 viewPos, in vec3 worldPos,
 		newEmission = (1.0 - clamp(length(pow4(albedo.rgb)), 0.0, 0.99)) * 6.0;
 		albedo.rgb = pow3(albedo.rgb);
 	} else if (mat > 122.9 && mat < 123.1) { // Sculks
-		newEmission = float(lAlbedo > 0.05 && albedo.r < 0.25) * 0.25;
+		newEmission = float(lAlbedo > 0.05 && albedo.r < 0.25) * 0.5;
 	} else if (mat > 123.9 && mat < 124.1) { // Redstone Lamp, Glowstone
 		newEmission = 0.5 + pow24(lAlbedo) * 2.0;
 	} else if (mat > 124.9 && mat < 125.1) { // Sea Lantern

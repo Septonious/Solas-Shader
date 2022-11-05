@@ -9,8 +9,7 @@ float getWaterHeightMap(vec3 worldPos, vec2 offset) {
 	#else
 	float noiseA = texture2D(shadowcolor1, (worldPos.xz - frameTimeCounter * 0.7) / 256.0 + offset).r;
 	float noiseB = texture2D(shadowcolor1, (worldPos.xz + frameTimeCounter * 0.9) / 96.0 + offset).r;
-	noiseA *= noiseA;
-	noiseB *= noiseB;
+
 	#endif
 
 	return mix(noiseA, noiseB, 0.5) * WATER_NORMAL_BUMP;

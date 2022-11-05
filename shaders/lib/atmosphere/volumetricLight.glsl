@@ -30,9 +30,7 @@ void computeVolumetricLight(inout vec3 color, in vec3 translucent, in float dith
 	visibility *= 1.0 - blindFactor;
 
 	if (visibility > 0.0) {
-		#ifdef SHADOW_COLOR
 		vec3 shadowCol = vec3(0.0);
-		#endif
 
 		float lViewPos = length(viewPos);
 		float linearDepth0 = getLinearDepth2(z0);
@@ -42,7 +40,7 @@ void computeVolumetricLight(inout vec3 color, in vec3 translucent, in float dith
 
 		//Ray marching and main calculations
 		for (int i = 0; i < VL_SAMPLES; i++) {
-			float currentDepth = pow(i + dither + 0.5, 1.5) * distanceFactor;
+			float currentDepth = pow(i + dither + 0.5 * eBS, 1.5) * distanceFactor;
 
 			if (linearDepth1 < currentDepth || (linearDepth0 < currentDepth && translucent.rgb == vec3(0.0))) {
 				break;

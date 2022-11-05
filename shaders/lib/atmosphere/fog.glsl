@@ -16,7 +16,7 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 atmo
 		  fog = 1.0 - exp(-128.0 * pow(fog, 0.15 * clearDay * eBS + 1.25));
 		  fog *= 1.0 - fogAltitude * (1.0 - rainStrength * 0.5);
 		  fog = pow(fog, 1.25);
-		  fog *= 1.0 - pow2(timeBrightness) * 0.75;
+		  fog *= 1.0 - pow2(timeBrightness) * 0.75 * caveFactor;
 		  fog = clamp(fog, 0.0, 1.0);
 
 	vec3 fogColor = mix(atmosphereColor, skyColor, 0.75 * (sunVisibility - pow2(timeBrightness))) * fog;
@@ -37,9 +37,8 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 atmo
 
 		vanillaFog = clamp(vanillaFog, 0.0, 1.0);
 		fog = mix(fog, 1.0, vanillaFog);
-		fog = mix(0.0, fog, caveFactor * eBS);
 
-		if (fog > 0.0) {
+		if (fog * caveFactor > 0.0) {
 			fogColor = mix(fogColor, atmosphereColor, vanillaFog) / fog;
 		}
 	}

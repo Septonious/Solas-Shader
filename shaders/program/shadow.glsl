@@ -50,7 +50,7 @@ void main() {
 
 	if (water > 0.9){
 		float caustics = getCaustics(worldPos + cameraPosition);
-		albedo.rgb = vec3(0.1 + timeBrightness * 0.2) * caustics;
+		albedo.rgb = mix(vec3(0.1 + timeBrightness * 0.2), waterColorSqrt * 0.5, 0.5) * caustics * WATER_CAUSTICS_STRENGTH;
 	}
 	#endif
 	#endif
