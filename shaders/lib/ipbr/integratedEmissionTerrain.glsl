@@ -87,7 +87,8 @@ void getIntegratedEmission(inout vec4 albedo, in vec3 viewPos, in vec3 worldPos,
 	} else if (mat > 125.9 && mat < 126.1) { // Nether Wart
 		newEmission = float(lAlbedo > 0.25) * 0.2 + float(lAlbedo > 0.75) * 0.2;
 	} else if (mat > 126.9 && mat < 127.1) { // End Portal Frame
-		newEmission = pow2(albedo.b - albedo.g) * 6.0 * float(albedo.r < 0.65);
+		newEmission = pow2(albedo.b - albedo.g) * 16.0 * float(albedo.r < 0.65);
+		lightmap.x *= 0.5;
 	} else if (mat > 127.9 && mat < 128.1) { // Dragon Egg
 		newEmission = lAlbedo * lAlbedo * 4.0;
 	} else if (mat > 128.9 && mat < 129.1) {// End Rod

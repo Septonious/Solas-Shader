@@ -1,6 +1,4 @@
-void computeVolumetricLight(inout vec3 color, in vec3 translucent, in float dither) {
-	vec3 vl = vec3(0.0);
-
+void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither) {
 	//Depths
 	float z0 = texture2D(depthtex0, texCoord).r;
 	float z1 = texture2D(depthtex1, texCoord).r;
@@ -19,9 +17,9 @@ void computeVolumetricLight(inout vec3 color, in vec3 translucent, in float dith
 	float VoL = clamp(dot(nViewPos, lightVec), 0.0, 1.0);
 	float sun = clamp(VoL * 0.5 + 0.5, 0.0, 1.0);
 		  sun = (0.01 / (1.0 - 0.99 * sun) - 0.01) * 4.0;
-	float nVoL = mix(0.3 + sun * 0.7, sun * 2.0, timeBrightness);
+	float nVoL = mix(0.5 + sun, sun, timeBrightness);
 
-	float visibility = float(z0 > 0.56) * mix(nVoU * nVoL, 2.0 + nVoL * 2.0, sign(isEyeInWater)) * 0.0125;
+	float visibility = float(z0 > 0.56) * mix(nVoU * nVoL, 2.0 + nVoL * 2.0, sign(isEyeInWater)) * 0.02;
 
 	#if MC_VERSION >= 11900
 	visibility *= 1.0 - darknessFactor;
@@ -36,7 +34,7 @@ void computeVolumetricLight(inout vec3 color, in vec3 translucent, in float dith
 		float linearDepth0 = getLinearDepth2(z0);
 		float linearDepth1 = getLinearDepth2(z1);
 
-		float distanceFactor = 4.0 + eBS * 3.0 - sign(isEyeInWater) * 3.0;
+		float distanceFactor = 5.0 + eBS * 2.0 - sign(isEyeInWater) * 3.0;
 
 		//Ray marching and main calculations
 		for (int i = 0; i < VL_SAMPLES; i++) {
@@ -81,6 +79,5 @@ void computeVolumetricLight(inout vec3 color, in vec3 translucent, in float dith
 
 		vl *= visibility;
 		vl *= lightCol * VL_OPACITY;
-		color += vl;
 	}
 }

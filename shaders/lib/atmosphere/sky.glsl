@@ -8,7 +8,7 @@ vec3 getAtmosphere(vec3 viewPos) {
 
     float VoS = dot(nViewPos, sunVec);
           VoS = 1.0 + clamp(VoS, -1.0, 0.0);
-          VoS = mix(VoS * 0.25, 0.1 + VoS * 0.1, sunVisibility);
+          VoS *= 0.125;
     float VoU = dot(nViewPos, upVec);
 
     //Set Variables Here
@@ -28,7 +28,7 @@ vec3 getAtmosphere(vec3 viewPos) {
     vec3 sky = mix(lightNight, daySky, sunVisibility) * skyDensity;
 
     //Fake Light Scattering
-    vec3 scattering = mix(mix(lowScatteringColor, highScatteringColor, horizonFactor * (1.0 - scatteringMixer * 0.75) * (1.0 - timeBrightnessSqrt)), lightColSqrt * 8.0, timeBrightnessSqrt);
+    vec3 scattering = mix(mix(lowScatteringColor, highScatteringColor, horizonFactor * (1.0 - scatteringMixer * 0.75) * (1.0 - timeBrightnessSqrt)), lightColSqrt * 4.0, timeBrightnessSqrt);
 
     sky = mix(sky, scattering, clamp(pow(exp(-(20.0 + sunVisibility * sunVisibility * 20.0) * nVoU), 0.3), 0.0, 1.0) * scatteringFactor);
 

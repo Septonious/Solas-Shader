@@ -10,13 +10,19 @@ in vec2 texCoord;
 #ifdef INTEGRATED_SPECULAR
 uniform int isEyeInWater;
 
-uniform float viewHeight, viewWidth;
-
 #ifdef TAA
 uniform float frameTimeCounter;
 #endif
 
 uniform sampler2D colortex2;
+#endif
+
+#if defined INTEGRATED_SPECULAR || defined VL
+uniform float viewHeight, viewWidth;
+#endif
+
+#ifdef VL
+uniform sampler2D colortex1;
 #endif
 
 uniform sampler2D colortex0;
@@ -34,7 +40,16 @@ uniform mat4 gbufferModelViewInverse;
 vec2 viewResolution = vec2(viewWidth, viewHeight);
 #endif
 
+//Optifine Constants//
+#ifdef VL
+const bool colortex1MipmapEnabled = true;
+#endif
+
 //Includes//
+#ifdef VL
+#include "/lib/filters/blur.glsl"
+#endif
+
 #ifdef INTEGRATED_SPECULAR
 #include "/lib/util/ToScreen.glsl"
 #include "/lib/util/ToView.glsl"
@@ -46,6 +61,11 @@ vec2 viewResolution = vec2(viewWidth, viewHeight);
 
 void main() {
 	vec3 color = texture2D(colortex0, texCoord).rgb;
+
+	#ifdef VL
+	vec3 vl = getDiskBlur8(colortex1, texCoord, 2.0).rgb;
+	color += vl * vl;
+	#endif
 
 	#ifdef INTEGRATED_SPECULAR
 	float z0 = texture2D(depthtex0, texCoord).r;

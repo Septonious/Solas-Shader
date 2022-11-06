@@ -43,7 +43,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
 	}
     #endif
 
-    lightmap.y = pow(lightmap.y, 0.33);
+    lightmap.y = sqrt(lightmap.y);
 
     #ifdef GBUFFERS_TERRAIN
     float emission2 = clamp(emission + newEmission, 0.0, 1.0);
@@ -118,10 +118,6 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
         scattering = clamp(scattering * 2.0, 0.0, 1.0);
         NoL = mix(NoL, 1.0, subsurface * 0.5);
         NoL = mix(NoL, 1.0, scattering);
-
-        #ifdef OVERWORLD
-        lightCol *= 1.0 + scattering;
-        #endif
     }
     #endif
 
@@ -138,7 +134,10 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
 
         if (shadowLength > 0.000001) {
             #ifdef OVERWORLD
-            float offset = shadowOffset * (1.0 + subsurface * 0.5);
+            float offset = shadowOffset;
+            if (subsurface > 0.5) {
+                offset = mix(offset * 2.0, offset * 0.5, clamp(lViewPos * 0.025, 0.0, 1.0));
+            }
             #else
             float offset = shadowOffset;
             #endif
