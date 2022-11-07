@@ -1,6 +1,9 @@
 # ![logo](https://media.discordapp.net/attachments/837667478590324737/1039281928727179375/unknown.png) Solas Shader
 Solas is a new Minecraft Java Edition shaderpack which aims to provide stunning visuals at a low performance cost. It was originally intended to serve as Prismarine Shader's successor. 
 
+### Downloads
+[![Download on curseforge](https://img.shields.io/badge/-Curseforge-F16436?style=for-the-badge&logo=curseforge&logoColor=white)](https://www.curseforge.com/minecraft/customization/solas-shader) [![Download on GitHub](https://img.shields.io/badge/-GitHub-F9E26C?style=for-the-badge&logo=github&logoColor=40463C)](https://github.com/Septonious/Solas-Shader/archive/refs/heads/main.zip)
+
 ## Unique Technologies
 Solas is probably the first shaderpack to finally achieve the goal of super fast and FPS-cheap colored lighting and global illumination in Minecraft.
 Both are done with bloom which costs little performance while maintaining good visual appearance.
@@ -23,10 +26,10 @@ Another problem a lot of shaderpacks have is shadow light leaking and peter pann
 
 - And more is coming soon
 
-### Downloads
-[![Download on curseforge](https://img.shields.io/badge/-Curseforge-F16436?style=for-the-badge&logo=curseforge&logoColor=white)](https://www.curseforge.com/minecraft/customization/solas-shader) [![Download on GitHub](https://img.shields.io/badge/-GitHub-F9E26C?style=for-the-badge&logo=github&logoColor=40463C)](https://github.com/Septonious/Solas-Shader/archive/refs/heads/main.zip)
-
 ## Screenshots
+<details><summary>Click to Expand</summary>
+<p>
+
 ![screenshot1](https://media.discordapp.net/attachments/1025820650394357891/1038128154126061599/orth.png)
 ![screenshot2](https://media.discordapp.net/attachments/1025820650394357891/1038128154570662058/mia.png)
 ![screenshot3](https://media.discordapp.net/attachments/887769802721067038/1038859728060686477/2022-11-06_19.57.21.png)
@@ -37,6 +40,9 @@ Another problem a lot of shaderpacks have is shadow light leaking and peter pann
 ![screenshot8](https://media.discordapp.net/attachments/887769802721067038/1028324379366522970/unknown.png)
 ![screenshot9](https://media.discordapp.net/attachments/887769802721067038/1026511341390921759/unknown.png)
 ![screenshot10](https://media.discordapp.net/attachments/887769802721067038/1026434164980985856/2022-10-03_17.40.18.png)
+
+</p>
+</details>
 
 ## License
 ![https://github.com/Septonious/Solas-Shader/blob/main/LICENSE](https://img.shields.io/github/license/Septonious/Solas-Shader?style=for-the-badge&logo=&color=lightblue)
