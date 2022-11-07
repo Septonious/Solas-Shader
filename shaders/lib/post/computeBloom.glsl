@@ -21,7 +21,7 @@ vec3 getBloomTile(float lod, vec2 coord, vec2 offset) {
 		}
 	}
 
-	return pow(bloom / 128.0, vec3(0.25));
+	return pow(bloom / 512.0, vec3(0.125));
 }
 
 vec3 getBlur(vec2 texCoord) {
@@ -32,7 +32,7 @@ vec3 getBlur(vec2 texCoord) {
 	     blur += getBloomTile(4.0 + BLOOM_TILE_SIZE, bloomCoord, vec2(0.645 , 0.26));
 	     blur += getBloomTile(5.0 + BLOOM_TILE_SIZE, bloomCoord, vec2(0.7175, 0.26));
 		
-		 blur = clamp(blur + (Bayer64(gl_FragCoord.xy) - 0.5) / 384.0, vec3(0.0), vec3(1.0));
+		 blur = clamp(blur, 0.0, 1.0);
 
     return blur;
 }

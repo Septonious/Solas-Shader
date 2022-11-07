@@ -51,7 +51,7 @@ void findBlockerDistance(vec3 shadowPos, mat2 ditherRotMat, inout float offset, 
     }
     blockerDistance /= shadowFilterSamples;
 
-    offset = mix(offset, max(offset, blockerDistance * 0.1), skyLightMap);
+    offset = mix(offset, max(offset, blockerDistance * 0.15), skyLightMap);
 }
 #endif
 
@@ -65,7 +65,7 @@ vec3 computeShadow(vec3 shadowPos, float offset, float dither, float skyLightMap
     #endif
 
     // Fix light leaking in caves
-    if (lightmap.y < 0.2 && 1.0 - clamp(pow(ao, 1.5) * 2.0, 0.0, 1.0) > 0.0) return vec3(0.0);
+    if (skyLightMap < 0.2 && 1.0 - clamp(pow(ao, 1.5) * 2.0, 0.0, 1.0) > 0.0) return vec3(1.0 - clamp(pow(ao, 1.5) * 2.0, 0.0, 1.0));
 
     for (int i = 0; i < shadowFilterSamples; i++) {
         vec2 shadowOffset = ditherRotMat * shadowOffsets[i] * offset;

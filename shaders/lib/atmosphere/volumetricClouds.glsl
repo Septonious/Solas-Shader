@@ -74,8 +74,8 @@ void computeVolumetricClouds(inout vec3 color, in vec3 atmosphereColor, in float
 		float lViewPos = length(viewPos);
 
 		//Blend ambient and light colors with the sky
-		ambientCol = mix(ambientCol, atmosphereColor, sunVisibility * (0.2 + timeBrightness * 0.8) * (1.0 - rainStrength * 0.5)) * (1.0 - timeBrightness * 0.6);
-		lightCol = mix(lightCol, atmosphereColor, sunVisibility * 0.5) * (1.0 + pow14(VoL) * 2.0);
+		ambientCol = mix(ambientCol, atmosphereColor, sunVisibility * (0.1 + timeBrightness * 0.3) * (1.0 - rainStrength * 0.5));
+		lightCol = mix(lightCol, atmosphereColor, sunVisibility * 0.5) * (1.0 + pow14(VoL));
 
 		//Set the two planes here between which the ray marching will be done
 		float lowerPlane = (VC_HEIGHT + stretching - cameraPosition.y) / nWorldPos.y;
@@ -118,7 +118,7 @@ void computeVolumetricClouds(inout vec3 color, in vec3 atmosphereColor, in float
 				float cloudLighting = clamp(smoothstep(VC_HEIGHT + stretching * noise, VC_HEIGHT - stretching * noise, rayPos.y) * 0.7 + noise * 0.6, 0.0, 1.0);
 
 				#ifdef VC_DISTANT_FADE
-				float cloudDistantFade = clamp((VC_DISTANCE - lWorldPos) / VC_DISTANCE * 2.0, 0.0, 1.0);
+				float cloudDistantFade = clamp((VC_DISTANCE - lWorldPos) / VC_DISTANCE * 2.0, 0.0, 0.75);
 				#endif
 
 				vec4 cloudColor = vec4(mix(lightCol, ambientCol, cloudLighting), noise);

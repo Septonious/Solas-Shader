@@ -52,7 +52,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     #endif
 
     float lViewPos = length(viewPos);
-    float ao = clamp(pow(color.a, 1.75), 0.0, 1.0);
+    float ao = clamp(pow2(color.a), 0.0, 1.0);
 
     //Vanilla Directional Lighting
 	float NoL = clamp(dot(normal, lightVec), 0.0, 1.0);
@@ -136,7 +136,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
             #ifdef OVERWORLD
             float offset = shadowOffset;
             if (subsurface > 0.5) {
-                offset = mix(offset * 2.0, offset * 0.5, clamp(lViewPos * 0.025, 0.0, 1.0));
+                offset = mix(offset * 2.0, offset, clamp(lViewPos * 0.025, 0.0, 1.0));
             }
             #else
             float offset = shadowOffset;
@@ -172,7 +172,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
     float rainFactor = 1.0 - rainStrength * 0.8;
 
     #ifdef GLOBAL_ILLUMINATION
-    bloom = clamp(2.0 * bloom * pow(getLuminance(bloom), GLOBAL_ILLUMINATION_RADIUS), 0.0, 1.0) * 4.0;
+    bloom = clamp(bloom * pow(getLuminance(bloom), GLOBAL_ILLUMINATION_RADIUS), 0.0, 1.0) * 4.0;
 
     #ifdef OVERWORLD
     ambientCol *= vec3(1.0) + bloom * sunVisibility * rainFactor;

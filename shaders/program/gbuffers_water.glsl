@@ -185,7 +185,7 @@ void main() {
 	float portal = float(mat > 1.9 && mat < 2.1);
 	float emission = portal * pow6(clamp(length(albedo.rgb), 0.0, 1.0)) * 1.5;
 
-	albedo.a *= 1.0 - portal * 0.5;
+	albedo.a *= 1.0 - portal * 0.25;
 
 	#ifndef VANILLA_WATER
 	if (water > 0.9) {
