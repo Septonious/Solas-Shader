@@ -1,10 +1,24 @@
 # ![logo](https://media.discordapp.net/attachments/837667478590324737/1039281928727179375/unknown.png) Solas Shader
 Solas is a new Minecraft Java Edition shaderpack which aims to provide stunning visuals at a low performance cost. It was originally intended to serve as Prismarine Shader's successor. 
 
-### Downloads
-[![Download on curseforge](https://img.shields.io/badge/-Curseforge-F16436?style=for-the-badge&logo=curseforge&logoColor=white)](https://www.curseforge.com/minecraft/customization/solas-shader) [![Download on GitHub](https://img.shields.io/badge/-GitHub-F9E26C?style=for-the-badge&logo=github&logoColor=40463C)](https://github.com/Septonious/Solas-Shader/archive/refs/heads/main.zip)
+### Trailer
+[![Trailer](https://media.discordapp.net/attachments/837667478590324737/1039620637209145496/solas-yt.png)](https://www.youtube.com/watch?v=Y-JdKxsQdy8)
 
-## Unique Technologies
+*click to open the trailer in YouTube*
+
+## Downloads
+[![Download on curseforge](https://img.shields.io/badge/-Curseforge-F16436?style=for-the-badge&logo=curseforge&logoColor=white)](https://www.curseforge.com/minecraft/customization/solas-shader) 
+
+[![Download on GitHub](https://img.shields.io/badge/-GitHub-F9E26C?style=for-the-badge&logo=github&logoColor=40463C)](https://github.com/Septonious/Solas-Shader/archive/refs/heads/main.zip)
+
+## Community
+[![Discord](https://discordapp.com/api/guilds/816223286958489631/widget.png?style=banner2)](https://discord.gg/4uTAUQR2xu) 
+
+[![Youtube](https://img.shields.io/youtube/channel/subscribers/UCa-oHqFdqa88Xp3wcBugazQ?color=%23ff0000&label=Youtube&logo=youtube&logoColor=white&style=for-the-badge)](https://www.youtube.com/channel/UCa-oHqFdqa88Xp3wcBugazQ)
+
+## About Solas
+
+### Unique Technologies
 Solas is probably the first shaderpack to finally achieve the goal of super fast and FPS-cheap colored lighting and global illumination in Minecraft.
 Both are done with bloom which costs little performance while maintaining good visual appearance.
 
@@ -13,7 +27,7 @@ Solas fixes that problem by toggling a cloud shadow check in cases where a close
 
 Another problem a lot of shaderpacks have is shadow light leaking and peter panning which is not present in Solas.
 
-## Key Features
+### Key Features
 - 3D volumetric clouds and light rays.
 
 - Water, atmospheric and border fog.
@@ -26,7 +40,7 @@ Another problem a lot of shaderpacks have is shadow light leaking and peter pann
 
 - And more is coming soon
 
-## Screenshots
+# Screenshots
 <details><summary>Click to Expand</summary>
 <p>
 
