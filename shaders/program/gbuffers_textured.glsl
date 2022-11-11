@@ -102,7 +102,7 @@ void main() {
 		}
 		#endif
 
-		getSceneLighting(albedo.rgb, viewPos, worldPos, normal, lightmap, clamp(emission, 0.0, 1.0), 0.0, 0.0, 0.0);
+		getSceneLighting(albedo.rgb, screenPos, viewPos, worldPos, normal, lightmap, clamp(emission, 0.0, 1.0), 0.0, 0.0, 0.0);
 	}
 
 	/* DRAWBUFFERS:0 */

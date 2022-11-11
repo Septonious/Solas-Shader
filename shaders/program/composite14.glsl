@@ -60,12 +60,12 @@ void main() {
 	rawBloom = getBloom(texCoord, dither - 0.25);
 
 	#if BLOOM_CONTRAST == 0
-	color = mix(color, rawBloom, 0.1 * BLOOM_STRENGTH);
+	color = mix(color, rawBloom, 0.05 * BLOOM_STRENGTH);
 	#else
 	vec3 bloomContrast = vec3(exp2(BLOOM_CONTRAST * 0.25));
 	color = pow(color, bloomContrast);
 
-	vec3 bloomStrength = pow(vec3(0.1 * BLOOM_STRENGTH), bloomContrast);
+	vec3 bloomStrength = pow(vec3(0.05 * BLOOM_STRENGTH), bloomContrast);
 	color = mix(color, pow(rawBloom, bloomContrast), bloomStrength);
 	color = pow(color, 1.0 / bloomContrast);
 	#endif

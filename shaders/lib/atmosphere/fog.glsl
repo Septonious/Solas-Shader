@@ -14,14 +14,14 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 atmo
 	float VoL = clamp(dot(normalize(viewPos), lightVec), 0.0, 1.0);
 
 	float fog = length(viewPos) * FOG_DENSITY / 512.0;
-		  fog *= (0.5 * rainStrength + 0.5) / (4.0 * clearDay + 1.0);
+		  fog *= (0.5 * rainStrength + 0.25) / (4.0 * clearDay + 1.0);
 		  fog = 1.0 - exp(-16.0 * pow(fog, 0.15 * clearDay * eBS + 1.25));
 		  fog *= 0.5 + sunVisibility * 0.5; //Night shouldn't have very dense fog
 		  fog *= 1.0 + max(sunVisibility - timeBrightness, 0.0); //Increase fog in morning/evening
 		  fog *= 1.0 - fogAltitude * 0.6; //Make fog stronger at low altitudes
 		  fog = clamp(fog, 0.0, 1.0);
 
-	vec3 fogColor = mix(atmosphereColor, pow(skyColor, vec3(1.25)), (0.5 - timeBrightness * 0.5) * sunVisibility * (1.0 - rainStrength)) * fog;
+	vec3 fogColor = mix(atmosphereColor, pow(skyColor, vec3(1.25)), (0.6 - timeBrightness * 0.5) * sunVisibility * (1.0 - rainStrength)) * fog;
 
     //Underground Fog
 	fogColor = mix(caveMinLightCol * fog, fogColor, caveFactor);

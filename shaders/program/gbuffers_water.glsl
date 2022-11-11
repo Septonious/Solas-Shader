@@ -86,7 +86,7 @@ uniform sampler2D shadowcolor1;
 uniform sampler2D gaux3;
 #endif
 
-#if defined BLOOM_COLORED_LIGHTING || defined GLOBAL_ILLUMINATION || defined BLOOMY_FOG
+#if defined BLOOM_COLORED_LIGHTING || defined GLOBAL_ILLUMINATION
 uniform sampler2D gaux4;
 #endif
 
@@ -117,7 +117,7 @@ uniform mat4 shadowModelView;
 #endif
 
 //Common Variables//
-#if defined BLOOM_COLORED_LIGHTING || defined GLOBAL_ILLUMINATION || defined BLOOMY_FOG
+#if defined BLOOM_COLORED_LIGHTING || defined GLOBAL_ILLUMINATION
 float getLuminance(vec3 color) {
 	return dot(color, vec3(0.299, 0.587, 0.114));
 }
@@ -209,7 +209,7 @@ void main() {
 		#ifdef VC
 		float cloudDepth = texture2D(gaux1, gl_FragCoord.xy / vec2(viewWidth, viewHeight)).a;
 
-		if (cloudDepth > 0.0 && water > 0.9 && cameraPosition.y + VC_STRETCHING * 0.5 > VC_HEIGHT) discard;
+		if (cloudDepth > 0.1 && water > 0.9 && cameraPosition.y + VC_STRETCHING * 0.5 > VC_HEIGHT) discard;
 		#endif
 
 		vec2 lightmap = clamp(lightMapCoord, 0.0, 1.0);
@@ -226,7 +226,7 @@ void main() {
 		}
 		#endif
 
-		getSceneLighting(albedo.rgb, viewPos, worldPos, newNormal, lightmap, emission, 0.0, 0.0, 1.0);
+		getSceneLighting(albedo.rgb, screenPos, viewPos, worldPos, newNormal, lightmap, emission, 0.0, 0.0, 1.0);
 
 		#if defined OVERWORLD
 		skyColor = getAtmosphere(viewPos);

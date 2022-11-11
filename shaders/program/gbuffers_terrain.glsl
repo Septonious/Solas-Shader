@@ -121,12 +121,12 @@ void main() {
 		getIntegratedSpecular(albedo, newNormal, worldPos.xz, lightmap, specular);
 		#endif
 
-		getSceneLighting(albedo.rgb, viewPos, worldPos, newNormal, lightmap, emission, newEmission, leaves, foliage, specular);
+		getSceneLighting(albedo.rgb, screenPos, viewPos, worldPos, newNormal, lightmap, emission, newEmission, leaves, foliage, specular);
 	}
 
 	/* DRAWBUFFERS:0 */
 	gl_FragData[0] = albedo;
-	emission = clamp(emission, 0.0, 1.0) + newEmission * 4.0;
+	emission = clamp(emission, 0.0, 1.0) + newEmission * 2.0;
 	#ifndef INTEGRATED_SPECULAR
 		#ifdef BLOOM
 		/* DRAWBUFFERS:02 */

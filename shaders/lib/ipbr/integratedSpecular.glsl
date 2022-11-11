@@ -30,13 +30,11 @@ void getIntegratedSpecular(inout vec4 albedo, in vec3 normal, in vec2 worldPos, 
         specular = pow3(lAlbedo) * 0.25;
     } else if (mat > 304.9 && mat < 305.1) {// Obsidian & Polished Deepslate
         specular = lAlbedo;
-    } else if (mat > 305.9 && mat < 306.1) {// Wet Farmland
-        specular = mix(0.0, 3.0, clamp(pow(lAlbedo, 0.33), 0.0, 1.0));
     }
 
     #if defined RAIN_PUDDLES && defined GBUFFERS_TERRAIN
     float NoU = clamp(dot(normal, upVec), 0.0, 0.75);
-    float puddles = wetness * pow16(lightmap.y) * (1.0 - lightmap.x) * (texture2D(noisetex, (worldPos + cameraPosition.xz) * 0.00125).b - 0.25) * NoU;
+    float puddles = wetness * pow8(lightmap.y) * (1.0 - lightmap.x * lightmap.x * 0.75) * (texture2D(noisetex, (worldPos + cameraPosition.xz) * 0.00125).b - 0.25) * NoU;
 
     if (puddles > 0.0) {
         specular += puddles;

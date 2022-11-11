@@ -52,10 +52,6 @@ uniform vec3 cameraPosition;
 uniform sampler2D colortex0;
 uniform sampler2D depthtex0;
 
-#ifdef BLOOM
-uniform sampler2D colortex2;
-#endif
-
 #if defined END_NEBULA || defined AURORA || defined VC
 uniform sampler2D noisetex;
 #endif
@@ -64,9 +60,7 @@ uniform sampler2D noisetex;
 uniform sampler2D depthtex2;
 #endif
 
-#ifdef BLOOMY_FOG
-uniform sampler2D colortex7;
-#endif
+uniform sampler2D colortex2;
 
 #ifdef VC
 uniform sampler2D depthtex1;
@@ -87,12 +81,6 @@ uniform mat4 gbufferModelView;
 float eBS = eyeBrightnessSmooth.y / 240.0;
 float caveFactor = mix(clamp((cameraPosition.y - 56.0) / 16.0, sign(isEyeInWater), 1.0), 1.0, eBS);
 float sunVisibility = clamp(dot(sunVec, upVec) + 0.025, 0.0, 0.1) * 10.0;
-#endif
-
-#ifdef BLOOMY_FOG
-float getLuminance(vec3 color) {
-	return dot(color, vec3(0.299, 0.587, 0.114));
-}
 #endif
 
 //Includes//
@@ -120,6 +108,7 @@ float getLuminance(vec3 color) {
 
 void main() {
 	vec3 color = texture2D(colortex0, texCoord).rgb;
+	vec4 colortex2Data = texture2D(colortex2, texCoord);
 
 	float cloudDepth = 0.0;
 	float z0 = texture2D(depthtex0, texCoord).r;
@@ -210,37 +199,27 @@ void main() {
 
 	computeVolumetricClouds(color, atmosphereColor, blueNoiseDither, cloudDepth);
 	#endif
-	
-	#ifdef BLOOM
-	vec4 bloomData = texture2D(colortex2, texCoord);
-
-	#ifdef OVERWORLD
-		 bloomData.ba += vec2(star + sunMoon * 0.002, float(star > 0.0 || sunMoon > 0.0));
-	#elif defined END
-		 bloomData.ba += vec2(star, float(star > 0.0));
-	#endif
-	#endif
 
 	#ifdef INTEGRATED_SPECULAR
 	vec3 reflectionColor = pow(color.rgb, vec3(0.125)) * 0.5;
 	#endif
 
-	/* DRAWBUFFERS:04 */
+	#ifdef BLOOM
+	#ifdef OVERWORLD
+	colortex2Data.ba += vec2(sunMoon * 0.125, sunMoon);
+	#elif defined END
+	colortex2Data.ba += vec2(star);
+	#endif
+	#endif
+
+	/* DRAWBUFFERS:042 */
 	gl_FragData[0].rgb = color;
 	gl_FragData[1].a = cloudDepth;
+	gl_FragData[2] = colortex2Data;
 
-	#ifndef INTEGRATED_SPECULAR
-		#ifdef BLOOM
-		/* DRAWBUFFERS:042 */
-		gl_FragData[2] = bloomData;
-		#endif
-	#else
-		/* DRAWBUFFERS:0426 */
-		#ifdef BLOOM
-		gl_FragData[2] = bloomData;
-		#endif
-
-		gl_FragData[3] = vec4(reflectionColor, float(z0 < 1.0));
+	#ifdef INTEGRATED_SPECULAR
+	/* DRAWBUFFERS:0426 */
+	gl_FragData[3] = vec4(reflectionColor, float(z0 < 1.0));
 	#endif
 }
 

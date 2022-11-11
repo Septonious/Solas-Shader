@@ -101,7 +101,7 @@ void main() {
 			}
 		}
 
-		getSceneLighting(albedo.rgb, viewPos, worldPos, normal, lightmap, emission, 0.0, 0.0, 0.0);
+		getSceneLighting(albedo.rgb, screenPos, viewPos, worldPos, normal, lightmap, emission, 0.0, 0.0, 0.0);
 
 		if (blockEntityId == 20) {
 			vec2 portalCoordPlayerPos = worldPos.xz * 0.25;
