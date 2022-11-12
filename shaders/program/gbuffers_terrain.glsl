@@ -101,7 +101,6 @@ void main() {
 	vec3 newNormal = normal;
 
 	float emission = 0.0;
-	float newEmission = 0.0;
 	float specular = 0.0;
 
 	if (albedo.a > 0.001) {
@@ -114,19 +113,21 @@ void main() {
 		vec2 lightmap = clamp(lightMapCoord, 0.0, 1.0);
 
 		#ifdef INTEGRATED_EMISSION
-		getIntegratedEmission(albedo, viewPos, worldPos, lightmap, newEmission);
+		getIntegratedEmission(albedo, viewPos, worldPos, lightmap, emission);
 		#endif
 
 		#ifdef INTEGRATED_SPECULAR
 		getIntegratedSpecular(albedo, newNormal, worldPos.xz, lightmap, specular);
 		#endif
 
-		getSceneLighting(albedo.rgb, screenPos, viewPos, worldPos, newNormal, lightmap, emission, newEmission, leaves, foliage, specular);
+		getSceneLighting(albedo.rgb, screenPos, viewPos, worldPos, newNormal, lightmap, emission, leaves, foliage, specular);
 	}
+
+	emission *= 4.0;
 
 	/* DRAWBUFFERS:0 */
 	gl_FragData[0] = albedo;
-	emission = clamp(emission, 0.0, 1.0) + newEmission * 2.0;
+
 	#ifndef INTEGRATED_SPECULAR
 		#ifdef BLOOM
 		/* DRAWBUFFERS:02 */

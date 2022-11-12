@@ -6,7 +6,7 @@ vec3 getBloomTile(float lod, vec2 bloomCoord, vec2 offset, vec2 bloomDither) {
 	float resScale = 1.25 * min(360.0, viewHeight) / viewHeight;
 	
 	vec2 centerOffset = vec2(0.125 * pixelWidth, 0.25 * pixelHeight);
-	vec3 bloom = getDiskBlur4(colortex1, (bloomCoord / scale + offset) * resScale + centerOffset + bloomDither, 1.0).rgb;
+	vec3 bloom = getDiskBlur4(colortex1, (bloomCoord / scale + offset) * resScale + centerOffset + bloomDither, 2.0).rgb;
 
 	return pow8(bloom) * 512.0;
 }

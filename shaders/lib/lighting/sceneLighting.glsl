@@ -33,23 +33,24 @@ vec3 getHandLightColor(float handlight) {
 #endif
 
 #ifdef BLOOM_COLORED_LIGHTING
-void computeBCL(inout vec3 blockLighting, in vec3 bloom, in vec3 normal, in vec3 screenPos, in float lViewPos, in float NoU, in float blockLightMap) {
-    float bloomLightMap = pow2(blockLightMap) + blockLightMap * 0.5;
+void computeBCL(inout vec3 blockLighting, in vec3 bloom, in vec3 normal, in vec3 screenPos, in float lViewPos, in float NoU, in float blockLightMap, in float skyLightMap) {
+    float bloomLightMap = pow3(blockLightMap) * 1.25 + blockLightMap * 0.25;
     float directionalLightMap = bloomLightMap;
+    float radius = mix(COLORED_LIGHTING_RADIUS - 0.15, COLORED_LIGHTING_RADIUS, skyLightMap);
 
-    vec3 dFdViewposX = dFdx(screenPos);
-    vec3 dFdViewposY = dFdy(screenPos);
-    vec2 dFdTorch = vec2(dFdx(blockLightMap), dFdy(blockLightMap));
-    vec3 torchLightDir = dFdViewposX * dFdTorch.x + dFdViewposY * dFdTorch.y;
+    //vec3 dFdViewposX = dFdx(screenPos);
+    //vec3 dFdViewposY = dFdy(screenPos);
+    //vec2 dFdTorch = vec2(dFdx(blockLightMap), dFdy(blockLightMap));
+    //vec3 torchLightDir = dFdViewposX * dFdTorch.x + dFdViewposY * dFdTorch.y;
 
-    if (length(dFdTorch) > 0.001) {
-        directionalLightMap *= clamp(dot(normalize(torchLightDir), normal) + 0.9, 0.0, 1.0) * 0.9 + 0.1;
-    }
+    //if (length(dFdTorch) > 0.001) {
+    //    directionalLightMap *= clamp(dot(normalize(torchLightDir), normal) + 0.9, 0.0, 1.0) * 0.9 + 0.1;
+    //}
 
-    bloomLightMap = mix(directionalLightMap, bloomLightMap, abs(NoU));
+    //bloomLightMap = mix(directionalLightMap, bloomLightMap, abs(NoU));
     bloomLightMap = mix(1.0 - clamp(lViewPos * 0.05, 0.0, 1.0 - bloomLightMap), bloomLightMap, bloomLightMap);
 
-	vec3 coloredLight = clamp(0.0625 * bloom * pow(getLuminance(bloom), COLORED_LIGHTING_RADIUS), 0.0, 1.0) * 16.0;
+	vec3 coloredLight = clamp(0.0625 * bloom * pow(getLuminance(bloom), radius), 0.0, 1.0) * 16.0;
     
     blockLighting += coloredLight * bloomLightMap;
 }
@@ -58,7 +59,7 @@ void computeBCL(inout vec3 blockLighting, in vec3 bloom, in vec3 normal, in vec3
 #ifndef GBUFFERS_TERRAIN
 void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in vec3 worldPos, in vec3 normal, in vec2 lightmap, in float emission, in float leaves, in float foliage, in float specular) {
 #else
-void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in vec3 worldPos, in vec3 normal, in vec2 lightmap, inout float emission, in float newEmission, in float leaves, in float foliage, in float specular) {
+void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in vec3 worldPos, in vec3 normal, in vec2 lightmap, in float emission, in float leaves, in float foliage, in float specular) {
 #endif
     #ifdef GBUFFERS_TERRAIN
 	if (foliage > 0.9) {
@@ -67,12 +68,6 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     #endif
 
     lightmap.y = sqrt(lightmap.y);
-
-    #ifdef GBUFFERS_TERRAIN
-    float emission2 = clamp(emission + newEmission, 0.0, 1.0);
-    #else
-    float emission2 = emission;
-    #endif
 
     float lViewPos = length(viewPos);
     float ao = clamp(pow2(color.a), 0.0, 1.0);
@@ -88,9 +83,9 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     vec3 blockLighting = vec3(0.0);
 
     #ifdef SHIMMER_MOD_SUPPORT
-    float blockLightMap = min(pow4(lightmap.x) * 2.0 + pow2(lightmap.x) * 0.125, 1.0) * (1.0 - emission2);
+    float blockLightMap = min(pow4(lightmap.x) * 2.0 + pow2(lightmap.x) * 0.125, 1.0) * (1.0 - emission);
     #else
-    float blockLightMap = min(pow8(lightmap.x) + pow4(lightmap.x) * 0.5, 1.0) * (1.0 - emission2);
+    float blockLightMap = min(pow8(lightmap.x) + pow4(lightmap.x) * 0.5, 1.0) * (1.0 - emission);
     #endif
 
 	#ifdef DYNAMIC_HANDLIGHT
@@ -106,12 +101,12 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     #if defined SHIMMER_MOD_SUPPORT
     //COLORED LIGHTING USING SHIMMER MOD
     vec3 coloredLight = getColoredLighting(worldPos, blockLightMap) * BLOCKLIGHT_I;
-    blockLighting = blockLightCol * blockLightMap + coloredLight * (1.0 - emission2);
+    blockLighting = blockLightCol * blockLightMap + coloredLight * (1.0 - emission);
     #elif defined BLOOM_COLORED_LIGHTING
     //BLOOM BASED COLORED LIGHTING
     blockLighting = blockLightCol * blockLightMap;
 
-    computeBCL(blockLighting, bloom, normal, screenPos, lViewPos, NoU, lightmap.x);
+    computeBCL(blockLighting, bloom, normal, screenPos, lViewPos, NoU, lightmap.x, lightmap.y);
     #else
     blockLighting = blockLightCol * blockLightMap;
     #endif
@@ -222,7 +217,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
 
     albedo = pow(albedo, vec3(2.2));
 
-    albedo *= sceneLighting + blockLighting + (albedo * emission2 * EMISSION_STRENGTH) + nightVision * 0.25 + (minLightCol * (1.0 - lightmap.y));
+    albedo *= sceneLighting + blockLighting + (albedo * emission * EMISSION_STRENGTH) + nightVision * 0.25 + (minLightCol * (1.0 - lightmap.y));
     albedo *= vanillaDiffuse;
 
     albedo = sqrt(max(albedo, vec3(0.0)));
@@ -235,7 +230,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     #endif
 
     if (giVisibility != 0.0) {
-        emission += mix(0.0, GLOBAL_ILLUMINATION_STRENGTH * 0.5 * float(emission2 == 0.0), giVisibility);
+        emission += mix(0.0, GLOBAL_ILLUMINATION_STRENGTH * 0.5 * float(emission == 0.0), giVisibility);
     }
     #endif
 }

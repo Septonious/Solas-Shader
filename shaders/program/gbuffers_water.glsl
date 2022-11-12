@@ -183,7 +183,7 @@ void main() {
 
 	float water = float(mat > 0.9 && mat < 1.1);
 	float portal = float(mat > 1.9 && mat < 2.1);
-	float emission = portal * pow6(clamp(length(albedo.rgb), 0.0, 1.0)) * 1.5;
+	float emission = portal * pow6(clamp(length(albedo.rgb), 0.0, 1.0)) * 2.0;
 
 	albedo.a *= 1.0 - portal * 0.25;
 
