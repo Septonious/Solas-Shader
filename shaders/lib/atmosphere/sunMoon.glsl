@@ -4,7 +4,7 @@ void getSunMoon(inout vec3 color, in vec3 nViewPos, in vec3 lightSun, in vec3 li
 	if (visibility > 0.0) {
 		float VoSM = mix(VoM, VoS, sunVisibility);
 		float glareDisk = clamp(VoSM * 0.5 + 0.5, 0.0, 1.0);
-			  glareDisk = 0.01 / (1.0 - 0.99 * glareDisk) - 0.01;
+			  glareDisk = 0.005 / (1.0 - 0.995 * glareDisk) - 0.005;
 
 		float sun = pow32(pow32(VoS * VoS));
 		float moon = pow32(pow32(VoM));
@@ -22,10 +22,10 @@ void getSunMoon(inout vec3 color, in vec3 nViewPos, in vec3 lightSun, in vec3 li
 		
 		vec3 sunMoonColor = sun * lightSun * sunVisibility + moon * lightNight * 8.0 * (1.0 - sunVisibility);
 			 sunMoonColor*= clamp(pow8(length(sunMoonColor)), 0.0, 1.0);
-			 sunMoonColor+= glareDisk * lightColSqrt * 0.4 * (1.0 - moonPhase * 0.2);
+			 sunMoonColor+= glareDisk * lightColSqrt * 0.5;
 			 sunMoonColor = clamp(sunMoonColor, 0.0, 1.0) * visibility;
 			 
 		sunMoon = sun + moon;
-		color += mix(vec3(0.0), vec3(4.0 * sunMoonColor), pow4(clamp(length(sunMoonColor), 0.0, 1.0))) + sunMoonColor;
+		color += mix(vec3(0.0), vec3(7.0 * (1.0 - sunVisibility) * sunMoonColor), pow4(clamp(length(sunMoonColor), 0.0, 1.0))) + sunMoonColor;
 	}
 }

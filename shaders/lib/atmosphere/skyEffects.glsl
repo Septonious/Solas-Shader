@@ -12,18 +12,16 @@ void getStars(inout vec3 color, in vec3 worldPos, in float VoU, in float nebulaF
 
 	if (visibility > 0.0) {
 		vec2 planeCoord = worldPos.xz / (length(worldPos.y) + length(worldPos.xz));
-			 planeCoord+= frameTimeCounter * 0.001;
-			 planeCoord+= cameraPosition.xz * 0.0001;
+			 planeCoord += frameTimeCounter * 0.001;
+			 planeCoord += cameraPosition.xz * 0.0001;
 			 planeCoord = floor(planeCoord * 384.0) / 384.0;
 
 	    star = GetNoise(planeCoord.xy);
-		star*= GetNoise(planeCoord.xy + 0.1);
-		star*= GetNoise(planeCoord.xy + 0.2);
-
+		star *= GetNoise(planeCoord.xy + 0.1);
+		star *= GetNoise(planeCoord.xy + 0.2);
 		star = max(star - (0.8 - nebulaFactor * 0.1), 0.0) * visibility;
-		star*= star;
 
-		color += vec3(48.0 * star);
+		color += star * star * lightNight * 64.0;
 	}
 }
 #endif

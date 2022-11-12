@@ -46,8 +46,8 @@ void findBlockerDistance(vec3 shadowPos, mat2 ditherRotMat, inout float offset, 
     float blockerDistance = 0.0;
         
     for (int i = 0; i < shadowFilterSamples; i++){
-        vec2 offset = ditherRotMat * shadowOffsets[i] * 0.015;
-        blockerDistance += shadowPos.z - texture2D(shadowtex0, shadowPos.xy + offset).x;
+        vec2 pixelOffset = ditherRotMat * shadowOffsets[i] * 0.015;
+        blockerDistance += shadowPos.z - texture2D(shadowtex0, shadowPos.xy + pixelOffset).x;
     }
     blockerDistance /= shadowFilterSamples;
 
@@ -68,7 +68,7 @@ vec3 computeShadow(vec3 shadowPos, float offset, float dither, float skyLightMap
     if (skyLightMap < 0.2 && 1.0 - clamp(pow(ao, 1.5) * 2.0, 0.0, 1.0) > 0.0) return vec3(1.0 - clamp(pow(ao, 1.5) * 2.0, 0.0, 1.0));
 
     for (int i = 0; i < shadowFilterSamples; i++) {
-        vec2 shadowOffset = ditherRotMat * shadowOffsets[i] * offset;
+        vec2 pixelOffset = ditherRotMat * shadowOffsets[i] * offset;
         shadow0 += texture2DShadow(shadowtex0, vec3(shadowPos.st + ditherRotMat * shadowOffsets[i] * offset, shadowPos.z));
     }
     shadow0 /= shadowFilterSamples;
@@ -77,8 +77,8 @@ vec3 computeShadow(vec3 shadowPos, float offset, float dither, float skyLightMap
     #ifdef SHADOW_COLOR
     if (shadow0 < 0.999) {
         for (int i = 0; i < shadowFilterSamples; i++) {
-            vec2 shadowOffset = ditherRotMat * shadowOffsets[i] * offset;
-            shadowCol += texture2D(shadowcolor0, shadowPos.st + shadowOffset).rgb *
+            vec2 pixelOffset = ditherRotMat * shadowOffsets[i] * offset;
+            shadowCol += texture2D(shadowcolor0, shadowPos.st + pixelOffset).rgb *
                          texture2DShadow(shadowtex1, vec3(shadowPos.st + ditherRotMat * shadowOffsets[i] * offset, shadowPos.z));
         }
         shadowCol /= shadowFilterSamples;

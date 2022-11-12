@@ -1,5 +1,9 @@
 #shaders/lang/ru_RU.lang
 
+option.SOLAS_BY_SEPTONIOUS=§6Solas
+value.SOLAS_BY_SEPTONIOUS.1=§bАвтор: Septonious
+option.SOLAS_BY_SEPTONIOUS.comment=Discord: https://discord.com/invite/4uTAUQR2xu. GitHub: https://github.com/Septonious/Solas-Shader. Переводил сам (да, я русский)
+
 #ATMOSPHERICS
 
 screen.ATMOSPHERICS=Атмосфера
@@ -91,6 +95,7 @@ option.COLORED_LIGHTING_STRENGTH=Сила ЦО
 
 option.AO=Ambient Occlusion (AO)
 option.AO_STRENGTH=Сила АО
+option.AO_RADIUS=Радиус АО
 
 option.GLOBAL_ILLUMINATION=Глобальное Освещение (ГО)
 option.GLOBAL_ILLUMINATION_STRENGTH=Сила ГО
@@ -129,6 +134,7 @@ option.EMISSION_STRENGTH=Яркость Свечения
 #COLOR
 
 screen.COLOR=Цвета
+screen.LIGHTAMBIENT_COLOR=Свет & Тень (Обычный Мир)
 
 screen.LIGHT_EM=Свет (Раннее Утро)
 option.LIGHT_EMR=Красный
@@ -166,6 +172,16 @@ option.LIGHT_NG=Зелёный
 option.LIGHT_NB=Синий
 option.LIGHT_NI=Интенсивность
 
+screen.END_COLOR=Свет & Тень (Энд)
+option.LIGHT_END_R=Красный
+option.LIGHT_END_G=Зелёный
+option.LIGHT_END_B=Синий
+option.LIGHT_END_I=Интенсивность
+
+option.AMBIENT_END_R=Красный
+option.AMBIENT_END_G=Зелёный
+option.AMBIENT_END_B=Синий
+option.AMBIENT_END_I=Интенсивность
 
 screen.AMBIENT_EM=Тень (Раннее Утро)
 option.AMBIENT_EMR=Красный
@@ -288,6 +304,10 @@ value.BLOOM_CONTRAST.1=0.25
 value.BLOOM_CONTRAST.2=0.50
 value.BLOOM_CONTRAST.3=0.75
 value.BLOOM_CONTRAST.4=1.00
+value.BLOOM_CONTRAST.5=1.25
+value.BLOOM_CONTRAST.6=1.50
+value.BLOOM_CONTRAST.7=1.75
+value.BLOOM_CONTRAST.8=2.00
 
 option.BLOOM_RADIUS=Радиус
 value.BLOOM_RADIUS.1=Минимальный

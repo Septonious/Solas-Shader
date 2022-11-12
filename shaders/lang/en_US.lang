@@ -1,5 +1,9 @@
 #shaders/lang/en_US.lang
 
+option.SOLAS_BY_SEPTONIOUS=§6Solas
+value.SOLAS_BY_SEPTONIOUS.0=§bBy Septonious
+option.SOLAS_BY_SEPTONIOUS.comment=Discord: https://discord.com/invite/4uTAUQR2xu. GitHub: https://github.com/Septonious/Solas-Shader
+
 #ATMOSPHERICS
 
 screen.ATMOSPHERICS=Atmospherics
@@ -96,6 +100,7 @@ option.COLORED_LIGHTING_STRENGTH=BCL Strength
 
 option.AO=Ambient Occlusion (AO)
 option.AO_STRENGTH=AO Strength
+option.AO_RADIUS=AO Radius
 
 option.GLOBAL_ILLUMINATION=Global Illumination (GI)
 option.GLOBAL_ILLUMINATION_STRENGTH=GI Strength
@@ -134,6 +139,7 @@ option.EMISSION_STRENGTH=Emission Strength
 #COLOR
 
 screen.COLOR=Colors
+screen.LIGHTAMBIENT_COLOR=Overworld Light & Ambient Color
 
 screen.LIGHT_EM=Light (Early Morning)
 option.LIGHT_EMR=Red
@@ -208,6 +214,17 @@ option.AMBIENT_NG=Green
 option.AMBIENT_NB=Blue
 option.AMBIENT_NI=Intensity
 
+
+screen.END_COLOR=End Light & Ambient Color
+option.LIGHT_END_R=Red
+option.LIGHT_END_G=Green
+option.LIGHT_END_B=Blue
+option.LIGHT_END_I=Intensity
+
+option.AMBIENT_END_R=Red
+option.AMBIENT_END_G=Green
+option.AMBIENT_END_B=Blue
+option.AMBIENT_END_I=Intensity
 
 screen.MINLIGHT=Minimal Lighting
 option.MINLIGHT_R=Red
@@ -296,6 +313,10 @@ value.BLOOM_CONTRAST.1=0.25
 value.BLOOM_CONTRAST.2=0.50
 value.BLOOM_CONTRAST.3=0.75
 value.BLOOM_CONTRAST.4=1.00
+value.BLOOM_CONTRAST.5=1.25
+value.BLOOM_CONTRAST.6=1.50
+value.BLOOM_CONTRAST.7=1.75
+value.BLOOM_CONTRAST.8=2.00
 
 option.BLOOM_RADIUS=Radius
 option.BLOOM_RADIUS.comment=Adjusts how far the glow spreads.

@@ -32,8 +32,8 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
 		vec3 shadowCol = vec3(0.0);
 
 		float lViewPos = length(viewPos);
-		float linearDepth0 = getLinearDepth2(z0);
-		float linearDepth1 = getLinearDepth2(z1);
+		float linearDepth0 = getLinearDepth(z0);
+		float linearDepth1 = getLinearDepth(z1);
 
 		float distanceFactor = mix(8.0, 3.0, sign(isEyeInWater));
 
