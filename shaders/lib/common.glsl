@@ -9,6 +9,7 @@ const float shadowOffset = 1.0 / shadowMapResolution;
 
 #define SHADOW_COLOR
 #define VPS
+#define VPS_BLUR_STRENGTH 0.20 //[0.10 0.15 0.20 0.25 0.30]
 //#define ENTITY_SHADOWS
 
 //Ambient Occlusion//
@@ -18,7 +19,7 @@ const float shadowOffset = 1.0 / shadowMapResolution;
 
 //GI
 #define GLOBAL_ILLUMINATION
-#define GLOBAL_ILLUMINATION_STRENGTH 0.5 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
+#define GLOBAL_ILLUMINATION_STRENGTH 0.4 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
 #define GLOBAL_ILLUMINATION_RADIUS -0.40 //[-0.50 -0.45 -0.40 -0.35 -0.30 -0.25 -0.20 -0.15 -0.10]
 
 //Colored Lighting//

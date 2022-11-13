@@ -118,7 +118,7 @@ void computeVolumetricClouds(inout vec3 color, in vec3 atmosphereColor, in float
 				float cloudLighting = clamp(smoothstep(VC_HEIGHT + stretching * noise, VC_HEIGHT - stretching * noise, rayPos.y) * 0.7 + noise * 0.6, 0.0, 1.0);
 
 				#ifdef VC_DISTANT_FADE
-				float cloudDistantFade = clamp((VC_DISTANCE - lWorldPos) / VC_DISTANCE * 2.0, 0.0, 0.75);
+				float cloudDistantFade = clamp((VC_DISTANCE - lWorldPos) / VC_DISTANCE * 2.0, 0.0, 1.0);
 				#endif
 
 				vec4 cloudColor = vec4(mix(lightCol, ambientCol, cloudLighting), noise);
