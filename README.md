@@ -31,14 +31,16 @@ Another problem a lot of shaderpacks have is shadow light leaking and peter pann
 - 3D volumetric clouds and light rays.
 
 - Water, atmospheric and border fog.
-- Fast colored lighting and global illumination.
-- Fancy sky effects: Aurora Borealis, Milky Way, Ender Nebula, Ender Vortex and more.
 
-- Cinematic post effects: bloom, chromatic aberration, adjustable and flexible tonemap, TAA, FXAA.
+- Fast colored lighting and global illumination.
+
+- Fancy sky effects: aurora borealis, Milky Way, ender nebula, ender vortex and more.
+
+- Cinematic post effects: bloom, chromatic aberration, depth of field, adjustable and flexible tonemap, TAA, FXAA.
 
 - Integrated PBR resourcepack with custom emissive and reflective blocks.
 
-- And more is coming soon
+- Advanced lighting model: vanilla & custom ambient occlusion, variable penumbra shadows.
 
 # Screenshots
 <details><summary>Click to Expand</summary>
