@@ -42,7 +42,7 @@ float texture2DShadow(sampler2D shadowtex, vec3 shadowPos) {
 
 #ifdef VPS
 //Variable Penumbra Shadows based on Tech's Lux Shader (https://github.com/TechDevOnGitHub)
-void findBlockerDistance(vec3 shadowPos, mat2 ditherRotMat, inout float offset, float skyLightMap) {
+void findBlockerDistance(vec3 shadowPos, mat2 ditherRotMat, inout float offset, float skyLightMap, float viewLengthFactor) {
     float blockerDistance = 0.0;
         
     for (int i = 0; i < shadowFilterSamples; i++){
@@ -51,17 +51,17 @@ void findBlockerDistance(vec3 shadowPos, mat2 ditherRotMat, inout float offset, 
     }
     blockerDistance /= shadowFilterSamples;
 
-    offset = mix(offset, max(offset, pow(blockerDistance, 0.85) * VPS_BLUR_STRENGTH), skyLightMap);
+    offset = mix(offset, max(offset, pow(blockerDistance, 0.85) * VPS_BLUR_STRENGTH), skyLightMap * viewLengthFactor);
 }
 #endif
 
-vec3 computeShadow(vec3 shadowPos, float offset, float dither, float skyLightMap, float ao) {
+vec3 computeShadow(vec3 shadowPos, float offset, float dither, float skyLightMap, float ao, float viewLengthFactor) {
     float shadow0 = 0.0;
 
     mat2 ditherRotMat = Rotate(dither * TAU);
 
     #ifdef VPS
-    findBlockerDistance(shadowPos, ditherRotMat, offset, skyLightMap);
+    findBlockerDistance(shadowPos, ditherRotMat, offset, skyLightMap, viewLengthFactor);
     #endif
 
     // Fix light leaking in caves

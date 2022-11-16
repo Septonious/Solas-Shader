@@ -34,25 +34,14 @@ vec3 getHandLightColor(float handlight) {
 
 #ifdef BLOOM_COLORED_LIGHTING
 void computeBCL(inout vec3 blockLighting, in vec3 bloom, in vec3 normal, in vec3 screenPos, in float lViewPos, in float NoU, in float blockLightMap, in float skyLightMap) {
-    float bloomLightMap = pow3(blockLightMap) * 1.25 + blockLightMap * 0.25;
-    float directionalLightMap = bloomLightMap;
-    float radius = mix(COLORED_LIGHTING_RADIUS - 0.15, COLORED_LIGHTING_RADIUS, skyLightMap);
+    float bloomLightMap = pow3(blockLightMap) * 1.25 + blockLightMap * 0.75;
+    float radius = mix(COLORED_LIGHTING_RADIUS - 0.1, COLORED_LIGHTING_RADIUS, skyLightMap);
 
-    //vec3 dFdViewposX = dFdx(screenPos);
-    //vec3 dFdViewposY = dFdy(screenPos);
-    //vec2 dFdTorch = vec2(dFdx(blockLightMap), dFdy(blockLightMap));
-    //vec3 torchLightDir = dFdViewposX * dFdTorch.x + dFdViewposY * dFdTorch.y;
-
-    //if (length(dFdTorch) > 0.001) {
-    //    directionalLightMap *= clamp(dot(normalize(torchLightDir), normal) + 0.9, 0.0, 1.0) * 0.9 + 0.1;
-    //}
-
-    //bloomLightMap = mix(directionalLightMap, bloomLightMap, abs(NoU));
-    bloomLightMap = mix(1.0 - clamp(lViewPos * 0.05, 0.0, 1.0 - bloomLightMap), bloomLightMap, bloomLightMap);
+    bloomLightMap += mix((1.0 - clamp(lViewPos * 0.05, 0.0, 1.0)) * 0.5, 0.0, min(bloomLightMap, 1.0));
 
 	vec3 coloredLight = clamp(0.0625 * bloom * pow(getLuminance(bloom), radius), 0.0, 1.0) * 16.0;
     
-    blockLighting += coloredLight * bloomLightMap;
+    blockLighting += coloredLight * bloomLightMap * mix(clamp(dot(normalize(bloom), normal) + 0.75, 0.0, 1.0), 1.0, abs(NoU));
 }
 #endif
 
@@ -179,7 +168,9 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
 
             vec3 shadowPos = calculateShadowPos(worldPosM);
 
-            shadow = computeShadow(shadowPos, offset, dither, lightmap.y, color.a) * lightmap.y;
+            float viewLengthFactor = 1.0 - clamp(length(viewPos.xz) * 0.01, 0.0, 1.0);
+
+            shadow = computeShadow(shadowPos, offset, dither, lightmap.y, color.a, viewLengthFactor) * lightmap.y;
         }
     }
 
@@ -213,7 +204,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     vec3 sceneLighting = pow(netherColSqrt, vec3(0.25)) * 0.125;
     #endif
 
-    albedo.rgb = mix(albedo.rgb, albedo.rgb * ao, (1.0 - ao) * (1.0 - blockLightMap * 0.5));
+    albedo.rgb = mix(albedo.rgb, albedo.rgb * ao, (1.0 - ao) * (1.0 - blockLightMap * 0.5) * float(emission == 0.0));
 
     albedo = pow(albedo, vec3(2.2));
 

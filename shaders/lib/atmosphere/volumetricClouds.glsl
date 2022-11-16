@@ -74,7 +74,7 @@ void computeVolumetricClouds(inout vec3 color, in vec3 atmosphereColor, in float
 		float lViewPos = length(viewPos);
 
 		//Blend ambient and light colors with the sky
-		ambientCol = mix(ambientCol, atmosphereColor, sunVisibility * (0.1 + timeBrightness * 0.2) * (1.0 - rainStrength * 0.5));
+		ambientCol = mix(ambientCol, atmosphereColor, sunVisibility * (0.3 + timeBrightness * 0.3) * (1.0 - rainStrength * 0.5));
 		lightCol = mix(lightCol, atmosphereColor, sunVisibility * 0.5) * (1.0 + pow14(VoL));
 
 		//Set the two planes here between which the ray marching will be done

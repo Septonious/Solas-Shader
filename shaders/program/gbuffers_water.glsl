@@ -244,7 +244,7 @@ void main() {
 
 			vec4 waterFog = getWaterFog(viewPos.xyz - oViewPos);
 			albedo.rgb = mix(albedo.rgb, waterFog.rgb * 6.0 * lightmap.y * (1.0 - rainStrength), waterFog.a);
-			albedo.a = mix(0.1, albedo.a, waterFog.a);
+			albedo.a = mix(0.25, albedo.a, waterFog.a);
 		}
 		#endif
 

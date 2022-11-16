@@ -48,7 +48,6 @@ uniform mat4 gbufferProjectionInverse, gbufferModelViewInverse;
 //Common Variables//
 #ifdef VL
 float eBS = eyeBrightnessSmooth.y / 240.0;
-float caveFactor = mix(clamp((cameraPosition.y - 56.0) / 16.0, float(sign(isEyeInWater)), 1.0), 1.0, eBS);
 float sunVisibility = clamp(dot(sunVec, upVec) + 0.025, 0.0, 0.1) * 10.0;
 #endif
 

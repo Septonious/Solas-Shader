@@ -21,7 +21,7 @@ void getIntegratedEmission(inout vec4 albedo, in vec3 viewPos, in vec3 worldPos,
 	#ifdef EMISSIVE_ORES
     if (mat > 99.9 && mat < 100.1) { // Glowing Ores
         emission = max(abs(albedo.r - albedo.g), max(abs(albedo.r - albedo.b), abs(albedo.g - albedo.b)));
-		emission = pow2(emission) * 4.0;
+		emission = pow2(emission) * 2.0;
     } 
 	#endif
 
@@ -49,11 +49,11 @@ void getIntegratedEmission(inout vec4 albedo, in vec3 viewPos, in vec3 worldPos,
 	} else if (mat > 105.9 && mat < 106.1) { // Warped Nylium
 		emission = float(albedo.g > albedo.b && albedo.g > albedo.r) * pow3(float(albedo.g - albedo.b));
 	} else if (mat > 107.9 && mat < 108.1) { // Amethyst
-		emission = pow4(lAlbedo);
+		emission = pow5(lAlbedo) * 0.5;
 	} else if (mat > 109.9 && mat < 110.1) { // Glow Lichen
 		emission = (0.005 + pow16(lAlbedo)) * (1.0 - lightmap.y * 0.5) * 2.0;
 	} else if (mat > 110.9 && mat < 111.1) { // Redstone Things
-		emission = float(albedo.r > 0.9);
+		emission = float(albedo.r > 0.9) * 0.5;
 	} else if (mat > 111.9 && mat < 112.1) { // Soul Emissives
 		emission = float(lAlbedo > 0.9);
 	} else if (mat > 112.9 && mat < 113.1) { // Brewing Stand
@@ -76,7 +76,7 @@ void getIntegratedEmission(inout vec4 albedo, in vec3 viewPos, in vec3 worldPos,
 	} else if (mat > 120.9 && mat < 121.9) { // Redstone Block && Lava
 		emission = 0.2 + pow2(lAlbedo) * 0.8;
 	} else if (mat > 121.9 && mat < 122.1) { // Froglights
-		emission = (1.0 - clamp(length(pow4(albedo.rgb)), 0.0, 0.99)) * 6.0;
+		emission = (1.0 - clamp(length(pow4(albedo.rgb)), 0.0, 0.99)) * 16.0;
 		albedo.rgb = pow3(albedo.rgb);
 	} else if (mat > 122.9 && mat < 123.1) { // Sculks
 		emission = float(lAlbedo > 0.05 && albedo.r < 0.25);
@@ -97,12 +97,14 @@ void getIntegratedEmission(inout vec4 albedo, in vec3 viewPos, in vec3 worldPos,
 	} else if (mat > 129.9 && mat < 130.1) { // Powered Rail
 		emission = float(albedo.r > 0.5 && albedo.g < 0.25) * 0.125;
 	} else if (mat > 130.9 && mat < 131.1) { // Fire
-		emission = 1.0 - pow8(lAlbedo) * 0.25;
+		emission = 0.5;
+	} else if (mat > 131.9 && mat < 132.1) { // Normal Lantern
+		emission = float(albedo.r > 0.6);
 	}
 
 	#ifdef EMISSIVE_CONCRETE
 	if (mat > 201.9 && mat < 202.1) {
-		emission = 2.0;
+		emission = 1.0;
 	}
 	#endif
 
