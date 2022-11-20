@@ -93,7 +93,7 @@ void main() {
 		 albedo.rgb = mix(albedo.rgb, entityColor.rgb, entityColor.a);
 
 	float lightningBolt = float(entityId == 0);
-	//float nametagText = float(length(entityColor.rgb) > 0.0);
+	//float nametagText = float(normal == vec3(0.0));
 	float emission = 0.0;
 
 	if (lightningBolt > 0.5) {
@@ -126,9 +126,8 @@ void main() {
 		gl_FragData[1].ba = vec2(emission * 0.1, emission);
 		#endif
 	#else
-		/* DRAWBUFFERS:062 */
-		gl_FragData[1] = vec4(albedo.rgb, 1.0);
-		gl_FragData[2] = vec4(EncodeNormal(normal), emission * 0.1, 1.0);
+		/* DRAWBUFFERS:02 */
+		gl_FragData[1] = vec4(EncodeNormal(normal), emission * 0.1, 1.0);
 	#endif
 }
 

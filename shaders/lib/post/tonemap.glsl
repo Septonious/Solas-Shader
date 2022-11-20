@@ -1,6 +1,6 @@
 void BSLTonemap(inout vec3 color) {
-	color = color * exp2(2.0 + EXPOSURE);
-	color = color / pow(pow(color, vec3(TONEMAP_WHITE_CURVE)) + 1.0, vec3(1.0 / TONEMAP_WHITE_CURVE));
+	color *= exp2(2.0 + EXPOSURE);
+	color /= pow(pow(color, vec3(TONEMAP_WHITE_CURVE)) + 1.0, vec3(1.0 / TONEMAP_WHITE_CURVE));
 	color = pow(color, mix(vec3(TONEMAP_LOWER_CURVE), vec3(TONEMAP_UPPER_CURVE), sqrt(color)));
 }
 

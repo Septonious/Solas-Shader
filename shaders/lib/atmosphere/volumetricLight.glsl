@@ -10,17 +10,13 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
 
 	vec3 nViewPos = normalize(viewPos.xyz);
 
-	float VoU = max(dot(nViewPos, upVec), 0.0);
-	float nVoU = pow2(1.0 - VoU);
+	float VoU = 1.0 - max(dot(nViewPos, upVec), 0.0);
 
 	vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.0);
-	float VoL = clamp(dot(nViewPos, lightVec), 0.0, 1.0);
-	float sun = clamp(VoL * 0.5 + 0.5, 0.0, 1.0);
-		  sun = (0.01 / (1.0 - 0.99 * sun) - 0.01) * 2.0;
-		  sun = sqrt(sun);
-	float nVoL = mix(0.5 + sun * 2.5, sun * (2.0 - eBS), timeBrightness);
-
-	float visibility = float(z0 > 0.56) * mix(nVoU * nVoL, 2.0 + nVoL * 2.0, float(sign(isEyeInWater))) * 0.02 * VL_OPACITY;
+	float VoL = dot(nViewPos, lightVec);
+	float sunFactor = exp(VoL * 2.0) * 0.5;
+	float nVoL = mix((0.75 + sunFactor) * 0.75, sunFactor * (1.5 - eBS), timeBrightness);
+	float visibility = float(z0 > 0.56) * mix(VoU * nVoL, 1.0 + nVoL, float(sign(isEyeInWater))) * 0.02 * VL_OPACITY;
 
 	#if MC_VERSION >= 11900
 	visibility *= 1.0 - darknessFactor;
@@ -35,11 +31,11 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
 		float linearDepth0 = getLinearDepth(z0);
 		float linearDepth1 = getLinearDepth(z1);
 
-		float distanceFactor = mix(8.0, 3.0, float(sign(isEyeInWater)));
+		float distanceFactor = mix(7.0 + eBS * 2.0, 2.0, float(sign(isEyeInWater)));
 
 		//Ray marching and main calculations
 		for (int i = 0; i < VL_SAMPLES; i++) {
-			float currentDepth = pow(i + dither + 0.25, 1.5) * distanceFactor;
+			float currentDepth = pow(i + dither + eBS * 0.75, 1.5) * distanceFactor;
 
 			if (linearDepth1 < currentDepth || (linearDepth0 < currentDepth && translucent.rgb == vec3(0.0))) {
 				break;
@@ -49,7 +45,7 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
 
 			float lWorldPos = length(worldPos);
 
-			if (nVoU == 0.0 || lWorldPos > far) break;
+			if (lWorldPos > far) break;
 
 			vec3 shadowPos = calculateShadowPos(worldPos);
 			shadowPos.z += 0.0512 / shadowMapResolution;

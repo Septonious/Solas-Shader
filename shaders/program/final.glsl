@@ -15,7 +15,7 @@ const int colortex1Format = RGB8; //translucent
 const int colortex2Format = RGBA16; //normals, emissives, specular
 const int colortex4Format = RGBA8; //ao
 const int colortex5Format = RGBA16; //temporal data
-const int colortex6Format = RGBA8; //reflection color
+const int colortex6Format = RGBA16; //reflection color
 const int colortex7Format = RGB16; //bloom color, used for bloom based colored lighting :tm: :tatsu_approves:
 */
 

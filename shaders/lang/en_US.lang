@@ -15,11 +15,11 @@ option.VC=Volumetric Clouds
 option.BLOCKY_CLOUDS=Blocky Clouds
 option.VC_DISTANT_FADE=Clouds Distant Fade
 option.VC_AMOUNT=Amount
-value.VC_AMOUNT.0.60=Very Low
-value.VC_AMOUNT.0.65=Low
-value.VC_AMOUNT.0.70=Medium
-value.VC_AMOUNT.0.75=High
-value.VC_AMOUNT.0.80=Very High
+value.VC_AMOUNT.1.00=Very Low
+value.VC_AMOUNT.0.75=Low
+value.VC_AMOUNT.0.50=Medium
+value.VC_AMOUNT.0.25=High
+value.VC_AMOUNT.0.00=Very High
 option.VC_HEIGHT=Height
 option.VC_STRETCHING=Stretching
 option.VC_SAMPLES=Samples
@@ -76,7 +76,6 @@ option.WATER_CAUSTICS_STRENGTH=Water Caustics Strength
 option.WATER_NORMALS=Water Normals (Waves)
 option.WATER_NORMAL_BUMP=Water Normal Bump
 option.WATER_NORMAL_OFFSET=Water Normal Offset
-option.WATER_NORMAL_VISIBILITY=Water Normal Visibility
 
 
 #LIGHTING

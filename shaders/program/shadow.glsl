@@ -87,9 +87,7 @@ uniform mat4 shadowProjection, shadowProjectionInverse;
 uniform mat4 shadowModelView, shadowModelViewInverse;
 
 //Attributes//
-#ifdef WATER_CAUSTICS
 attribute vec4 mc_Entity;
-#endif
 
 #ifdef WAVING_BLOCKS
 attribute vec4 mc_midTexCoord;

@@ -11,11 +11,11 @@ option.VC=体积云
 option.BLOCKY_CLOUDS=方块云
 option.VC_DISTANT_FADE=体积云远距离淡化
 option.VC_AMOUNT=数量
-value.VC_AMOUNT.0.60=很少
-value.VC_AMOUNT.0.65=少
-value.VC_AMOUNT.0.70=适量
-value.VC_AMOUNT.0.75=多
-value.VC_AMOUNT.0.80=非常多
+value.VC_AMOUNT.1.00=很少
+value.VC_AMOUNT.0.75=少
+value.VC_AMOUNT.0.50=适量
+value.VC_AMOUNT.0.25=多
+value.VC_AMOUNT.0.00=非常多
 option.VC_HEIGHT=高度
 option.VC_STRETCHING=延展程度
 option.VC_SAMPLES=采样值
@@ -72,7 +72,6 @@ option.WATER_CAUSTICS_STRENGTH=水焦散强度
 option.WATER_NORMALS=水面法线
 option.WATER_NORMAL_BUMP=水面法线凹凸
 option.WATER_NORMAL_OFFSET=水体法线偏移
-option.WATER_NORMAL_VISIBILITY=水体法线可见性
 
 
 #LIGHTING

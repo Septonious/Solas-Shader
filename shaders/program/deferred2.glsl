@@ -50,7 +50,7 @@ uniform vec3 skyColor;
 uniform vec3 cameraPosition;
 
 uniform sampler2D colortex0;
-uniform sampler2D depthtex0;
+uniform sampler2D depthtex1;
 
 #if defined END_NEBULA || defined AURORA || defined VC
 uniform sampler2D noisetex;
@@ -63,7 +63,6 @@ uniform sampler2D depthtex2;
 uniform sampler2D colortex2;
 
 #ifdef VC
-uniform sampler2D depthtex1;
 uniform sampler2D shadowcolor1;
 uniform sampler2DShadow shadowtex0, shadowtex1;
 
@@ -111,8 +110,8 @@ void main() {
 	vec4 colortex2Data = texture2D(colortex2, texCoord);
 
 	float cloudDepth = 0.0;
-	float z0 = texture2D(depthtex0, texCoord).r;
-	vec3 viewPos = ToView(vec3(texCoord, z0));
+	float z1 = texture2D(depthtex1, texCoord).r;
+	vec3 viewPos = ToView(vec3(texCoord, z1));
 	vec3 worldPos = ToWorld(viewPos);
 
 	#if defined OVERWORLD
@@ -136,7 +135,19 @@ void main() {
 	float VoM = clamp(dot(nViewPos, -sunVec), 0.0, 1.0);
 	#endif
 
-	if (z0 == 1.0) { //Sky rendering
+	#ifdef VC
+	vec4 vc = vec4(0.0);
+
+	float blueNoiseDither = getBlueNoise(gl_FragCoord.xy);
+
+	#ifdef TAA
+	blueNoiseDither = fract(blueNoiseDither + frameTimeCounter * 16.0);
+	#endif
+
+	computeVolumetricClouds(vc, atmosphereColor, z1, blueNoiseDither, cloudDepth);
+	#endif
+
+	if (z1 == 1.0) { //Sky rendering
 		#ifdef OVERWORLD
 		if (caveFactor != 0.0 && VoU > 0.0) {
 			VoU = pow2(VoU);
@@ -158,7 +169,7 @@ void main() {
 			#endif
 		}
 
-		getSunMoon(skyColor, nViewPos, lightSun, lightNight, VoS, VoM, caveFactor, sunMoon);
+		getSunMoon(skyColor, nViewPos, lightSun * (1.0 - cloudDepth), lightNight * (1.0 - cloudDepth), VoS, VoM, caveFactor, sunMoon);
 		#endif
 
 		#ifdef END
@@ -189,15 +200,9 @@ void main() {
 	} else {
 		Fog(color, viewPos, worldPos, skyColor);
 	}
-	
+
 	#ifdef VC
-	float blueNoiseDither = getBlueNoise(gl_FragCoord.xy);
-
-	#ifdef TAA
-	blueNoiseDither = fract(blueNoiseDither + frameTimeCounter * 16.0);
-	#endif
-
-	computeVolumetricClouds(color, atmosphereColor, blueNoiseDither, cloudDepth);
+	color = mix(color, pow(vc.rgb, vec3(1.0 / 2.2)), vc.a * vc.a * mix(VC_OPACITY, 0.4, rainStrength));
 	#endif
 
 	#ifdef INTEGRATED_SPECULAR
@@ -219,7 +224,7 @@ void main() {
 
 	#ifdef INTEGRATED_SPECULAR
 	/* DRAWBUFFERS:0426 */
-	gl_FragData[3] = vec4(reflectionColor, float(z0 < 1.0));
+	gl_FragData[3] = vec4(reflectionColor, float(z1 < 1.0));
 	#endif
 }
 

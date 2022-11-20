@@ -2,8 +2,8 @@ float pixelWidth = 1.0 / viewWidth;
 float pixelHeight = 1.0 / viewHeight;
 
 vec3 getBloomTile(float lod, vec2 bloomCoord, vec2 offset, vec2 bloomDither) {
+	const float resScale = 1.25;
 	float scale = exp2(lod);
-	float resScale = 1.25 * min(360.0, viewHeight) / viewHeight;
 	
 	vec2 centerOffset = vec2(0.125 * pixelWidth, 0.25 * pixelHeight);
 	vec3 bloom = getDiskBlur4(colortex1, (bloomCoord / scale + offset) * resScale + centerOffset + bloomDither, 1.0).rgb;

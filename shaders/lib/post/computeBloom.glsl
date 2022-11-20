@@ -1,4 +1,4 @@
-float pixelHeight = 0.8 / min(360.0, viewHeight);
+float pixelHeight = 0.8 / viewHeight;
 float pixelWidth = pixelHeight / aspectRatio;
 
 const float weight[6] = float[6](0.0556, 0.1667, 0.2777, 0.2777, 0.1667, 0.0556);
@@ -25,7 +25,7 @@ vec3 getBloomTile(float lod, vec2 coord, vec2 offset) {
 }
 
 vec3 getBlur(vec2 texCoord) {
-	vec2 bloomCoord = texCoord * viewHeight * 0.8 / min(360.0, viewHeight);
+	vec2 bloomCoord = texCoord * viewHeight * 0.8 / viewHeight;
 	vec3 blur =  getBloomTile(1.0 + BLOOM_TILE_SIZE, bloomCoord, vec2(0.0   , 0.0 ));
 	     blur += getBloomTile(2.0 + BLOOM_TILE_SIZE, bloomCoord, vec2(0.51  , 0.0 ));
 	     blur += getBloomTile(3.0 + BLOOM_TILE_SIZE, bloomCoord, vec2(0.51  , 0.26));

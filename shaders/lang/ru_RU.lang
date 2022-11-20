@@ -15,11 +15,11 @@ option.VC=Объёмные Облака
 option.BLOCKY_CLOUDS=Квадратные Облака
 option.VC_DISTANT_FADE=Облачный Дальний Туман
 option.VC_AMOUNT=Количество Облаков
-value.VC_AMOUNT.0.60=Очень Низкое
-value.VC_AMOUNT.0.65=Низкое
-value.VC_AMOUNT.0.70=Среднее
-value.VC_AMOUNT.0.75=Большое
-value.VC_AMOUNT.0.80=Очень Большое
+value.VC_AMOUNT.1.00=Очень Низкое
+value.VC_AMOUNT.0.75=Низкое
+value.VC_AMOUNT.0.50=Среднее
+value.VC_AMOUNT.0.25=Большое
+value.VC_AMOUNT.0.00=Очень Большое
 option.VC_HEIGHT=Высота
 option.VC_STRETCHING=Толщина
 option.VC_SAMPLES=Качество
@@ -74,7 +74,6 @@ option.WATER_CAUSTICS_STRENGTH=Видимость Каустиков
 option.WATER_NORMALS=Волны
 option.WATER_NORMAL_BUMP=Амплитуда Волн
 option.WATER_NORMAL_OFFSET=Смещение Волн
-option.WATER_NORMAL_VISIBILITY=Видимость Волн
 
 
 #LIGHTING

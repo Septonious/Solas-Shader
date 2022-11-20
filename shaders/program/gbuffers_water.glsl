@@ -183,9 +183,9 @@ void main() {
 
 	float water = float(mat > 0.9 && mat < 1.1);
 	float portal = float(mat > 1.9 && mat < 2.1);
-	float emission = portal * pow6(clamp(length(albedo.rgb), 0.0, 1.0)) * 2.0;
+	float emission = portal * 3.0;
 
-	albedo.a *= 1.0 - portal * 0.25;
+	albedo.a *= 1.0 - portal * 0.5;
 
 	#ifndef VANILLA_WATER
 	if (water > 0.9) {
@@ -250,7 +250,7 @@ void main() {
 
 		#ifdef INTEGRATED_SPECULAR
 		if (portal < 0.5 && albedo.a < 0.95) {
-			float fresnel1 = pow2(clamp(1.0 + dot(newNormal, normalize(viewPos)), 0.0, 1.0)) * (1.0 - float(isEyeInWater == 1) * 0.75);
+			float fresnel1 = pow2(clamp(1.0 + dot(newNormal, normalize(viewPos)), 0.0, 1.0)) * (1.0 - float(isEyeInWater == 1) * 0.75) * (0.3 + water * 0.7);
 
 			getReflection(albedo, viewPos, newNormal, fresnel1, lightmap.y, emission);
 		}
@@ -298,17 +298,43 @@ uniform int framemod8;
 uniform float viewWidth, viewHeight;
 #endif
 
+#ifdef WAVING_WATER
+uniform float frameTimeCounter;
+#endif
+
 #if defined OVERWORLD || defined END
 uniform float timeAngle;
 #endif
 
-uniform mat4 gbufferModelView;
+#ifdef WAVING_WATER
+uniform vec3 cameraPosition;
+#endif
+
+uniform mat4 gbufferModelView, gbufferModelViewInverse;
 
 //Attributes//
 attribute vec4 mc_Entity;
 
 #ifdef WATER_NORMALS
 attribute vec4 at_tangent;
+#endif
+
+#ifdef WAVING_WATER
+attribute vec4 mc_midTexCoord;
+#endif
+
+//Common Functions//
+#ifdef WAVING_WATER
+float getWavingWater(vec3 worldPos) {
+	float fractY = fract(worldPos.y + cameraPosition.y + 0.005);
+		
+	float wave = sin(TAU * (frameTimeCounter * 0.7 + worldPos.x * 0.16 + worldPos.z * 0.08)) +
+				 sin(TAU * (frameTimeCounter * 0.5 + worldPos.x * 0.1 + worldPos.z * 0.2));
+
+	if (fractY > 0.01) return wave * 0.025;
+	
+	return 0.0;
+}
 #endif
 
 //Includes//
@@ -362,7 +388,14 @@ void main() {
 	//Color & Position
     color = gl_Color;
 
-	gl_Position = ftransform();
+	vec4 position = gbufferModelViewInverse * gl_ModelViewMatrix * gl_Vertex;
+	
+	#ifdef WAVING_WATER
+	float istopv = gl_MultiTexCoord0.t < mc_midTexCoord.t ? 1.0 : 0.0;
+	if (mc_Entity.x == 1) position.y += getWavingWater(position.xyz) * lightMapCoord.y;
+	#endif
+
+	gl_Position = gl_ProjectionMatrix * gbufferModelView * position;
 
 	#ifdef TAA
 	gl_Position.xy = TAAJitter(gl_Position.xy, gl_Position.w);

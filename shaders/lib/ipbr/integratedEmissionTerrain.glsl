@@ -49,7 +49,7 @@ void getIntegratedEmission(inout vec4 albedo, in vec3 viewPos, in vec3 worldPos,
 	} else if (mat > 105.9 && mat < 106.1) { // Warped Nylium
 		emission = float(albedo.g > albedo.b && albedo.g > albedo.r) * pow3(float(albedo.g - albedo.b));
 	} else if (mat > 107.9 && mat < 108.1) { // Amethyst
-		emission = pow5(lAlbedo) * 0.5;
+		emission = pow6(lAlbedo);
 	} else if (mat > 109.9 && mat < 110.1) { // Glow Lichen
 		emission = (0.005 + pow16(lAlbedo)) * (1.0 - lightmap.y * 0.5) * 2.0;
 	} else if (mat > 110.9 && mat < 111.1) { // Redstone Things
@@ -59,14 +59,14 @@ void getIntegratedEmission(inout vec4 albedo, in vec3 viewPos, in vec3 worldPos,
 	} else if (mat > 112.9 && mat < 113.1) { // Brewing Stand
 		emission = float(albedo.r > 0.5 && albedo.b < 0.4);
 	} else if (mat > 113.9 && mat < 114.1) { // Glow berries
-		emission = float(albedo.r > 0.5) * 0.5;
+		emission = float(albedo.r > 0.5) * 0.75;
 		albedo.rgb *= 1.0 + float(albedo.r > 0.5);
 	} else if (mat > 114.9 && mat < 115.1) { // Torch & Shroomlight
-		emission = 0.15 + float(lAlbedo > 0.99) * 0.5;
+		emission = 0.15 + float(lAlbedo > 0.99);
 	} else if (mat > 115.9 && mat < 116.1) { // Furnaces
 		emission = float(albedo.r > 0.8 || (albedo.r > 0.6 && albedo.b < 0.5));
 	} else if (mat > 116.9 && mat < 117.1) { // Chorus
-		emission = float(albedo.g > 0.55) * 0.5;
+		emission = float(albedo.g > 0.55);
 	} else if (mat > 117.9 && mat < 118.1) { // Enchanting Table
 		emission = float(lAlbedo > 0.75);
 	} else if (mat > 118.9 && mat < 119.1) { // Soul Campfire
@@ -97,7 +97,7 @@ void getIntegratedEmission(inout vec4 albedo, in vec3 viewPos, in vec3 worldPos,
 	} else if (mat > 129.9 && mat < 130.1) { // Powered Rail
 		emission = float(albedo.r > 0.5 && albedo.g < 0.25) * 0.125;
 	} else if (mat > 130.9 && mat < 131.1) { // Fire
-		emission = 0.5;
+		emission = 0.75;
 	} else if (mat > 131.9 && mat < 132.1) { // Normal Lantern
 		emission = float(albedo.r > 0.6);
 	}
@@ -119,9 +119,9 @@ void getIntegratedEmission(inout vec4 albedo, in vec3 viewPos, in vec3 worldPos,
 	#endif
 
 	#if defined OVERWORLD && defined EMISSIVE_FLOWERS
-	if (isPlant > 0.9 && isPlant < 1.1){ // Flowers
+	if (isPlant > 0.9 && isPlant < 1.1 || mat > 132.9 && mat < 133.1){ // Flowers
 		if (albedo.b > albedo.g || albedo.r > albedo.g) {
-			emission = 0.2 * lAlbedo * (1.0 - rainStrength);
+			emission = 0.5 * lAlbedo * (1.0 - rainStrength);
 			emission *= 2.0 - clamp(length(viewPos) * 0.2, 0.0, 1.0);
 			emission *= 0.5 + clamp(sin(frameTimeCounter) * cos(frameTimeCounter * 0.5), 0.0, 0.5);
 		}

@@ -11,11 +11,11 @@ option.VC=Nubes Volumétricas
 option.BLOCKY_CLOUDS=Nubes Cúbicas
 option.VC_DISTANT_FADE=Desvanecimiento Distante de las Nubes
 option.VC_AMOUNT=Cantidad
-value.VC_AMOUNT.0.60=Muy Baja
-value.VC_AMOUNT.0.65=Baja
-value.VC_AMOUNT.0.70=Media
-value.VC_AMOUNT.0.75=Alta
-value.VC_AMOUNT.0.80=Muy Alta
+value.VC_AMOUNT.1.00=Muy Baja
+value.VC_AMOUNT.0.75=Baja
+value.VC_AMOUNT.0.50=Media
+value.VC_AMOUNT.0.25=Alta
+value.VC_AMOUNT.0.00=Muy Alta
 option.VC_HEIGHT=Altura
 option.VC_STRETCHING=Estirar
 option.VC_SAMPLES=Pasadas
@@ -72,7 +72,6 @@ option.WATER_CAUSTICS_STRENGTH=Intensidad de los Cáusticos del Agua
 option.WATER_NORMALS=Normales del Agua (Olas)
 option.WATER_NORMAL_BUMP=Bump en los Normales del Agua
 option.WATER_NORMAL_OFFSET=Offset de los Normales del Agua
-option.WATER_NORMAL_VISIBILITY=Visiblidad de los Normales del Agua
 
 
 #LIGHTING
