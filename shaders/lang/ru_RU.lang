@@ -75,6 +75,8 @@ option.WATER_NORMALS=Волны
 option.WATER_NORMAL_BUMP=Амплитуда Волн
 option.WATER_NORMAL_OFFSET=Смещение Волн
 
+option.WATER_REFRACTION=Преломление Света Водой
+option.WATER_REFRACTION_STRENGTH=Сила Преломления
 
 #LIGHTING
 

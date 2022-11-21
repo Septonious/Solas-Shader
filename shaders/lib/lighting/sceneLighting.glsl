@@ -56,8 +56,6 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
 	}
     #endif
 
-    lightmap.y = sqrt(lightmap.y);
-
     float lViewPos = length(viewPos);
     float ao = clamp(pow2(color.a), 0.0, 1.0);
 
@@ -72,9 +70,9 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     vec3 blockLighting = vec3(0.0);
 
     #ifdef SHIMMER_MOD_SUPPORT
-    float blockLightMap = min(pow4(lightmap.x) * 2.0 + pow2(lightmap.x) * 0.125, 1.0) * (1.0 - emission);
+    float blockLightMap = min(pow4(lightmap.x) * 2.0 + pow2(lightmap.x) * 0.125, 1.0) * float(emission == 0.0);
     #else
-    float blockLightMap = min(pow8(lightmap.x) + pow4(lightmap.x) * 0.5, 1.0) * (1.0 - emission);
+    float blockLightMap = min(pow8(lightmap.x) + pow4(lightmap.x) * 0.5, 1.0) * float(emission == 0.0);
     #endif
 
 	#ifdef DYNAMIC_HANDLIGHT
@@ -91,12 +89,11 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     #if defined SHIMMER_MOD_SUPPORT
     //COLORED LIGHTING USING SHIMMER MOD
     vec3 coloredLight = getColoredLighting(worldPos, blockLightMap) * BLOCKLIGHT_I;
-    blockLighting = blockLightCol * blockLightMap + coloredLight * (1.0 - emission);
+    blockLighting = blockLightCol * blockLightMap + coloredLight * float(emission == 0.0);
     #elif defined BLOOM_COLORED_LIGHTING
     //BLOOM BASED COLORED LIGHTING
     blockLighting = blockLightCol * blockLightMap;
-
-    computeBCL(blockLighting, bloom, directionalBloom, lViewPos, lightmap.x, lightmap.y);
+    if (emission == 0.0) computeBCL(blockLighting, bloom, directionalBloom, lViewPos, lightmap.x, lightmap.y);
     #else
     blockLighting = blockLightCol * blockLightMap;
     #endif

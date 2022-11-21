@@ -74,7 +74,7 @@ void getIntegratedEmission(inout vec4 albedo, in vec3 viewPos, in vec3 worldPos,
 	} else if (mat > 119.9 && mat < 120.1) { // Normal Campfire && Magma Block
 		emission = float(albedo.r > 0.65 && albedo.b < 0.35) * 2.0;
 	} else if (mat > 120.9 && mat < 121.9) { // Redstone Block && Lava
-		emission = 0.2 + pow2(lAlbedo) * 0.8;
+		emission = 0.25 + lAlbedo * 1.75;
 	} else if (mat > 121.9 && mat < 122.1) { // Froglights
 		emission = (1.0 - clamp(length(pow4(albedo.rgb)), 0.0, 0.99)) * 16.0;
 		albedo.rgb = pow3(albedo.rgb);

@@ -29,7 +29,7 @@ float getCloudNoise(vec3 rayPos, float cloudLayer) {
 	float noise = texture3DNoise(floor(rayPos * 0.25)) * 100.0;
 	#endif
 
-	return clamp(noise - VC_AMOUNT - 6.0 - cloudLayer, 0.0, 1.0);
+	return clamp(noise - VC_AMOUNT - 6.0 - cloudLayer * 1.5 + rainStrength, 0.0, 1.0);
 }
 
 void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, in float z1, in float dither, inout float cloudDepth) {

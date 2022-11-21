@@ -77,6 +77,8 @@ option.WATER_NORMALS=Water Normals (Waves)
 option.WATER_NORMAL_BUMP=Water Normal Bump
 option.WATER_NORMAL_OFFSET=Water Normal Offset
 
+option.WATER_REFRACTION=Water Light Refraction
+option.WATER_REFRACTION_STRENGTH=Refraction Strength
 
 #LIGHTING
 

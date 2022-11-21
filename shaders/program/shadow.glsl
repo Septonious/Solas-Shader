@@ -21,6 +21,8 @@ in vec4 color;
 #ifdef WATER_CAUSTICS
 uniform float frameTimeCounter;
 
+uniform ivec2 eyeBrightnessSmooth;
+
 uniform vec3 fogColor;
 uniform vec3 cameraPosition;
 
@@ -32,6 +34,11 @@ uniform sampler2D shadowcolor1;
 #endif
 
 uniform sampler2D tex;
+
+//Common Variables//
+#ifdef WATER_CAUSTICS
+float eBS = eyeBrightnessSmooth.y / 240.0;
+#endif
 
 //Includes//
 #ifdef WATER_CAUSTICS
@@ -50,7 +57,7 @@ void main() {
 
 	if (water > 0.9){
 		float caustics = getCaustics(worldPos + cameraPosition);
-		albedo.rgb = mix(vec3(0.25), waterColorSqrt * 0.5, 0.5) * caustics * WATER_CAUSTICS_STRENGTH;
+		albedo.rgb = mix(vec3(0.5), waterColor, 0.5) * (0.5 * eBS + caustics) * WATER_CAUSTICS_STRENGTH;
 	}
 	#endif
 	#endif

@@ -76,7 +76,7 @@ void main() {
 	computeVolumetricLight(vl, translucent, blueNoiseDither);
 	#endif
 
-	/* DRAWBUFFERS:01 */
+	/* DRAWBUFFERS:07 */
 	gl_FragData[0].rgb = color;
 	gl_FragData[1].rgb = sqrt(vl);
 }

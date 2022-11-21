@@ -22,9 +22,8 @@ void main() {
 		albedo.rgb *= vec3(1.0) + lightMapCoord.x * blockLightCol;
 	}
 
-    /* DRAWBUFFERS:01 */
+    /* DRAWBUFFERS:0 */
     gl_FragData[0] = albedo * 0.75;
-	gl_FragData[1] = vec4(0.0, 0.0, 0.0, 1.0);
 }
 
 #endif

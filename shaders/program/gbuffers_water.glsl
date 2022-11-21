@@ -243,8 +243,8 @@ void main() {
 			vec3 oViewPos = ToNDC(oScreenPos);
 
 			vec4 waterFog = getWaterFog(viewPos.xyz - oViewPos);
-			albedo.rgb = mix(albedo.rgb, waterFog.rgb * 6.0 * lightmap.y * (1.0 - rainStrength), waterFog.a);
-			albedo.a = mix(0.25, albedo.a, waterFog.a);
+			albedo.rgb = mix(albedo.rgb, waterFog.rgb * 4.0 * lightmap.y * (1.0 - rainStrength), waterFog.a);
+			albedo.a = mix(albedo.a * 0.5, albedo.a, waterFog.a);
 		}
 		#endif
 
@@ -259,13 +259,14 @@ void main() {
 		Fog(albedo.rgb, viewPos, worldPos, skyColor);
 	}
 
-	/* DRAWBUFFERS:01 */
+	/* DRAWBUFFERS:014 */
 	gl_FragData[0] = albedo;
-	gl_FragData[1] = vec4(0.0, 0.0, 0.0, 1.0);
+	gl_FragData[1] = albedo;
+	gl_FragData[2] = vec4(1.0);
 
 	#ifdef BLOOM
-	/* DRAWBUFFERS:012 */
-	gl_FragData[2].ba = vec2(emission * 0.1, emission);
+	/* DRAWBUFFERS:0142 */
+	gl_FragData[3].ba = vec2(emission * 0.1, emission);
 	#endif
 }
 

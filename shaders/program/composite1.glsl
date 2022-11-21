@@ -22,7 +22,7 @@ uniform float viewHeight, viewWidth;
 #endif
 
 #ifdef VL
-uniform sampler2D colortex1;
+uniform sampler2D colortex7;
 #endif
 
 uniform sampler2D colortex0;
@@ -42,7 +42,7 @@ vec2 viewResolution = vec2(viewWidth, viewHeight);
 
 //Optifine Constants//
 #ifdef VL
-const bool colortex1MipmapEnabled = true;
+const bool colortex7MipmapEnabled = true;
 #endif
 
 //Includes//
@@ -63,7 +63,7 @@ void main() {
 	vec3 color = texture2D(colortex0, texCoord).rgb;
 
 	#ifdef VL
-	vec3 vl = getDiskBlur8(colortex1, texCoord, 1.5).rgb;
+	vec3 vl = getDiskBlur8(colortex7, texCoord, 1.5).rgb;
 	color += vl * vl;
 	#endif
 

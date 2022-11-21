@@ -87,9 +87,8 @@ void main() {
 		getSceneLighting(albedo.rgb, screenPos, viewPos, worldPos, normal, lightmap, 0.0, 0.0, 0.0, 0.0);
 	}
 
-	/* DRAWBUFFERS:01 */
+	/* DRAWBUFFERS:0 */
 	gl_FragData[0] = albedo;
-	gl_FragData[1] = vec4(0.0, 0.0, 0.0, 1.0);
 }
 
 #endif
