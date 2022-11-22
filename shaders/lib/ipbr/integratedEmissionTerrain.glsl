@@ -20,10 +20,10 @@ void getIntegratedEmission(inout vec4 albedo, in vec3 viewPos, in vec3 worldPos,
 
 	#ifdef EMISSIVE_ORES
     if (mat > 99.9 && mat < 100.1) { // Glowing Ores
-		if (albedo.r > albedo.g && albedo.r > albedo.b) emission = albedo.r;
-		else if (albedo.g > albedo.r && albedo.g > albedo.b) emission = albedo.g;
+		if (albedo.r * albedo.r > albedo.g && albedo.r * albedo.r > albedo.b) emission = albedo.r;
+		else if (albedo.g * albedo.g > albedo.r && albedo.g * albedo.g > albedo.b) emission = albedo.g;
 		else if (albedo.b > albedo.r && albedo.b > albedo.g) emission = albedo.b;
-		emission = max(emission - 0.2, 0.0) * 2.0;
+		emission = max(emission - 0.2, 0.0) * 3.0;
     } 
 	#endif
 
