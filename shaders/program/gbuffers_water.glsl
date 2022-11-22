@@ -326,13 +326,13 @@ attribute vec4 mc_midTexCoord;
 
 //Common Functions//
 #ifdef WAVING_WATER
-float getWavingWater(vec3 worldPos) {
+float getWavingWater(vec3 worldPos, float skyLightMap) {
 	float fractY = fract(worldPos.y + cameraPosition.y + 0.005);
 		
 	float wave = sin(TAU * (frameTimeCounter * 0.7 + worldPos.x * 0.16 + worldPos.z * 0.08)) +
 				 sin(TAU * (frameTimeCounter * 0.5 + worldPos.x * 0.1 + worldPos.z * 0.2));
 
-	if (fractY > 0.01) return wave * 0.025;
+	if (fractY > 0.01) return wave * 0.075 * skyLightMap;
 	
 	return 0.0;
 }
@@ -393,7 +393,7 @@ void main() {
 	
 	#ifdef WAVING_WATER
 	float istopv = gl_MultiTexCoord0.t < mc_midTexCoord.t ? 1.0 : 0.0;
-	if (mc_Entity.x == 1) position.y += getWavingWater(position.xyz) * lightMapCoord.y;
+	if (mc_Entity.x == 1) position.y += getWavingWater(position.xyz, lightMapCoord.y);
 	#endif
 
 	gl_Position = gl_ProjectionMatrix * gbufferModelView * position;

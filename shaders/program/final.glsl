@@ -44,17 +44,17 @@ uniform float aspectRatio;
 
 //Program//
 void main() {
-	vec3 color = texture2D(colortex1, texCoord).rgb;
+	vec4 color = texture2D(colortex1, texCoord);
 
 	#if defined SHARPENING && MC_VERSION >= 11200
-	sharpenFilter(colortex1, color, texCoord);
+	sharpenFilter(colortex1, color.rgb, texCoord);
 	#endif
 
 	#ifdef CHROMATIC_ABERRATION
-	getChromaticAberration(color, texCoord);
+	getChromaticAberration(color.rgb, texCoord);
 	#endif
 
-	gl_FragColor.rgb = color;
+	gl_FragColor = color;
 }
 
 #endif

@@ -20,8 +20,10 @@ void getIntegratedEmission(inout vec4 albedo, in vec3 viewPos, in vec3 worldPos,
 
 	#ifdef EMISSIVE_ORES
     if (mat > 99.9 && mat < 100.1) { // Glowing Ores
-        emission = max(abs(albedo.r - albedo.g), max(abs(albedo.r - albedo.b), abs(albedo.g - albedo.b)));
-		emission = pow2(emission) * 2.0;
+		if (albedo.r > albedo.g && albedo.r > albedo.b) emission = albedo.r;
+		else if (albedo.g > albedo.r && albedo.g > albedo.b) emission = albedo.g;
+		else if (albedo.b > albedo.r && albedo.b > albedo.g) emission = albedo.b;
+		emission = max(emission - 0.2, 0.0) * 2.0;
     } 
 	#endif
 
@@ -51,7 +53,7 @@ void getIntegratedEmission(inout vec4 albedo, in vec3 viewPos, in vec3 worldPos,
 	} else if (mat > 107.9 && mat < 108.1) { // Amethyst
 		emission = pow6(lAlbedo);
 	} else if (mat > 109.9 && mat < 110.1) { // Glow Lichen
-		emission = (0.005 + pow16(lAlbedo)) * (1.0 - lightmap.y * 0.5) * 2.0;
+		emission = (0.025 + pow16(lAlbedo)) * (1.0 - lightmap.y * 0.5) * 4.0;
 	} else if (mat > 110.9 && mat < 111.1) { // Redstone Things
 		emission = float(albedo.r > 0.9) * 0.5;
 	} else if (mat > 111.9 && mat < 112.1) { // Soul Emissives
@@ -76,14 +78,14 @@ void getIntegratedEmission(inout vec4 albedo, in vec3 viewPos, in vec3 worldPos,
 	} else if (mat > 120.9 && mat < 121.9) { // Redstone Block && Lava
 		emission = 0.25 + lAlbedo * 1.75;
 	} else if (mat > 121.9 && mat < 122.1) { // Froglights
-		emission = (1.0 - clamp(length(pow4(albedo.rgb)), 0.0, 0.99)) * 16.0;
+		emission = 1.5 - lAlbedo;
 		albedo.rgb = pow3(albedo.rgb);
 	} else if (mat > 122.9 && mat < 123.1) { // Sculks
 		emission = float(lAlbedo > 0.05 && albedo.r < 0.25);
 	} else if (mat > 123.9 && mat < 124.1) { // Redstone Lamp, Glowstone
-		emission = 1.0 + pow24(lAlbedo);
+		emission = 1.0 + pow8(lAlbedo);
 	} else if (mat > 124.9 && mat < 125.1) { // Sea Lantern
-		emission = pow10(lAlbedo);
+		emission = 0.5 + pow10(lAlbedo);
 	} else if (mat > 125.9 && mat < 126.1) { // Nether Wart
 		emission = float(lAlbedo > 0.25) * 0.2 + float(lAlbedo > 0.75) * 0.2;
 	} else if (mat > 126.9 && mat < 127.1) { // End Portal Frame

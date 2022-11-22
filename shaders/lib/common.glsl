@@ -24,8 +24,8 @@ const float shadowOffset = 1.0 / shadowMapResolution;
 
 //Colored Lighting//
 #define BLOOM_COLORED_LIGHTING
-#define COLORED_LIGHTING_STRENGTH 1.50 //[1.00 1.25 1.50 1.75 2.00]
-#define COLORED_LIGHTING_RADIUS -0.45 //[-0.50 -0.45 -0.40 -0.35 -0.30 -0.25 -0.20 -0.15 -0.10]
+#define COLORED_LIGHTING_STRENGTH 2.50 //[1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00]
+#define COLORED_LIGHTING_RADIUS -0.20 //[-0.50 -0.45 -0.40 -0.35 -0.30 -0.25 -0.20 -0.15 -0.10]
 //#define SHIMMER_MOD_SUPPORT
 
 //Integrated PBR//
@@ -51,8 +51,8 @@ const float shadowOffset = 1.0 / shadowMapResolution;
 
 //Bloom//
 #define BLOOM
-#define BLOOM_STRENGTH 2.25 //[1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00]
-#define BLOOM_CONTRAST 8 //[-4 -3 -2 -1 0 1 2 3 4 5 6 7 8]
+#define BLOOM_STRENGTH 2.00 //[1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00]
+#define BLOOM_CONTRAST 4 //[-4 -3 -2 -1 0 1 2 3 4 5 6]
 #define BLOOM_RADIUS 5 //[1 2 3 4 5]
 #define BLOOM_TILE_SIZE 0.0 //[0.0 0.5 1.0 1.5 2.0]
 

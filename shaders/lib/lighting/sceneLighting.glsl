@@ -34,10 +34,10 @@ vec3 getHandLightColor(float handlight) {
 
 #ifdef BLOOM_COLORED_LIGHTING
 void computeBCL(inout vec3 blockLighting, in vec3 bloom, in float directionalBloom, in float lViewPos, in float blockLightMap, in float skyLightMap) {
-    float bloomLightMap = pow2(blockLightMap) + blockLightMap * 0.5;
+    float bloomLightMap = pow2(blockLightMap) * 1.5 + blockLightMap * 0.5;
     float radius = mix(COLORED_LIGHTING_RADIUS - 0.1, COLORED_LIGHTING_RADIUS, skyLightMap);
 
-    bloomLightMap += mix((1.0 - clamp(lViewPos * 0.05, 0.0, 1.0)) * 0.5, 0.0, min(bloomLightMap, 1.0));
+    bloomLightMap += mix((1.0 - clamp(lViewPos * 0.05, 0.0, 1.0)) * 0.5, 0.0, min(bloomLightMap, 0.5));
 
 	vec3 coloredLight = clamp(0.0625 * bloom * pow(getLuminance(bloom), radius), 0.0, 1.0) * 16.0;
     
@@ -83,7 +83,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     #if defined BLOOM_COLORED_LIGHTING || defined GLOBAL_ILLUMINATION
     vec3 bloom = texture2D(gaux4, gl_FragCoord.xy / vec2(viewWidth, viewHeight)).rgb;
          bloom = pow4(bloom) * 128.0;
-    float directionalBloom = clamp(abs(dot(normalize(bloom), normal)), 0.0, 1.0);
+    float directionalBloom = clamp(abs(dot(normalize(bloom), normal)) + 0.25, 0.0, 1.0);
     #endif
 
     #if defined SHIMMER_MOD_SUPPORT
@@ -169,7 +169,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
 
             float viewLengthFactor = 1.0 - clamp(length(viewPos.xz) * 0.01, 0.0, 1.0);
 
-            shadow = computeShadow(shadowPos, offset, dither, lightmap.y, color.a, viewLengthFactor) * lightmap.y;
+            shadow = computeShadow(shadowPos, offset, dither, lightmap.y, ao, viewLengthFactor) * lightmap.y;
         }
     }
 

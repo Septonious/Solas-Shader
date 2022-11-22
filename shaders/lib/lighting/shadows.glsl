@@ -64,9 +64,6 @@ vec3 computeShadow(vec3 shadowPos, float offset, float dither, float skyLightMap
     findBlockerDistance(shadowPos, ditherRotMat, offset, skyLightMap, viewLengthFactor);
     #endif
 
-    // Fix light leaking in caves
-    if (skyLightMap < 0.2 && 1.0 - clamp(pow(ao, 1.5) * 2.0, 0.0, 1.0) > 0.0) return vec3(1.0 - clamp(pow(ao, 1.5) * 2.0, 0.0, 1.0));
-
     for (int i = 0; i < shadowFilterSamples; i++) {
         vec2 pixelOffset = ditherRotMat * shadowOffsets[i] * offset;
         shadow0 += texture2DShadow(shadowtex0, vec3(shadowPos.st + ditherRotMat * shadowOffsets[i] * offset, shadowPos.z));
@@ -84,6 +81,9 @@ vec3 computeShadow(vec3 shadowPos, float offset, float dither, float skyLightMap
         shadowCol /= shadowFilterSamples;
     }
     #endif
+
+    //Light leak fix
+    shadow0 = mix(shadow0, shadow0 * ao, (1.0 - ao));
 
     return clamp(shadowCol * (1.0 - shadow0) + shadow0, 0.0, 1.0);
 }

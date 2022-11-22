@@ -30,6 +30,7 @@ uniform vec3 fogColor;
 
 uniform sampler2D colortex0;
 
+/*
 #ifdef WATER_REFRACTION
 uniform float frameTimeCounter;
 
@@ -45,6 +46,7 @@ uniform sampler2D shadowcolor1;
 
 uniform mat4 gbufferModelViewInverse;
 #endif
+*/
 
 #if defined WATER_FOG || defined WATER_REFRACTION
 uniform sampler2D depthtex0;
@@ -62,10 +64,12 @@ float sunVisibility = clamp(dot(sunVec, upVec) + 0.025, 0.0, 0.1) * 10.0;
 #if defined WATER_FOG || defined WATER_REFRACTION
 #include "/lib/util/ToView.glsl"
 
+/*
 #ifdef WATER_REFRACTION
 #include "/lib/util/ToWorld.glsl"
 #include "/lib/water/waterRefraction.glsl"
 #endif
+*/
 
 #ifdef WATER_FOG
 #include "/lib/color/dimensionColor.glsl"
