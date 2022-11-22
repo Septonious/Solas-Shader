@@ -183,7 +183,7 @@ void main() {
 
 	float water = float(mat > 0.9 && mat < 1.1);
 	float portal = float(mat > 1.9 && mat < 2.1);
-	float emission = portal * 3.0;
+	float emission = portal * 4.0;
 
 	albedo.a *= 1.0 - portal * 0.5;
 

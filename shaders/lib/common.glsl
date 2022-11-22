@@ -9,7 +9,7 @@ const float shadowOffset = 1.0 / shadowMapResolution;
 
 #define SHADOW_COLOR
 #define VPS
-#define VPS_BLUR_STRENGTH 0.20 //[0.10 0.15 0.20 0.25 0.30]
+#define VPS_BLUR_STRENGTH 0.25 //[0.10 0.15 0.20 0.25 0.30]
 //#define ENTITY_SHADOWS
 
 //Ambient Occlusion//
@@ -25,7 +25,7 @@ const float shadowOffset = 1.0 / shadowMapResolution;
 //Colored Lighting//
 #define BLOOM_COLORED_LIGHTING
 #define COLORED_LIGHTING_STRENGTH 2.50 //[1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00]
-#define COLORED_LIGHTING_RADIUS -0.20 //[-0.50 -0.45 -0.40 -0.35 -0.30 -0.25 -0.20 -0.15 -0.10]
+#define COLORED_LIGHTING_RADIUS -0.25 //[-0.50 -0.45 -0.40 -0.35 -0.30 -0.25 -0.20 -0.15 -0.10]
 //#define SHIMMER_MOD_SUPPORT
 
 //Integrated PBR//
