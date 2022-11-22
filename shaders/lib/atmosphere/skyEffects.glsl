@@ -21,7 +21,7 @@ void getStars(inout vec3 color, in vec3 worldPos, in float VoU, in float nebulaF
 		star *= GetNoise(planeCoord.xy + 0.2);
 		star = max(star - (0.8 - nebulaFactor * 0.1), 0.0) * visibility;
 
-		color += star * star * lightNight * 64.0;
+		color += star * star * 64.0;
 	}
 }
 #endif
@@ -40,11 +40,12 @@ void getEndVortex(inout vec3 color, in vec3 worldPos, in float VoU, in float VoS
 		vec3 sunVec = mat3(gbufferModelViewInverse) * sunVec;
 		vec2 sunCoord = sunVec.xz / (sunVec.y + length(sunVec));
 		vec2 planeCoord = worldPos.xz / (worldPos.y + length(worldPos)) - sunCoord;
-
 		vec3 spiral = getSpiral(planeCoord, VoS);
+		
 		float spiralBrightness = length(spiral);
-		color = mix(color, spiral, pow2(spiralBrightness));
 		float hole = pow16(pow32(VoS));
+
+		color = mix(color, spiral * END_VORTEX_SIZE, pow3(spiralBrightness));
 		color *= float(length(hole) < 0.5);
 	}
 }

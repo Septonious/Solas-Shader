@@ -59,6 +59,13 @@ option.AURORA_COLD_BIOME_VISIBILITY.comment=Переключает видимо�
 option.AURORA_FULL_MOON_VISIBILITY=С.С. при полной луне
 option.AURORA_FULL_MOON_VISIBILITY.comment=Переключает видимость Северного Сияния только при полной луне
 
+screen.END_VORTEX=Настройки Чёрной Дыры
+
+option.END_VORTEX=Чёрная Дыра в Энде
+
+option.END_VORTEX_SIZE=Радиус
+option.END_VORTEX_WHIRL=Закручивание
+option.END_VORTEX_ARMS=Количество ветвей
 
 #WATER
 

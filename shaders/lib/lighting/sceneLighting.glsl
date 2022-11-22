@@ -169,7 +169,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
 
             float viewLengthFactor = 1.0 - clamp(length(viewPos.xz) * 0.01, 0.0, 1.0);
 
-            shadow = computeShadow(shadowPos, offset, dither, lightmap.y, ao, viewLengthFactor) * lightmap.y;
+            shadow = computeShadow(shadowPos, offset, dither, lightmap.y, ao, viewLengthFactor);
         }
     }
 
@@ -191,11 +191,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     #endif
 
     #ifdef END
-    #ifdef GLOBAL_ILLUMINATION
-    vec3 sceneLighting = mix(endAmbientCol * 0.25 * (vec3(1.0) + bloom), endLightCol * 0.25, fullShadow);
-    #else
     vec3 sceneLighting = mix(endAmbientCol * 0.25, endLightCol * 0.25, fullShadow);
-    #endif
     #endif
     #endif
 

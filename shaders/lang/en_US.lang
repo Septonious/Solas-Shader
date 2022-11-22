@@ -61,6 +61,14 @@ option.AURORA_COLD_BIOME_VISIBILITY.comment=Enables aurora only when player is i
 option.AURORA_FULL_MOON_VISIBILITY=Aurora Full Moon Visibility
 option.AURORA_FULL_MOON_VISIBILITY.comment=Enables aurora only when the Moon if full
 
+screen.END_VORTEX=Ender Vortex Config
+
+option.END_VORTEX=Ender Vortex
+option.END_VORTEX.comment=Toggles a black hole looking object in the End sky. Idk how to call it properly lol
+
+option.END_VORTEX_SIZE=Vortex Size
+option.END_VORTEX_WHIRL=Vortex Whirling
+option.END_VORTEX_ARMS=Vortex Arms Count
 
 #WATER
 
