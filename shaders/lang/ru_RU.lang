@@ -85,6 +85,8 @@ option.WATER_NORMAL_OFFSET=Смещение Волн
 option.WATER_REFRACTION=Преломление Света Водой
 option.WATER_REFRACTION_STRENGTH=Сила Преломления
 
+option.WAVING_WATER=3Д Волны на Воде
+
 #LIGHTING
 
 screen.LIGHTING=Освещение

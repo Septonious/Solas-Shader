@@ -21,10 +21,10 @@ float texture3DNoise(vec3 rayPos) {
 
 float getCloudNoise(vec3 rayPos, float cloudLayer) {
 	#ifndef BLOCKY_CLOUDS
-	float noise = texture3DNoise(rayPos * 0.25 - frameTimeCounter * 0.01) * 6.5;
-		  noise+= texture3DNoise(rayPos * 0.50 - frameTimeCounter * 0.02) * 4.0;
-		  noise+= texture3DNoise(rayPos * 1.00 - frameTimeCounter * 0.03) * 2.5;
-		  noise+= texture3DNoise(rayPos * 2.00 - frameTimeCounter * 0.04) * 1.5;
+	float noise = texture3DNoise(rayPos * 0.25 + frameTimeCounter * 0.5) * 6.5;
+		  noise+= texture3DNoise(rayPos * 0.50 + frameTimeCounter * 1.0) * 4.0;
+		  noise+= texture3DNoise(rayPos * 1.00 + frameTimeCounter * 1.5) * 2.5;
+		  noise+= texture3DNoise(rayPos * 2.00 + frameTimeCounter * 2.0) * 1.5;
 	#else
 	float noise = texture3DNoise(floor(rayPos * 0.25)) * 100.0;
 	#endif
