@@ -88,7 +88,7 @@ void main() {
 		float NoL = clamp(dot(normal, lightVec), 0.0, 1.0);
 		float NoE = clamp(dot(normal, eastVec), -1.0, 1.0);
 
-		getSceneLighting(albedo.rgb, viewPos, worldPos, normal, lightmap, NoU, NoL, NoE, 0.0, 0.0, 0.0, 0.0);
+		getSceneLighting(albedo.rgb, screenPos, viewPos, worldPos, normal, lightmap, NoU, NoL, NoE, 0.0, 0.0, 0.0, 0.0);
 	}
 
 	/* DRAWBUFFERS:0 */

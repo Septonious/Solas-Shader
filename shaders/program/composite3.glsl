@@ -13,9 +13,11 @@ in vec3 sunVec, upVec;
 #endif
 
 //Uniforms//
-#ifdef WATER_FOG
+#if defined WATER_FOG || defined WATER_REFRACTION
 uniform int isEyeInWater;
+#endif
 
+#ifdef WATER_FOG
 #if MC_VERSION >= 11900
 uniform float darknessFactor;
 #endif
@@ -30,7 +32,6 @@ uniform vec3 fogColor;
 
 uniform sampler2D colortex0;
 
-/*
 #ifdef WATER_REFRACTION
 uniform float frameTimeCounter;
 
@@ -46,7 +47,6 @@ uniform sampler2D shadowcolor1;
 
 uniform mat4 gbufferModelViewInverse;
 #endif
-*/
 
 #if defined WATER_FOG || defined WATER_REFRACTION
 uniform sampler2D depthtex0;
@@ -64,12 +64,10 @@ float sunVisibility = clamp(dot(sunVec, upVec) + 0.025, 0.0, 0.1) * 10.0;
 #if defined WATER_FOG || defined WATER_REFRACTION
 #include "/lib/util/ToView.glsl"
 
-/*
 #ifdef WATER_REFRACTION
 #include "/lib/util/ToWorld.glsl"
 #include "/lib/water/waterRefraction.glsl"
 #endif
-*/
 
 #ifdef WATER_FOG
 #include "/lib/color/dimensionColor.glsl"
@@ -92,19 +90,16 @@ void main() {
 	}
 	#endif
 
-	/*
 	#ifdef WATER_REFRACTION
-	vec3 worldPos = ToWorld(viewPos);
+	float waterData = texture2D(colortex4, texCoord).a;
 
-	float waterData = texture2D(colortex4, texCoord).r;
-
-	if (waterData > 0.5) {
-		vec2 refractedCoord = getRefraction(worldPos + cameraPosition);
+	if (waterData > 0.0 && waterData < 0.004000001 && isEyeInWater == 0) {
+		vec3 worldPos = ToWorld(viewPos);
+		vec2 refractedCoord = getRefraction(worldPos + cameraPosition, viewPos);
 
 		color = texture2D(colortex0, refractedCoord).rgb;
 	}
 	#endif
-	*/
 	#endif
 
 	/* DRAWBUFFERS:0 */

@@ -44,9 +44,9 @@ void computeBCL(inout vec3 blockLighting, in vec3 bloom, in float directionalBlo
 #endif
 
 #ifndef GBUFFERS_TERRAIN
-void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in vec3 normal, in vec2 lightmap, in float NoU, in float NoL, in float NoE, in float emission, in float leaves, in float foliage, in float specular) {
+void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in vec3 worldPos, in vec3 normal, in vec2 lightmap, in float NoU, in float NoL, in float NoE, in float emission, in float leaves, in float foliage, in float specular) {
 #else
-void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in vec3 normal, in vec2 lightmap, in float NoU, in float NoL, in float NoE, inout float emission, in float leaves, in float foliage, in float specular) {
+void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in vec3 worldPos, in vec3 normal, in vec2 lightmap, in float NoU, in float NoL, in float NoE, inout float emission, in float leaves, in float foliage, in float specular) {
 #endif
     #ifdef GBUFFERS_TERRAIN
 	if (foliage > 0.9) {
@@ -75,7 +75,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in v
 	#endif
 
     #if defined BLOOM_COLORED_LIGHTING || defined GLOBAL_ILLUMINATION
-    vec3 bloom = texture2D(gaux1, gl_FragCoord.xy / vec2(viewWidth, viewHeight)).rgb;
+    vec3 bloom = texture2D(gaux1, screenPos.xy).rgb;
          bloom = pow4(bloom) * 128.0;
     float directionalBloom = clamp(abs(dot(normalize(bloom), normal)) + 0.25, 0.0, 1.0);
     #endif

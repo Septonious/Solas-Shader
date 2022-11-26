@@ -13,14 +13,18 @@ float getWaterHeightMap(vec3 waterPos, vec2 offset) {
 	return mix(noiseA, noiseB, 0.5) * WATER_NORMAL_BUMP;
 }
 
-vec2 getRefraction(vec3 waterPos){
-	float h1 = getWaterHeightMap(waterPos, vec2( WATER_NORMAL_OFFSET, 0.0));
-	float h2 = getWaterHeightMap(waterPos, vec2(-WATER_NORMAL_OFFSET, 0.0));
-	float h3 = getWaterHeightMap(waterPos, vec2(0.0,  WATER_NORMAL_OFFSET));
-	float h4 = getWaterHeightMap(waterPos, vec2(0.0, -WATER_NORMAL_OFFSET));
+vec2 getRefraction(vec3 waterPos, vec3 viewPos){
+	float viewDistance = 1.0 - clamp(length(viewPos) * 0.01, 0.0, 1.0);
 
-	float xDelta = (h2 - h1) / WATER_NORMAL_OFFSET;
-	float yDelta = (h4 - h3) / WATER_NORMAL_OFFSET;
+	if (viewDistance > 0.0) {
+		float h1 = getWaterHeightMap(waterPos, vec2( WATER_NORMAL_OFFSET, 0.0));
+		float h2 = getWaterHeightMap(waterPos, vec2(-WATER_NORMAL_OFFSET, 0.0));
+		float h3 = getWaterHeightMap(waterPos, vec2(0.0,  WATER_NORMAL_OFFSET));
+		float h4 = getWaterHeightMap(waterPos, vec2(0.0, -WATER_NORMAL_OFFSET));
 
-	return texCoord + vec2(xDelta, yDelta) * WATER_REFRACTION_STRENGTH;
+		float xDelta = (h2 - h1) / WATER_NORMAL_OFFSET;
+		float yDelta = (h4 - h3) / WATER_NORMAL_OFFSET;
+
+		return clamp(texCoord + vec2(xDelta, yDelta) * WATER_REFRACTION_STRENGTH * 0.05 * viewDistance, 0.0, 1.0);
+	} return texCoord;
 }

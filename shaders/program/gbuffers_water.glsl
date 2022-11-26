@@ -206,7 +206,7 @@ void main() {
 		float NoE = clamp(dot(normal, eastVec), -1.0, 1.0);
 
 		#ifdef VC
-		float cloudDepth = texture2D(gaux1, gl_FragCoord.xy / vec2(viewWidth, viewHeight)).a;
+		float cloudDepth = texture2D(gaux1, screenPos.xy).a;
 
 		if (cloudDepth > 0.1 && water > 0.9 && cameraPosition.y + VC_STRETCHING * 0.5 > VC_HEIGHT) discard;
 		#endif
@@ -225,7 +225,7 @@ void main() {
 		}
 		#endif
 
-		getSceneLighting(albedo.rgb, viewPos, worldPos, newNormal, lightmap, NoU, NoL, NoE, emission, 0.0, 0.0, 1.0);
+		getSceneLighting(albedo.rgb, screenPos, viewPos, worldPos, newNormal, lightmap, NoU, NoL, NoE, emission, 0.0, 0.0, 1.0);
 
 		#if defined OVERWORLD
 		skyColor = getAtmosphere(viewPos);
@@ -236,19 +236,19 @@ void main() {
 		#endif
 
 		#if defined OVERWORLD && defined WATER_FOG
-		if (water > 0.9 && rainStrength != 1.0) {
+		if (water > 0.9) {
 			float oDepth = texture2D(depthtex1, screenPos.xy).r;
-			vec3 oScreenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), oDepth);
+			vec3 oScreenPos = vec3(screenPos.xy, oDepth);
 			vec3 oViewPos = ToNDC(oScreenPos);
 			vec3 diffPos = viewPos - oViewPos;
 
 			float DoN = clamp(dot(normalize(diffPos), newNormal), 0.0, 1.0);
 			float absorptionFactor = 1.0 - clamp(length(diffPos) * DoN * 0.075, 0.0, 1.0);
-				  absorptionFactor *= 1.0 - rainStrength;
+			float brightnessFactor = mix(mix(0.5, 1.0, sunVisibility), 0.5, rainStrength);
 
-			vec3 absorptionColor = albedo.rgb * mix(vec3(1.0), mix(waterColor, vec3(0.0, 1.0, 1.0), absorptionFactor) * 2.0, 1.0 - absorptionFactor * absorptionFactor);
+			vec3 absorptionColor = albedo.rgb * mix(vec3(1.0), mix(waterColor, vec3(0.0, 1.0, 1.0), absorptionFactor) * brightnessFactor * 2.0, 1.0 - absorptionFactor * absorptionFactor);
 
-			albedo.rgb = mix(waterColor * 0.5, absorptionColor, absorptionFactor);
+			albedo.rgb = mix(waterColor * brightnessFactor * 0.5, absorptionColor, absorptionFactor);
 			albedo.a = mix(albedo.a, 0.1, absorptionFactor);
 		}
 		#endif
@@ -267,7 +267,7 @@ void main() {
 	/* DRAWBUFFERS:014 */
 	gl_FragData[0] = albedo;
 	gl_FragData[1] = albedo;
-	gl_FragData[2] = vec4(1.0);
+	gl_FragData[2].a = 0.004;
 
 	#ifdef BLOOM
 	/* DRAWBUFFERS:0142 */

@@ -124,7 +124,7 @@ void main() {
 		getIntegratedSpecular(albedo, newNormal, worldPos.xz, lightmap, specular);
 		#endif
 
-		getSceneLighting(albedo.rgb, viewPos, worldPos, newNormal, lightmap, NoU, NoL, NoE, emission, leaves, foliage, specular);
+		getSceneLighting(albedo.rgb, screenPos, viewPos, worldPos, newNormal, lightmap, NoU, NoL, NoE, emission, leaves, foliage, specular);
 	}
 
 	emission *= 2.0;
