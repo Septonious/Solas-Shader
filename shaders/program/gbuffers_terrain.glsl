@@ -42,7 +42,7 @@ uniform sampler2D noisetex;
 uniform vec3 cameraPosition;
 
 #if defined BLOOM_COLORED_LIGHTING || defined GLOBAL_ILLUMINATION
-uniform sampler2D gaux4;
+uniform sampler2D gaux1;
 #endif
 
 uniform sampler2D texture;
@@ -112,15 +112,19 @@ void main() {
 		vec3 worldPos = ToWorld(viewPos);
 		vec2 lightmap = clamp(lightMapCoord, 0.0, 1.0);
 
+		float NoU = clamp(dot(normal, upVec), -1.0, 1.0);
+		float NoL = clamp(dot(normal, lightVec), 0.0, 1.0);
+		float NoE = clamp(dot(normal, eastVec), -1.0, 1.0);
+
 		#ifdef INTEGRATED_EMISSION
-		getIntegratedEmission(albedo, viewPos, worldPos, lightmap, emission);
+		getIntegratedEmission(albedo, viewPos, worldPos, lightmap, NoU, emission);
 		#endif
 
 		#ifdef INTEGRATED_SPECULAR
 		getIntegratedSpecular(albedo, newNormal, worldPos.xz, lightmap, specular);
 		#endif
 
-		getSceneLighting(albedo.rgb, screenPos, viewPos, worldPos, newNormal, lightmap, emission, leaves, foliage, specular);
+		getSceneLighting(albedo.rgb, viewPos, worldPos, newNormal, lightmap, NoU, NoL, NoE, emission, leaves, foliage, specular);
 	}
 
 	emission *= 2.0;

@@ -33,11 +33,9 @@ vec3 getHandLightColor(float handlight) {
 #endif
 
 #ifdef BLOOM_COLORED_LIGHTING
-void computeBCL(inout vec3 blockLighting, in vec3 bloom, in float directionalBloom, in float lViewPos, in float blockLightMap, in float skyLightMap) {
-    float bloomLightMap = pow2(blockLightMap) * 1.5 + blockLightMap * 0.5;
+void computeBCL(inout vec3 blockLighting, in vec3 bloom, in float directionalBloom, in float blockLightMap, in float skyLightMap) {
+    float bloomLightMap = pow2(blockLightMap) * 1.25 + blockLightMap * 0.5 + 0.125;
     float radius = mix(COLORED_LIGHTING_RADIUS - 0.1, COLORED_LIGHTING_RADIUS, skyLightMap);
-
-    bloomLightMap += mix((1.0 - clamp(lViewPos * 0.05, 0.0, 1.0)) * 0.5, 0.0, min(bloomLightMap, 0.5));
 
 	vec3 coloredLight = clamp(0.0625 * bloom * pow(getLuminance(bloom), radius), 0.0, 1.0) * 16.0;
     
@@ -46,9 +44,9 @@ void computeBCL(inout vec3 blockLighting, in vec3 bloom, in float directionalBlo
 #endif
 
 #ifndef GBUFFERS_TERRAIN
-void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in vec3 worldPos, in vec3 normal, in vec2 lightmap, in float emission, in float leaves, in float foliage, in float specular) {
+void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in vec3 normal, in vec2 lightmap, in float NoU, in float NoL, in float NoE, in float emission, in float leaves, in float foliage, in float specular) {
 #else
-void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in vec3 worldPos, in vec3 normal, in vec2 lightmap, inout float emission, in float leaves, in float foliage, in float specular) {
+void getSceneLighting(inout vec3 albedo, in vec3 viewPos, in vec3 worldPos, in vec3 normal, in vec2 lightmap, in float NoU, in float NoL, in float NoE, inout float emission, in float leaves, in float foliage, in float specular) {
 #endif
     #ifdef GBUFFERS_TERRAIN
 	if (foliage > 0.9) {
@@ -60,10 +58,6 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     float ao = clamp(pow2(color.a), 0.0, 1.0);
 
     //Vanilla Directional Lighting
-	float NoL = clamp(dot(normal, lightVec), 0.0, 1.0);
-	float NoU = clamp(dot(normal, upVec), -1.0, 1.0);
-	float NoE = clamp(dot(normal, eastVec), -1.0, 1.0);
-
 	float vanillaDiffuse = (0.25 * NoU + 0.75) + (0.667 - abs(NoE)) * (1.0 - abs(NoU)) * 0.15;
 
     //Block Lighting//
@@ -81,7 +75,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
 	#endif
 
     #if defined BLOOM_COLORED_LIGHTING || defined GLOBAL_ILLUMINATION
-    vec3 bloom = texture2D(gaux4, gl_FragCoord.xy / vec2(viewWidth, viewHeight)).rgb;
+    vec3 bloom = texture2D(gaux1, gl_FragCoord.xy / vec2(viewWidth, viewHeight)).rgb;
          bloom = pow4(bloom) * 128.0;
     float directionalBloom = clamp(abs(dot(normalize(bloom), normal)) + 0.25, 0.0, 1.0);
     #endif
@@ -93,7 +87,9 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     #elif defined BLOOM_COLORED_LIGHTING
     //BLOOM BASED COLORED LIGHTING
     blockLighting = blockLightCol * blockLightMap;
-    if (emission == 0.0) computeBCL(blockLighting, bloom, directionalBloom, lViewPos, lightmap.x, lightmap.y);
+    #if !defined GBUFFERS_TEXTURED
+    if (emission == 0.0) computeBCL(blockLighting, bloom, directionalBloom, lightmap.x, lightmap.y);
+    #endif
     #else
     blockLighting = blockLightCol * blockLightMap;
     #endif
@@ -199,7 +195,9 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     vec3 sceneLighting = pow(netherColSqrt, vec3(0.25)) * 0.125;
     #endif
 
+    #ifdef VANILLA_AO
     albedo.rgb = mix(albedo.rgb, albedo.rgb * ao, (1.0 - ao) * (1.0 - blockLightMap) * float(emission == 0.0));
+    #endif
 
     albedo = pow(albedo, vec3(2.2));
 

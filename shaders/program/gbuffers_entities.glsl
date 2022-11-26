@@ -38,7 +38,7 @@ uniform vec3 cameraPosition;
 uniform vec4 entityColor;
 
 #if defined BLOOM_COLORED_LIGHTING || defined GLOBAL_ILLUMINATION
-uniform sampler2D gaux4;
+uniform sampler2D gaux1;
 #endif
 
 uniform sampler2D texture;
@@ -109,11 +109,15 @@ void main() {
 		vec3 worldPos = ToWorld(viewPos);
 		vec2 lightmap = clamp(lightMapCoord, 0.0, 1.0);
 
+		float NoU = clamp(dot(normal, upVec), -1.0, 1.0);
+		float NoL = clamp(dot(normal, lightVec), 0.0, 1.0);
+		float NoE = clamp(dot(normal, eastVec), -1.0, 1.0);
+
 		#ifdef INTEGRATED_EMISSION
 		getIntegratedEmission(albedo.rgb, lightmap, emission);
 		#endif
 
-		getSceneLighting(albedo.rgb, screenPos, viewPos, worldPos, normal, lightmap, emission + entityColor.a * 0.25 + lightningBolt * 0.25, 0.0, 0.0, 0.0);
+		getSceneLighting(albedo.rgb, viewPos, worldPos, normal, lightmap, NoU, NoL, NoE, emission + entityColor.a * 0.25 + lightningBolt * 0.25, 0.0, 0.0, 0.0);
 	}
 	#endif
 	

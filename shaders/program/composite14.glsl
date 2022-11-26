@@ -13,10 +13,10 @@ uniform float viewWidth, viewHeight;
 uniform float frameTimeCounter;
 #endif
 
-uniform sampler2D colortex0;
+uniform sampler2D depthtex0, colortex0;
 
 #ifdef BLOOM
-uniform sampler2D depthtex0, colortex1;
+uniform sampler2D colortex1;
 #endif
 
 #ifdef TAA
@@ -25,7 +25,7 @@ uniform sampler2D colortex5;
 
 //Optifine Constants//
 #ifdef BLOOM
-const bool colortex7Clear = false;
+const bool colortex4Clear = false;
 #endif
 
 #ifdef TAA
@@ -55,9 +55,10 @@ void main() {
 	vec3 rawBloom = vec3(0.0);
 
 	float dither = Bayer64(gl_FragCoord.xy);
+	float z0 = texture2D(depthtex0, texCoord).r;
 
 	#ifdef BLOOM
-	rawBloom = getBloom(texCoord, dither - 0.25);
+	rawBloom = getBloom(texCoord, dither - 0.25, z0);
 
 	#if BLOOM_CONTRAST == 0
 	color = mix(color, rawBloom, 0.025 * BLOOM_STRENGTH);
@@ -81,10 +82,10 @@ void main() {
 
 	color += (dither - 0.25) / 64.0;
 
-	/* DRAWBUFFERS:157 */
+	/* DRAWBUFFERS:154 */
 	gl_FragData[0].rgb = color;
 	gl_FragData[1].gba = temporalColor;
-	gl_FragData[2].rgb = pow(rawBloom / 128.0, vec3(0.25));
+	gl_FragData[2].rgb = pow(rawBloom / 128.0, vec3(0.25)) * float(z0 < 1.0);
 }
 
 #endif

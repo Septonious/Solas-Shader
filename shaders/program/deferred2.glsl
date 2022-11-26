@@ -157,7 +157,7 @@ void main() {
 			#endif
 
 			#ifdef STARS
-			getStars(skyColor, worldPos, VoU, nebulaFactor, caveFactor, star);
+			getStars(skyColor, worldPos, VoU, nebulaFactor, clamp(caveFactor - cloudDepth, 0.0, 1.0), star);
 			#endif
 
 			#ifdef RAINBOW

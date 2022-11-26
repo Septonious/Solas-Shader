@@ -7,7 +7,7 @@ uniform sampler2D shadowcolor0;
 
 int shadowFilterSamples = 8;
 
-vec2 shadowOffsets[8] = vec2[8](
+const vec2 shadowOffsets[8] = vec2[8](
     vec2( 0.000000,  0.250000),
     vec2( 0.292496, -0.319290),
     vec2(-0.556877,  0.048872),

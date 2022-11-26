@@ -58,10 +58,6 @@ uniform float rainStrength;
 
 #if defined OVERWORLD || defined END
 uniform float timeBrightness, timeAngle;
-
-#ifdef WATER_FOG
-uniform float shadowFade;
-#endif
 #endif
 
 #if defined OVERWORLD || ((defined OVERWORLD || defined END) && defined INTEGRATED_SPECULAR)
@@ -154,9 +150,8 @@ vec2 viewResolution = vec2(viewWidth, viewHeight);
 #include "/lib/color/dimensionColor.glsl"
 #include "/lib/lighting/sceneLighting.glsl"
 
-#if defined OVERWORLD && defined WATER_FOG
+#if defined OVERWORLD && defined INTEGRATED_SPECULAR
 #include "/lib/atmosphere/sky.glsl"
-#include "/lib/water/waterFog.glsl"
 #endif
 
 #ifdef WATER_NORMALS
@@ -206,6 +201,10 @@ void main() {
 		vec3 viewPos = ToNDC(screenPos);
 		vec3 worldPos = ToWorld(viewPos);
 
+		float NoU = clamp(dot(normal, upVec), -1.0, 1.0);
+		float NoL = clamp(dot(normal, lightVec), 0.0, 1.0);
+		float NoE = clamp(dot(normal, eastVec), -1.0, 1.0);
+
 		#ifdef VC
 		float cloudDepth = texture2D(gaux1, gl_FragCoord.xy / vec2(viewWidth, viewHeight)).a;
 
@@ -226,7 +225,7 @@ void main() {
 		}
 		#endif
 
-		getSceneLighting(albedo.rgb, screenPos, viewPos, worldPos, newNormal, lightmap, emission, 0.0, 0.0, 1.0);
+		getSceneLighting(albedo.rgb, viewPos, worldPos, newNormal, lightmap, NoU, NoL, NoE, emission, 0.0, 0.0, 1.0);
 
 		#if defined OVERWORLD
 		skyColor = getAtmosphere(viewPos);
@@ -237,19 +236,25 @@ void main() {
 		#endif
 
 		#if defined OVERWORLD && defined WATER_FOG
-		if (water > 0.9 && lightmap.y > 0.0 && rainStrength != 1.0) {
+		if (water > 0.9 && rainStrength != 1.0) {
 			float oDepth = texture2D(depthtex1, screenPos.xy).r;
 			vec3 oScreenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), oDepth);
 			vec3 oViewPos = ToNDC(oScreenPos);
+			vec3 diffPos = viewPos - oViewPos;
 
-			vec4 waterFog = getWaterFog(viewPos.xyz - oViewPos);
-			albedo.rgb = mix(albedo.rgb, waterFog.rgb * 4.0 * lightmap.y * (1.0 - rainStrength), waterFog.a);
-			albedo.a = mix(albedo.a * 0.5, albedo.a, waterFog.a);
+			float DoN = clamp(dot(normalize(diffPos), newNormal), 0.0, 1.0);
+			float absorptionFactor = 1.0 - clamp(length(diffPos) * DoN * 0.075, 0.0, 1.0);
+				  absorptionFactor *= 1.0 - rainStrength;
+
+			vec3 absorptionColor = albedo.rgb * mix(vec3(1.0), mix(waterColor, vec3(0.0, 1.0, 1.0), absorptionFactor) * 2.0, 1.0 - absorptionFactor * absorptionFactor);
+
+			albedo.rgb = mix(waterColor * 0.5, absorptionColor, absorptionFactor);
+			albedo.a = mix(albedo.a, 0.1, absorptionFactor);
 		}
 		#endif
 
 		#ifdef INTEGRATED_SPECULAR
-		if (portal < 0.5 && albedo.a < 0.95) {
+		if (portal < 0.5) {
 			float fresnel1 = pow2(clamp(1.0 + dot(newNormal, normalize(viewPos)), 0.0, 1.0)) * (1.0 - float(isEyeInWater == 1) * 0.75) * (0.3 + water * 0.7);
 
 			getReflection(albedo, viewPos, newNormal, fresnel1, lightmap.y, emission);
@@ -327,7 +332,8 @@ attribute vec4 mc_midTexCoord;
 //Common Functions//
 #ifdef WAVING_WATER
 float getWavingWater(vec3 worldPos, float skyLightMap) {
-	float fractY = fract(worldPos.y + cameraPosition.y + 0.005);
+	worldPos += cameraPosition;
+	float fractY = fract(worldPos.y + 0.005);
 		
 	float wave = sin(TAU * (frameTimeCounter * 0.7 + worldPos.x * 0.16 + worldPos.z * 0.08)) +
 				 sin(TAU * (frameTimeCounter * 0.5 + worldPos.x * 0.1 + worldPos.z * 0.2));

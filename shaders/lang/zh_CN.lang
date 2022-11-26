@@ -1,5 +1,9 @@
 #shaders/lang/zh_CN.lang
 
+option.SOLAS_BY_SEPTONIOUS=§6Solas
+value.SOLAS_BY_SEPTONIOUS.0=§b作者: Septonious
+option.SOLAS_BY_SEPTONIOUS.comment=Discord: https://discord.com/invite/4uTAUQR2xu. GitHub: https://github.com/Septonious/Solas-Shader
+
 #ATMOSPHERICS
 
 screen.ATMOSPHERICS=大气
@@ -57,6 +61,14 @@ option.AURORA_COLD_BIOME_VISIBILITY.comment=只有当玩家在积雪生物群系
 option.AURORA_FULL_MOON_VISIBILITY=极光在满月夜晚可见
 option.AURORA_FULL_MOON_VISIBILITY.comment=只有当满月的时,才会启用极光.
 
+screen.END_VORTEX=终末涡旋配置
+
+option.END_VORTEX=终末涡旋
+option.END_VORTEX.comment=切换末地天空中的黑色洞状天体开关. 实际上作者也不知道这个东西叫什么好.
+
+option.END_VORTEX_SIZE=涡旋尺寸
+option.END_VORTEX_WHIRL=涡旋旋扭程度
+option.END_VORTEX_ARMS=涡旋齿数
 
 #WATER
 
@@ -73,6 +85,8 @@ option.WATER_NORMALS=水面法线
 option.WATER_NORMAL_BUMP=水面法线凹凸
 option.WATER_NORMAL_OFFSET=水体法线偏移
 
+option.WATER_REFRACTION=水体光线折射
+option.WATER_REFRACTION_STRENGTH=折射强度
 
 #LIGHTING
 
@@ -81,6 +95,9 @@ screen.LIGHTING=照明
 option.shadowMapResolution=阴影分辨率
 option.shadowDistance=阴影距离
 option.sunPathRotation=日月斜角
+option.VPS=可变半阴影
+option.VPS.comment=启用根据方块投射阴影距离长短来判断阴影是否变得更模糊 / 锐利的功能.
+option.VPS_BLUR_STRENGTH=可变半阴影强度
 option.SHADOW_SAMPLE_COUNT=阴影采样计数
 option.SHADOW_COLOR=着色阴影
 option.ENTITY_SHADOWS=实体阴影
@@ -93,6 +110,7 @@ option.COLORED_LIGHTING_STRENGTH=彩色照明强度
 
 option.AO=环境光遮蔽
 option.AO_STRENGTH=环境光遮蔽强度
+option.AO_RADIUS=环境光遮蔽半径
 
 option.GLOBAL_ILLUMINATION=全局照明
 option.GLOBAL_ILLUMINATION_STRENGTH=全局照明强度
@@ -131,6 +149,7 @@ option.EMISSION_STRENGTH=自发光强度
 #COLOR
 
 screen.COLOR=颜色
+screen.LIGHTAMBIENT_COLOR=主世界照明 & 环境光颜色
 
 screen.LIGHT_EM=凌晨光照颜色
 option.LIGHT_EMR=红色
@@ -205,6 +224,17 @@ option.AMBIENT_NG=绿色
 option.AMBIENT_NB=蓝色
 option.AMBIENT_NI=强度
 
+
+screen.END_COLOR=末地光照颜色 & 环境光颜色
+option.LIGHT_END_R=红色
+option.LIGHT_END_G=绿色
+option.LIGHT_END_B=蓝色
+option.LIGHT_END_I=强度
+
+option.AMBIENT_END_R=红色
+option.AMBIENT_END_G=绿色
+option.AMBIENT_END_B=蓝色
+option.AMBIENT_END_I=强度
 
 screen.MINLIGHT=最小照明颜色
 option.MINLIGHT_R=红色
@@ -316,3 +346,4 @@ option.WAVING_PLANTS=植物摇晃
 option.WAVING_LEAVES=树叶摇晃
 option.WAVING_SPEED=摇晃速度
 option.WAVING_AMPLITUDE=摇晃幅度
+option.WAVING_WATER=水体摇晃

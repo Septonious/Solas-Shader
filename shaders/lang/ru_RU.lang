@@ -107,6 +107,7 @@ option.COLORED_LIGHTING_RADIUS=Радиус ЦО
 option.COLORED_LIGHTING_STRENGTH=Сила ЦО
 
 option.AO=Ambient Occlusion (AO)
+option.VANILLA_AO=Ванильное АО
 option.AO_STRENGTH=Сила АО
 option.AO_RADIUS=Радиус АО
 

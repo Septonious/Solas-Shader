@@ -33,7 +33,7 @@ uniform float timeBrightness, timeAngle;
 uniform vec3 cameraPosition;
 
 #if defined BLOOM_COLORED_LIGHTING || defined GLOBAL_ILLUMINATION
-uniform sampler2D gaux4;
+uniform sampler2D gaux1;
 #endif
 
 uniform sampler2D texture;
@@ -84,7 +84,11 @@ void main() {
 		vec3 worldPos = ToWorld(viewPos);
 		vec2 lightmap = clamp(lightMapCoord, 0.0, 1.0);
 
-		getSceneLighting(albedo.rgb, screenPos, viewPos, worldPos, normal, lightmap, 0.0, 0.0, 0.0, 0.0);
+		float NoU = clamp(dot(normal, upVec), -1.0, 1.0);
+		float NoL = clamp(dot(normal, lightVec), 0.0, 1.0);
+		float NoE = clamp(dot(normal, eastVec), -1.0, 1.0);
+
+		getSceneLighting(albedo.rgb, viewPos, worldPos, normal, lightmap, NoU, NoL, NoE, 0.0, 0.0, 0.0, 0.0);
 	}
 
 	/* DRAWBUFFERS:0 */

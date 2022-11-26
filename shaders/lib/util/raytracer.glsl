@@ -12,7 +12,7 @@ vec3 rayTrace(vec3 viewPos, vec3 normal, float dither, out float border, int ref
 	#endif
 
 	vec3 reflectionPos = vec3(0.0);
-	vec3 startPos = viewPos + normal * 0.035;
+	vec3 startPos = viewPos + normal * 0.5;
     vec3 rayDir = stepSize * reflect(normalize(viewPos), normalize(normal));
 	vec3 rayIncrement = rayDir;
     viewPos += rayDir;
@@ -40,7 +40,7 @@ vec3 rayTrace(vec3 viewPos, vec3 normal, float dither, out float border, int ref
 
         rayDir *= refinementFactor;
         rayIncrement += rayDir;
-		viewPos = startPos + rayIncrement * (0.025 * dither + 0.975);
+		viewPos = startPos + rayIncrement * (0.1 * dither + 0.9);
     }
 
 	border = getCoordDistance(reflectionPos.xy);

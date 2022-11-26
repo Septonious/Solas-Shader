@@ -88,6 +88,8 @@ option.WATER_NORMAL_OFFSET=Water Normal Offset
 option.WATER_REFRACTION=Water Light Refraction
 option.WATER_REFRACTION_STRENGTH=Refraction Strength
 
+option.WAVING_WATER=Waving Water
+
 #LIGHTING
 
 screen.LIGHTING=Lighting
@@ -108,7 +110,8 @@ option.BLOOM_COLORED_LIGHTING=Bloom Colored Lighting (BCL)
 option.COLORED_LIGHTING_RADIUS=BCL Radius
 option.COLORED_LIGHTING_STRENGTH=BCL Strength
 
-option.AO=Ambient Occlusion (AO)
+option.AO=Custom Ambient Occlusion (AO)
+option.VANILLA_AO=Vanilla Ambient Occlusion (AO)
 option.AO_STRENGTH=AO Strength
 option.AO_RADIUS=AO Radius
 
