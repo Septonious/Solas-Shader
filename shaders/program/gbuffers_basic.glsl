@@ -24,6 +24,7 @@ uniform float frameTimeCounter;
 
 #ifdef OVERWORLD
 uniform float rainStrength;
+uniform float shadowFade;
 #endif
 
 #if defined OVERWORLD || defined END

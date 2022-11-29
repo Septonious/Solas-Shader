@@ -16,6 +16,8 @@ uniform float frameTimeCounter;
 uniform sampler2D depthtex0, colortex0;
 
 #ifdef BLOOM
+uniform mat4 gbufferProjectionInverse;
+
 uniform sampler2D colortex1;
 #endif
 
@@ -33,7 +35,7 @@ const bool colortex5Clear = false;
 #endif
 
 //Common Functions//
-#ifdef BLOOM
+#ifdef BLOOMY_FOG
 float getLuminance(vec3 color) {
 	return dot(color, vec3(0.299, 0.587, 0.114));
 }
@@ -46,6 +48,10 @@ float getLuminance(vec3 color) {
 #ifdef BLOOM
 #include "/lib/filters/blur.glsl"
 #include "/lib/post/getBloom.glsl"
+
+#ifdef BLOOMY_FOG
+#include "/lib/util/ToView.glsl"
+#endif
 #endif
 
 //Program//
@@ -69,6 +75,20 @@ void main() {
 	vec3 bloomStrength = pow(vec3(0.025 * BLOOM_STRENGTH), bloomContrast);
 	color = mix(color, pow(rawBloom, bloomContrast), bloomStrength);
 	color = pow(color, 1.0 / bloomContrast);
+	#endif
+
+	#ifdef BLOOMY_FOG
+	vec3 viewPos = ToView(vec3(texCoord, z0));
+	float fog = length(viewPos) * FOG_DENSITY * 0.001;
+		  fog = 1.0 - exp(-4.0 * fog);
+
+	vec3 bloomFog = clamp(0.0625 * rawBloom * pow(getLuminance(rawBloom), -0.5) * fog, 0.0, 1.0) * 16.0;
+
+	#ifdef NETHER
+	bloomFog *= 2.0;
+	#endif
+
+	color += bloomFog * 0.075;
 	#endif
 	#endif
 

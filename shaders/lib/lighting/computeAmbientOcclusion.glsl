@@ -15,7 +15,7 @@ float computeAmbientOcclusion(float linearDepth0, float dither) {
 	dither = fract(dither + frameTimeCounter * 16.0);
 	#endif
 
-	float currentStep = 0.25 * dither + 0.25;
+	float currentStep = 0.2 * dither + 0.3;
 
 	float fovScale = gbufferProjection[1][1] / 1.37;
 	float distScale = max((far - near) * linearDepth0 + near, 5.0);

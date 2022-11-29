@@ -24,6 +24,7 @@ uniform float frameTimeCounter;
 
 #ifdef OVERWORLD
 uniform float rainStrength;
+uniform float shadowFade;
 #endif
 
 #if defined OVERWORLD || defined END
@@ -106,7 +107,7 @@ void main() {
 		}
 		#endif
 
-		getSceneLighting(albedo.rgb, screenPos, viewPos, worldPos, normal, lightmap, NoU, NoL, NoE, clamp(emission, 0.0, 1.0), 0.0, 0.0, 0.0);
+		getSceneLighting(albedo.rgb, screenPos, viewPos, worldPos, normal, lightmap, NoU, NoL, NoE, emission, 0.0, 0.0, 0.0);
 	}
 
 	/* DRAWBUFFERS:0 */

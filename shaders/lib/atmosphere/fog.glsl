@@ -13,8 +13,8 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 atmo
 	vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.0);
 	float VoL = clamp(dot(normalize(viewPos), lightVec), 0.0, 1.0);
 
-	float fog = length(viewPos) * FOG_DENSITY / 128.0;
-		  fog *= (0.75 * rainStrength + 0.25) / (4.0 * clearDay + 1.0);
+	float fog = lViewPos * FOG_DENSITY / 128.0;
+		  fog *= 0.25 / (4.0 * clearDay + 1.0);
 		  fog = 1.0 - exp(-8.0 * pow(fog, 0.15 * clearDay * eBS + 1.25));
 		  fog *= 0.5 + sunVisibility * 0.5; //Night shouldn't have very dense fog
 		  fog *= 1.0 + max(sunVisibility - timeBrightness, 0.0); //Increase fog in morning/evening
@@ -50,7 +50,7 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 atmo
 	//Nether Fog
 	#ifdef NETHER
 	vec3 fogColor = netherColSqrt.rgb * 0.25;
-	float fog = lViewPos * 0.0075;
+	float fog = lViewPos * 0.0025;
 
 	#ifdef DISTANT_FADE
 	fog += 2.0 * pow4(lWorldPos / far);

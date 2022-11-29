@@ -6,11 +6,12 @@
 #ifdef FSH
 
 //Varyings//
+flat in int mat;
+
 #ifdef WATER_NORMALS
 in float viewDistance;
 #endif
 
-in float mat;
 in vec2 texCoord, lightMapCoord;
 in vec3 sunVec, upVec, eastVec;
 in vec3 normal;
@@ -54,6 +55,7 @@ uniform float darknessFactor;
 
 #ifdef OVERWORLD
 uniform float rainStrength;
+uniform float shadowFade;
 #endif
 
 #if defined OVERWORLD || defined END
@@ -176,8 +178,8 @@ vec2 viewResolution = vec2(viewWidth, viewHeight);
 void main() {
 	vec4 albedo = texture2D(texture, texCoord) * color;
 
-	float water = float(mat > 0.9 && mat < 1.1);
-	float portal = float(mat > 1.9 && mat < 2.1);
+	float water = int(mat == 1);
+	float portal = int(mat == 2);
 	float emission = portal * 4.0;
 
 	albedo.a *= 1.0 - portal * 0.5;
@@ -267,7 +269,7 @@ void main() {
 	/* DRAWBUFFERS:014 */
 	gl_FragData[0] = albedo;
 	gl_FragData[1] = albedo;
-	gl_FragData[2].a = 0.004;
+	gl_FragData[2].a = water * 0.004;
 
 	#ifdef BLOOM
 	/* DRAWBUFFERS:0142 */
@@ -282,11 +284,12 @@ void main() {
 #ifdef VSH
 
 //Varyings//
+flat out int mat;
+
 #ifdef WATER_NORMALS
 out float viewDistance;
 #endif
 
-out float mat;
 out vec2 texCoord, lightMapCoord;
 out vec3 sunVec, upVec, eastVec;
 out vec3 normal;
@@ -389,8 +392,8 @@ void main() {
 	eastVec = normalize(gbufferModelView[0].xyz);
 
 	//Materials
-	mat = 0.0;
-	mat = float(mc_Entity.x);
+	mat = 0;
+	mat = int(mc_Entity.x);
 
 	//Color & Position
     color = gl_Color;
@@ -398,8 +401,10 @@ void main() {
 	vec4 position = gbufferModelViewInverse * gl_ModelViewMatrix * gl_Vertex;
 	
 	#ifdef WAVING_WATER
-	float istopv = gl_MultiTexCoord0.t < mc_midTexCoord.t ? 1.0 : 0.0;
-	if (mc_Entity.x == 1) position.y += getWavingWater(position.xyz, lightMapCoord.y);
+	if (mc_Entity.x == 1) {
+		float istopv = gl_MultiTexCoord0.t < mc_midTexCoord.t ? 1.0 : 0.0;
+		position.y += getWavingWater(position.xyz, lightMapCoord.y);
+	}
 	#endif
 
 	gl_Position = gl_ProjectionMatrix * gbufferModelView * position;

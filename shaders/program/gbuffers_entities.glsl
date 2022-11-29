@@ -6,7 +6,7 @@
 #ifdef FSH
 
 //Varyings//
-in float mat;
+flat in int mat;
 in vec2 texCoord, lightMapCoord;
 in vec3 sunVec, upVec, eastVec;
 in vec3 normal;
@@ -27,6 +27,7 @@ uniform float frameTimeCounter;
 
 #ifdef OVERWORLD
 uniform float rainStrength;
+uniform float shadowFade;
 #endif
 
 #if defined OVERWORLD || defined END
@@ -117,7 +118,7 @@ void main() {
 		getIntegratedEmission(albedo.rgb, lightmap, emission);
 		#endif
 
-		getSceneLighting(albedo.rgb, screenPos, viewPos, worldPos, normal, lightmap, NoU, NoL, NoE, emission + entityColor.a * 0.25 + lightningBolt * 0.25, 0.0, 0.0, 0.0);
+		getSceneLighting(albedo.rgb, screenPos, viewPos, worldPos, normal, lightmap, NoU, NoL, NoE, emission + entityColor.a + lightningBolt * 0.25, 0.0, 0.0, 0.0);
 	}
 	#endif
 	
@@ -142,7 +143,7 @@ void main() {
 #ifdef VSH
 
 //Varyings//
-out float mat;
+flat out int mat;
 out vec2 texCoord, lightMapCoord;
 out vec3 sunVec, upVec, eastVec;
 out vec3 normal;
@@ -192,10 +193,10 @@ void main() {
 	eastVec = normalize(gbufferModelView[0].xyz);
 
 	//Materials
-	mat = 0.0;
+	mat = 0;
 	
 	#ifdef INTEGRATED_EMISSION
-	mat = float(entityId);
+	mat = int(entityId);
 	#endif
 
 	//Color & Position

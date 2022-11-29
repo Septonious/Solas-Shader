@@ -6,7 +6,8 @@
 #ifdef FSH
 
 //Varyings//
-in float mat, isPlant;
+flat in int mat;
+in float isPlant;
 in vec2 texCoord, lightMapCoord;
 in vec3 sunVec, upVec, eastVec;
 in vec3 normal;
@@ -25,6 +26,7 @@ uniform float frameTimeCounter;
 
 #ifdef OVERWORLD
 uniform float rainStrength;
+uniform float shadowFade;
 #endif
 
 #if defined OVERWORLD || defined END
@@ -104,17 +106,21 @@ void main() {
 	float specular = 0.0;
 
 	if (albedo.a > 0.001) {
-		float foliage = float(mat > 0.99 && mat < 1.01) + float(mat > 107.9 && mat < 108.1);
-		float leaves = float(mat > 1.99 && mat < 2.01);
+		float foliage = int(mat == 1) + int(mat == 108);
+		float leaves = int(mat == 2);
 
 		vec3 screenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z);
 		vec3 viewPos = ToNDC(screenPos);
 		vec3 worldPos = ToWorld(viewPos);
 		vec2 lightmap = clamp(lightMapCoord, 0.0, 1.0);
 
-		float NoU = clamp(dot(normal, upVec), -1.0, 1.0);
-		float NoL = clamp(dot(normal, lightVec), 0.0, 1.0);
-		float NoE = clamp(dot(normal, eastVec), -1.0, 1.0);
+		if (foliage > 0.9) {
+			newNormal = upVec;
+		}
+
+		float NoU = clamp(dot(newNormal, upVec), -1.0, 1.0);
+		float NoL = clamp(dot(newNormal, lightVec), 0.0, 1.0);
+		float NoE = clamp(dot(newNormal, eastVec), -1.0, 1.0);
 
 		#ifdef INTEGRATED_EMISSION
 		getIntegratedEmission(albedo, viewPos, worldPos, lightmap, NoU, emission);
@@ -124,7 +130,7 @@ void main() {
 		getIntegratedSpecular(albedo, newNormal, worldPos.xz, lightmap, specular);
 		#endif
 
-		getSceneLighting(albedo.rgb, screenPos, viewPos, worldPos, newNormal, lightmap, NoU, NoL, NoE, emission, leaves, foliage, specular);
+		getSceneLighting(albedo.rgb, screenPos, viewPos, worldPos, newNormal, lightmap, NoU, NoL, NoE, emission, leaves, foliage, specular * clamp(NoU - 0.01, 0.0, 1.0));
 	}
 
 	emission *= 2.0;
@@ -150,7 +156,8 @@ void main() {
 #ifdef VSH
 
 //Varyings//
-out float mat, isPlant;
+flat out int mat;
+out float isPlant;
 out vec2 texCoord, lightMapCoord;
 out vec3 sunVec, upVec, eastVec;
 out vec3 normal;
@@ -220,15 +227,15 @@ void main() {
 	eastVec = normalize(gbufferModelView[0].xyz);
 
 	//Materials
-	mat = 0.0;
+	mat = 0;
 	isPlant = 0.0;
 
 	if (mc_Entity.x >= 4 && mc_Entity.x <= 11 && mc_Entity.x != 9 && mc_Entity.x != 10 || (mc_Entity.x >= 14 && mc_Entity.x <= 15)) {
-		mat = 1.0;
+		mat = 1;
 	} else if (mc_Entity.x == 9 || mc_Entity.x == 10){
-		mat = 2.0;
+		mat = 2;
 	} else {
-		mat = float(mc_Entity.x);
+		mat = int(mc_Entity.x);
 	}
 
 	vec4 position = gbufferModelViewInverse * gl_ModelViewMatrix * gl_Vertex;
