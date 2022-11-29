@@ -139,7 +139,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     #endif
 
     #ifdef NETHER
-    vec3 sceneLighting = pow(netherColSqrt, vec3(0.25)) * 0.125;
+    vec3 sceneLighting = pow(netherColSqrt, vec3(0.5)) * 0.125;
     #endif
 
     #ifdef VANILLA_AO
