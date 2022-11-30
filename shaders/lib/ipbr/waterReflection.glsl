@@ -35,6 +35,7 @@ void getReflection(inout vec4 color, in vec3 viewPos, in vec3 normal, in float f
 		if (skyLightMap > 0.0) {
 			#if defined OVERWORLD || (defined END && (defined END_NEBULA || defined END_STARS))
 			float nebulaFactor = 0.0;
+			float endVortex = 0.0;
 			float sunMoon = 0.0;
 			float star = 0.0;
 
@@ -79,7 +80,8 @@ void getReflection(inout vec4 color, in vec3 viewPos, in vec3 normal, in float f
 			#endif
 
 			#ifdef END_VORTEX
-			getEndVortex(reflectionFade, worldPos, VoU, VoS);
+			getEndVortex(reflectionFade, worldPos, VoU, VoS, endVortex);
+			emission += endVortex * 0.1;
 			#endif
 			#endif
 

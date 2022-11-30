@@ -357,6 +357,7 @@ const float TAU = 6.2831853;
 #undef VC
 #undef VL
 #undef WAVING_BLOCKS
+#undef GLOBAL_ILLUMINATION
 #endif
 
 #ifdef NETHER

@@ -60,11 +60,11 @@ const bool colortex1MipmapEnabled = true;
 #endif
 
 void main() {
-	vec3 color = texture2D(colortex0, texCoord).rgb;
+	vec4 color = texture2D(colortex0, texCoord);
 
 	#ifdef VL
 	vec3 vl = getDiskBlur8(colortex1, texCoord, 1.5).rgb;
-	color += vl * vl;
+	color.rgb += vl * vl;
 	#endif
 
 	#ifdef INTEGRATED_SPECULAR
@@ -76,14 +76,14 @@ void main() {
 	vec3 normal = DecodeNormal(terrainData.rg);
 
 	if (terrainData.a > 0.05 && terrainData.a < 1.0 && z0 > 0.56 && z0 >= z1) {
-		float fresnel = pow4(clamp(1.0 + dot(normal, normalize(viewPos)), 0.0, 1.0));
+		float fresnel = pow6(clamp(1.0 + dot(normal, normalize(viewPos)), 0.0, 1.0));
 
-		getReflection(viewPos, normal, color, fresnel * terrainData.a);
+		getReflection(color, viewPos, normal, fresnel * terrainData.a);
 	}
 	#endif
 
 	/* DRAWBUFFERS:0 */
-	gl_FragData[0].rgb = color;
+	gl_FragData[0] = color;
 }
 
 #endif

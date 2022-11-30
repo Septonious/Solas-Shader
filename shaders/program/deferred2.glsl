@@ -126,6 +126,7 @@ void main() {
 
 	#if defined OVERWORLD || defined END
 	float nebulaFactor = 0.0;
+	float endVortex = 0.0;
 	float sunMoon = 0.0;
 	float star = 0.0;
 
@@ -182,7 +183,7 @@ void main() {
 		#endif
 
 		#ifdef END_VORTEX
-		getEndVortex(skyColor, worldPos, VoU, VoS);
+		getEndVortex(skyColor, worldPos, VoU, VoS, endVortex);
 		#endif
 		#endif
 
@@ -213,7 +214,7 @@ void main() {
 	#ifdef OVERWORLD
 	colortex2Data.ba += vec2(sunMoon * 0.125, sunMoon);
 	#elif defined END
-	colortex2Data.ba += vec2(star);
+	colortex2Data.ba += vec2(star + endVortex * 0.1);
 	#endif
 	#endif
 

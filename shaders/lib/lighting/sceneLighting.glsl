@@ -124,9 +124,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     #if defined GLOBAL_ILLUMINATION && !defined GBUFFERS_TEXTURED && !defined GBUFFERS_WATER
     bloom = clamp(0.0625 * bloom * pow(getLuminance(bloom), GLOBAL_ILLUMINATION_RADIUS), 0.0, 1.0) * 16.0;
 
-    #ifdef OVERWORLD
     ambientCol *= vec3(1.0) + bloom * sunVisibility * rainFactor;
-    #endif
     #endif
 
     vec3 sceneLighting = mix(ambientCol, lightCol, fullShadow * rainFactor * shadowFade) * lightmap.y * lightmap.y;
@@ -152,11 +150,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     albedo = sqrt(max(albedo, vec3(0.0)));
 
     #if defined GLOBAL_ILLUMINATION && !defined GBUFFERS_TEXTURED && !defined GBUFFERS_WATER
-    #ifdef OVERWORLD
     float giVisibility = length(fullShadow * rainFactor * sunVisibility);
-    #else
-    float giVisibility = length(fullShadow) * 0.25;
-    #endif
 
     if (giVisibility != 0.0) {
         emission += mix(0.0, GLOBAL_ILLUMINATION_STRENGTH * int(emission == 0.0), giVisibility);

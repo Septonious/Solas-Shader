@@ -35,7 +35,7 @@ vec3 getSpiral(vec2 coord, float VoS){
     return clamp(endAmbientColSqrt * spiral * 0.25, 0.0, 1.0);
 }
 
-void getEndVortex(inout vec3 color, in vec3 worldPos, in float VoU, in float VoS) {
+void getEndVortex(inout vec3 color, in vec3 worldPos, in float VoU, in float VoS, inout float endVortex) {
 	if (VoS > 0.0) {
 		vec3 sunVec = mat3(gbufferModelViewInverse) * sunVec;
 		vec2 sunCoord = sunVec.xz / (sunVec.y + length(sunVec));
@@ -46,7 +46,9 @@ void getEndVortex(inout vec3 color, in vec3 worldPos, in float VoU, in float VoS
 		float hole = pow16(pow32(VoS));
 
 		color = mix(color, spiral * END_VORTEX_SIZE, pow3(spiralBrightness));
-		color *= float(length(hole) < 0.5);
+		color *= int(length(hole) < 0.5);
+		endVortex = mix(0.0, length(spiral * END_VORTEX_SIZE), pow3(spiralBrightness));
+		endVortex *= int(length(hole) < 0.5);
 	}
 }
 #endif

@@ -26,8 +26,8 @@ void getIntegratedSpecular(inout vec4 albedo, in vec3 normal, in vec2 worldPos, 
         specular = pow8(lAlbedo) * 4.0;
     } else if (mat == 303) {// Emerald & Diamond Blocks
         specular = pow12(lAlbedo);
-    } else if (mat == 304) {// Polished Stones Blocks & Basalt
-        specular = pow3(lAlbedo) * 0.25;
+    } else if (mat == 304 || mat == 306) {// Polished Stones Blocks & Basalt & Prismarine (my previous shader really)
+        specular = 1;
     } else if (mat == 305) {// Obsidian & Polished Deepslate
         specular = lAlbedo * 0.25;
     }

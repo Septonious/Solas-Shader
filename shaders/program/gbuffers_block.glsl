@@ -109,7 +109,7 @@ void main() {
 		getSceneLighting(albedo.rgb, screenPos, viewPos, worldPos, normal, lightmap, NoU, NoL, NoE, emission, 0.0, 0.0, 0.0);
 
 		if (blockEntityId == 20) {
-			vec2 portalCoordPlayerPos = worldPos.xz * 0.25;
+			vec2 portalCoordPlayerPos = screenPos.xy;
 
 			float portalNoise = texture2D(noisetex, portalCoordPlayerPos * 0.25).r * 0.25 + 0.375;
 			float portal0 = texture2D(texture,  portalCoordPlayerPos.rg * 0.50 + vec2(0.0, frameTimeCounter * 0.012)).r * 3.00;
