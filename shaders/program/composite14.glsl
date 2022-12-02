@@ -88,7 +88,7 @@ void main() {
 	bloomFog *= 2.0;
 	#endif
 
-	color += bloomFog * 0.075;
+	color += bloomFog * 0.05;
 	#endif
 	#endif
 

@@ -13,10 +13,14 @@ float texture3DNoise(vec3 rayPos) {
 	vec2 noiseCoord = (floorPos.xz + fractPos.xz + floorPos.y * 16.0) * 0.015625;
 
 	#ifndef BLOCKY_CLOUDS
-	return texture2D(shadowcolor1, noiseCoord + 0.25).x;
+	float planeA = texture2D(shadowcolor1, noiseCoord).r;
+	float planeB = texture2D(shadowcolor1, noiseCoord + 0.25).r;
 	#else
-	return texture2D(shadowcolor1, noiseCoord + 0.25).a;
+	float planeA = texture2D(shadowcolor1, noiseCoord).a;
+	float planeB = texture2D(shadowcolor1, noiseCoord + 0.25).a;
 	#endif
+
+	return mix(planeA, planeB, fractPos.y);
 }
 
 float getCloudNoise(vec3 rayPos, float cloudLayer) {
@@ -51,9 +55,9 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, in float z1
 		float VoL = clamp(dot(normalize(viewPos), lightVec) * shadowFade, 0.0, 1.0);
 		float lViewPos = length(viewPos);
 
-		//Blend ambient and light colors with the sky
+		//Blend colors with the sky
+		lightCol = mix(lightCol, atmosphereColor, sunVisibility * 0.5) * (1.0 + pow12(VoL));
 		ambientCol = mix(ambientCol, atmosphereColor, sunVisibility * 0.25 * (1.0 - rainStrength * 0.5));
-		lightCol = mix(lightCol, atmosphereColor, sunVisibility * 0.5) * (1.0 + pow14(VoL));
 
 		//Set the two planes here between which the ray marching will be done
 		float lowerPlane = (VC_HEIGHT + stretching - cameraPosition.y) / nWorldPos.y;
@@ -94,7 +98,7 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, in float z1
 
 				//Color calculations
 				#ifndef BLOCKY_CLOUDS
-				float cloudLighting = clamp(smoothstep(VC_HEIGHT + stretching * noise, VC_HEIGHT - stretching * noise, rayPos.y) * 0.75 + noise * 0.5, 0.0, 1.0);
+				float cloudLighting = clamp(smoothstep(VC_HEIGHT + stretching * noise, VC_HEIGHT - stretching * noise, rayPos.y) * 0.6 + noise * 0.6, 0.0, 1.0);
 				#else
 				float cloudLighting = clamp(smoothstep(VC_HEIGHT + stretching * noise, VC_HEIGHT - stretching * noise, rayPos.y), 0.0, 1.0);
 				#endif
@@ -104,9 +108,6 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, in float z1
 				#endif
 
 				vec4 cloudColor = vec4(mix(lightCol, ambientCol, cloudLighting), noise);
-					 #ifdef VC_DISTANT_FADE
-					 cloudColor.a = mix(0.0, cloudColor.a, cloudDistantFade);
-					 #endif
 					 cloudColor.rgb *= cloudColor.a;
 
 				vc += cloudColor * (1.0 - vc.a);

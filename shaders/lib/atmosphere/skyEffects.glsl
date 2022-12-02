@@ -5,7 +5,7 @@ float GetNoise(vec2 pos) {
 
 void getStars(inout vec3 color, in vec3 worldPos, in float VoU, in float nebulaFactor, in float caveFactor, inout float star) {
 	#ifdef OVERWORLD
-	float visibility = (1.0 - timeBrightnessSqrt) * (1.0 - rainStrength) * pow(VoU, 0.125) * caveFactor;
+	float visibility = (1.0 - timeBrightness) * (1.0 - rainStrength) * pow(VoU, 0.125) * caveFactor;
 	#else
 	float visibility = 0.75 + nebulaFactor * 0.25;
 	#endif

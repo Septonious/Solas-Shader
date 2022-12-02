@@ -15,11 +15,11 @@ option.VC=Объёмные Облака
 option.BLOCKY_CLOUDS=Квадратные Облака
 option.VC_DISTANT_FADE=Облачный Дальний Туман
 option.VC_AMOUNT=Количество Облаков
-value.VC_AMOUNT.1.00=Очень Низкое
-value.VC_AMOUNT.0.75=Низкое
-value.VC_AMOUNT.0.50=Среднее
-value.VC_AMOUNT.0.25=Большое
-value.VC_AMOUNT.0.00=Очень Большое
+value.VC_AMOUNT.0.90=Очень Низкое
+value.VC_AMOUNT.0.80=Низкое
+value.VC_AMOUNT.0.70=Среднее
+value.VC_AMOUNT.0.60=Большое
+value.VC_AMOUNT.0.50=Очень Большое
 option.VC_HEIGHT=Высота
 option.VC_STRETCHING=Толщина
 option.VC_SAMPLES=Качество
@@ -113,7 +113,6 @@ option.AO_RADIUS=Радиус АО
 
 option.GLOBAL_ILLUMINATION=Глобальное Освещение (ГО)
 option.GLOBAL_ILLUMINATION_STRENGTH=Сила ГО
-option.GLOBAL_ILLUMINATION_RADIUS=Радиус ГО
 option.DYNAMIC_HANDLIGHT=Динамичное Освещение
 
 

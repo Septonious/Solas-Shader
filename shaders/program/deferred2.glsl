@@ -146,6 +146,7 @@ void main() {
 	#endif
 
 	computeVolumetricClouds(vc, atmosphereColor, z1, blueNoiseDither, cloudDepth);
+	vc.rgb = pow(vc.rgb, vec3(1.0 / 2.2));
 	#endif
 
 	if (z1 == 1.0) { //Sky rendering
@@ -203,7 +204,7 @@ void main() {
 	}
 
 	#ifdef VC
-	color = mix(color, pow(vc.rgb, vec3(1.0 / 2.2)), vc.a * vc.a * mix(VC_OPACITY, 0.4, rainStrength));
+	color = mix(color, vc.rgb, pow3(vc.a) * mix(VC_OPACITY, 0.4, rainStrength));
 	#endif
 
 	#ifdef INTEGRATED_SPECULAR
@@ -212,7 +213,7 @@ void main() {
 
 	#ifdef BLOOM
 	#ifdef OVERWORLD
-	colortex2Data.ba += vec2(sunMoon * 0.125, sunMoon);
+	colortex2Data.ba += vec2(sunMoon * 0.125 + star, sunMoon + star);
 	#elif defined END
 	colortex2Data.ba += vec2(star + endVortex * 0.1);
 	#endif

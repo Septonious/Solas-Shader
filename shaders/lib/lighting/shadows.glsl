@@ -5,8 +5,6 @@ uniform sampler2D shadowtex1;
 uniform sampler2D shadowcolor0;
 #endif
 
-int shadowFilterSamples = 8;
-
 const vec2 shadowOffsets[8] = vec2[8](
     vec2( 0.000000,  0.250000),
     vec2( 0.292496, -0.319290),
@@ -29,15 +27,8 @@ vec3 calculateShadowPos(vec3 worldPos) {
     return shadowPos * 0.5 + 0.5;
 }
 
-mat2 Rotate(float angle) {
-    float sinAngle = sin(angle);
-    float cosAngle = cos(angle);
-
-    return mat2(cosAngle, -sinAngle, sinAngle, cosAngle);
-}
-
 float texture2DShadow(sampler2D shadowtex, vec3 shadowPos) {
-    return texture2D(shadowtex, shadowPos.xy).x > shadowPos.z ? 1.0 : 0.0;
+    return step(shadowPos.z - 0.0001, texture2D(shadowtex, shadowPos.xy).r);
 }
 
 #ifdef VPS
@@ -45,11 +36,11 @@ float texture2DShadow(sampler2D shadowtex, vec3 shadowPos) {
 void findBlockerDistance(vec3 shadowPos, mat2 ditherRotMat, inout float offset, float skyLightMap, float viewLengthFactor) {
     float blockerDistance = 0.0;
         
-    for (int i = 0; i < shadowFilterSamples; i++){
+    for (int i = 0; i < 8; i++){
         vec2 pixelOffset = ditherRotMat * shadowOffsets[i] * 0.015;
-        blockerDistance += shadowPos.z - texture2D(shadowtex0, shadowPos.xy + pixelOffset).x;
+        blockerDistance += shadowPos.z - texture2D(shadowtex0, shadowPos.xy + pixelOffset).r;
     }
-    blockerDistance /= shadowFilterSamples;
+    blockerDistance *= 0.125;
 
     offset = mix(offset, max(offset, blockerDistance * VPS_BLUR_STRENGTH), skyLightMap * viewLengthFactor);
 }
@@ -58,27 +49,29 @@ void findBlockerDistance(vec3 shadowPos, mat2 ditherRotMat, inout float offset, 
 vec3 computeShadow(vec3 shadowPos, float offset, float dither, float skyLightMap, float ao, float viewLengthFactor) {
     float shadow0 = 0.0;
 
-    mat2 ditherRotMat = Rotate(dither * TAU);
+    float cosTheta = cos(dither * TAU);
+	float sinTheta = sin(dither * TAU);
+    mat2 ditherRotMat =  mat2(cosTheta, -sinTheta, sinTheta, cosTheta);
 
     #ifdef VPS
     findBlockerDistance(shadowPos, ditherRotMat, offset, skyLightMap, viewLengthFactor);
     #endif
 
-    for (int i = 0; i < shadowFilterSamples; i++) {
+    for (int i = 0; i < 8; i++) {
         vec2 pixelOffset = ditherRotMat * shadowOffsets[i] * offset;
-        shadow0 += texture2DShadow(shadowtex0, vec3(shadowPos.st + ditherRotMat * shadowOffsets[i] * offset, shadowPos.z));
+        shadow0 += texture2DShadow(shadowtex0, vec3(shadowPos.st + pixelOffset, shadowPos.z));
     }
-    shadow0 /= shadowFilterSamples;
+    shadow0 *= 0.125;
 
     vec3 shadowCol = vec3(0.0);
     #ifdef SHADOW_COLOR
     if (shadow0 < 0.999) {
-        for (int i = 0; i < shadowFilterSamples; i++) {
+        for (int i = 0; i < 8; i++) {
             vec2 pixelOffset = ditherRotMat * shadowOffsets[i] * offset;
             shadowCol += texture2D(shadowcolor0, shadowPos.st + pixelOffset).rgb *
-                         texture2DShadow(shadowtex1, vec3(shadowPos.st + ditherRotMat * shadowOffsets[i] * offset, shadowPos.z));
+                         texture2DShadow(shadowtex1, vec3(shadowPos.st + pixelOffset, shadowPos.z));
         }
-        shadowCol /= shadowFilterSamples;
+        shadowCol *= 0.125;
     }
     #endif
 

@@ -79,7 +79,7 @@ void getIntegratedEmission(inout vec4 albedo, in vec3 viewPos, in vec3 worldPos,
 	} else if (mat == 120) { // Powered Rail
 		emission = 0.25 * int(albedo.g < 0.25);
 	} else if (mat == 121 || mat == 122 || mat == 123) { // Fully emissive blocks
-		emission = lAlbedo * 2.0;
+		emission = 1.0;
 	}
 	
 	#ifdef EMISSIVE_POWDER_SNOW

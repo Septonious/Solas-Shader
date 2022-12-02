@@ -11,11 +11,11 @@ option.VC=Nubes Volumétricas
 option.BLOCKY_CLOUDS=Nubes Cúbicas
 option.VC_DISTANT_FADE=Desvanecimiento Distante de las Nubes
 option.VC_AMOUNT=Cantidad
-value.VC_AMOUNT.1.00=Muy Baja
-value.VC_AMOUNT.0.75=Baja
-value.VC_AMOUNT.0.50=Media
-value.VC_AMOUNT.0.25=Alta
-value.VC_AMOUNT.0.00=Muy Alta
+value.VC_AMOUNT.0.90=Muy Baja
+value.VC_AMOUNT.0.80=Baja
+value.VC_AMOUNT.0.70=Media
+value.VC_AMOUNT.0.60=Alta
+value.VC_AMOUNT.0.50=Muy Alta
 option.VC_HEIGHT=Altura
 option.VC_STRETCHING=Estirar
 option.VC_SAMPLES=Pasadas
@@ -98,7 +98,6 @@ option.AO_STRENGTH=Intensidad de AO
 
 option.GLOBAL_ILLUMINATION=Iluminación Global (GI)
 option.GLOBAL_ILLUMINATION_STRENGTH=Intensidad de GI
-option.GLOBAL_ILLUMINATION_RADIUS=Radio de GI
 option.DYNAMIC_HANDLIGHT=Iluminacón Dinámica en la Mano
 
 

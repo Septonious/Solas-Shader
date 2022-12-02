@@ -133,8 +133,6 @@ void main() {
 		getSceneLighting(albedo.rgb, screenPos, viewPos, worldPos, newNormal, lightmap, NoU, NoL, NoE, emission, leaves, foliage, specular * clamp(NoU - 0.01, 0.0, 1.0));
 	}
 
-	emission *= 2.0;
-
 	/* DRAWBUFFERS:0 */
 	gl_FragData[0] = albedo;
 

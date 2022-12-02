@@ -10,7 +10,7 @@ vec3 lightVec = sunVec;
 
 #ifdef BLOOM_COLORED_LIGHTING
 void computeBCL(inout vec3 blockLighting, in vec3 bloom, in float lViewPos, in float directionalBloom, in float blockLightMap, in float skyLightMap) {
-    float bloomLightMap = blockLightMap * blockLightMap * 1.25 + blockLightMap * 0.5 + clamp(1.0 - lViewPos * 0.05, 0.0, 0.25);
+    float bloomLightMap = blockLightMap * blockLightMap * 1.25 + blockLightMap * 0.5 + 0.2;
     float radius = mix(COLORED_LIGHTING_RADIUS - 0.1, COLORED_LIGHTING_RADIUS, skyLightMap);
 
 	vec3 coloredLight = clamp(0.0625 * bloom * pow(getLuminance(bloom), radius), 0.0, 1.0) * 16.0;
@@ -42,7 +42,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     
     vec3 blockLighting = blockLightCol * blockLightMap;
 
-    #if (defined BLOOM_COLORED_LIGHTING || defined GLOBAL_ILLUMINATION) && !defined GBUFFERS_TEXTURED && !defined GBUFFERS_WATER
+    #if (defined BLOOM_COLORED_LIGHTING || defined GLOBAL_ILLUMINATION) && !defined GBUFFERS_WATER
     vec3 bloom = texture2D(gaux1, screenPos.xy).rgb;
          bloom = pow4(bloom) * 128.0;
     float directionalBloom = clamp(abs(dot(normalize(bloom), normal)) + 0.2, 0.0, 1.0);
@@ -53,7 +53,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     blockLighting += getColoredLighting(worldPos, blockLightMap) * BLOCKLIGHT_I * int(emission == 0.0);
     #elif defined BLOOM_COLORED_LIGHTING
     //Bloom Based Colored Lighting
-    #if !defined GBUFFERS_TEXTURED && !defined GBUFFERS_WATER
+    #if !defined GBUFFERS_WATER
     if (emission == 0.0) computeBCL(blockLighting, bloom, lViewPos, directionalBloom, lightmap.x, lightmap.y);
     #endif
     #endif
@@ -75,9 +75,9 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
 	      VoL = clamp(VoL * 0.5 + 0.5, 0.0, 1.0);
 	      VoL = 0.01 / (1.0 - 0.99 * VoL) - 0.01;
     float scattering = clamp((VoL + sqrt(VoL)) * (1.0 + specular * 3.0), 0.0, 0.5 + subsurface * 0.2 + specular * 0.8);
-    
-    NoL = mix(NoL, 0.5 + min(scattering * 0.5, 1.0), subsurface);
-    lightCol *= 1.0 + scattering * 3.0;
+
+    NoL = mix(NoL, 0.3 + min(scattering * 0.45, 0.45), subsurface * (0.5 + min(scattering * 0.5, 0.5)));
+    lightCol *= 1.0 + scattering;
     #endif
 
     if (NoL > 0.0001) {
@@ -121,12 +121,6 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     #ifdef OVERWORLD
     float rainFactor = 1.0 - rainStrength * 0.8;
 
-    #if defined GLOBAL_ILLUMINATION && !defined GBUFFERS_TEXTURED && !defined GBUFFERS_WATER
-    bloom = clamp(0.0625 * bloom * pow(getLuminance(bloom), GLOBAL_ILLUMINATION_RADIUS), 0.0, 1.0) * 16.0;
-
-    ambientCol *= vec3(1.0) + bloom * sunVisibility * rainFactor;
-    #endif
-
     vec3 sceneLighting = mix(ambientCol, lightCol, fullShadow * rainFactor * shadowFade) * lightmap.y * lightmap.y;
     sceneLighting *= 1.0 + scattering * shadow;
     #endif
@@ -145,15 +139,17 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     #endif
 
     albedo = pow(albedo, vec3(2.2));
-    albedo *= sceneLighting + blockLighting + (albedo * emission * EMISSION_STRENGTH) + nightVision * 0.25 + (minLightCol * (1.0 - lightmap.y));
+    albedo *= sceneLighting + blockLighting + (albedo * emission * 2.0) + nightVision * 0.25 + (minLightCol * (1.0 - lightmap.y));
     albedo *= vanillaDiffuse;
     albedo = sqrt(max(albedo, vec3(0.0)));
 
+    emission *= EMISSION_STRENGTH;
+
     #if defined GLOBAL_ILLUMINATION && !defined GBUFFERS_TEXTURED && !defined GBUFFERS_WATER
-    float giVisibility = length(fullShadow * rainFactor * sunVisibility);
+    float giVisibility = length(fullShadow * rainFactor * sunVisibility) * int(emission == 0.0);
 
     if (giVisibility != 0.0) {
-        emission += mix(0.0, GLOBAL_ILLUMINATION_STRENGTH * int(emission == 0.0), giVisibility);
+        emission += mix(0.0, GLOBAL_ILLUMINATION_STRENGTH, giVisibility);
     }
     #endif
 }

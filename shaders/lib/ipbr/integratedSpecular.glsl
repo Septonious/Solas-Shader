@@ -19,15 +19,15 @@ void getIntegratedSpecular(inout vec4 albedo, in vec3 normal, in vec2 worldPos, 
     float lAlbedo = length(albedo.rgb);
 
     if (mat == 300) {// Sand
-        specular = int(albedo.b > 0.65) * 0.125 + int(albedo.b > 0.7) * 0.125;
+        specular = int(albedo.b > 0.65 || albedo.b > 0.7) * 0.125;
     } else if (mat == 301) {// Iron Block
         specular = int(pow16(albedo.r)) * 16.0;
-    } else if (mat == 302) {// Gold Block & Gold Pressure Plate
-        specular = pow8(lAlbedo) * 4.0;
+    } else if (mat == 302) {// Gold Block & Gold Pressure Plate & Amethyst
+        specular = pow8(clamp(lAlbedo, 0.0, 1.0));
     } else if (mat == 303) {// Emerald & Diamond Blocks
         specular = pow12(lAlbedo);
     } else if (mat == 304 || mat == 306) {// Polished Stones Blocks & Basalt & Prismarine (my previous shader really)
-        specular = 1;
+        specular = pow4(clamp(lAlbedo, 0.0, 1.0)) * 0.25;
     } else if (mat == 305) {// Obsidian & Polished Deepslate
         specular = lAlbedo * 0.25;
     }

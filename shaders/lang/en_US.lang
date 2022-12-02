@@ -15,11 +15,11 @@ option.VC=Volumetric Clouds
 option.BLOCKY_CLOUDS=Blocky Clouds
 option.VC_DISTANT_FADE=Clouds Distant Fade
 option.VC_AMOUNT=Amount
-value.VC_AMOUNT.1.00=Very Low
-value.VC_AMOUNT.0.75=Low
-value.VC_AMOUNT.0.50=Medium
-value.VC_AMOUNT.0.25=High
-value.VC_AMOUNT.0.00=Very High
+value.VC_AMOUNT.0.90=Very Low
+value.VC_AMOUNT.0.80=Low
+value.VC_AMOUNT.0.70=Medium
+value.VC_AMOUNT.0.60=High
+value.VC_AMOUNT.0.50=Very High
 option.VC_HEIGHT=Height
 option.VC_STRETCHING=Stretching
 option.VC_SAMPLES=Samples
@@ -116,8 +116,8 @@ option.AO_STRENGTH=AO Strength
 option.AO_RADIUS=AO Radius
 
 option.GLOBAL_ILLUMINATION=Global Illumination (GI)
+comment.GLOBAL_ILLUMINATION.comment=Enables fake GI based on bloom. Both bloom and bloom colored lighting have to be enabled.
 option.GLOBAL_ILLUMINATION_STRENGTH=GI Strength
-option.GLOBAL_ILLUMINATION_RADIUS=GI Radius
 option.DYNAMIC_HANDLIGHT=Dynamic Hand Lighting
 
 
