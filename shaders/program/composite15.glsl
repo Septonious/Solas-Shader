@@ -42,6 +42,10 @@ uniform sampler2D depthtex0;
 uniform sampler2D depthtex1;
 #endif
 
+#ifdef SSPT
+uniform sampler2D colortex3;
+#endif
+
 uniform sampler2D colortex1;
 
 //Optifine Constants//

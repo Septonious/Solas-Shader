@@ -88,7 +88,7 @@ uniform sampler2D gaux3;
 uniform sampler2D gaux4;
 #endif
 
-#ifdef VC
+#if defined VC || defined BLOOM_COLORED_LIGHTING || defined GLOBAL_ILLUMINATION
 uniform sampler2D gaux1;
 #endif
 
@@ -115,7 +115,7 @@ uniform mat4 shadowModelView;
 #endif
 
 //Common Variables//
-#if defined BLOOM_COLORED_LIGHTING || defined GLOBAL_ILLUMINATION
+#if (defined GLOBAL_ILLUMINATION || defined BLOOM_COLORED_LIGHTING) || (defined SSPT && defined GLOBAL_ILLUMINATION)
 float getLuminance(vec3 color) {
 	return dot(color, vec3(0.299, 0.587, 0.114));
 }
@@ -138,6 +138,10 @@ vec2 viewResolution = vec2(viewWidth, viewHeight);
 #include "/lib/util/ToNDC.glsl"
 #include "/lib/util/ToWorld.glsl"
 #include "/lib/util/bayerDithering.glsl"
+
+#ifdef INTEGRATED_SPECULAR
+#include "/lib/util/encode.glsl"
+#endif
 
 #ifdef INTEGRATED_SPECULAR
 #include "/lib/util/ToScreen.glsl"
@@ -177,10 +181,11 @@ vec2 viewResolution = vec2(viewWidth, viewHeight);
 //Program//
 void main() {
 	vec4 albedo = texture2D(texture, texCoord) * color;
+	vec3 newNormal = normal;
 
 	float water = int(mat == 1);
 	float portal = int(mat == 2);
-	float emission = portal * 4.0;
+	float emission = portal * 8.0;
 
 	albedo.a *= 1.0 - portal * 0.5;
 
@@ -197,7 +202,6 @@ void main() {
 
 	if (albedo.a > 0.001) {
 		vec3 skyColor = vec3(0.0);
-		vec3 newNormal = normal;
 
 		vec3 screenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z);
 		vec3 viewPos = ToNDC(screenPos);
@@ -271,9 +275,14 @@ void main() {
 	gl_FragData[1] = albedo;
 	gl_FragData[2].a = water * 0.004;
 
-	#ifdef BLOOM
-	/* DRAWBUFFERS:0142 */
-	gl_FragData[3].ba = vec2(emission * 0.1, emission);
+	#ifndef INTEGRATED_SPECULAR
+		#ifdef BLOOM
+		/* DRAWBUFFERS:0142 */
+		gl_FragData[3].ba = vec2(emission * 0.1, emission);
+		#endif
+	#else
+		/* DRAWBUFFERS:0142 */
+		gl_FragData[3] = vec4(EncodeNormal(newNormal), emission * 0.1, 1.0);
 	#endif
 }
 

@@ -48,7 +48,7 @@ uniform mat4 shadowModelView;
 #endif
 
 //Common Variables//
-#if defined BLOOM_COLORED_LIGHTING || defined GLOBAL_ILLUMINATION
+#if (defined GLOBAL_ILLUMINATION || defined BLOOM_COLORED_LIGHTING) || (defined SSPT && defined GLOBAL_ILLUMINATION)
 float getLuminance(vec3 color) {
 	return dot(color, vec3(0.299, 0.587, 0.114));
 }

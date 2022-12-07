@@ -58,7 +58,7 @@ uniform mat4 shadowModelView;
 #endif
 
 //Common Variables//
-#if defined BLOOM_COLORED_LIGHTING || defined GLOBAL_ILLUMINATION
+#if (defined GLOBAL_ILLUMINATION || defined BLOOM_COLORED_LIGHTING) || (defined SSPT && defined GLOBAL_ILLUMINATION)
 float getLuminance(vec3 color) {
 	return dot(color, vec3(0.299, 0.587, 0.114));
 }
@@ -107,7 +107,7 @@ void main() {
 
 	if (albedo.a > 0.001) {
 		float foliage = int(mat == 1) + int(mat == 108);
-		float leaves = int(mat == 2);
+		float leaves = int(mat == 2) + int(mat == 16) * 0.5;
 
 		vec3 screenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z);
 		vec3 viewPos = ToNDC(screenPos);

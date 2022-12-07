@@ -31,8 +31,6 @@ vec3 getBlur(vec2 texCoord) {
 	     blur += getBloomTile(3.0 + BLOOM_TILE_SIZE, bloomCoord, vec2(0.51  , 0.26));
 	     blur += getBloomTile(4.0 + BLOOM_TILE_SIZE, bloomCoord, vec2(0.645 , 0.26));
 	     blur += getBloomTile(5.0 + BLOOM_TILE_SIZE, bloomCoord, vec2(0.7175, 0.26));
-		
-		 blur = clamp(blur, 0.0, 1.0);
 
-    return blur;
+    return clamp(blur, 0.0, 1.0);
 }

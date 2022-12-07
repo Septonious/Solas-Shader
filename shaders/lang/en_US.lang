@@ -115,6 +115,12 @@ option.VANILLA_AO=Vanilla Ambient Occlusion (AO)
 option.AO_STRENGTH=AO Strength
 option.AO_RADIUS=AO Radius
 
+option.SSPT=Screen Space Path Tracing
+option.SSPT_LUMINANCE=Luminance
+option.SSPT_LUMINANCE.comment=Controls the brightness of SSPT.
+option.SSPT_SAMPLE_COUNT=Sample Count
+option.SSPT_SAMPLE_COUNT.comment=Controls the accuracy and precision of SSPT. Higher values impact performance!
+
 option.GLOBAL_ILLUMINATION=Global Illumination (GI)
 comment.GLOBAL_ILLUMINATION.comment=Enables fake GI based on bloom. Both bloom and bloom colored lighting have to be enabled.
 option.GLOBAL_ILLUMINATION_STRENGTH=GI Strength

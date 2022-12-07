@@ -13,6 +13,7 @@ const float wetnessHalflife = 128.0;
 const int colortex0Format = R11F_G11F_B10F; //scene
 const int colortex1Format = RGB8; //translucent
 const int colortex2Format = RGBA16; //normals, emissives, specular
+const int colortex3Format = RGB8; //sspt
 const int colortex4Format = RGBA8; //ao
 const int colortex5Format = RGBA16; //temporal data
 const int colortex6Format = RGBA16; //reflection color

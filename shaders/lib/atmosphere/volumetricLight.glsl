@@ -16,7 +16,7 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
 	float VoL = dot(nViewPos, lightVec);
 	float sunFactor = exp(VoL * 2.0) * 0.5;
 	float nVoL = mix((0.75 + sunFactor) * 0.75, sunFactor * (1.5 - eBS), timeBrightness);
-	float visibility = float(z0 > 0.56) * (VoU * nVoL) * 0.02 * VL_OPACITY;
+	float visibility = float(z0 > 0.56) * max(VoU * nVoL, sign(isEyeInWater)) * 0.02 * VL_OPACITY;
 
 	#if MC_VERSION >= 11900
 	visibility *= 1.0 - darknessFactor;

@@ -7,8 +7,14 @@
 in vec2 texCoord;
 
 //Uniforms//
-#ifdef INTEGRATED_SPECULAR
+#if defined INTEGRATED_SPECULAR || defined SSPT
 uniform int isEyeInWater;
+
+#ifdef SSPT
+uniform int frameCounter;
+
+uniform float far, near;
+#endif
 
 #ifdef TAA
 uniform float frameTimeCounter;
@@ -27,7 +33,11 @@ uniform sampler2D colortex1;
 
 uniform sampler2D colortex0;
 
-#ifdef INTEGRATED_SPECULAR
+#ifdef SSPT
+uniform sampler2D noisetex;
+#endif
+
+#if defined INTEGRATED_SPECULAR || defined SSPT
 uniform sampler2D depthtex0, depthtex1;
 
 uniform mat4 gbufferProjection;
@@ -50,13 +60,21 @@ const bool colortex1MipmapEnabled = true;
 #include "/lib/filters/blur.glsl"
 #endif
 
-#ifdef INTEGRATED_SPECULAR
+#if defined INTEGRATED_SPECULAR || defined SSPT
 #include "/lib/util/ToScreen.glsl"
 #include "/lib/util/ToView.glsl"
 #include "/lib/util/encode.glsl"
+#endif
+
+#ifdef INTEGRATED_SPECULAR
 #include "/lib/util/bayerDithering.glsl"
 #include "/lib/util/raytracer.glsl"
 #include "/lib/ipbr/simpleReflection.glsl"
+#endif
+
+#ifdef SSPT
+#include "/lib/util/blueNoiseDithering.glsl"
+#include "/lib/lighting/sspt.glsl"
 #endif
 
 void main() {
@@ -67,13 +85,16 @@ void main() {
 	color.rgb += vl * vl;
 	#endif
 
-	#ifdef INTEGRATED_SPECULAR
-	float z0 = texture2D(depthtex0, texCoord).r;
-	float z1 = texture2D(depthtex1, texCoord).r;
-	vec3 viewPos = ToView(vec3(texCoord, z0));
-
+	#if defined INTEGRATED_SPECULAR || defined SSPT
 	vec4 terrainData = texture2D(colortex2, texCoord);
 	vec3 normal = DecodeNormal(terrainData.rg);
+
+	float z0 = texture2D(depthtex0, texCoord).r;
+	float z1 = texture2D(depthtex1, texCoord).r;
+	#endif
+
+	#ifdef INTEGRATED_SPECULAR
+	vec3 viewPos = ToView(vec3(texCoord, z0));
 
 	if (terrainData.a > 0.05 && terrainData.a < 1.0 && z0 > 0.56 && z0 >= z1) {
 		float fresnel = pow2(clamp(1.0 + dot(normal, normalize(viewPos)), 0.0, 1.0));
@@ -82,8 +103,17 @@ void main() {
 	}
 	#endif
 
+	#ifdef SSPT
+	vec3 sspt = computeSSPT(vec3(texCoord, z0), normal, z0);
+	#endif
+
 	/* DRAWBUFFERS:0 */
 	gl_FragData[0] = color;
+
+	#ifdef SSPT
+	/* DRAWBUFFERS:03 */
+	gl_FragData[1].rgb = pow(sspt / 128.0, vec3(0.25));
+	#endif
 }
 
 #endif

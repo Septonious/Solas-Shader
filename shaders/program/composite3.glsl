@@ -17,6 +17,11 @@ in vec3 sunVec, upVec;
 uniform int isEyeInWater;
 #endif
 
+#ifdef SSPT
+uniform float far, near;
+uniform float viewWidth, viewHeight;
+#endif
+
 #ifdef WATER_FOG
 #if MC_VERSION >= 11900
 uniform float darknessFactor;
@@ -38,6 +43,10 @@ uniform float frameTimeCounter;
 uniform vec3 cameraPosition;
 
 uniform sampler2D colortex4;
+
+#ifdef SSPT
+uniform sampler2D colortex2, colortex3;
+#endif
 
 #ifdef BLOCKY_CLOUDS
 uniform sampler2D noisetex;
@@ -75,6 +84,11 @@ float sunVisibility = clamp(dot(sunVec, upVec) + 0.025, 0.0, 0.1) * 10.0;
 #endif
 #endif
 
+#ifdef SSPT
+#include "/lib/util/encode.glsl"
+#include "/lib/filters/ssptDenoiser.glsl"
+#endif
+
 void main() {
 	vec3 color = texture2D(colortex0, texCoord).rgb;
 
@@ -102,8 +116,18 @@ void main() {
 	#endif
 	#endif
 
+	#ifdef SSPT
+	vec3 sspt = NormalAwareBlur();
+	color *= vec3(1.0) + sspt;
+	#endif
+
 	/* DRAWBUFFERS:0 */
 	gl_FragData[0].rgb = color;
+
+	#ifdef SSPT
+	/* DRAWBUFFERS:03 */
+	gl_FragData[1].rgb = sspt;
+	#endif
 }
 
 #endif

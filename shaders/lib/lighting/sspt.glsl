@@ -1,4 +1,4 @@
-/*
+
 const uint k = 1103515245U;
 
 vec2 getHashNoise(uvec3 x){
@@ -10,7 +10,7 @@ vec2 getHashNoise(uvec3 x){
 }
 
 bool raytrace(vec3 viewPos, vec3 rayDir, float dither, inout vec3 hitPos) {
-    const int rayCount = 10;
+    const int rayCount = SSPT_SAMPLE_COUNT;
     const float rayLength = 1.0 / rayCount;
 
     vec3 screenPos = ToScreen(viewPos);
@@ -38,31 +38,34 @@ vec3 generateCosineVector(vec3 normal, vec2 noise) {
     return normalize(normal + randomDir);
 }
 
-vec3 computeSSPT(vec3 screenPos, vec3 normal) {
-    vec3 illumination = vec3(0.0);
-    vec3 weight = vec3(1.0);
+vec3 computeSSPT(vec3 screenPos, vec3 normal, float z0) {
+    float emission = texture2D(colortex2, texCoord).b;
 
-	float speed = 0.6180339887498967 * (frameCounter & 127);
+    if (emission == 0.0 && z0 > 0.56) {
+        vec3 illumination = vec3(0.0);
+        vec3 weight = vec3(1.0);
 
-    float dither = getBlueNoise(gl_FragCoord.xy);
-          dither = fract(dither + speed);
+        float speed = 0.6180339887498967 * (frameCounter & 127);
+        float dither = fract(getBlueNoise(gl_FragCoord.xy) + speed);
 
-    vec2 noise = getHashNoise(uvec3(gl_FragCoord.xy, speed));
+        vec2 noise = getHashNoise(uvec3(gl_FragCoord.xy, speed));
 
-    vec3 hitNormal = normalize(DecodeNormal(texture2D(colortex2, screenPos.xy).xy));
-    vec3 hitPos = ToView(screenPos) + hitNormal * 0.001;
-    vec3 rayDir = generateCosineVector(hitNormal, noise);
+        vec3 hitNormal = normalize(DecodeNormal(texture2D(colortex2, screenPos.xy).xy));
+        vec3 hitPos = ToView(screenPos) + hitNormal * 0.001;
+        vec3 rayDir = generateCosineVector(hitNormal, noise);
 
-    bool hit = raytrace(hitPos, rayDir, dither, hitPos);
+        bool hit = raytrace(hitPos, rayDir, dither, hitPos);
 
-    if (hit) {
-        vec3 hitAlbedo = texture2D(colortex0, hitPos.xy).rgb;
-        float isEmissive = texture2D(colortex2, hitPos.xy).b * 1000.0;
+        if (hit) {
+            vec3 hitAlbedo = texture2D(colortex0, hitPos.xy).rgb;
+            float isEmissive = texture2D(colortex2, hitPos.xy).b * SSPT_LUMINANCE;
 
-        weight *= hitAlbedo;
-        illumination += weight * isEmissive;
+            weight *= hitAlbedo;
+            illumination += weight * isEmissive;
+        }
+
+        return illumination * illumination;
     }
 
-    return illumination;
+    return vec3(0.0);
 }
-*/

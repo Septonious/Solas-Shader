@@ -17,7 +17,7 @@ vec3 getBloom(vec2 bloomCoord, float dither, float z0) {
 		vec2 bloomDither = vec2(0.0);
 
 		#ifdef TAA
-		dither = fract(dither + frameTimeCounter * 16.0);
+		dither = fract(dither + frameTimeCounter * 16.0) - 0.25;
 		#endif
 
 		bloomDither = vec2(dither * pixelWidth, dither * pixelHeight);
