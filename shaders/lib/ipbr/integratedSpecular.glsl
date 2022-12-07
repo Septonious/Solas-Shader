@@ -27,9 +27,9 @@ void getIntegratedSpecular(inout vec4 albedo, in vec3 normal, in vec2 worldPos, 
     } else if (mat == 303) {// Emerald & Diamond Blocks
         specular = pow12(lAlbedo);
     } else if (mat == 304 || mat == 306) {// Polished Stones Blocks & Basalt & Prismarine (my previous shader really)
-        specular = pow4(clamp(lAlbedo, 0.0, 1.0)) * 0.25;
+        specular = pow4(clamp(lAlbedo, 0.0, 1.0)) * 0.15;
     } else if (mat == 305) {// Obsidian & Polished Deepslate
-        specular = lAlbedo * 0.25;
+        specular = lAlbedo * 0.2;
     }
 
     #if defined RAIN_PUDDLES && defined GBUFFERS_TERRAIN

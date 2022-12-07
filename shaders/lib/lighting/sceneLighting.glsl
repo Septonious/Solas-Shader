@@ -65,10 +65,11 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     //Main Scene Lighting (Sunlight & Shadows)
     #if defined OVERWORLD || defined END
     vec3 shadow = vec3(0.0);
+    float subsurface = 0.0;
 
     //Subsurface Scattering & Specular Highlight
     #ifdef OVERWORLD
-    float subsurface = leaves + foliage;
+    subsurface = leaves + foliage;
 
     //Subsurface Scattering & Specular Highlight
     float VoL = dot(normalize(viewPos), lightVec);
@@ -76,7 +77,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
 	      VoL = 0.01 / (1.0 - 0.99 * VoL) - 0.01;
     float scattering = clamp((VoL + sqrt(VoL)) * (1.0 + specular * 3.0), 0.0, 0.5 + subsurface * 0.2 + specular * 0.8);
 
-    NoL = mix(NoL, 0.3 + min(scattering * 0.45, 0.45), subsurface * (0.5 + min(scattering * 0.5, 0.5)));
+    NoL = mix(NoL, 0.5 + min(scattering * 0.5, 0.5), subsurface * (0.5 + min(scattering * 0.5, 0.5)));
     lightCol *= 1.0 + scattering;
     #endif
 
@@ -84,7 +85,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
         //Shadows without peter-panning from Emin's Complementary Reimagined shaderpack, tysm for allowing me to use them ^^
         //Developed by Emin#7309 and gri573#7741
         #ifdef TAA
-        float dither = fract(Bayer64(gl_FragCoord.xy) + frameTimeCounter * 16.0);
+        float dither = fract(Bayer64(gl_FragCoord.xy) + frameTimeCounter * 16.0) / 16.0 * (1.0 + subsurface * 3.0);
         #else
         float dither = 0.0;
         #endif
@@ -96,13 +97,14 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
 
             #ifndef GBUFFERS_TEXTURED
                 //Shadow bias without peter-panning
-                vec3 worldNormal = normalize(ToWorld(normal * 1000.0));
-                vec3 bias = worldNormal * min(0.1 + length(worldPos) / 200.0, 0.5) * (2.0 - NoL);
+                vec3 worldNormal = normalize(ToWorld(normal * 100000.0));
+                vec3 bias = worldNormal * min(0.1 + length(worldPos) / 250.0, 0.75);
                 
-                #ifdef GBUFFERS_WATER
-                    bias *= 0.5;
-                    worldPosM += 1.0 - lightmap.y;
-                #endif
+                //Light leaking fix from Complementary
+                if (lightmap.y < 0.001) {
+                    vec3 edgeFactor = 0.2 * (0.5 - fract(worldPosM + cameraPosition + worldNormal * 0.01));
+                    worldPosM += (1.0 - ao) * edgeFactor;
+                }
 
                 worldPosM += bias;
             #else
@@ -110,9 +112,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
                 worldPosM = mix(centerworldPos, worldPosM + vec3(0.0, 0.02, 0.0), lightmap.y);
             #endif
 
-            float viewLengthFactor = 1.0 - clamp(length(viewPos.xz) * 0.01, 0.0, 1.0);
-
-            shadow = computeShadow(calculateShadowPos(worldPosM), shadowOffset, dither, lightmap.y, ao, viewLengthFactor);
+            shadow = computeShadow(calculateShadowPos(worldPosM), shadowOffset * (1.0 + subsurface * 2.0), dither, lightmap.y, ao, subsurface);
         }
     }
 
@@ -135,7 +135,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     #endif
 
     #ifdef VANILLA_AO
-    albedo.rgb = mix(albedo.rgb, albedo.rgb * ao, (1.0 - ao) * (1.0 - blockLightMap) * int(emission == 0.0));
+    albedo.rgb = mix(albedo.rgb, albedo.rgb * ao, (1.0 - ao) * (1.0 - blockLightMap) * int(emission == 0.0) * 0.5);
     #endif
 
     albedo = pow(albedo, vec3(2.2));
@@ -145,7 +145,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
 
     emission *= EMISSION_STRENGTH;
 
-    #if defined GLOBAL_ILLUMINATION && !defined GBUFFERS_TEXTURED && !defined GBUFFERS_WATER
+    #if defined GLOBAL_ILLUMINATION && !defined GBUFFERS_WATER
     float giVisibility = length(fullShadow * rainFactor * sunVisibility) * int(emission == 0.0);
 
     if (giVisibility != 0.0) {

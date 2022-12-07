@@ -25,7 +25,7 @@ float texture3DNoise(vec3 rayPos) {
 
 float getCloudNoise(vec3 rayPos, float cloudLayer) {
 	#ifndef BLOCKY_CLOUDS
-	float noise = texture3DNoise(rayPos * 0.25 + frameTimeCounter * 0.5) * 6.5;
+	float noise = texture3DNoise(rayPos * 0.20 + frameTimeCounter * 0.5) * 6.5;
 		  noise+= texture3DNoise(rayPos * 0.50 + frameTimeCounter * 1.0) * 4.0;
 		  noise+= texture3DNoise(rayPos * 1.00 + frameTimeCounter * 1.5) * 2.5;
 		  noise+= texture3DNoise(rayPos * 2.00 + frameTimeCounter * 2.0) * 1.5;
@@ -52,7 +52,7 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, in float z1
 		vec3 nWorldPos = normalize(ToWorld(viewPos));
 		vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.0);
 		
-		float VoL = clamp(dot(normalize(viewPos), lightVec) * shadowFade, 0.0, 1.0);
+		float VoL = clamp(dot(normalize(viewPos), lightVec), 0.0, 1.0) * shadowFade;
 		float lViewPos = length(viewPos);
 
 		//Blend colors with the sky
@@ -80,7 +80,7 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, in float z1
 
 			float lWorldPos = length(worldPos);
 			float cloudLayer = abs(VC_HEIGHT - rayPos.y) / stretching;
-            float cloudVisibility = float(cloudLayer < 2.0);
+            float cloudVisibility = int(cloudLayer < 3.0);
 
 			if (cloudVisibility == 0.0 || lWorldPos > VC_DISTANCE || lViewPos - 1.0 < lWorldPos) break;
 
@@ -89,7 +89,7 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, in float z1
 				vec3 shadowPos = calculateShadowPos(worldPos);
 				float shadow1 = shadow2D(shadowtex1, shadowPos).z;
 
-				cloudVisibility *= 1.0 - float(shadow1 != 1.0);
+				cloudVisibility *= 1.0 - int(shadow1 != 1.0);
 			}
 
 			//Shaping and lighting
@@ -98,13 +98,9 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, in float z1
 
 				//Color calculations
 				#ifndef BLOCKY_CLOUDS
-				float cloudLighting = clamp(smoothstep(VC_HEIGHT + stretching * noise, VC_HEIGHT - stretching * noise, rayPos.y) * 0.6 + noise * 0.6, 0.0, 1.0);
+				float cloudLighting = clamp(smoothstep(VC_HEIGHT + stretching * noise, VC_HEIGHT - stretching * noise, rayPos.y) * 0.65 + noise * 0.65, 0.0, 1.0);
 				#else
 				float cloudLighting = clamp(smoothstep(VC_HEIGHT + stretching * noise, VC_HEIGHT - stretching * noise, rayPos.y), 0.0, 1.0);
-				#endif
-
-				#ifdef VC_DISTANT_FADE
-				float cloudDistantFade = clamp((VC_DISTANCE - lWorldPos) / VC_DISTANCE * 2.0, 0.0, 1.0);
 				#endif
 
 				vec4 cloudColor = vec4(mix(lightCol, ambientCol, cloudLighting), noise);
