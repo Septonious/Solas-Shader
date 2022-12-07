@@ -1,7 +1,10 @@
 uniform sampler2DShadow shadowtex0;
 
-#ifdef SHADOW_COLOR
+#if defined SHADOW_COLOR || defined VPS
 uniform sampler2D shadowtex1;
+#endif
+
+#ifdef SHADOW_COLOR
 uniform sampler2D shadowcolor0;
 #endif
 
