@@ -1,7 +1,7 @@
+#define GBUFFERS_WATER
+
 //Settings//
 #include "/lib/common.glsl"
-
-#define GBUFFERS_WATER
 
 #ifdef FSH
 

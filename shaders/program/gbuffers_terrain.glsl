@@ -1,7 +1,7 @@
+#define GBUFFERS_TERRAIN
+
 //Settings//
 #include "/lib/common.glsl"
-
-#define GBUFFERS_TERRAIN
 
 #ifdef FSH
 

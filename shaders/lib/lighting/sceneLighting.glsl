@@ -42,7 +42,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     
     vec3 blockLighting = blockLightCol * blockLightMap;
 
-    #if (defined BLOOM_COLORED_LIGHTING || defined GLOBAL_ILLUMINATION) && !defined GBUFFERS_WATER
+    #if defined BLOOM_COLORED_LIGHTING || defined GLOBAL_ILLUMINATION
     vec3 bloom = texture2D(gaux1, screenPos.xy).rgb;
          bloom = pow4(bloom) * 128.0;
     float directionalBloom = clamp(abs(dot(normalize(bloom), normal)) + 0.2, 0.0, 1.0);
@@ -53,9 +53,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     blockLighting += getColoredLighting(worldPos, blockLightMap) * BLOCKLIGHT_I * int(emission == 0.0);
     #elif defined BLOOM_COLORED_LIGHTING
     //Bloom Based Colored Lighting
-    #if !defined GBUFFERS_WATER
     if (emission == 0.0) computeBCL(blockLighting, bloom, lViewPos, directionalBloom, lightmap.x, lightmap.y);
-    #endif
     #endif
 
     #ifdef DYNAMIC_HANDLIGHT
@@ -90,30 +88,27 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
         float dither = 0.0;
         #endif
 
-        float shadowLength = shadowDistance * 0.9166667 - length(vec4(worldPos.x, worldPos.y, worldPos.y, worldPos.z));
+        vec3 worldPosM = worldPos;
 
-        if (shadowLength > 0.000001) {
-            vec3 worldPosM = worldPos;
-
-            #ifndef GBUFFERS_TEXTURED
-                //Shadow bias without peter-panning
-                vec3 worldNormal = normalize(ToWorld(normal * 100000.0));
-                vec3 bias = worldNormal * min(0.1 + length(worldPos) / 250.0, 0.75);
+        #ifndef GBUFFERS_TEXTURED
+            //Shadow bias without peter-panning
+            vec3 worldNormal = normalize(ToWorld(normal * 100000.0));
+            vec3 bias = worldNormal * min(0.1 + length(worldPos) / 250.0, 0.75);
                 
-                //Light leaking fix from Complementary
-                if (lightmap.y < 0.001) {
-                    vec3 edgeFactor = 0.2 * (0.5 - fract(worldPosM + cameraPosition + worldNormal * 0.01));
-                    worldPosM += (1.0 - ao) * edgeFactor;
-                }
+            //Light leaking fix from Complementary
+            if (lightmap.y < 0.001) {
+                vec3 edgeFactor = 0.2 * (0.5 - fract(worldPosM + cameraPosition + worldNormal * 0.01));
+                worldPosM += (1.0 - ao) * edgeFactor;
+            }
 
-                worldPosM += bias;
-            #else
-                vec3 centerworldPos = floor(worldPosM + cameraPosition) - cameraPosition + 0.5;
-                worldPosM = mix(centerworldPos, worldPosM + vec3(0.0, 0.02, 0.0), lightmap.y);
-            #endif
+            worldPosM += bias;
+        #else
+            vec3 centerworldPos = floor(worldPosM + cameraPosition) - cameraPosition + 0.5;
+            worldPosM = mix(centerworldPos, worldPosM + vec3(0.0, 0.02, 0.0), lightmap.y);
+        #endif
 
-            shadow = computeShadow(calculateShadowPos(worldPosM), shadowOffset * (1.0 + subsurface * 2.0), dither, lightmap.y, ao, subsurface);
-        }
+        shadow = computeShadow(calculateShadowPos(worldPosM), shadowOffset * (1.0 + subsurface * 2.0), dither, lightmap.y, ao, subsurface);
+        
     }
 
     vec3 fullShadow = shadow * NoL;
@@ -145,7 +140,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
 
     emission *= EMISSION_STRENGTH;
 
-    #if defined GLOBAL_ILLUMINATION && !defined GBUFFERS_WATER
+    #if defined GLOBAL_ILLUMINATION
     float giVisibility = length(fullShadow * rainFactor * sunVisibility) * int(emission == 0.0);
 
     if (giVisibility != 0.0) {

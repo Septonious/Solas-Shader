@@ -1,7 +1,7 @@
+#define GBUFFERS_WEATHER
+
 //Settings//
 #include "/lib/common.glsl"
-
-#define GBUFFERS_WEATHER
 
 #ifdef FSH
 

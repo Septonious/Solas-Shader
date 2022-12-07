@@ -1,7 +1,7 @@
+#define GBUFFERS_TEXTURED
+
 //Settings//
 #include "/lib/common.glsl"
-
-#define GBUFFERS_TEXTURED
 
 #ifdef FSH
 
@@ -36,10 +36,6 @@ uniform ivec2 atlasSize;
 #endif
 
 uniform vec3 cameraPosition;
-
-#if defined BLOOM_COLORED_LIGHTING || defined GLOBAL_ILLUMINATION
-uniform sampler2D gaux1;
-#endif
 
 uniform sampler2D texture;
 

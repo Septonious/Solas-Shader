@@ -1,7 +1,7 @@
+#define GBUFFERS_BASIC
+
 //Settings//
 #include "/lib/common.glsl"
-
-#define GBUFFERS_BASIC
 
 #ifdef FSH
 

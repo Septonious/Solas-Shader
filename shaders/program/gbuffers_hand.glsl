@@ -1,7 +1,7 @@
+#define GBUFFERS_HAND
+
 //Settings//
 #include "/lib/common.glsl"
-
-#define GBUFFERS_HAND
 
 #ifdef FSH
 

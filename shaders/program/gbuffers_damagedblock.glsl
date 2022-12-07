@@ -1,7 +1,7 @@
+#define GBUFFERS_DAMAGEDBLOCK
+
 //Settings//
 #include "/lib/common.glsl"
-
-#define GBUFFERS_DAMAGEDBLOCK
 
 #ifdef FSH
 
