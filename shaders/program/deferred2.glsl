@@ -226,7 +226,7 @@ void main() {
 
 	#ifdef INTEGRATED_SPECULAR
 	/* DRAWBUFFERS:0426 */
-	gl_FragData[3] = vec4(reflectionColor, float(z1 < 1.0));
+	gl_FragData[3] = vec4(reflectionColor, int(z1 < 1.0));
 	#endif
 }
 

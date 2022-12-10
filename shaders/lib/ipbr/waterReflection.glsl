@@ -14,14 +14,12 @@ void getReflection(inout vec4 color, in vec3 viewPos, in vec3 normal, in float f
 
 	border = clamp(13.333 * (1.0 - border), 0.0, 1.0);
 
-	if (reflectPos.z < 1.0 - 1e-5) {
-		reflection.a = texture2D(gaux3, reflectPos.xy).a;
-		if (reflection.a > 0.001) {
-			reflection.rgb = texture2D(gaux3, reflectPos.xy).rgb;
-			reflection.rgb = pow(reflection.rgb * 2.0, vec3(8.0));
-		}
-		reflection.a *= border;
+	reflection.a = texture2D(gaux3, reflectPos.xy).a;
+	if (reflection.a > 0.0) {
+		reflection.rgb = texture2D(gaux3, reflectPos.xy).rgb;
+		reflection.rgb = pow(reflection.rgb * 2.0, vec3(8.0));
 	}
+	reflection.a *= border;
 
 	#ifdef OVERWORLD
 	vec3 reflectionFade = color.rgb;

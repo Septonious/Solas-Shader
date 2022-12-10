@@ -35,12 +35,12 @@ void findBlockerDistance(vec3 shadowPos, in float dither, inout float offset, fl
     float blockerDistance = 0.0;
         
     for (int i = 0; i < 4; i++){
-        vec2 pixelOffset = offsetDist(i + dither) * offset * 4.0;
+        vec2 pixelOffset = offsetDist(i + dither * 2.0) * offset * 0.5;
         blockerDistance += shadowPos.z - texture2D(shadowtex1, shadowPos.xy + pixelOffset).r;
     }
     blockerDistance *= 0.25;
 
-    offset = mix(offset, max(offset, min(blockerDistance * VPS_BLUR_STRENGTH, offset * 6.0)), skyLightMap);
+    offset = mix(offset, max(offset, min(blockerDistance * VPS_BLUR_STRENGTH, offset * 4.0)), skyLightMap);
 }
 #endif
 

@@ -64,7 +64,7 @@ vec3 computeSSPT(vec3 screenPos, vec3 normal, float z0) {
             illumination += weight * isEmissive;
         }
 
-        return illumination * illumination;
+        return illumination;
     }
 
     return vec3(0.0);

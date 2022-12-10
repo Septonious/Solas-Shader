@@ -97,7 +97,7 @@ void main() {
 	vec3 viewPos = ToView(vec3(texCoord, z0));
 
 	if (terrainData.a > 0.05 && terrainData.a < 1.0 && z0 > 0.56 && z0 >= z1) {
-		float fresnel = pow2(clamp(1.0 + dot(normal, normalize(viewPos)), 0.0, 1.0));
+		float fresnel = pow4(clamp(1.0 + dot(normal, normalize(viewPos)), 0.0, 1.0));
 
 		getReflection(color, viewPos, normal, fresnel * terrainData.a);
 	}

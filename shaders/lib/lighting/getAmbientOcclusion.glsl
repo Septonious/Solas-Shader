@@ -18,13 +18,13 @@ float getAmbientOcclusion(float linearDepth0){
 		float sampleDepth = getLinearDepth(texture2D(depthtex0, texCoord + pixelOffset).r);
 		float weight = max(1.0 - 2.0 * far * abs(linearDepth0 - sampleDepth), 0.0001);
 
-		ao += texture2D(colortex4, texCoord + pixelOffset).r * weight;
+		ao += texture2D(colortex4, texCoord + pixelOffset).a * weight;
 		totalWeight += weight;
 	}
 
 	ao /= totalWeight;
 	
-	if (totalWeight < 0.0001) ao = texture2D(colortex4, texCoord).r;
+	if (totalWeight < 0.0001) ao = texture2D(colortex4, texCoord).a;
 
 	return pow(ao, AO_STRENGTH);
 }

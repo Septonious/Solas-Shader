@@ -18,9 +18,17 @@ uniform int heldBlockLightValue;
 uniform int heldBlockLightValue2;
 #endif
 
+#ifdef OVERWORLD
+uniform int isEyeInWater;
+#endif
+
 uniform float viewWidth, viewHeight;
 uniform float nightVision;
 uniform float frameTimeCounter;
+
+#if MC_VERSION >= 11900
+uniform float darknessFactor;
+#endif
 
 #ifdef OVERWORLD
 uniform float rainStrength;
@@ -29,10 +37,17 @@ uniform float shadowFade;
 
 #if defined OVERWORLD || defined END
 uniform float timeBrightness, timeAngle;
+uniform float far, blindFactor;
 #endif
 
 #ifdef INTEGRATED_EMISSION
 uniform ivec2 atlasSize;
+#endif
+
+#ifdef OVERWORLD
+uniform ivec2 eyeBrightnessSmooth;
+
+uniform vec3 skyColor;
 #endif
 
 uniform vec3 cameraPosition;
@@ -55,6 +70,8 @@ float getLuminance(vec3 color) {
 #endif
 
 #ifdef OVERWORLD
+float eBS = eyeBrightnessSmooth.y / 240.0;
+float caveFactor = mix(clamp((cameraPosition.y - 56.0) / 16.0, float(sign(isEyeInWater)), 1.0), 1.0, eBS);
 float sunVisibility = clamp(dot(sunVec, upVec) + 0.025, 0.0, 0.1) * 10.0;
 #endif
 
@@ -73,6 +90,12 @@ float sunVisibility = clamp(dot(sunVec, upVec) + 0.025, 0.0, 0.1) * 10.0;
 #endif
 
 #include "/lib/color/dimensionColor.glsl"
+
+#ifndef END
+#include "/lib/atmosphere/sky.glsl"
+#include "/lib/atmosphere/fog.glsl"
+#endif
+
 #include "/lib/lighting/sceneLighting.glsl"
 
 //Program//
@@ -86,6 +109,14 @@ void main() {
 		vec3 viewPos = ToNDC(screenPos);
 		vec3 worldPos = ToWorld(viewPos);
 		vec2 lightmap = clamp(lightMapCoord, 0.0, 1.0);
+
+		#if defined OVERWORLD
+		vec3 atmosphereColor = getAtmosphere(viewPos);
+		#elif defined NETHER
+		vec3 atmosphereColor = netherColSqrt.rgb * 0.25;
+		#endif
+
+		vec3 skyColor = atmosphereColor;
 
 		float NoU = clamp(dot(normal, upVec), -1.0, 1.0);
 		float NoL = clamp(dot(normal, lightVec), 0.0, 1.0);
@@ -104,6 +135,7 @@ void main() {
 		#endif
 
 		getSceneLighting(albedo.rgb, screenPos, viewPos, worldPos, normal, lightmap, NoU, NoL, NoE, emission, 0.0, 0.0, 0.0);
+		Fog(albedo.rgb, viewPos, worldPos, skyColor);
 	}
 
 	/* DRAWBUFFERS:0 */

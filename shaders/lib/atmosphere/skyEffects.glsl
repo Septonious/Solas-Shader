@@ -129,7 +129,7 @@ void getAurora(inout vec3 color, in vec3 worldPos, in float caveFactor) {
 	float visibility = pow6(1.0 - sunVisibility) * (1.0 - rainStrength) * caveFactor;
 
 	#ifdef AURORA_FULL_MOON_VISIBILITY
-	visibility *= float(moonPhase == 0);
+	visibility *= int(moonPhase == 0);
 	#endif
 
 	#ifdef AURORA_COLD_BIOME_VISIBILITY

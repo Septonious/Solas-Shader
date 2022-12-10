@@ -107,7 +107,7 @@ void main() {
 	#ifdef WATER_REFRACTION
 	float waterData = texture2D(colortex4, texCoord).a;
 
-	if (waterData > 0.0 && waterData < 0.004000001 && isEyeInWater == 0) {
+	if (waterData > 0.0 && waterData < 0.004000001 && isEyeInWater == 0 && z0 > 0.56) {
 		vec3 worldPos = ToWorld(viewPos);
 		vec2 refractedCoord = getRefraction(worldPos + cameraPosition, viewPos);
 
@@ -118,7 +118,7 @@ void main() {
 
 	#ifdef SSPT
 	vec3 sspt = NormalAwareBlur();
-	color *= vec3(1.0) + sspt;
+	color *= vec3(1.0) + sspt * 4.0;
 	#endif
 
 	/* DRAWBUFFERS:0 */

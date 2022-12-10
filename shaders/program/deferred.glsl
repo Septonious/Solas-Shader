@@ -34,7 +34,7 @@ void main() {
     #endif
 
     /* DRAWBUFFERS:4 */
-    gl_FragData[0].r = ao;
+    gl_FragData[0].a = ao;
 }
 
 #endif
