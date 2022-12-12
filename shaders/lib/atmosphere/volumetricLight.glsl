@@ -75,6 +75,6 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
 		}
 
 		vl *= visibility;
-		vl *= lightCol;
+		vl *= mix(lightCol, skyColor, sunVisibility * (0.25 + 0.25 * timeBrightness));
 	}
 }

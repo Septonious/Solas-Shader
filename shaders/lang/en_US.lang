@@ -333,14 +333,6 @@ value.BLOOM_CONTRAST.2=0.50
 value.BLOOM_CONTRAST.3=0.75
 value.BLOOM_CONTRAST.4=1.00
 
-option.BLOOM_RADIUS=Radius
-option.BLOOM_RADIUS.comment=Adjusts how far the glow spreads.
-value.BLOOM_RADIUS.1=Minimum
-value.BLOOM_RADIUS.2=Very Low
-value.BLOOM_RADIUS.3=Low
-value.BLOOM_RADIUS.4=Medium
-value.BLOOM_RADIUS.5=High
-
 #OTHER
 
 screen.OTHER=Other

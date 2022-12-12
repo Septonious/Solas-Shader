@@ -295,14 +295,6 @@ value.BLOOM_CONTRAST.2=0.50
 value.BLOOM_CONTRAST.3=0.75
 value.BLOOM_CONTRAST.4=1.00
 
-option.BLOOM_RADIUS=Radio
-option.BLOOM_RADIUS.comment=Ajusta que tan lejos se propaga la luminosad de las fuentes de luz.
-value.BLOOM_RADIUS.1=Mínimo
-value.BLOOM_RADIUS.2=Muy Bajo
-value.BLOOM_RADIUS.3=Bajo
-value.BLOOM_RADIUS.4=Medio
-value.BLOOM_RADIUS.5=Alto
-
 #OTHER
 
 screen.OTHER=Other

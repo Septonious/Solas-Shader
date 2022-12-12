@@ -118,7 +118,7 @@ void main() {
 
 	#ifdef SSPT
 	vec3 sspt = NormalAwareBlur();
-	color *= vec3(1.0) + sspt * 4.0;
+	color *= vec3(1.0) + sspt * SSPT_LUMINANCE;
 	#endif
 
 	/* DRAWBUFFERS:0 */

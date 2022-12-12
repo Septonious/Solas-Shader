@@ -138,10 +138,7 @@ vec2 viewResolution = vec2(viewWidth, viewHeight);
 #include "/lib/util/ToNDC.glsl"
 #include "/lib/util/ToWorld.glsl"
 #include "/lib/util/bayerDithering.glsl"
-
-#ifdef INTEGRATED_SPECULAR
 #include "/lib/util/encode.glsl"
-#endif
 
 #ifdef INTEGRATED_SPECULAR
 #include "/lib/util/ToScreen.glsl"
@@ -231,7 +228,7 @@ void main() {
 		}
 		#endif
 
-		getSceneLighting(albedo.rgb, screenPos, viewPos, worldPos, newNormal, lightmap, NoU, NoL, NoE, emission, 0.0, 0.0, 1.0);
+		getSceneLighting(albedo.rgb, screenPos, viewPos, worldPos, newNormal, lightmap, NoU, NoL, NoE, emission, 0.0, 0.0, 0.95);
 
 		#if defined OVERWORLD
 		skyColor = getAtmosphere(viewPos);
@@ -270,20 +267,11 @@ void main() {
 		Fog(albedo.rgb, viewPos, worldPos, skyColor);
 	}
 
-	/* DRAWBUFFERS:014 */
+	/* DRAWBUFFERS:0124 */
 	gl_FragData[0] = albedo;
 	gl_FragData[1] = albedo;
-	gl_FragData[2].a = water * 0.004;
-
-	#ifndef INTEGRATED_SPECULAR
-		#ifdef BLOOM
-		/* DRAWBUFFERS:0142 */
-		gl_FragData[3].ba = vec2(emission * 0.1, emission);
-		#endif
-	#else
-		/* DRAWBUFFERS:0142 */
-		gl_FragData[3] = vec4(EncodeNormal(newNormal), emission * 0.1, 1.0);
-	#endif
+	gl_FragData[2] = vec4(EncodeNormal(newNormal), emission * 0.01, 1.0);
+	gl_FragData[3].a = water * 0.004;
 }
 
 #endif

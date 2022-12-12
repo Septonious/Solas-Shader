@@ -25,7 +25,7 @@ uniform float darknessFactor;
 
 uniform ivec2 eyeBrightnessSmooth;
 
-uniform vec3 cameraPosition;
+uniform vec3 cameraPosition, skyColor;
 #endif
 
 uniform sampler2D colortex0;

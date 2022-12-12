@@ -50,7 +50,7 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 atmo
 	//Nether Fog
 	#ifdef NETHER
 	vec3 fogColor = netherColSqrt.rgb * 0.25;
-	float fog = lViewPos * 0.0025;
+	float fog = lViewPos * 0.005;
 
 	#ifdef DISTANT_FADE
 	fog += 2.0 * pow4(lWorldPos / far);
@@ -107,7 +107,6 @@ void Fog(inout vec3 color, in vec3 viewPos, in vec3 worldPos, in vec3 atmosphere
 	if (isEyeInWater < 0.5) getNormalFog(color, viewPos, worldPos, atmosphereColor);
 	if (isEyeInWater > 1) getDenseFog(color, viewPos);
 	if (blindFactor > 0.0) getBlindFog(color, viewPos);
-	
 	#if MC_VERSION >= 11900
 	if (darknessFactor > 0.0) getDarknessFog(color, viewPos);
 	#endif

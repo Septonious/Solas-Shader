@@ -318,13 +318,6 @@ value.BLOOM_CONTRAST.2=0.50
 value.BLOOM_CONTRAST.3=0.75
 value.BLOOM_CONTRAST.4=1.00
 
-option.BLOOM_RADIUS=Радиус
-value.BLOOM_RADIUS.1=Минимальный
-value.BLOOM_RADIUS.2=Очень Маленький
-value.BLOOM_RADIUS.3=Маленький
-value.BLOOM_RADIUS.4=Средний
-value.BLOOM_RADIUS.5=Большой
-
 #OTHER
 
 screen.OTHER=Прочее

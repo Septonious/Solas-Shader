@@ -10,18 +10,17 @@ vec3 lightVec = sunVec;
 
 #ifdef BLOOM_COLORED_LIGHTING
 void computeBCL(inout vec3 blockLighting, in vec3 bloom, in float lViewPos, in float directionalBloom, in float blockLightMap, in float skyLightMap) {
-    float bloomLightMap = blockLightMap * blockLightMap * 1.25 + blockLightMap * 0.5 + 0.2;
-    float radius = mix(COLORED_LIGHTING_RADIUS - 0.1, COLORED_LIGHTING_RADIUS, skyLightMap);
+    float bloomLightMap = blockLightMap * blockLightMap * 1.25 + blockLightMap * 0.5 + 0.25;
 
-	vec3 coloredLight = clamp(0.0625 * bloom * pow(getLuminance(bloom), radius), 0.0, 1.0) * 16.0;
+	vec3 coloredLight = clamp(0.0625 * bloom * pow(getLuminance(bloom), COLORED_LIGHTING_RADIUS), 0.0, 1.0) * 32.0; //16.0 * 2.0 for higher visibility
     
-    blockLighting += coloredLight * bloomLightMap * directionalBloom * COLORED_LIGHTING_STRENGTH;
+    blockLighting += coloredLight * bloomLightMap * directionalBloom;
 }
 #endif
 
 #ifdef GBUFFERS_TERRAIN
 void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in vec3 worldPos, in vec3 normal, in vec2 lightmap,
-                      in float NoU, in float NoL, in float NoE, inout float emission, in float leaves, in float foliage, in float specular) {
+                      in float NoU, in float NoL, in float NoE, inout float emission, inout float coloredLightingIntensity, in float leaves, in float foliage, in float specular) {
 #else
 void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in vec3 worldPos, in vec3 normal, in vec2 lightmap,
                       in float NoU, in float NoL, in float NoE, in float emission, in float leaves, in float foliage, in float specular) {
@@ -83,7 +82,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
         //Shadows without peter-panning from Emin's Complementary Reimagined shaderpack, tysm for allowing me to use them ^^
         //Developed by Emin#7309 and gri573#7741
         #ifdef TAA
-        float dither = fract(Bayer64(gl_FragCoord.xy) + frameTimeCounter * 16.0) / 16.0 * (1.0 + subsurface * 3.0);
+        float dither = fract(Bayer64(gl_FragCoord.xy) + frameTimeCounter * 16.0) * (1.0 + subsurface * 2.0) * TAU;
         #else
         float dither = 0.0;
         #endif
@@ -100,7 +99,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
                 
                 //Light leaking fix from Complementary
                 if (lightmap.y < 0.001) {
-                    vec3 edgeFactor = 0.2 * (0.5 - fract(worldPosM + cameraPosition + worldNormal * 0.01));
+                    vec3 edgeFactor = 0.25 * (0.5 - fract(worldPosM + cameraPosition + worldNormal * 0.01));
                     worldPosM += (1.0 - ao) * edgeFactor;
                 }
 
@@ -110,7 +109,9 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
                 worldPosM = mix(centerworldPos, worldPosM + vec3(0.0, 0.02, 0.0), lightmap.y);
             #endif
 
-            shadow = computeShadow(calculateShadowPos(worldPosM), shadowOffset * (1.0 + foliage * 2.0), dither, lightmap.y, ao, subsurface);
+            float viewLengthFactor = 1.0 - clamp(length(viewPos.xz) * 0.01, 0.0, 1.0);
+
+            shadow = computeShadow(calculateShadowPos(worldPosM), mix(shadowOffset, shadowOffset * ao, (1.0 - ao)) * (1.0 + foliage * 2.0), dither, lightmap.y, ao, subsurface, viewLengthFactor);
         }
     }
 
@@ -160,9 +161,9 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
 
     if (giVisibility != 0.0) {
         #ifndef SSPT
-        emission += mix(0.0, GLOBAL_ILLUMINATION_STRENGTH * (2.0 - clamp(getLuminance(albedo.rgb), 0.0, 1.0)), giVisibility);
+        coloredLightingIntensity += mix(0.0, GLOBAL_ILLUMINATION_STRENGTH * (2.0 - clamp(getLuminance(albedo.rgb), 0.0, 1.0)), giVisibility);
         #else
-        emission += mix(0.0, 24.0 * GLOBAL_ILLUMINATION_STRENGTH * (2.0 - clamp(getLuminance(albedo.rgb), 0.0, 1.0)), giVisibility);
+        coloredLightingIntensity += mix(0.0, 24.0 * GLOBAL_ILLUMINATION_STRENGTH * (2.0 - clamp(getLuminance(albedo.rgb), 0.0, 1.0)), giVisibility);
         #endif
     }
     #endif

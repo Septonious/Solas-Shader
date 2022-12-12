@@ -48,11 +48,6 @@ uniform sampler2D colortex3;
 
 uniform sampler2D colortex1;
 
-//Optifine Constants//
-#ifdef DOF
-const bool colortex0MipmapEnabled = true;
-#endif
-
 //Common Functions//
 #ifdef FXAA
 float getLuminance(vec3 color) {
@@ -78,14 +73,6 @@ float getLuminance(vec3 color) {
 void main() {
 	vec3 color = texture2D(colortex1, texCoord).rgb;
 
-	#ifdef DOF
-	float z0 = texture2D(depthtex0, texCoord).r;
-	float z1 = texture2D(depthtex1, texCoord).r;
-	vec3 viewPos = ToView(vec3(texCoord, z0));
-
-	color = getDepthOfField(color, viewPos, z1);
-	#endif
-
 	#ifdef FXAA
 	color = FXAA311(color);	
 	#endif
@@ -93,6 +80,14 @@ void main() {
 	#ifdef TAA
     vec4 prev = vec4(texture2D(colortex5, texCoord).r, 0.0, 0.0, 0.0);
 	prev = TemporalAA(color, prev.r, colortex1, colortex5);
+	#endif
+
+	#ifdef DOF
+	float z0 = texture2D(depthtex0, texCoord).r;
+	float z1 = texture2D(depthtex1, texCoord).r;
+	vec3 viewPos = ToView(vec3(texCoord, z0));
+
+	color = getDepthOfField(color, viewPos, z1);
 	#endif
 
 	/* DRAWBUFFERS:1 */

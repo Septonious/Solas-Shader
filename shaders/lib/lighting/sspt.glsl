@@ -58,7 +58,7 @@ vec3 computeSSPT(vec3 screenPos, vec3 normal, float z0) {
 
         if (hit) {
             vec3 hitAlbedo = texture2D(colortex0, hitPos.xy).rgb;
-            float isEmissive = texture2D(colortex2, hitPos.xy).b * SSPT_LUMINANCE;
+            float isEmissive = texture2D(colortex2, hitPos.xy).b * 100.0;
 
             weight *= hitAlbedo;
             illumination += weight * isEmissive;

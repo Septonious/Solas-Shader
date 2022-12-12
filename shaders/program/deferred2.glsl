@@ -83,10 +83,10 @@ float sunVisibility = clamp(dot(sunVec, upVec) + 0.025, 0.0, 0.1) * 10.0;
 #endif
 
 //Includes//
-#include "/lib/color/dimensionColor.glsl"
 #include "/lib/util/bayerDithering.glsl"
 #include "/lib/util/ToView.glsl"
 #include "/lib/util/ToWorld.glsl"
+#include "/lib/color/dimensionColor.glsl"
 
 #ifdef VC
 #include "/lib/util/blueNoiseDithering.glsl"
@@ -199,12 +199,12 @@ void main() {
 		#endif
 
 		color = skyColor;
-	} else {
-		Fog(color, viewPos, worldPos, skyColor);
 	}
 
+	Fog(color, viewPos, worldPos, skyColor);
+
 	#ifdef VC
-	color = mix(color, vc.rgb, pow3(vc.a) * mix(VC_OPACITY, 0.4, rainStrength));
+	color = mix(color, vc.rgb, pow4(vc.a) * mix(1.0, mix(VC_OPACITY, 0.4, rainStrength), int(z1 == 1.0)));
 	#endif
 
 	#ifdef INTEGRATED_SPECULAR
@@ -213,9 +213,9 @@ void main() {
 
 	#ifdef BLOOM
 	#ifdef OVERWORLD
-	colortex2Data.ba += vec2(sunMoon * 0.125 + star, sunMoon + star);
+	colortex2Data.ba += vec2(sunMoon * 0.01 + star, sunMoon + star);
 	#elif defined END
-	colortex2Data.ba += vec2(star + endVortex * 0.1);
+	colortex2Data.ba += vec2(star + endVortex * 0.01);
 	#endif
 	#endif
 

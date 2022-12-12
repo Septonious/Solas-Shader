@@ -323,14 +323,6 @@ value.BLOOM_CONTRAST.2=0.50
 value.BLOOM_CONTRAST.3=0.75
 value.BLOOM_CONTRAST.4=1.00
 
-option.BLOOM_RADIUS=半径
-option.BLOOM_RADIUS.comment=调整发光的范围.
-value.BLOOM_RADIUS.1=最小
-value.BLOOM_RADIUS.2=很小
-value.BLOOM_RADIUS.3=小
-value.BLOOM_RADIUS.4=中等
-value.BLOOM_RADIUS.5=大
-
 #OTHER
 
 screen.OTHER=其它

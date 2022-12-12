@@ -64,6 +64,7 @@ float sunVisibility = clamp(dot(sunVec, upVec) + 0.025, 0.0, 0.1) * 10.0;
 #include "/lib/util/ToNDC.glsl"
 #include "/lib/util/ToWorld.glsl"
 #include "/lib/util/bayerDithering.glsl"
+#include "/lib/util/encode.glsl"
 
 #if defined OVERWORLD || defined END
 #include "/lib/util/ToShadow.glsl"
@@ -76,10 +77,6 @@ float sunVisibility = clamp(dot(sunVec, upVec) + 0.025, 0.0, 0.1) * 10.0;
 
 #include "/lib/color/dimensionColor.glsl"
 #include "/lib/lighting/sceneLighting.glsl"
-
-#if defined BLOOM || defined INTEGRATED_SPECULAR
-#include "/lib/util/encode.glsl"
-#endif
 
 //Program//
 void main() {
@@ -122,13 +119,9 @@ void main() {
 		}
 	}
 
-	/* DRAWBUFFERS:0 */
-	gl_FragData[0] = albedo;
-
-	#if defined BLOOM || defined INTEGRATED_SPECULAR
 	/* DRAWBUFFERS:02 */
-	gl_FragData[1] = vec4(EncodeNormal(normal), emission * 0.1, 1.0);
-	#endif
+	gl_FragData[0] = albedo;
+	gl_FragData[1] = vec4(EncodeNormal(normal), emission * 0.01, 1.0);
 }
 
 #endif

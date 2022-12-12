@@ -72,6 +72,7 @@ float sunVisibility = clamp(dot(sunVec, upVec) + 0.025, 0.0, 0.1) * 10.0;
 #include "/lib/util/ToNDC.glsl"
 #include "/lib/util/ToWorld.glsl"
 #include "/lib/util/bayerDithering.glsl"
+#include "/lib/util/encode.glsl"
 
 #if defined OVERWORLD || defined END
 #include "/lib/util/ToShadow.glsl"
@@ -93,10 +94,6 @@ float sunVisibility = clamp(dot(sunVec, upVec) + 0.025, 0.0, 0.1) * 10.0;
 #include "/lib/ipbr/integratedSpecular.glsl"
 #endif
 
-#if defined BLOOM || defined INTEGRATED_SPECULAR
-#include "/lib/util/encode.glsl"
-#endif
-
 //Program//
 void main() {
 	vec4 albedo = texture2D(texture, texCoord) * vec4(color.rgb, 1.0);
@@ -104,6 +101,7 @@ void main() {
 
 	float emission = 0.0;
 	float specular = 0.0;
+	float coloredLightingIntensity = 0.0;
 
 	if (albedo.a > 0.001) {
 		float foliage = int(mat == 1) + int(mat == 108);
@@ -123,28 +121,19 @@ void main() {
 		float NoE = clamp(dot(newNormal, eastVec), -1.0, 1.0);
 
 		#ifdef INTEGRATED_EMISSION
-		getIntegratedEmission(albedo, viewPos, worldPos, lightmap, NoU, emission);
+		getIntegratedEmission(albedo, viewPos, worldPos, lightmap, NoU, emission, coloredLightingIntensity);
 		#endif
 
 		#ifdef INTEGRATED_SPECULAR
 		getIntegratedSpecular(albedo, newNormal, worldPos.xz, lightmap, specular);
 		#endif
 
-		getSceneLighting(albedo.rgb, screenPos, viewPos, worldPos, newNormal, lightmap, NoU, NoL, NoE, emission, leaves, foliage, specular * clamp(NoU - 0.01, 0.0, 1.0));
+		getSceneLighting(albedo.rgb, screenPos, viewPos, worldPos, newNormal, lightmap, NoU, NoL, NoE, emission, coloredLightingIntensity, leaves, foliage, specular * clamp(NoU - 0.01, 0.0, 1.0));
 	}
 
-	/* DRAWBUFFERS:0 */
+	/* DRAWBUFFERS:02 */
 	gl_FragData[0] = albedo;
-
-	#ifndef INTEGRATED_SPECULAR
-		#ifdef BLOOM
-		/* DRAWBUFFERS:02 */
-		gl_FragData[1].ba = vec2(emission * 0.1, emission);
-		#endif
-	#else
-		/* DRAWBUFFERS:02 */
-		gl_FragData[1] = vec4(EncodeNormal(newNormal), emission * 0.1, specular);
-	#endif
+	gl_FragData[1] = vec4(EncodeNormal(newNormal), coloredLightingIntensity * 0.01 * COLORED_LIGHTING_STRENGTH, specular);
 }
 
 #endif

@@ -81,7 +81,7 @@ void main() {
 	vec4 color = texture2D(colortex0, texCoord);
 
 	#ifdef VL
-	vec3 vl = getDiskBlur8(colortex1, texCoord, 1.5).rgb;
+	vec3 vl = getDiskBlur8(colortex1, texCoord, 1.0).rgb;
 	color.rgb += vl * vl;
 	#endif
 

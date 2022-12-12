@@ -26,7 +26,7 @@ uniform sampler2D colortex5;
 #endif
 
 //Optifine Constants//
-#ifdef BLOOM
+#if defined BLOOM && (defined BLOOM_COLORED_LIGHTING || defined GLOBAL_ILLUMINATION)
 const bool colortex4Clear = false;
 #endif
 
@@ -85,7 +85,7 @@ void main() {
 	vec3 bloomFog = clamp(0.0625 * rawBloom * pow(getLuminance(rawBloom), -0.5) * fog, 0.0, 1.0) * 16.0;
 
 	#ifdef NETHER
-	bloomFog *= 2.0;
+	bloomFog *= 4.0;
 	#endif
 
 	color += bloomFog * 0.05;
