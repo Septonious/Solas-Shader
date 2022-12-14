@@ -21,16 +21,16 @@ const float shadowOffset = 0.75 / shadowMapResolution;
 //SSPT//
 //#define SSPT
 #define SSPT_SAMPLE_COUNT 30 //[10 20 30 40 50 60 70 80 90 100]
-#define SSPT_LUMINANCE 9.0 //[5.0 6.0 7.0 8.0 9.0 10.0]
+#define SSPT_LUMINANCE 12.0 //[5.0 6.0 7.0 8.0 9.0 10.0 11.0 12.0 13.0 14.0 15.0]
 
 //Bloom GI//
 #define GLOBAL_ILLUMINATION
-#define GLOBAL_ILLUMINATION_STRENGTH 0.5 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
+#define GLOBAL_ILLUMINATION_STRENGTH 2.50 //[1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00]
 
 //Colored Lighting//
 #define BLOOM_COLORED_LIGHTING
-#define COLORED_LIGHTING_STRENGTH 3.00 //[1.00 1.50 2.00 2.50 3.00 3.50 4.00]
-#define COLORED_LIGHTING_RADIUS -0.30 //[-0.50 -0.45 -0.40 -0.35 -0.30 -0.25 -0.20]
+#define COLORED_LIGHTING_STRENGTH 2.50 //[1.00 1.50 2.00 2.50 3.00 3.50 4.00]
+#define COLORED_LIGHTING_RADIUS -0.40 //[-0.50 -0.45 -0.40 -0.35 -0.30 -0.25 -0.20]
 //#define SHIMMER_MOD_SUPPORT
 
 //Integrated PBR//
@@ -48,7 +48,7 @@ const float shadowOffset = 0.75 / shadowMapResolution;
 #define INTEGRATED_SPECULAR
 #define SPECULAR_STRENGTH 1.1 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2.0]
 #define WATER_SPECULAR_STRENGTH 0.9 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
-#define REFLECTION_RT_SAMPLE_COUNT 16 //[4 8 12 16 20 24 28 32]
+#define REFLECTION_RT_SAMPLE_COUNT 20 //[4 8 12 16 20 24 28 32]
 
 //Depth of Field//
 //#define DOF
@@ -417,9 +417,4 @@ const float TAU = 6.2831853;
 #undef GLOBAL_ILLUMINATION
 #undef BLOOM_COLORED_LIGHTING
 #endif
-#endif
-
-#ifndef GBUFFERS_TERRAIN
-#undef GLOBAL_ILLUMINATION
-#undef SSPT
 #endif

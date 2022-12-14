@@ -59,6 +59,7 @@ vec3 NeighbourhoodClamping(vec3 color, vec3 tempColor, vec2 viewScale, sampler2D
 
 vec4 TemporalAA(inout vec3 color, float tempData, sampler2D colortex, sampler2D temptex) {
 	float z1 = texture2D(depthtex1, texCoord).r;
+	float sspt = 0.0;
 
 	vec3 coord = vec3(texCoord, z1);
 	vec2 prvCoord = Reprojection(coord);
@@ -68,7 +69,11 @@ vec4 TemporalAA(inout vec3 color, float tempData, sampler2D colortex, sampler2D 
 
 	if (tempColor == vec3(0.0)) return vec4(tempData, color);
 
-	tempColor = NeighbourhoodClamping(color, tempColor, 1.0 / viewResolution, colortex);
+	#ifdef SSPT
+	sspt = length(texture2D(colortex3, texCoord).rgb);
+	#endif
+
+	if (sspt == 0.0) tempColor = NeighbourhoodClamping(color, tempColor, 1.0 / viewResolution, colortex);
 	
 	float blendFactor = float(
 		prvCoord.x > 0.0 && prvCoord.x < 1.0 &&
@@ -77,7 +82,8 @@ vec4 TemporalAA(inout vec3 color, float tempData, sampler2D colortex, sampler2D 
 	
 	vec2 velocity = (texCoord - prvCoord.xy) * viewResolution;
 
-	blendFactor *= exp(-length(velocity)) * 0.3 + 0.6;
+	if (sspt == 0.0) blendFactor *= exp(-length(velocity)) * 0.3 + 0.6;
+	else blendFactor = 0.975;
 	
 	color = mix(color, tempColor, blendFactor);
 

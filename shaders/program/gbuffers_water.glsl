@@ -194,10 +194,10 @@ void main() {
 
 	float water = int(mat == 1);
 	float portal = int(mat == 2);
-	float emission = portal * 8.0;
+	float emission = portal * 4.0;
 	float coloredLightingIntensity = emission;
 
-	albedo.a *= 1.0 - portal * 0.5;
+	albedo.a = mix(albedo.a, 1.0, portal);
 	albedo.a += int(mat == 3) * 0.25;
 
 	#ifndef VANILLA_WATER
@@ -276,7 +276,7 @@ void main() {
 
 		#ifdef INTEGRATED_SPECULAR
 		if (portal < 0.5) {
-			float fresnel1 = pow2(clamp(1.0 + dot(newNormal, normalize(viewPos)), 0.0, 1.0)) * (1.0 - float(isEyeInWater == 1) * 0.75) * (0.3 + water * 0.7);
+			float fresnel1 = pow2(clamp(1.0 + dot(newNormal, normalize(viewPos)), 0.0, 1.0)) * (1.0 - float(isEyeInWater == 1) * 0.75) * (0.15 + water * 0.85);
 
 			getReflection(albedo, viewPos, newNormal, fresnel1, lightmap.y, emission);
 		}

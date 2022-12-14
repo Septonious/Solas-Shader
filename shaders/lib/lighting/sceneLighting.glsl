@@ -34,7 +34,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     vec3 worldNormal = normalize(ToWorld(normal * 100000.0));
     vec3 worldNormalGMVI = normalize(ToWorld(mat3(gbufferModelViewInverse) * normal * 100000.0));
 
-    float directionalLightMap = 1.0 - clamp(dot(normalize(vec3(blockLightMap)), worldNormal), 0.0, 1.0);
+    float directionalLightMap = 1.0 - clamp(dot(normalize(vec3(blockLightMap)), worldNormal) - 0.15, 0.0, 1.0);
     vec3 blockLighting = blockLightCol * directionalLightMap * blockLightMap;
 
     #if defined BLOOM_COLORED_LIGHTING || defined GLOBAL_ILLUMINATION
@@ -159,11 +159,12 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
 
     emission *= EMISSION_STRENGTH;
 
+    #if defined GBUFFERS_TERRAIN || defined GBUFFERS_WATER
     #if (defined GLOBAL_ILLUMINATION && defined BLOOM_COLORED_LIGHTING) || (defined SSPT && defined GLOBAL_ILLUMINATION)
     float giVisibility = length(fullShadow * rainFactor * sunVisibility) * int(emission == 0.0 && specular == 0.0);
 
     if (giVisibility != 0.0) {
-        coloredLightingIntensity += mix(0.0, GLOBAL_ILLUMINATION_STRENGTH * (0.2 - clamp(getLuminance(albedo.rgb), 0.0, 0.15)), giVisibility);
+        coloredLightingIntensity += mix(0.0, GLOBAL_ILLUMINATION_STRENGTH * (1.0 - clamp(getLuminance(albedo.rgb), 0.0, 0.5)), giVisibility);
     }
     #endif
 
@@ -171,5 +172,6 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     int glass = int(mat == 3);
 
     coloredLightingIntensity += glass * int(blockLightMap > 0.25) * 8.0;
+    #endif
     #endif
 }

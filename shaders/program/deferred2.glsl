@@ -199,9 +199,7 @@ void main() {
 		#endif
 
 		color = skyColor;
-	}
-
-	Fog(color, viewPos, worldPos, skyColor);
+	} else Fog(color, viewPos, worldPos, skyColor);
 
 	#ifdef VC
 	color = mix(color, vc.rgb, pow4(vc.a) * mix(1.0, VC_OPACITY, float(z1 == 1.0)));

@@ -26,7 +26,7 @@ uniform sampler2D colortex5;
 #endif
 
 //Optifine Constants//
-#if defined BLOOM && (defined BLOOM_COLORED_LIGHTING || defined GLOBAL_ILLUMINATION)
+#ifdef BLOOM
 const bool colortex4Clear = false;
 #endif
 

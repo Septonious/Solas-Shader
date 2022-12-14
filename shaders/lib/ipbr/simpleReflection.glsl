@@ -18,5 +18,4 @@ void getReflection(inout vec4 color, in vec3 viewPos, in vec3 normal, in float f
 	reflection.a *= border;
 
 	color.rgb = mix(color.rgb, max(mix(vec3(0.0), reflection.rgb, reflection.a), vec3(0.0)), fresnel);
-	color.a = mix(color.a, 1.0, fresnel);
 }

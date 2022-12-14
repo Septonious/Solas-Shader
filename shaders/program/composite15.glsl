@@ -26,13 +26,15 @@ uniform float centerDepthSmooth;
 #ifdef TAA
 uniform vec3 cameraPosition, previousCameraPosition;
 
-uniform mat4 gbufferPreviousProjection, gbufferProjectionInverse;
+uniform mat4 gbufferPreviousProjection;
 uniform mat4 gbufferPreviousModelView, gbufferModelViewInverse;
 
 uniform sampler2D colortex5;
 #endif
 
 #if defined TAA || defined DOF
+uniform mat4 gbufferProjectionInverse;
+
 #ifdef DOF
 uniform mat4 gbufferProjection;
 
@@ -47,6 +49,11 @@ uniform sampler2D colortex3;
 #endif
 
 uniform sampler2D colortex1;
+
+//Optifine Constants//
+#ifdef DOF
+const bool colortex0MipmapEnabled = true;
+#endif
 
 //Common Functions//
 #ifdef FXAA
