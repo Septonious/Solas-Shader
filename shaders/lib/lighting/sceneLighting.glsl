@@ -4,10 +4,6 @@ vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.
 vec3 lightVec = sunVec;
 #endif
 
-#ifdef DYNAMIC_HANDLIGHT
-#include "/lib/lighting/dynamicHandLight.glsl"
-#endif
-
 #ifdef BLOOM_COLORED_LIGHTING
 void computeBCL(inout vec3 blockLighting, in vec3 bloom, in float lViewPos, in float directionalBloom, in float blockLightMap, in float skyLightMap) {
     float bloomLightMap = blockLightMap * blockLightMap * 1.25 + blockLightMap * 0.5 + 0.25;
@@ -33,11 +29,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
 	float vanillaDiffuse = (0.25 * NoU + 0.75) + (0.667 - abs(NoE)) * (1.0 - abs(NoU)) * 0.15;
 
     //Block Lighting//
-    #ifdef SHIMMER_MOD_SUPPORT
-    float blockLightMap = min(pow4(lightmap.x) * 2.0 + lightmap.x * lightmap.x * 0.125, 1.0) * int(emission == 0.0);
-    #else
     float blockLightMap = min(pow8(lightmap.x) + pow4(lightmap.x) * 0.5, 1.0) * int(emission == 0.0);
-    #endif
 
     vec3 worldNormal = normalize(ToWorld(normal * 10000.0));
     vec3 worldNormalGMVI = normalize(ToWorld(mat3(gbufferModelViewInverse) * normal));
@@ -49,14 +41,9 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     float directionalBloom = 1.0 - clamp(dot(normalize(bloom), worldNormalGMVI) - 0.15, 0.0, 1.0);
     #endif
 
-    #if defined SHIMMER_MOD_SUPPORT
-    //World Space Colored Lighting via Shimmer Mod
-    blockLighting += getColoredLighting(worldPos, blockLightMap) * BLOCKLIGHT_I * int(emission == 0.0);
-    #elif defined BLOOM_COLORED_LIGHTING
+    #if defined BLOOM_COLORED_LIGHTING
     //Bloom Based Colored Lighting
-    #ifndef GBUFFERS_WATER
     if (emission == 0.0) computeBCL(blockLighting, bloom, lViewPos, directionalBloom, lightmap.x, lightmap.y);
-    #endif
     #endif
 
     #ifdef DYNAMIC_HANDLIGHT
@@ -64,7 +51,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     #endif
 
     //Main Scene Lighting (Sunlight & Shadows)
-    #ifndef NETHER
+    #if defined OVERWORLD || defined END
     vec3 shadow = vec3(0.0);
     float subsurface = 0.0;
 
@@ -82,7 +69,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     lightCol *= 1.0 + scattering;
     #endif
 
-    if (NoL > 0.01) {
+    if (NoL > 0.0001) {
         //Shadows without peter-panning from Emin's Complementary Reimagined shaderpack, tysm for allowing me to use them ^^
         //Developed by Emin#7309 and gri573#7741
         #ifdef TAA
@@ -123,7 +110,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
             #endif
 
             float viewLengthFactor = 1.0 - clamp(length(viewPos.xz) * 0.01, 0.0, 1.0);
-            float offset = mix(shadowOffset, shadowOffset * ao, (1.0 - ao)) * (1.0 + foliage * 3.0);
+            float offset = mix(shadowOffset, shadowOffset * ao, (1.0 - ao)) * (1.0 + foliage * 3.0 * viewLengthFactor);
 
             shadow = computeShadow(shadowPos, offset, dither, lightmap.y, ao, subsurface, viewLengthFactor);
         }
@@ -178,11 +165,9 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     }
     #endif
 
-    #ifdef BLOOM_COLORED_LIGHTING
     #ifdef GBUFFERS_WATER
     int glass = int(mat == 3);
 
     coloredLightingIntensity += glass * int(blockLightMap > 0.25) * 8.0;
-    #endif
     #endif
 }

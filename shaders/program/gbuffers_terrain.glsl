@@ -79,9 +79,15 @@ float sunVisibility = clamp(dot(sunVec, upVec) + 0.025, 0.0, 0.1) * 10.0;
 #include "/lib/lighting/shadows.glsl"
 #endif
 
+#ifdef DYNAMIC_HANDLIGHT
+#include "/lib/lighting/dynamicHandLight.glsl"
+#endif
+
+/*
 #ifdef SHIMMER_MOD_SUPPORT
 #include "/lib/lighting/shimmerModSupport.glsl"
 #endif
+*/
 
 #include "/lib/color/dimensionColor.glsl"
 #include "/lib/lighting/sceneLighting.glsl"
@@ -133,7 +139,7 @@ void main() {
 
 	/* DRAWBUFFERS:02 */
 	gl_FragData[0] = albedo;
-	gl_FragData[1] = vec4(EncodeNormal(newNormal), coloredLightingIntensity * 0.01 * COLORED_LIGHTING_STRENGTH, specular);
+	gl_FragData[1] = vec4(EncodeNormal(newNormal), coloredLightingIntensity * 0.1, specular);
 }
 
 #endif
@@ -147,7 +153,7 @@ flat out int mat;
 out float isPlant;
 out vec2 texCoord, lightMapCoord;
 out vec3 sunVec, upVec, eastVec;
-out vec3 normal, binormal, tangent;
+out vec3 normal;
 out vec4 color;
 
 //Uniforms//
@@ -197,8 +203,6 @@ void main() {
 
 	//Normal
 	normal = normalize(gl_NormalMatrix * gl_Normal);
-	binormal = normalize(gl_NormalMatrix * cross(at_tangent.xyz, gl_Normal.xyz) * at_tangent.w);
-	tangent  = normalize(gl_NormalMatrix * at_tangent.xyz);
 
 	//Sun & Other vectors
 	sunVec = vec3(0.0);

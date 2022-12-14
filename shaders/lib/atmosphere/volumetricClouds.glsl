@@ -48,7 +48,7 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, in float z1
 		vec3 nWorldPos = normalize(ToWorld(viewPos));
 		vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.0);
 
-		float distanceFactor = min(far * 16.0, 1500.0);
+		float distanceFactor = min(far * 10.0, 1500.0);
 		float VoL = clamp(dot(normalize(viewPos), lightVec), 0.0, 1.0) * shadowFade;
 
 		//Blend colors with the sky

@@ -213,9 +213,9 @@ void main() {
 
 	#ifdef BLOOM
 	#ifdef OVERWORLD
-	colortex2Data.ba += vec2(sunMoon * 0.01 + star, sunMoon + star);
+	colortex2Data.ba += vec2(sunMoon * 0.1 + star, sunMoon + star);
 	#elif defined END
-	colortex2Data.ba += vec2(star + endVortex * 0.01);
+	colortex2Data.ba += vec2(star + endVortex * 0.1);
 	#endif
 	#endif
 

@@ -134,4 +134,5 @@ void getIntegratedEmission(inout vec4 albedo, in vec3 viewPos, in vec3 worldPos,
 	#endif
 
 	emission = clamp(emission * EMISSION_STRENGTH, 0.0, 4.0);
+	coloredLightingIntensity *= COLORED_LIGHTING_STRENGTH;
 }

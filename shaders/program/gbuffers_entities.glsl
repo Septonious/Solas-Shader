@@ -69,9 +69,15 @@ float sunVisibility = clamp(dot(sunVec, upVec) + 0.025, 0.0, 0.1) * 10.0;
 #include "/lib/lighting/shadows.glsl"
 #endif
 
+#ifdef DYNAMIC_HANDLIGHT
+#include "/lib/lighting/dynamicHandLight.glsl"
+#endif
+
+/*
 #ifdef SHIMMER_MOD_SUPPORT
 #include "/lib/lighting/shimmerModSupport.glsl"
 #endif
+*/
 
 #include "/lib/color/dimensionColor.glsl"
 #include "/lib/lighting/sceneLighting.glsl"
@@ -116,7 +122,7 @@ void main() {
 	
 	/* DRAWBUFFERS:02 */
 	gl_FragData[0] = albedo;
-	gl_FragData[1] = vec4(EncodeNormal(normal), emission * 0.01, 1.0);
+	gl_FragData[1] = vec4(EncodeNormal(normal), emission * 0.1, 1.0);
 }
 
 #endif

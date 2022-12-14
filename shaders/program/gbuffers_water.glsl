@@ -140,6 +140,10 @@ vec2 viewResolution = vec2(viewWidth, viewHeight);
 #include "/lib/util/bayerDithering.glsl"
 #include "/lib/util/encode.glsl"
 
+#ifdef DYNAMIC_HANDLIGHT
+#include "/lib/lighting/dynamicHandLight.glsl"
+#endif
+
 #ifdef INTEGRATED_SPECULAR
 #include "/lib/util/ToScreen.glsl"
 #include "/lib/util/raytracer.glsl"
@@ -272,7 +276,7 @@ void main() {
 	/* DRAWBUFFERS:0124 */
 	gl_FragData[0] = albedo;
 	gl_FragData[1] = albedo;
-	gl_FragData[2] = vec4(EncodeNormal(newNormal), coloredLightingIntensity * 0.01, 1.0);
+	gl_FragData[2] = vec4(EncodeNormal(newNormal), coloredLightingIntensity * 0.1, 1.0);
 	gl_FragData[3].a = water * 0.004;
 }
 

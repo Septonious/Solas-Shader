@@ -68,9 +68,15 @@ float sunVisibility = clamp(dot(sunVec, upVec) + 0.025, 0.0, 0.1) * 10.0;
 #include "/lib/lighting/shadows.glsl"
 #endif
 
+#ifdef DYNAMIC_HANDLIGHT
+#include "/lib/lighting/dynamicHandLight.glsl"
+#endif
+
+/*
 #ifdef SHIMMER_MOD_SUPPORT
 #include "/lib/lighting/shimmerModSupport.glsl"
 #endif
+*/
 
 #include "/lib/color/dimensionColor.glsl"
 #include "/lib/lighting/sceneLighting.glsl"
