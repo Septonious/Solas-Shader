@@ -18,6 +18,10 @@ uniform int heldBlockLightValue;
 uniform int heldBlockLightValue2;
 #endif
 
+#ifdef TAA
+uniform int framemod8;
+#endif
+
 uniform float viewWidth, viewHeight;
 uniform float nightVision;
 uniform float frameTimeCounter;
@@ -61,6 +65,10 @@ float sunVisibility = clamp(dot(sunVec, upVec) + 0.025, 0.0, 0.1) * 10.0;
 #include "/lib/util/ToWorld.glsl"
 #include "/lib/util/bayerDithering.glsl"
 
+#ifdef TAA
+#include "/lib/util/jitter.glsl"
+#endif
+
 #if defined OVERWORLD || defined END
 #include "/lib/util/ToShadow.glsl"
 #include "/lib/lighting/shadows.glsl"
@@ -86,7 +94,11 @@ void main() {
 
 	if (albedo.a > 0.001) {
 		vec3 screenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z);
+		#ifdef TAA
+		vec3 viewPos = ToNDC(vec3(TAAJitter(screenPos.xy, -0.5), screenPos.z));
+		#else
 		vec3 viewPos = ToNDC(screenPos);
+		#endif
 		vec3 worldPos = ToWorld(viewPos);
 		vec2 lightmap = clamp(lightMapCoord, 0.0, 1.0);
 

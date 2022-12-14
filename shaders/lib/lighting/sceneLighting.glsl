@@ -29,11 +29,13 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
 	float vanillaDiffuse = (0.25 * NoU + 0.75) + (0.667 - abs(NoE)) * (1.0 - abs(NoU)) * 0.15;
 
     //Block Lighting//
-    float blockLightMap = min(pow8(lightmap.x) + pow4(lightmap.x) * 0.5, 1.0) * int(emission == 0.0);
+    float blockLightMap = min(pow(lightmap.x, 2.0 - lightmap.x) * lightmap.x * lightmap.x, 1.0) * int(emission == 0.0);
 
-    vec3 worldNormal = normalize(ToWorld(normal * 10000.0));
-    vec3 worldNormalGMVI = normalize(ToWorld(mat3(gbufferModelViewInverse) * normal));
-    vec3 blockLighting = blockLightCol * (1.0 - clamp(dot(normalize(vec3(blockLightMap)), worldNormal) - 0.15, 0.0, 1.0)) * blockLightMap;
+    vec3 worldNormal = normalize(ToWorld(normal * 100000.0));
+    vec3 worldNormalGMVI = normalize(ToWorld(mat3(gbufferModelViewInverse) * normal * 100000.0));
+
+    float directionalLightMap = 1.0 - clamp(dot(normalize(vec3(blockLightMap)), worldNormal), 0.0, 1.0);
+    vec3 blockLighting = blockLightCol * directionalLightMap * blockLightMap;
 
     #if defined BLOOM_COLORED_LIGHTING || defined GLOBAL_ILLUMINATION
     vec3 bloom = texture2D(gaux1, screenPos.xy).rgb;

@@ -31,6 +31,10 @@ uniform int heldBlockLightValue;
 uniform int heldBlockLightValue2;
 #endif
 
+#ifdef TAA
+uniform int framemod8;
+#endif
+
 #ifdef INTEGRATED_SPECULAR
 #ifdef OVERWORLD
 uniform int moonPhase;
@@ -140,6 +144,10 @@ vec2 viewResolution = vec2(viewWidth, viewHeight);
 #include "/lib/util/bayerDithering.glsl"
 #include "/lib/util/encode.glsl"
 
+#ifdef TAA
+#include "/lib/util/jitter.glsl"
+#endif
+
 #ifdef DYNAMIC_HANDLIGHT
 #include "/lib/lighting/dynamicHandLight.glsl"
 #endif
@@ -207,7 +215,11 @@ void main() {
 		vec3 skyColor = vec3(0.0);
 
 		vec3 screenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z);
+		#ifdef TAA
+		vec3 viewPos = ToNDC(vec3(TAAJitter(screenPos.xy, -0.5), screenPos.z));
+		#else
 		vec3 viewPos = ToNDC(screenPos);
+		#endif
 		vec3 worldPos = ToWorld(viewPos);
 
 		float NoU = clamp(dot(normal, upVec), -1.0, 1.0);
