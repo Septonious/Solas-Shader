@@ -183,8 +183,10 @@ void main() {
 	float water = int(mat == 1);
 	float portal = int(mat == 2);
 	float emission = portal * 8.0;
+	float coloredLightingIntensity = emission;
 
 	albedo.a *= 1.0 - portal * 0.5;
+	albedo.a += int(mat == 3) * 0.25;
 
 	#ifndef VANILLA_WATER
 	if (water > 0.9) {
@@ -228,7 +230,7 @@ void main() {
 		}
 		#endif
 
-		getSceneLighting(albedo.rgb, screenPos, viewPos, worldPos, newNormal, lightmap, NoU, NoL, NoE, emission, 0.0, 0.0, 0.95);
+		getSceneLighting(albedo.rgb, screenPos, viewPos, worldPos, newNormal, lightmap, NoU, NoL, NoE, emission, coloredLightingIntensity, 0.0, 0.0, 0.95);
 
 		#if defined OVERWORLD
 		skyColor = getAtmosphere(viewPos);
@@ -270,7 +272,7 @@ void main() {
 	/* DRAWBUFFERS:0124 */
 	gl_FragData[0] = albedo;
 	gl_FragData[1] = albedo;
-	gl_FragData[2] = vec4(EncodeNormal(newNormal), emission * 0.01, 1.0);
+	gl_FragData[2] = vec4(EncodeNormal(newNormal), coloredLightingIntensity * 0.01, 1.0);
 	gl_FragData[3].a = water * 0.004;
 }
 

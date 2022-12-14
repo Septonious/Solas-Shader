@@ -8,7 +8,7 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 atmo
 	//Overworld Fog
 	#ifdef OVERWORLD
 	//Variables
-	float fogAltitude = clamp(pow16((worldPos.y + cameraPosition.y + 1000.0 - FOG_HEIGHT) * 0.001), 0.0, 1.0);
+	float fogAltitude = clamp(pow16((worldPos.y + cameraPosition.y + 1000.0 - FOG_HEIGHT) * 0.001), 0.0, 1.0 - rainStrength * 0.25);
 	float clearDay = sunVisibility * (1.0 - rainStrength * 0.25);
 	vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.0);
 	float VoL = clamp(dot(normalize(viewPos), lightVec), 0.0, 1.0);

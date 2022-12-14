@@ -18,7 +18,7 @@ void computeBCL(inout vec3 blockLighting, in vec3 bloom, in float lViewPos, in f
 }
 #endif
 
-#ifdef GBUFFERS_TERRAIN
+#if defined GBUFFERS_TERRAIN || defined GBUFFERS_WATER
 void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in vec3 worldPos, in vec3 normal, in vec2 lightmap,
                       in float NoU, in float NoL, in float NoE, inout float emission, inout float coloredLightingIntensity, in float leaves, in float foliage, in float specular) {
 #else
@@ -54,7 +54,9 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     blockLighting += getColoredLighting(worldPos, blockLightMap) * BLOCKLIGHT_I * int(emission == 0.0);
     #elif defined BLOOM_COLORED_LIGHTING
     //Bloom Based Colored Lighting
+    #ifndef GBUFFERS_WATER
     if (emission == 0.0) computeBCL(blockLighting, bloom, lViewPos, directionalBloom, lightmap.x, lightmap.y);
+    #endif
     #endif
 
     #ifdef DYNAMIC_HANDLIGHT
@@ -174,5 +176,13 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     if (giVisibility != 0.0) {
         coloredLightingIntensity += mix(0.0, GLOBAL_ILLUMINATION_STRENGTH * (0.2 - clamp(getLuminance(albedo.rgb), 0.0, 0.15)), giVisibility);
     }
+    #endif
+
+    #ifdef BLOOM_COLORED_LIGHTING
+    #ifdef GBUFFERS_WATER
+    int glass = int(mat == 3);
+
+    coloredLightingIntensity += glass * int(blockLightMap > 0.25) * 8.0;
+    #endif
     #endif
 }

@@ -24,7 +24,7 @@ float getCloudSample(vec3 rayPos, float rayPosY, float cloudLayer) {
 	float noiseDetail = get3DNoise(noiseCoord * 4.0, frameTimeCounter * 0.0004, fractPos.y);
 	float noiseHighDetail = get3DNoise(noiseCoord * 16.0 + detailZ, frameTimeCounter * 0.0006, fractPos.y);
 
-	float noise = (noiseBase - noiseDetail * 0.2 - noiseHighDetail * 0.15) * 26.0 * VC_AMOUNT;
+	float noise = (noiseBase - noiseDetail * 0.2 - noiseHighDetail * 0.15) * mix(26.0 * VC_AMOUNT, 30.0, rainStrength);
 
 	float shapingNoise = clamp(noise - 10.0, 0.0, 1.0);
 	float cloudShaping = clamp(smoothstep(VC_HEIGHT + stretching * shapingNoise, VC_HEIGHT - stretching * shapingNoise, rayPosY), 0.0, 1.0);
@@ -53,7 +53,7 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, in float z1
 
 		//Blend colors with the sky
 		lightCol *= 1.0 + pow8(VoL);
-		ambientCol = mix(ambientCol, atmosphereColor, sunVisibility * 0.5);
+		ambientCol = mix(ambientCol, atmosphereColor, max(sunVisibility * 0.35 - rainStrength * 0.35, 0.0));
 
 		//Set the two planes here between which the ray marching will be done
 		float lowerPlane = (VC_HEIGHT + stretching - cameraPosition.y) / nWorldPos.y;

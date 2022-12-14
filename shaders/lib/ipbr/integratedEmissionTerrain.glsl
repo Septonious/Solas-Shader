@@ -101,7 +101,7 @@ void getIntegratedEmission(inout vec4 albedo, in vec3 viewPos, in vec3 worldPos,
 		coloredLightingIntensity = emission;
 	} else if (mat == 121 || mat == 122 || mat == 123) { // Fully emissive blocks
 		emission = 0.25;
-		coloredLightingIntensity = 2.0;
+		coloredLightingIntensity = 3.0;
 		albedo.rgb = sqrt(albedo.rgb);
 	}
 	
