@@ -1,5 +1,9 @@
 #shaders/lang/fr_FR.lang
 
+option.SOLAS_BY_SEPTONIOUS=§6Solas
+value.SOLAS_BY_SEPTONIOUS.0=§bPar Septonious
+option.SOLAS_BY_SEPTONIOUS.comment=Discord: https://discord.gg/4uTAUQR2xu GitHub: https://github.com/Septonious/Solas-Shader
+
 #ATMOSPHERICS
 
 screen.ATMOSPHERICS=Atmosphériques
@@ -41,12 +45,12 @@ option.FOG_DENSITY=Densité du Brouillard
 option.FOG_HEIGHT=Hauteur du Brouillard
 option.BLOOMY_FOG=Brouillard Bloomy
 option.BLOOMY_FOG_DENSITY=Densité du Brouillard Bloomy
-option.BLOOMY_FOG.comment=Active le brouillard qui est Coloré par bloom. Nécessite que Bloom et Bloom ColoRouge Éclairage soient activés !
+option.BLOOMY_FOG.comment=Active le brouillard qui est Coloré par bloom. Nécessite que Bloom et Bloom ColoRouge Éclairage soient activés!
 
 screen.SKY_CONFIG=Configuration du ciel
 
 option.STARS=Étoiles
-option.END_STARS=Étoiles dans l'End
+option.END_STARS=Étoiles de l'End
 option.MILKY_WAY=Voie Lactée
 option.MILKY_WAY_BRIGHTNESS=Luminosité de la Voie Lactée
 option.END_NEBULA=Nébuleuse de l'End
@@ -57,6 +61,14 @@ option.AURORA_COLD_BIOME_VISIBILITY.comment=Active les aurores uniquement lorsqu
 option.AURORA_FULL_MOON_VISIBILITY=Visibilité des Aurore pendant la Pleine Lune
 option.AURORA_FULL_MOON_VISIBILITY.comment=Active les aurores uniquement pendant les Pleine Lune.
 
+screen.END_VORTEX=Configuration du Vortex
+
+option.END_VORTEX=Vortex de l'End
+option.END_VORTEX.comment=Rajoute un truc ressemblant à un trou noir dans le ciel de l'End.
+
+option.END_VORTEX_SIZE=Taille du Vortex
+option.END_VORTEX_WHIRL=Tourbillons du Vortex
+option.END_VORTEX_ARMS=Nombre de bras du Vortex
 
 #WATER
 
@@ -73,6 +85,10 @@ option.WATER_NORMALS=Vagues d'Eau
 option.WATER_NORMAL_BUMP=Bosse des Vagues
 option.WATER_NORMAL_OFFSET=Décalage des Vagues
 
+option.WATER_REFRACTION=Réfraction de la lumière dans l'eau
+option.WATER_REFRACTION_STRENGTH=Force de la Réfraction
+
+option.WAVING_WATER=Eau Ondulante
 
 #LIGHTING
 
@@ -81,20 +97,32 @@ screen.LIGHTING=Éclairage
 option.shadowMapResolution=Résolution des Ombres
 option.shadowDistance=Distance des Ombres
 option.sunPathRotation=Angle du Soleil
-option.SHADOW_SAMPLE_COUNT=Échantillons d'Ombres
+option.VPS=Ombres de pénombre variable (VPS)
+option.VPS.comment=Permet d'obtenir des ombres qui deviennent plus ou moins nettes en fonction de la distance du bloqueur.
+option.VPS_BLUR_STRENGTH=Force du VPS
+option.SHADOW_SAMPLE_COUNT=Échantillons des Ombres
 option.SHADOW_COLOR=Ombres Coloré
 option.ENTITY_SHADOWS=Ombres d'Entités
 
-option.SHIMMER_MOD_SUPPORT=Support du Mod Shimmer
+option.SHIMMER_MOD_SUPPORT=Compatibilité avec le Mod Shimmer
 option.SHIMMER_MOD_SUPPORT.comment=Ajoute un éclairage Coloré fourni par Shimmer mod
-option.BLOOM_COLORouge_LIGHTING=Éclairage Coloré du Bloom (BCL)
-option.COLORouge_LIGHTING_RADIUS=BCL Radius
-option.COLORouge_LIGHTING_STRENGTH=Force du BCL
+option.BLOOM_COLORED_LIGHTING=Éclairage Coloré du Bloom (BCL)
+option.COLORED_LIGHTING_RADIUS=Rayon du BCL
+option.COLORED_LIGHTING_STRENGTH=Force du BCL
 
-option.AO=Occlusion Ambiante (AO)
-option.AO_STRENGTH=Force du AO
+option.AO=Occlusion ambiante personnalisée (AO)
+option.VANILLA_AO=Occlusion Ambiante Minecraft par Défaut (AO)
+option.AO_STRENGTH=Force de l'AO
+option.AO_RADIUS=Rayon de l'AO
+
+option.SSPT=Screen Space Path Tracing (SSPT)
+option.SSPT_LUMINANCE=Luminance
+option.SSPT_LUMINANCE.comment=Contrôle la luminosité du SSPT
+option.SSPT_SAMPLE_COUNT=Nombre d'Échantillons
+option.SSPT_SAMPLE_COUNT.comment=Contrôle l'exactitude et la précision du SSPT. Des valeurs plus élevées ont un impact sur les performances!
 
 option.GLOBAL_ILLUMINATION=Illumination Globale (GI)
+option.GLOBAL_ILLUMINATION.comment=Active de la fausse GI basée sur du bloom. Le bloom et l'éclairage coloré bloom doivent être activés.
 option.GLOBAL_ILLUMINATION_STRENGTH=Force du GI
 option.DYNAMIC_HANDLIGHT=Éclairage Dynamique des Mains
 
@@ -103,7 +131,7 @@ option.DYNAMIC_HANDLIGHT=Éclairage Dynamique des Mains
 
 screen.IPBR=PBR Intégré (IPBR)
 
-option.INTEGRATED_SPECULAR=Mappage Spéculaire du IPBR 
+option.INTEGRATED_SPECULAR=Mappage Spéculaire du IPBR
 
 screen.ISPECULAR=Configuration des Spéculaire
 
@@ -130,38 +158,39 @@ option.EMISSION_STRENGTH=Force des Émissifs
 #COLOR
 
 screen.COLOR=Couleurs
+screen.LIGHTAMBIENT_COLOR=Lumière et couleur ambiante de l'Overworld
 
-screen.LIGHT_EM=Light (Début de Matinée)
+screen.LIGHT_EM=Lumière (Début de Matinée)
 option.LIGHT_EMR=Rouge
 option.LIGHT_EMG=Vert
 option.LIGHT_EMB=Bleu
 option.LIGHT_EMI=Intensité
 
-screen.LIGHT_M=Light (Matin)
+screen.LIGHT_M=Lumière (Matin)
 option.LIGHT_MR=Rouge
 option.LIGHT_MG=Vert
 option.LIGHT_MB=Bleu
 option.LIGHT_MI=Intensité
 
-screen.LIGHT_D=Light (Jour)
+screen.LIGHT_D=Lumière (Jour)
 option.LIGHT_DR=Rouge
 option.LIGHT_DG=Vert
 option.LIGHT_DB=Bleu
 option.LIGHT_DI=Intensité
 
-screen.LIGHT_E=Light (Soir)
+screen.LIGHT_E=Lumière (Soir)
 option.LIGHT_ER=Rouge
 option.LIGHT_EG=Vert
 option.LIGHT_EB=Bleu
 option.LIGHT_EI=Intensité
 
-screen.LIGHT_LE=Light (Fin de Soirée)
+screen.LIGHT_LE=Lumière (Fin de Soirée)
 option.LIGHT_LER=Rouge
 option.LIGHT_LEG=Vert
 option.LIGHT_LEB=Bleu
 option.LIGHT_LEI=Intensité
 
-screen.LIGHT_N=Light (Night)
+screen.LIGHT_N=Lumière (Nuit)
 option.LIGHT_NR=Rouge
 option.LIGHT_NG=Vert
 option.LIGHT_NB=Bleu
@@ -205,19 +234,30 @@ option.AMBIENT_NB=Bleu
 option.AMBIENT_NI=Intensité
 
 
-screen.MINLIGHT=Minimal Éclairage
+screen.END_COLOR=Lumière de l'End & Couleur Ambiente
+option.LIGHT_END_R=Rouge
+option.LIGHT_END_G=Vert
+option.LIGHT_END_B=Bleu
+option.LIGHT_END_I=Intensité
+
+option.AMBIENT_END_R=Rouge
+option.AMBIENT_END_G=Vert
+option.AMBIENT_END_B=Bleu
+option.AMBIENT_END_I=Intensité
+
+screen.MINLIGHT=Minimal Lumièreing
 option.MINLIGHT_R=Rouge
 option.MINLIGHT_G=Vert
 option.MINLIGHT_B=Bleu
 option.MINLIGHT_I=Intensité
 
-screen.BLOCKLIGHT_COLOR=Couleur de la lumière de bloc
+screen.BLOCKLIGHT_COLOR=Lumière de Block
 option.BLOCKLIGHT_R=Rouge
 option.BLOCKLIGHT_G=Vert
 option.BLOCKLIGHT_B=Bleu
 option.BLOCKLIGHT_I=Intensité
 
-screen.WATER_COLOR=Water Color
+screen.WATER_COLOR=Couleur de l'Eau
 option.WATER_R=Rouge
 option.WATER_G=Vert
 option.WATER_B=Bleu
@@ -249,9 +289,9 @@ screen.POST=Effets Secondaires
 option.DOF=Profondeur de champ (DOF)
 option.DOF.comment=Rend flou l'objet situé en dehors du point focal de l'œil du joueur.
 
-option.DOF_STRENGTH=Force du DoF
+option.DOF_STRENGTH=Force du DOF
 
-option.SHARPENING=Aiguisage (Sharpening)
+option.SHARPENING=Aiguisage d'Image (Sharpening)
 option.CHROMATIC_ABERRATION=Aberration Chromatique (CA)
 option.CHROMATIC_ABERRATION_STRENGTH=Force des CA
 
@@ -273,9 +313,25 @@ option.SATURATION.comment=Ajuste la saturation de toutes les couleurs.
 option.VIBRANCE=Vibrance
 option.VIBRANCE.comment=Ajuste la saturation des couleurs moins saturées, les couleurs bien saturées sont moins affectées.
 
+screen.BLOOM=Configuration du Bloom
+
 option.BLOOM=Bloom
 option.BLOOM_STRENGTH=Force du Bloom
 
+option.BLOOM_TILE_SIZE=Taille des tuiles
+option.BLOOM_TILE_SIZE.comment=Ajuste la taille de chaque tuile de Bloom. Des valeurs plus élevées donnent moins de précision et un plus grand rayon. Des valeurs plus faibles donnent plus de précision et un rayon plus petit.
+
+option.BLOOM_CONTRAST=Contraste
+option.BLOOM_CONTRAST.comment=Détermine si le Bloom doit préserver le contraste des couleurs ou la visibilité des détails. Une valeur plus élevée préserve le contraste des couleurs tandis qu'une valeur plus faible préserve la visibilité des détails.
+value.BLOOM_CONTRAST.-4=-1.00
+value.BLOOM_CONTRAST.-3=-0.75
+value.BLOOM_CONTRAST.-2=-0.50
+value.BLOOM_CONTRAST.-1=-0.25
+value.BLOOM_CONTRAST.0=0.00
+value.BLOOM_CONTRAST.1=0.25
+value.BLOOM_CONTRAST.2=0.50
+value.BLOOM_CONTRAST.3=0.75
+value.BLOOM_CONTRAST.4=1.00
 
 #OTHER
 

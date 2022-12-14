@@ -2,7 +2,7 @@
 
 option.SOLAS_BY_SEPTONIOUS=§6Solas
 value.SOLAS_BY_SEPTONIOUS.0=§bBy Septonious
-option.SOLAS_BY_SEPTONIOUS.comment=Discord: https://discord.com/invite/4uTAUQR2xu. GitHub: https://github.com/Septonious/Solas-Shader
+option.SOLAS_BY_SEPTONIOUS.comment=Discord: https://discord.gg/4uTAUQR2xu GitHub: https://github.com/Septonious/Solas-Shader
 
 #ATMOSPHERICS
 
@@ -97,7 +97,7 @@ screen.LIGHTING=Lighting
 option.shadowMapResolution=Shadow Resolution
 option.shadowDistance=Shadow Distance
 option.sunPathRotation=Sun Angle
-option.VPS=Variable Penumbra Shadows
+option.VPS=Variable Penumbra Shadows (VPS)
 option.VPS.comment=Enables shadows that become blurrier/sharper depending on the blocker distance.
 option.VPS_BLUR_STRENGTH=VPS Strength
 option.SHADOW_SAMPLE_COUNT=Shadow Samples
@@ -115,7 +115,7 @@ option.VANILLA_AO=Vanilla Ambient Occlusion (AO)
 option.AO_STRENGTH=AO Strength
 option.AO_RADIUS=AO Radius
 
-option.SSPT=Screen Space Path Tracing
+option.SSPT=Screen Space Path Tracing (SSPT)
 option.SSPT_LUMINANCE=Luminance
 option.SSPT_LUMINANCE.comment=Controls the brightness of SSPT.
 option.SSPT_SAMPLE_COUNT=Sample Count
@@ -286,10 +286,10 @@ option.SKY_HI=Intensity (High Scattering)
 
 screen.POST=Post Effects
 
-option.DOF=Depth of Field
+option.DOF=Depth of Field (DOF)
 option.DOF.comment=Blurs the object outside your player's eye focal point.
 
-option.DOF_STRENGTH=DoF Strength
+option.DOF_STRENGTH=DOF Strength
 
 option.SHARPENING=Image Sharpening
 option.CHROMATIC_ABERRATION=Chromatic Aberration (CA)
