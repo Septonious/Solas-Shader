@@ -122,7 +122,7 @@ option.SSPT_SAMPLE_COUNT=Sample Count
 option.SSPT_SAMPLE_COUNT.comment=Controls the accuracy and precision of SSPT. Higher values impact performance!
 
 option.GLOBAL_ILLUMINATION=Global Illumination (GI)
-comment.GLOBAL_ILLUMINATION.comment=Enables fake GI based on bloom. Both bloom and bloom colored lighting have to be enabled.
+option.GLOBAL_ILLUMINATION.comment=Enables fake GI based on bloom. Both bloom and bloom colored lighting have to be enabled.
 option.GLOBAL_ILLUMINATION_STRENGTH=GI Strength
 option.DYNAMIC_HANDLIGHT=Dynamic Hand Lighting
 

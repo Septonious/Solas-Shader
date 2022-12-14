@@ -52,7 +52,7 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, in float z1
 		float VoL = clamp(dot(normalize(viewPos), lightVec), 0.0, 1.0) * shadowFade;
 
 		//Blend colors with the sky
-		lightCol = mix(lightCol, atmosphereColor, sunVisibility * 0.25) * (1.0 + pow8(VoL));
+		lightCol *= 1.0 + pow8(VoL);
 		ambientCol = mix(ambientCol, atmosphereColor, sunVisibility * 0.5);
 
 		//Set the two planes here between which the ray marching will be done

@@ -147,7 +147,7 @@ flat out int mat;
 out float isPlant;
 out vec2 texCoord, lightMapCoord;
 out vec3 sunVec, upVec, eastVec;
-out vec3 normal;
+out vec3 normal, binormal, tangent;
 out vec4 color;
 
 //Uniforms//
@@ -171,6 +171,7 @@ uniform mat4 gbufferModelView;
 uniform mat4 gbufferModelViewInverse;
 
 //Attributes//
+attribute vec4 at_tangent;
 attribute vec4 mc_Entity;
 
 #ifdef WAVING_BLOCKS
@@ -196,6 +197,8 @@ void main() {
 
 	//Normal
 	normal = normalize(gl_NormalMatrix * gl_Normal);
+	binormal = normalize(gl_NormalMatrix * cross(at_tangent.xyz, gl_Normal.xyz) * at_tangent.w);
+	tangent  = normalize(gl_NormalMatrix * at_tangent.xyz);
 
 	//Sun & Other vectors
 	sunVec = vec3(0.0);

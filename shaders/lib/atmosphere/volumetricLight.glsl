@@ -8,11 +8,10 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
 	vec4 viewPos = gbufferProjectionInverse * (screenPos * 2.0 - 1.0);
 	viewPos /= viewPos.w;
 
+	vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.0);
 	vec3 nViewPos = normalize(viewPos.xyz);
 
 	float VoU = 1.0 - max(dot(nViewPos, upVec), 0.0);
-
-	vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.0);
 	float VoL = dot(nViewPos, lightVec);
 	float sunFactor = exp(VoL * 2.0) * 0.5;
 	float nVoL = mix((0.75 + sunFactor) * 0.75, sunFactor * (1.5 - eBS), timeBrightness);
@@ -63,7 +62,7 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
 					}
 				}
 				#endif
-				vec3 shadow = clamp(shadowCol * 8.0 * (1.0 - shadow0) + shadow0, vec3(0.0), vec3(1.0));
+				vec3 shadow = clamp(shadowCol * 8.0 * (1.0 - shadow0) + shadow0, 0.0, 1.0);
 
 				//Translucency Blending
 				if (linearDepth0 < currentDepth) {

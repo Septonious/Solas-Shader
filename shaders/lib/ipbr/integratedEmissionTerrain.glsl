@@ -23,7 +23,10 @@ void getIntegratedEmission(inout vec4 albedo, in vec3 viewPos, in vec3 worldPos,
 		emission = clamp(max(max(max(albedo.r - albedo.b, albedo.r - albedo.g), max(albedo.b - albedo.g, albedo.b - albedo.r)), max(albedo.g - albedo.r, albedo.g - albedo.b)), 0.0, 1.0);
 		emission = clamp(emission * int(emission > 0.1) * 8.0, 0.0, 1.0) * lAlbedo;
 		coloredLightingIntensity = emission * 4.0;
-    } 
+    } else if (mat == 134) {
+		emission = int(lAlbedo > 0.9);
+		coloredLightingIntensity = emission * 4.0;
+	}
 	#endif
 
 	if (mat == 101) { // Crying Obsidian and Respawn Anchor
@@ -62,7 +65,7 @@ void getIntegratedEmission(inout vec4 albedo, in vec3 viewPos, in vec3 worldPos,
 		coloredLightingIntensity = emission;
 	} else if (mat == 109) { // Torch
 		emission = int(lAlbedo > 0.9);
-		coloredLightingIntensity = emission * 3.0;
+		coloredLightingIntensity = emission * 2.0;
 	} else if (mat == 110) { // Furnaces
 		emission = int(albedo.r > 0.8 || (albedo.r > 0.6 && albedo.b < 0.5));
 		coloredLightingIntensity = emission * 2.0;

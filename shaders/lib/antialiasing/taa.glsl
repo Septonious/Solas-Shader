@@ -73,7 +73,7 @@ vec4 TemporalAA(inout vec3 color, float tempData, sampler2D colortex, sampler2D 
 	sspt = texture2D(colortex3, texCoord).rgb;
 	#endif
 
-	if (sspt == 0.0) tempColor = NeighbourhoodClamping(color, tempColor, 1.0 / viewResolution, colortex);
+	if (length(sspt) == 0.0) tempColor = NeighbourhoodClamping(color, tempColor, 1.0 / viewResolution, colortex);
 	
 	float blendFactor = float(
 		prvCoord.x > 0.0 && prvCoord.x < 1.0 &&
@@ -82,7 +82,7 @@ vec4 TemporalAA(inout vec3 color, float tempData, sampler2D colortex, sampler2D 
 	
 	vec2 velocity = (texCoord - prvCoord.xy) * viewResolution;
 
-	if (sspt == vec3(0.0)) blendFactor *= exp(-length(velocity)) * 0.3 + 0.6;
+	if (length(sspt) == 0.0) blendFactor *= exp(-length(velocity)) * 0.3 + 0.6;
 	else blendFactor = 0.975;
 	
 	color = mix(color, tempColor, blendFactor);
