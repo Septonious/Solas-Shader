@@ -120,7 +120,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     #ifdef OVERWORLD
     float rainFactor = 1.0 - rainStrength * 0.75;
 
-    vec3 sceneLighting = mix(ambientCol, lightCol, fullShadow * rainFactor * shadowFade) * lightmap.y * lightmap.y;
+    vec3 sceneLighting = mix(ambientCol, mix(lightCol, lightColSqrt, sunVisibility * 0.5), fullShadow * rainFactor * shadowFade) * lightmap.y * lightmap.y;
     sceneLighting *= 1.0 + scattering * shadow;
     #endif
 
@@ -156,9 +156,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     #endif
 
     #ifdef GBUFFERS_WATER
-    int glass = int(mat == 3);
-
-    coloredLightingIntensity += glass * int(blockLightMap > 0.25) * 4.0;
+    coloredLightingIntensity += int(mat == 3 && blockLightMap > 0.25);
     #endif
     #endif
 }

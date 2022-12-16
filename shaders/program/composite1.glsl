@@ -22,7 +22,7 @@ uniform float viewHeight, viewWidth;
 #endif
 
 #ifdef VL
-uniform sampler2D colortex1;
+uniform sampler2D colortex6;
 #endif
 
 uniform sampler2D colortex0;
@@ -41,10 +41,6 @@ vec2 viewResolution = vec2(viewWidth, viewHeight);
 #endif
 
 //Includes//
-#ifdef VL
-#include "/lib/filters/blur.glsl"
-#endif
-
 #ifdef INTEGRATED_SPECULAR
 #include "/lib/util/ToScreen.glsl"
 #include "/lib/util/ToView.glsl"
@@ -58,7 +54,12 @@ void main() {
 	vec4 color = texture2D(colortex0, texCoord);
 
 	#ifdef VL
-	vec3 vl = getDiskBlur8RGB(colortex1, texCoord, 2.0);
+    vec3 vl1 = texture2D(colortex6, texCoord + vec2( 0.0,  1.0 / viewHeight)).rgb;
+    vec3 vl2 = texture2D(colortex6, texCoord + vec2( 0.0, -1.0 / viewHeight)).rgb;
+    vec3 vl3 = texture2D(colortex6, texCoord + vec2( 1.0 / viewWidth,   0.0)).rgb;
+    vec3 vl4 = texture2D(colortex6, texCoord + vec2(-1.0 / viewWidth,   0.0)).rgb;
+    vec3 vlSum = (vl1 + vl2 + vl3 + vl4) * 0.25;
+    vec3 vl = texture2D(colortex6, texCoord).rgb;
 	color.rgb += vl * vl;
 	#endif
 

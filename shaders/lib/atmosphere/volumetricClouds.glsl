@@ -1,7 +1,7 @@
 #ifndef BLOCKY_CLOUDS
 const float stretching = VC_STRETCHING;
 #else
-const float stretching = 20.0;
+const float stretching = 10.0;
 #endif
 
 float get3DNoise(vec2 noiseCoord, float wind, float fractPosY) {
@@ -11,6 +11,7 @@ float get3DNoise(vec2 noiseCoord, float wind, float fractPosY) {
 	return mix(planeA, planeB, fractPosY);
 }
 
+#ifndef BLOCKY_CLOUDS
 float getCloudSample(vec3 rayPos, float rayPosY) {
 	rayPos *= 0.0025;
 
@@ -20,9 +21,9 @@ float getCloudSample(vec3 rayPos, float rayPosY) {
 	vec2 noiseCoord = (floorPos.xz + fractPos.xz + floorPos.y * 16.0) * 0.015625;
 
 	float detailZ = floor(rayPos.y * 32.0 + 0.5) * 0.05;
-	float noiseBase = get3DNoise(noiseCoord, frameTimeCounter * 0.0002, fractPos.y);
-	float noiseDetail = get3DNoise(noiseCoord * 4.0, frameTimeCounter * 0.0004, fractPos.y);
-	float noiseHighDetail = get3DNoise(noiseCoord * 16.0 + detailZ, frameTimeCounter * 0.0006, fractPos.y);
+	float noiseBase = get3DNoise(noiseCoord, frameTimeCounter * 0.0001, fractPos.y);
+	float noiseDetail = get3DNoise(noiseCoord * 4.0, frameTimeCounter * 0.0002, fractPos.y);
+	float noiseHighDetail = get3DNoise(noiseCoord * 16.0 + detailZ, frameTimeCounter * 0.0003, fractPos.y);
 
 	float noise = (noiseBase - noiseDetail * 0.2 - noiseHighDetail * 0.15) * mix(26.0 * VC_AMOUNT, 31.0, rainStrength);
 
@@ -31,6 +32,21 @@ float getCloudSample(vec3 rayPos, float rayPosY) {
 
 	return clamp(noise - mix(14.0, 10.0, sqrt(cloudShaping)), 0.0, 1.0);
 }
+#else
+float getCloudSample(vec3 rayPos, float rayPosY) {
+	rayPos = floor(rayPos * 0.5);
+	rayPos *= 0.025;
+
+	vec3 floorPos = floor(rayPos);
+	vec3 fractPos = fract(rayPos);
+
+	vec2 noiseCoord = (floorPos.xz + fractPos.xz + floorPos.y * 16.0) * 0.015625;
+
+	float noise = texture2D(shadowcolor1, noiseCoord + 0.25).a * 100.0;
+
+	return clamp(noise - 12.0 + rainStrength, 0.0, 1.0);
+}
+#endif
 
 void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, in float z1, in float dither, inout float cloudDepth) {
 	//Total visibility of clouds

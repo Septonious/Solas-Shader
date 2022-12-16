@@ -9,10 +9,9 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
 	vec3 nViewPos = normalize(viewPos.xyz);
 
 	float VoU = 1.0 - max(dot(nViewPos, upVec), 0.0);
-	float VoL = dot(nViewPos, lightVec);
-	float sunFactor = exp(VoL * 2.0) * 0.5;
-	float nVoL = mix((0.75 + sunFactor) * 0.75, sunFactor * (1.5 - eBS), timeBrightness);
-	float visibility = int(z0 > 0.56) * max(VoU * nVoL, sign(isEyeInWater)) * 0.02 * VL_OPACITY;
+	float VoL = exp(dot(nViewPos, lightVec) * 2.0) * 0.5;
+	float nVoL = mix(0.75 + VoL, VoL * (1.0 - eBS * 0.5), timeBrightness);
+	float visibility = int(z0 > 0.56) * max(VoU * nVoL, sign(isEyeInWater)) * 0.0125 * VL_OPACITY;
 
 	#if MC_VERSION >= 11900
 	visibility *= 1.0 - darknessFactor;
@@ -27,11 +26,11 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
 		float linearDepth0 = getLinearDepth(z0);
 		float linearDepth1 = getLinearDepth(z1);
 
-		float distanceFactor = 7.0 + eBS * 2.0 - sign(isEyeInWater) * 4.0;
+		float distanceFactor = 5.0 + eBS * 3.0 - sign(isEyeInWater) * 3.0;
 
 		//Ray marching and main calculations
 		for (int i = 0; i < VL_SAMPLES; i++) {
-			float currentDepth = pow(i + dither + eBS * 0.75, 1.5) * distanceFactor;
+			float currentDepth = (i + dither) * distanceFactor;
 
 			if (linearDepth1 < currentDepth || (linearDepth0 < currentDepth && translucent.rgb == vec3(0.0))) {
 				break;
@@ -39,7 +38,7 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
 
 			vec3 worldPos = ToWorld(ToView(vec3(texCoord, getLogarithmicDepth(currentDepth))));
 
-			if (length(worldPos) > 128.0) break;
+			if (length(worldPos) > 256.0) break;
 
 			vec3 shadowPos = ToShadow(worldPos);
 

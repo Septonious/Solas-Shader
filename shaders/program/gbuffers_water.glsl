@@ -74,11 +74,7 @@ uniform vec3 skyColor, fogColor;
 #endif
 
 #if defined WATER_NORMALS || (defined INTEGRATED_SPECULAR && (defined END_NEBULA || defined AURORA))
-uniform sampler2D noisetex;
-
-#ifndef BLOCKY_CLOUDS
-uniform sampler2D shadowcolor1;
-#endif
+uniform sampler2D noisetex, shadowcolor1;
 #endif
 
 #ifdef INTEGRATED_SPECULAR
