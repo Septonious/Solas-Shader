@@ -4,11 +4,8 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
 	float z1 = texture2D(depthtex1, texCoord).r;
 
 	//Positions
-	vec4 screenPos = vec4(texCoord, z0, 1.0);
-	vec4 viewPos = gbufferProjectionInverse * (screenPos * 2.0 - 1.0);
-	viewPos /= viewPos.w;
-
 	vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.0);
+	vec3 viewPos = ToView(vec3(texCoord, z0));
 	vec3 nViewPos = normalize(viewPos.xyz);
 
 	float VoU = 1.0 - max(dot(nViewPos, upVec), 0.0);
@@ -40,37 +37,31 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
 				break;
 			}
 
-			vec3 worldPos = calculateWorldPos(getLogarithmicDepth(currentDepth), texCoord);
+			vec3 worldPos = ToWorld(ToView(vec3(texCoord, getLogarithmicDepth(currentDepth))));
 
-			float lWorldPos = length(worldPos);
+			if (length(worldPos) > 128.0) break;
 
-			if (lWorldPos > far) break;
+			vec3 shadowPos = ToShadow(worldPos);
 
-			vec3 shadowPos = calculateShadowPos(worldPos);
-			shadowPos.z += 0.0512 / shadowMapResolution;
+			float shadow0 = shadow2D(shadowtex0, shadowPos).z;
 
-			if (length(shadowPos.xy * 2.0 - 1.0) < 1.0) {
-				float shadow0 = shadow2D(shadowtex0, shadowPos).z;
-
-				//Colored Shadows
-				#ifdef SHADOW_COLOR
-				if (shadow0 < 1.0) {
-					float shadow1 = shadow2D(shadowtex1, shadowPos.xyz).z;
-					if (shadow1 > 0.0) {
-						shadowCol = texture2D(shadowcolor0, shadowPos.xy).rgb;
-						shadowCol *= shadowCol * shadow1;
-					}
+			//Colored Shadows
+			#ifdef SHADOW_COLOR
+			if (shadow0 < 1.0) {
+				float shadow1 = shadow2D(shadowtex1, shadowPos.xyz).z;
+				if (shadow1 > 0.0) {
+					shadowCol = texture2D(shadowcolor0, shadowPos.xy).rgb * shadow1;
 				}
-				#endif
-				vec3 shadow = clamp(shadowCol * 8.0 * (1.0 - shadow0) + shadow0, 0.0, 1.0);
-
-				//Translucency Blending
-				if (linearDepth0 < currentDepth) {
-					shadow *= translucent.rgb;
-				}
-
-				vl += shadow;
 			}
+			#endif
+			vec3 shadow = clamp(shadowCol * 8.0 * (1.0 - shadow0) + shadow0, 0.0, 1.0);
+
+			//Translucency Blending
+			if (linearDepth0 < currentDepth) {
+				shadow *= translucent.rgb;
+			}
+
+			vl += shadow;
 		}
 
 		vl *= visibility;

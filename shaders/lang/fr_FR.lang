@@ -104,8 +104,6 @@ option.SHADOW_SAMPLE_COUNT=Échantillons des Ombres
 option.SHADOW_COLOR=Ombres Coloré
 option.ENTITY_SHADOWS=Ombres d'Entités
 
-option.SHIMMER_MOD_SUPPORT=Compatibilité avec le Mod Shimmer
-option.SHIMMER_MOD_SUPPORT.comment=Ajoute un éclairage Coloré fourni par Shimmer mod
 option.BLOOM_COLORED_LIGHTING=Éclairage Coloré du Bloom (BCL)
 option.COLORED_LIGHTING_RADIUS=Rayon du BCL
 option.COLORED_LIGHTING_STRENGTH=Force du BCL

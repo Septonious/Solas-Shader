@@ -57,7 +57,7 @@ float getLuminance(vec3 color) {
 //Program//
 void main() {
 	vec3 color = texture2D(colortex0, texCoord).rgb;
-	vec3 temporalColor = vec3(0.0);
+	vec3 tempData = vec3(0.0);
 	vec3 rawBloom = vec3(0.0);
 
 	float dither = Bayer64(gl_FragCoord.xy);
@@ -93,7 +93,7 @@ void main() {
 	#endif
 
 	#ifdef TAA
-	temporalColor = texture2D(colortex5, texCoord).gba;
+	tempData = texture2D(colortex5, texCoord).gba;
 	#endif
 
 	BSLTonemap(color);
@@ -104,7 +104,7 @@ void main() {
 
 	/* DRAWBUFFERS:154 */
 	gl_FragData[0].rgb = color;
-	gl_FragData[1].gba = temporalColor;
+	gl_FragData[1].gba = tempData;
 	gl_FragData[2].rgb = pow(rawBloom / 128.0, vec3(0.25)) * float(z0 < 1.0);
 }
 

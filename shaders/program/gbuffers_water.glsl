@@ -49,21 +49,18 @@ uniform float wetness;
 #endif
 #endif
 
-uniform float viewWidth, viewHeight, far;
-uniform float nightVision, blindFactor;
-uniform float frameTimeCounter;
-
 #if MC_VERSION >= 11900
 uniform float darknessFactor;
 #endif
 
-#ifdef OVERWORLD
-uniform float rainStrength;
-uniform float shadowFade;
-#endif
+uniform float nightVision;
+uniform float frameTimeCounter;
+uniform float blindFactor, far;
+uniform float viewWidth, viewHeight;
 
-#if defined OVERWORLD || defined END
-uniform float timeBrightness, timeAngle;
+#ifdef OVERWORLD
+uniform float shadowFade;
+uniform float rainStrength, timeBrightness, timeAngle;
 #endif
 
 #if defined OVERWORLD || ((defined OVERWORLD || defined END) && defined INTEGRATED_SPECULAR)
@@ -119,7 +116,7 @@ uniform mat4 shadowModelView;
 #endif
 
 //Common Variables//
-#if (defined GLOBAL_ILLUMINATION || defined BLOOM_COLORED_LIGHTING) || (defined SSPT && defined GLOBAL_ILLUMINATION)
+#if defined GLOBAL_ILLUMINATION || defined BLOOM_COLORED_LIGHTING
 float getLuminance(vec3 color) {
 	return dot(color, vec3(0.299, 0.587, 0.114));
 }
@@ -265,12 +262,12 @@ void main() {
 
 			float DoN = clamp(dot(normalize(diffPos), newNormal), 0.0, 1.0);
 			float absorptionFactor = 1.0 - clamp(length(diffPos) * DoN * 0.075, 0.0, 1.0);
-			float brightnessFactor = mix(mix(0.5, 1.0, sunVisibility), 0.5, rainStrength);
+			float brightnessFactor = mix(mix(0.5, 1.0, sunVisibility), 0.75, rainStrength);
 
 			vec3 absorptionColor = albedo.rgb * mix(vec3(1.0), mix(waterColor, vec3(0.0, 1.0, 1.0), absorptionFactor) * brightnessFactor * 2.0, 1.0 - absorptionFactor * absorptionFactor);
 
 			albedo.rgb = mix(waterColor * brightnessFactor * 0.5, absorptionColor, absorptionFactor);
-			albedo.a = mix(albedo.a, 0.1, absorptionFactor);
+			albedo.a = mix(albedo.a, 0.25, absorptionFactor);
 		}
 		#endif
 
@@ -373,7 +370,7 @@ void main() {
     texCoord = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;
 
 	lightMapCoord = (gl_TextureMatrix[1] * gl_MultiTexCoord1).xy;
-	lightMapCoord = clamp((lightMapCoord - 0.03125) * 1.06667, vec2(0.0), vec2(0.9333, 1.0));
+	lightMapCoord = clamp(lightMapCoord, vec2(0.0), vec2(0.9333, 1.0));
 
 	//Normal
 	normal = normalize(gl_NormalMatrix * gl_Normal);
@@ -407,7 +404,6 @@ void main() {
 	eastVec = normalize(gbufferModelView[0].xyz);
 
 	//Materials
-	mat = 0;
 	mat = int(mc_Entity.x);
 
 	//Color & Position

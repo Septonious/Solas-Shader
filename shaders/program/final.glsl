@@ -11,12 +11,11 @@ const float wetnessHalflife = 128.0;
 //Optifine Constants//
 /*
 const int colortex0Format = R11F_G11F_B10F; //scene
-const int colortex1Format = RGB8; //translucent
+const int colortex1Format = RGB16; //translucent
 const int colortex2Format = RGBA16; //normals, emissives, specular
-const int colortex3Format = RGB8; //sspt
 const int colortex4Format = RGBA8; //ao
 const int colortex5Format = RGBA16; //temporal data
-const int colortex6Format = RGBA16; //reflection color
+const int colortex6Format = RGB10_A2; //reflection color
 */
 
 //Varyings//
@@ -44,17 +43,17 @@ uniform float aspectRatio;
 
 //Program//
 void main() {
-	vec4 color = texture2D(colortex1, texCoord);
+	vec3 color = texture2D(colortex1, texCoord).rgb;
 
 	#if defined SHARPENING && MC_VERSION >= 11200
-	sharpenFilter(colortex1, color.rgb, texCoord);
+	sharpenFilter(color, texCoord);
 	#endif
 
 	#ifdef CHROMATIC_ABERRATION
-	getChromaticAberration(color.rgb, texCoord);
+	getChromaticAberration(color, texCoord);
 	#endif
 
-	gl_FragColor = color;
+	gl_FragColor.rgb = color;
 }
 
 #endif

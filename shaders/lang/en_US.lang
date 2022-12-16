@@ -104,8 +104,6 @@ option.SHADOW_SAMPLE_COUNT=Shadow Samples
 option.SHADOW_COLOR=Colored Shadows
 option.ENTITY_SHADOWS=Entity Shadows
 
-option.SHIMMER_MOD_SUPPORT=Shimmer Mod Support
-option.SHIMMER_MOD_SUPPORT.comment=Adds colored lighting provided by Shimmer mod
 option.BLOOM_COLORED_LIGHTING=Bloom Colored Lighting (BCL)
 option.COLORED_LIGHTING_RADIUS=BCL Radius
 option.COLORED_LIGHTING_STRENGTH=BCL Strength

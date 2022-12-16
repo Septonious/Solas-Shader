@@ -17,11 +17,11 @@ void main() {
     vec4 albedo = texture2D(texture, texCoord) * color;
 
     /* DRAWBUFFERS:0 */
-    gl_FragData[0] = albedo * albedo * 2.0;
+    gl_FragData[0] = albedo;
 
 	#ifdef BLOOM
 	/* DRAWBUFFERS:02 */
-	gl_FragData[1].ba = vec2(0.1, 1.0);
+	gl_FragData[1].ba = vec2(0.5, 1.0);
 	#endif
 }
 

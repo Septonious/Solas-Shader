@@ -17,11 +17,6 @@ in vec3 sunVec, upVec;
 uniform int isEyeInWater;
 #endif
 
-#ifdef SSPT
-uniform float far, near;
-uniform float viewWidth, viewHeight;
-#endif
-
 #ifdef WATER_FOG
 #if MC_VERSION >= 11900
 uniform float darknessFactor;
@@ -43,16 +38,7 @@ uniform float frameTimeCounter;
 uniform vec3 cameraPosition;
 
 uniform sampler2D colortex4;
-
-#ifdef SSPT
-uniform sampler2D colortex2, colortex3;
-#endif
-
-#ifdef BLOCKY_CLOUDS
-uniform sampler2D noisetex;
-#else
 uniform sampler2D shadowcolor1;
-#endif
 
 uniform mat4 gbufferModelViewInverse;
 #endif
@@ -84,17 +70,25 @@ float sunVisibility = clamp(dot(sunVec, upVec) + 0.025, 0.0, 0.1) * 10.0;
 #endif
 #endif
 
-#ifdef SSPT
-#include "/lib/util/encode.glsl"
-#include "/lib/filters/ssptDenoiser.glsl"
-#endif
-
 void main() {
-	vec3 color = texture2D(colortex0, texCoord).rgb;
+	vec2 newTexCoord = texCoord;
 
 	#if defined WATER_FOG || defined WATER_REFRACTION
-	float z0 = texture2D(depthtex0, texCoord).r;
+	float z0 = texture2D(depthtex0, newTexCoord).r;
 	vec3 viewPos = ToView(vec3(texCoord, z0));
+	#endif
+
+	#ifdef WATER_REFRACTION
+	float waterData = texture2D(colortex4, texCoord).a;
+
+	if (waterData > 0.0 && waterData < 0.004000001 && isEyeInWater == 0 && z0 > 0.56) {
+		vec2 refractedCoord = getRefraction(ToWorld(viewPos) + cameraPosition, viewPos);
+
+		newTexCoord = refractedCoord;
+	}
+	#endif
+
+	vec3 color = texture2D(colortex0, newTexCoord).rgb;
 
 	#ifdef WATER_FOG
 	if (isEyeInWater == 1){
@@ -104,30 +98,8 @@ void main() {
 	}
 	#endif
 
-	#ifdef WATER_REFRACTION
-	float waterData = texture2D(colortex4, texCoord).a;
-
-	if (waterData > 0.0 && waterData < 0.004000001 && isEyeInWater == 0 && z0 > 0.56) {
-		vec3 worldPos = ToWorld(viewPos);
-		vec2 refractedCoord = getRefraction(worldPos + cameraPosition, viewPos);
-
-		color = texture2D(colortex0, refractedCoord).rgb;
-	}
-	#endif
-	#endif
-
-	#ifdef SSPT
-	vec3 sspt = NormalAwareBlur();
-	color *= vec3(1.0) + sspt * SSPT_LUMINANCE;
-	#endif
-
 	/* DRAWBUFFERS:0 */
 	gl_FragData[0].rgb = color;
-
-	#ifdef SSPT
-	/* DRAWBUFFERS:03 */
-	gl_FragData[1].rgb = sspt;
-	#endif
 }
 
 #endif

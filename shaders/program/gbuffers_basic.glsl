@@ -22,17 +22,13 @@ uniform int heldBlockLightValue2;
 uniform int framemod8;
 #endif
 
-uniform float viewWidth, viewHeight;
 uniform float nightVision;
 uniform float frameTimeCounter;
+uniform float viewWidth, viewHeight;
 
 #ifdef OVERWORLD
-uniform float rainStrength;
 uniform float shadowFade;
-#endif
-
-#if defined OVERWORLD || defined END
-uniform float timeBrightness, timeAngle;
+uniform float rainStrength, timeBrightness, timeAngle;
 #endif
 
 uniform vec3 cameraPosition;
@@ -50,7 +46,7 @@ uniform mat4 shadowModelView;
 #endif
 
 //Common Variables//
-#if (defined GLOBAL_ILLUMINATION || defined BLOOM_COLORED_LIGHTING) || (defined SSPT && defined GLOBAL_ILLUMINATION)
+#if defined GLOBAL_ILLUMINATION || defined BLOOM_COLORED_LIGHTING
 float getLuminance(vec3 color) {
 	return dot(color, vec3(0.299, 0.587, 0.114));
 }
@@ -77,13 +73,6 @@ float sunVisibility = clamp(dot(sunVec, upVec) + 0.025, 0.0, 0.1) * 10.0;
 #ifdef DYNAMIC_HANDLIGHT
 #include "/lib/lighting/dynamicHandLight.glsl"
 #endif
-
-
-/*
-#ifdef SHIMMER_MOD_SUPPORT
-#include "/lib/lighting/shimmerModSupport.glsl"
-#endif
-*/
 
 #include "/lib/color/dimensionColor.glsl"
 #include "/lib/lighting/sceneLighting.glsl"

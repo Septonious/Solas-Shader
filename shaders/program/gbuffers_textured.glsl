@@ -24,21 +24,17 @@ uniform int heldBlockLightValue2;
 uniform int framemod8;
 #endif
 
-uniform float viewWidth, viewHeight;
-uniform float nightVision;
-uniform float frameTimeCounter;
-
 #if MC_VERSION >= 11900
 uniform float darknessFactor;
 #endif
 
-#ifdef OVERWORLD
-uniform float rainStrength;
-uniform float shadowFade;
-#endif
+uniform float nightVision;
+uniform float frameTimeCounter;
+uniform float viewWidth, viewHeight;
 
-#if defined OVERWORLD || defined END
-uniform float timeBrightness, timeAngle;
+#ifdef OVERWORLD
+uniform float shadowFade;
+uniform float rainStrength, timeBrightness, timeAngle;
 #endif
 
 uniform float far, blindFactor;
@@ -66,7 +62,7 @@ uniform mat4 shadowModelView;
 #endif
 
 //Common Variables//
-#if (defined GLOBAL_ILLUMINATION && defined BLOOM_COLORED_LIGHTING) || (defined SSPT && (defined OVERWORLD || defined END))
+#if defined GLOBAL_ILLUMINATION || defined BLOOM_COLORED_LIGHTING
 float getLuminance(vec3 color) {
 	return dot(color, vec3(0.299, 0.587, 0.114));
 }

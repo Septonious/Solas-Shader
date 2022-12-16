@@ -25,9 +25,10 @@ uniform float timeBrightness, timeAngle, rainStrength;
 uniform float darknessFactor;
 #endif
 
+uniform float far;
 uniform float blindFactor;
+uniform float frameTimeCounter;
 uniform float viewWidth, viewHeight;
-uniform float far, frameTimeCounter;
 
 #ifdef VC
 uniform float shadowFade;
@@ -49,12 +50,12 @@ uniform vec3 skyColor;
 
 uniform vec3 cameraPosition;
 
-uniform sampler2D colortex0;
-uniform sampler2D depthtex1;
-
 #if defined END_NEBULA || defined AURORA || defined VC
 uniform sampler2D noisetex;
 #endif
+
+uniform sampler2D colortex0;
+uniform sampler2D depthtex1;
 
 #ifdef MILKY_WAY
 uniform sampler2D depthtex2;
@@ -64,7 +65,7 @@ uniform sampler2D colortex2;
 
 #ifdef VC
 uniform sampler2D shadowcolor1;
-uniform sampler2DShadow shadowtex0, shadowtex1;
+uniform sampler2DShadow shadowtex1;
 
 uniform mat4 shadowProjection, shadowModelView;
 #endif
@@ -91,6 +92,7 @@ float sunVisibility = clamp(dot(sunVec, upVec) + 0.025, 0.0, 0.1) * 10.0;
 #ifdef VC
 #include "/lib/util/blueNoiseDithering.glsl"
 #include "/lib/atmosphere/spaceConversion.glsl"
+#include "/lib/util/ToShadow.glsl"
 #include "/lib/atmosphere/volumetricClouds.glsl"
 #endif
 
@@ -217,13 +219,13 @@ void main() {
 	#endif
 	#endif
 
-	/* DRAWBUFFERS:042 */
+	/* DRAWBUFFERS:024 */
 	gl_FragData[0].rgb = color;
-	gl_FragData[1].a = cloudDepth;
-	gl_FragData[2] = colortex2Data;
+	gl_FragData[1] = colortex2Data;
+	gl_FragData[2].a = cloudDepth;
 
 	#ifdef INTEGRATED_SPECULAR
-	/* DRAWBUFFERS:0426 */
+	/* DRAWBUFFERS:0246 */
 	gl_FragData[3] = vec4(reflectionColor, int(z1 < 1.0));
 	#endif
 }

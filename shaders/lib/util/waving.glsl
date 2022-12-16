@@ -46,7 +46,9 @@ vec3 getWavingBlocks(vec3 pos, float istopv, float skyLightMap) {
         #ifdef WAVING_LEAVES
         if (mc_Entity.x == 9) wave += calculateMovement(worldPos, 0.25, 1.1, vec2(0.04, 0.04));
         #endif
+
+        return pos + wave * skyLightMap;
     }
 
-    return pos + wave * skyLightMap;
+    return pos;
 }

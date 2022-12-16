@@ -7,14 +7,8 @@
 in vec2 texCoord;
 
 //Uniforms//
-#if defined INTEGRATED_SPECULAR || defined SSPT
+#ifdef INTEGRATED_SPECULAR
 uniform int isEyeInWater;
-
-#ifdef SSPT
-uniform int frameCounter;
-
-uniform float far, near;
-#endif
 
 #ifdef TAA
 uniform float frameTimeCounter;
@@ -33,11 +27,7 @@ uniform sampler2D colortex1;
 
 uniform sampler2D colortex0;
 
-#ifdef SSPT
-uniform sampler2D noisetex;
-#endif
-
-#if defined INTEGRATED_SPECULAR || defined SSPT
+#ifdef INTEGRATED_SPECULAR
 uniform sampler2D depthtex0, depthtex1;
 
 uniform mat4 gbufferProjection;
@@ -50,42 +40,29 @@ uniform mat4 gbufferModelViewInverse;
 vec2 viewResolution = vec2(viewWidth, viewHeight);
 #endif
 
-//Optifine Constants//
-#ifdef VL
-const bool colortex1MipmapEnabled = true;
-#endif
-
 //Includes//
 #ifdef VL
 #include "/lib/filters/blur.glsl"
 #endif
 
-#if defined INTEGRATED_SPECULAR || defined SSPT
+#ifdef INTEGRATED_SPECULAR
 #include "/lib/util/ToScreen.glsl"
 #include "/lib/util/ToView.glsl"
 #include "/lib/util/encode.glsl"
-#endif
-
-#ifdef INTEGRATED_SPECULAR
 #include "/lib/util/bayerDithering.glsl"
 #include "/lib/util/raytracer.glsl"
 #include "/lib/ipbr/simpleReflection.glsl"
-#endif
-
-#ifdef SSPT
-#include "/lib/util/blueNoiseDithering.glsl"
-#include "/lib/lighting/sspt.glsl"
 #endif
 
 void main() {
 	vec4 color = texture2D(colortex0, texCoord);
 
 	#ifdef VL
-	vec3 vl = getDiskBlur8(colortex1, texCoord, 1.0).rgb;
+	vec3 vl = getDiskBlur8RGB(colortex1, texCoord, 2.0);
 	color.rgb += vl * vl;
 	#endif
 
-	#if defined INTEGRATED_SPECULAR || defined SSPT
+	#ifdef INTEGRATED_SPECULAR
 	vec4 terrainData = texture2D(colortex2, texCoord);
 	vec3 normal = DecodeNormal(terrainData.rg);
 
@@ -103,17 +80,8 @@ void main() {
 	}
 	#endif
 
-	#ifdef SSPT
-	vec3 sspt = computeSSPT(vec3(texCoord, z0), normal, z0);
-	#endif
-
 	/* DRAWBUFFERS:0 */
 	gl_FragData[0] = color;
-
-	#ifdef SSPT
-	/* DRAWBUFFERS:03 */
-	gl_FragData[1].rgb = pow(sspt / 128.0, vec3(0.25));
-	#endif
 }
 
 #endif

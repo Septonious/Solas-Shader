@@ -24,24 +24,18 @@ uniform int heldBlockLightValue2;
 uniform int framemod8;
 #endif
 
-uniform float viewWidth, viewHeight;
 uniform float nightVision;
 uniform float frameTimeCounter;
+uniform float viewWidth, viewHeight;
 
 #ifdef OVERWORLD
-uniform float rainStrength;
 uniform float shadowFade;
-#endif
-
-#if defined OVERWORLD || defined END
-uniform float timeBrightness, timeAngle;
+uniform float rainStrength, timeBrightness, timeAngle;
 #endif
 
 #ifdef RAIN_PUDDLES
 uniform float wetness;
-#endif
 
-#if defined RAIN_PUDDLES || defined EMISSIVE_FLOWERS
 uniform sampler2D noisetex;
 #endif
 
@@ -91,15 +85,6 @@ float sunVisibility = clamp(dot(sunVec, upVec) + 0.025, 0.0, 0.1) * 10.0;
 #include "/lib/lighting/dynamicHandLight.glsl"
 #endif
 
-/*
-#ifdef SHIMMER_MOD_SUPPORT
-#include "/lib/lighting/shimmerModSupport.glsl"
-#endif
-*/
-
-#include "/lib/color/dimensionColor.glsl"
-#include "/lib/lighting/sceneLighting.glsl"
-
 #ifdef INTEGRATED_EMISSION
 #include "/lib/ipbr/integratedEmissionTerrain.glsl"
 #endif
@@ -107,6 +92,9 @@ float sunVisibility = clamp(dot(sunVec, upVec) + 0.025, 0.0, 0.1) * 10.0;
 #ifdef INTEGRATED_SPECULAR
 #include "/lib/ipbr/integratedSpecular.glsl"
 #endif
+
+#include "/lib/color/dimensionColor.glsl"
+#include "/lib/lighting/sceneLighting.glsl"
 
 //Program//
 void main() {
@@ -149,10 +137,10 @@ void main() {
 		getSceneLighting(albedo.rgb, screenPos, viewPos, worldPos, newNormal, lightmap, NoU, NoL, NoE, emission, coloredLightingIntensity, leaves, foliage, specular * clamp(NoU - 0.01, 0.0, 1.0));
 	}
 
-	/* DRAWBUFFERS:02 */
+	/* DRAWBUFFERS:0 */
 	gl_FragData[0] = albedo;
 	
-	#if defined BLOOM || defined SSPT || defined INTEGRATED_SPECULAR
+	#if defined BLOOM || defined INTEGRATED_SPECULAR
 	/* DRAWBUFFERS:02 */
 	gl_FragData[1] = vec4(EncodeNormal(normal), coloredLightingIntensity * 0.1, specular);
 	#endif
@@ -179,7 +167,7 @@ uniform int framemod8;
 uniform float viewWidth, viewHeight;
 #endif
 
-#if defined OVERWORLD || defined END
+#ifdef OVERWORLD
 uniform float timeAngle;
 #endif
 
@@ -236,7 +224,6 @@ void main() {
 	eastVec = normalize(gbufferModelView[0].xyz);
 
 	//Materials
-	mat = 0;
 	isPlant = 0.0;
 
 	if (mc_Entity.x >= 4 && mc_Entity.x <= 11 && mc_Entity.x != 9 && mc_Entity.x != 10 || (mc_Entity.x >= 14 && mc_Entity.x <= 15)) {

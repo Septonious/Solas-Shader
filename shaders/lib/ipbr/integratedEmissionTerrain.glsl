@@ -21,8 +21,8 @@ void getIntegratedEmission(inout vec4 albedo, in vec3 viewPos, in vec3 worldPos,
 	#ifdef EMISSIVE_ORES
     if (mat == 100) { // Glowing Ores
 		emission = clamp(max(max(max(albedo.r - albedo.b, albedo.r - albedo.g), max(albedo.b - albedo.g, albedo.b - albedo.r)), max(albedo.g - albedo.r, albedo.g - albedo.b)), 0.0, 1.0);
-		emission = clamp(emission * int(emission > 0.1) * 8.0, 0.0, 1.0) * lAlbedo;
-		coloredLightingIntensity = emission * 4.0;
+		emission = clamp(emission * int(emission > 0.1) * 16.0, 0.0, 1.0) * lAlbedo;
+		coloredLightingIntensity = emission * 2.0;
     } else if (mat == 134) {
 		emission = int(lAlbedo > 0.9);
 		coloredLightingIntensity = emission * 4.0;
@@ -62,7 +62,7 @@ void getIntegratedEmission(inout vec4 albedo, in vec3 viewPos, in vec3 worldPos,
 		coloredLightingIntensity = emission * 2.0;
 	} else if (mat == 108) { // Glow berries
 		emission = int(albedo.r > 0.5);
-		coloredLightingIntensity = emission;
+		coloredLightingIntensity = emission * 2.5;
 	} else if (mat == 109) { // Torch
 		emission = int(lAlbedo > 0.9);
 		coloredLightingIntensity = emission * 2.0;

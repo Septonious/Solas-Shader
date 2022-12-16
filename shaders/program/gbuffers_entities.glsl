@@ -21,17 +21,13 @@ uniform int heldBlockLightValue;
 uniform int heldBlockLightValue2;
 #endif
 
-uniform float viewWidth, viewHeight;
 uniform float nightVision;
 uniform float frameTimeCounter;
+uniform float viewWidth, viewHeight;
 
 #ifdef OVERWORLD
-uniform float rainStrength;
 uniform float shadowFade;
-#endif
-
-#if defined OVERWORLD || defined END
-uniform float timeBrightness, timeAngle;
+uniform float rainStrength, timeBrightness, timeAngle;
 #endif
 
 uniform vec3 cameraPosition;
@@ -48,7 +44,7 @@ uniform mat4 shadowModelView;
 #endif
 
 //Common Variables//
-#if (defined GLOBAL_ILLUMINATION && defined BLOOM_COLORED_LIGHTING) || (defined SSPT && (defined OVERWORLD || defined END))
+#if defined GLOBAL_ILLUMINATION || defined BLOOM_COLORED_LIGHTING
 float getLuminance(vec3 color) {
 	return dot(color, vec3(0.299, 0.587, 0.114));
 }
@@ -73,36 +69,30 @@ float sunVisibility = clamp(dot(sunVec, upVec) + 0.025, 0.0, 0.1) * 10.0;
 #include "/lib/lighting/dynamicHandLight.glsl"
 #endif
 
-/*
-#ifdef SHIMMER_MOD_SUPPORT
-#include "/lib/lighting/shimmerModSupport.glsl"
-#endif
-*/
-
-#include "/lib/color/dimensionColor.glsl"
-#include "/lib/lighting/sceneLighting.glsl"
-
 #ifdef INTEGRATED_EMISSION
 #include "/lib/ipbr/integratedEmissionEntities.glsl"
 #endif
+
+#include "/lib/color/dimensionColor.glsl"
+#include "/lib/lighting/sceneLighting.glsl"
 
 //Program//
 void main() {
 	vec4 albedo = texture2D(texture, texCoord) * color;
 		 albedo.rgb = mix(albedo.rgb, entityColor.rgb, entityColor.a);
 
-	float lightningBolt = float(entityId == 0);
+	int lightningBolt = int(entityId == 1);
 	//float nametagText = float(normal == vec3(0.0));
 	float emission = 0.0;
 
-	if (lightningBolt > 0.5) {
+	if (lightningBolt == 1) {
 		albedo.rgb = vec3(1.0);
 		albedo.rgb *= albedo.rgb * albedo.rgb;
 		albedo.a = 1.0;
 	}
 
 	#ifndef ENTITY_HIGHLIGHT
-	if (albedo.a > 0.001 && lightningBolt < 0.5) {
+	if (albedo.a > 0.001 && lightningBolt == 0) {
 		vec3 screenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z);
 		vec3 viewPos = ToNDC(screenPos);
 		vec3 worldPos = ToWorld(viewPos);
@@ -123,7 +113,7 @@ void main() {
 	/* DRAWBUFFERS:0 */
 	gl_FragData[0] = albedo;
 
-	#if defined BLOOM || defined SSPT || defined INTEGRATED_SPECULAR
+	#if defined BLOOM || defined INTEGRATED_SPECULAR
 	/* DRAWBUFFERS:02 */
 	gl_FragData[1] = vec4(EncodeNormal(normal), emission * 0.1, 1.0);
 	#endif
@@ -152,11 +142,6 @@ uniform float timeAngle;
 #endif
 
 uniform mat4 gbufferModelView;
-
-//Includes//
-#ifdef INTEGRATED_EMISSION
-#include "/lib/ipbr/integratedEmissionEntities.glsl"
-#endif
 
 //Program//
 void main() {

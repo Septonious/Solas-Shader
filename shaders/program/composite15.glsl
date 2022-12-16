@@ -7,10 +7,6 @@
 in vec2 texCoord;
 
 //Uniforms//
-#ifdef TAA
-uniform int frameCounter;
-#endif
-
 #if defined TAA || defined FXAA || defined DOF
 uniform float viewWidth, viewHeight;
 #endif
@@ -32,23 +28,17 @@ uniform mat4 gbufferPreviousModelView, gbufferModelViewInverse;
 uniform sampler2D colortex5;
 #endif
 
+uniform sampler2D colortex1;
+
 #if defined TAA || defined DOF
+uniform sampler2D depthtex1;
+
 uniform mat4 gbufferProjectionInverse;
 
 #ifdef DOF
 uniform mat4 gbufferProjection;
-
-uniform sampler2D depthtex0;
 #endif
-
-uniform sampler2D depthtex1;
 #endif
-
-#ifdef SSPT
-uniform sampler2D colortex3;
-#endif
-
-uniform sampler2D colortex1;
 
 //Optifine Constants//
 #ifdef DOF
@@ -84,16 +74,17 @@ void main() {
 	color = FXAA311(color);	
 	#endif
 
+	#if defined DOF || defined TAA
+	float z1 = texture2D(depthtex1, texCoord).r;
+	#endif
+
 	#ifdef TAA
-    vec4 prev = vec4(texture2D(colortex5, texCoord).r, 0.0, 0.0, 0.0);
-	prev = TemporalAA(color, prev.r, colortex1, colortex5);
+    vec4 tempData = vec4(texture2D(colortex5, texCoord).r, 0.0, 0.0, 0.0);
+	tempData = TemporalAA(color, colortex1, colortex5, tempData.r, z1);
 	#endif
 
 	#ifdef DOF
-	float z0 = texture2D(depthtex0, texCoord).r;
-	float z1 = texture2D(depthtex1, texCoord).r;
-	vec3 viewPos = ToView(vec3(texCoord, z0));
-
+	vec3 viewPos = ToView(vec3(texCoord, z1));
 	color = getDepthOfField(color, viewPos, z1);
 	#endif
 
@@ -102,7 +93,7 @@ void main() {
 
 	#ifdef TAA
 	/* DRAWBUFFERS:15 */
-	gl_FragData[1] = prev;
+	gl_FragData[1] = tempData;
 	#endif
 }
 

@@ -2,7 +2,7 @@
 
 option.SOLAS_BY_SEPTONIOUS=§6Solas
 value.SOLAS_BY_SEPTONIOUS.0=§b作者: Septonious
-option.SOLAS_BY_SEPTONIOUS.comment=Discord: https://discord.com/invite/4uTAUQR2xu. GitHub: https://github.com/Septonious/Solas-Shader
+option.SOLAS_BY_SEPTONIOUS.comment=Discord: https://discord.gg/4uTAUQR2xu. GitHub: https://github.com/Septonious/Solas-Shader
 
 #ATMOSPHERICS
 
@@ -88,6 +88,8 @@ option.WATER_NORMAL_OFFSET=水体法线偏移
 option.WATER_REFRACTION=水体光线折射
 option.WATER_REFRACTION_STRENGTH=折射强度
 
+option.WAVING_WATER=水体摇晃
+
 #LIGHTING
 
 screen.LIGHTING=照明
@@ -95,9 +97,9 @@ screen.LIGHTING=照明
 option.shadowMapResolution=阴影分辨率
 option.shadowDistance=阴影距离
 option.sunPathRotation=日月斜角
-option.VPS=可变半阴影
+option.VPS=可变半阴影(VPS)
 option.VPS.comment=启用根据方块投射阴影距离长短来判断阴影是否变得更模糊 / 锐利的功能.
-option.VPS_BLUR_STRENGTH=可变半阴影强度
+option.VPS_BLUR_STRENGTH=可变半阴影(VPS)强度
 option.SHADOW_SAMPLE_COUNT=阴影采样计数
 option.SHADOW_COLOR=着色阴影
 option.ENTITY_SHADOWS=实体阴影
@@ -108,11 +110,19 @@ option.BLOOM_COLORED_LIGHTING=基于泛光的彩色照明
 option.COLORED_LIGHTING_RADIUS=彩色照明半径
 option.COLORED_LIGHTING_STRENGTH=彩色照明强度
 
-option.AO=环境光遮蔽
-option.AO_STRENGTH=环境光遮蔽强度
-option.AO_RADIUS=环境光遮蔽半径
+option.AO=自定义 环境光遮蔽(AO)
+option.VANILLA_AO=原版 环境光遮蔽(AO)
+option.AO_STRENGTH=环境光遮蔽 强度
+option.AO_RADIUS=环境光遮蔽 半径
+
+option.SSPT=屏幕空间路径追踪(SSPT)
+option.SSPT_LUMINANCE=亮度
+option.SSPT_LUMINANCE.comment=控制SSPT开启后光源的亮度.
+option.SSPT_SAMPLE_COUNT=采样值
+option.SSPT_SAMPLE_COUNT.comment=控制SSPT的精度和准确程度. 更高的值会有很大性能影响!
 
 option.GLOBAL_ILLUMINATION=全局照明
+option.GLOBAL_ILLUMINATION.comment=启用基于泛光的全局照明(不精确). 需要同时启用 泛光 和 基于泛光的彩色照明 选项.
 option.GLOBAL_ILLUMINATION_STRENGTH=全局照明强度
 option.DYNAMIC_HANDLIGHT=动态手持光源
 
@@ -276,10 +286,10 @@ option.SKY_HI=天空上部 - 颜色强度
 
 screen.POST=后期效果
 
-option.DOF=景深
+option.DOF=景深(DOF)
 option.DOF.comment=模糊玩家眼睛焦点以外的物体.
 
-option.DOF_STRENGTH=景深强度
+option.DOF_STRENGTH=景深(DOF)强度
 
 option.SHARPENING=图像锐化
 option.CHROMATIC_ABERRATION=色度偏差
@@ -333,4 +343,3 @@ option.WAVING_PLANTS=植物摇晃
 option.WAVING_LEAVES=树叶摇晃
 option.WAVING_SPEED=摇晃速度
 option.WAVING_AMPLITUDE=摇晃幅度
-option.WAVING_WATER=水体摇晃

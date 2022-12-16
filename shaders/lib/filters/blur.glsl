@@ -44,7 +44,6 @@ vec4 getDiskBlur4(sampler2D colortex, vec2 coord, float strength) {
 		vec2 pixelOffset = blurOffsets4[i] * pixelSize * strength;
 		blur += texture2D(colortex, coord + pixelOffset);
 	}
-
 	blur *= 0.25;
 
 	return blur;
@@ -57,7 +56,18 @@ vec4 getDiskBlur8(sampler2D colortex, vec2 coord, float strength) {
 		vec2 pixelOffset = blurOffsets8[i] * pixelSize * strength;
 		blur += texture2D(colortex, coord + pixelOffset);
 	}
+	blur *= 0.125;
 
+	return blur;
+}
+
+vec3 getDiskBlur8RGB(sampler2D colortex, vec2 coord, float strength) {
+	vec3 blur = vec3(0.0);
+
+	for (int i = 0; i < 8; i++) {
+		vec2 pixelOffset = blurOffsets8[i] * pixelSize * strength;
+		blur += texture2D(colortex, coord + pixelOffset).rgb;
+	}
 	blur *= 0.125;
 
 	return blur;
@@ -70,7 +80,6 @@ vec4 getDiskBlur16(sampler2D colortex, vec2 coord, float strength) {
 		vec2 pixelOffset = blurOffsets16[i] * pixelSize * strength;
 		blur += texture2D(colortex, coord + pixelOffset);
 	}
-
 	blur *= 0.0625;
 
 	return blur;

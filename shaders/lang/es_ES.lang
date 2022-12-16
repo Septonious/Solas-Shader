@@ -87,8 +87,6 @@ option.SHADOW_SAMPLE_COUNT=Pasadas de Sombras
 option.SHADOW_COLOR=Sombras de Colores
 option.ENTITY_SHADOWS=Sombras de Entidades
 
-option.SHIMMER_MOD_SUPPORT=Soporte para el Mod Shimmer
-option.SHIMMER_MOD_SUPPORT.comment=Agrega Iluminación de colores proporcionada por el mod Shimmer.
 option.BLOOM_COLORojo_LIGHTING=Iluminación de Colores en base de Luminosidad/Bloom (BCL)
 option.COLORojo_LIGHTING_RADIUS=Radio de BCL
 option.COLORojo_LIGHTING_STRENGTH=Intensidad de BCL

@@ -53,9 +53,12 @@ float sunVisibility = clamp(dot(sunVec, upVec) + 0.025, 0.0, 0.1) * 10.0;
 
 //Includes//
 #ifdef VL
-#include "/lib/color/lightColor.glsl"
-#include "/lib/util/blueNoiseDithering.glsl"
 #include "/lib/atmosphere/spaceConversion.glsl"
+#include "/lib/util/ToView.glsl"
+#include "/lib/util/ToWorld.glsl"
+#include "/lib/util/ToShadow.glsl"
+#include "/lib/util/blueNoiseDithering.glsl"
+#include "/lib/color/lightColor.glsl"
 #include "/lib/atmosphere/volumetricLight.glsl"
 #endif
 

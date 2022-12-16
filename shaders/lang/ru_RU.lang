@@ -101,7 +101,6 @@ option.SHADOW_SAMPLE_COUNT=Качество Теней
 option.SHADOW_COLOR=Цветные Тени
 option.ENTITY_SHADOWS=Тени от Существ
 
-option.SHIMMER_MOD_SUPPORT=Поддержка мода Shimmer
 option.BLOOM_COLORED_LIGHTING=Цветное Освещение (ЦО) (Й жив)
 option.COLORED_LIGHTING_RADIUS=Радиус ЦО
 option.COLORED_LIGHTING_STRENGTH=Сила ЦО

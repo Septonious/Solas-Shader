@@ -6,7 +6,7 @@
 
 //Varyings//
 #ifdef WATER_CAUSTICS
-in float mat;
+flat in int mat;
 #endif
 
 in vec2 texCoord;
@@ -26,11 +26,7 @@ uniform ivec2 eyeBrightnessSmooth;
 uniform vec3 fogColor;
 uniform vec3 cameraPosition;
 
-#ifdef BLOCKY_CLOUDS
-uniform sampler2D noisetex;
-#else
 uniform sampler2D shadowcolor1;
-#endif
 #endif
 
 uniform sampler2D tex;
@@ -53,9 +49,7 @@ void main() {
 	albedo.rgb *= 1.0 - pow8(pow32(albedo.a));
 
 	#ifdef WATER_CAUSTICS
-	float water = float(mat > 0.98 && mat < 1.02);
-
-	if (water > 0.9){
+	if (mat == 1){
 		float caustics = getCaustics(worldPos + cameraPosition);
 		albedo.rgb = mix(vec3(0.5), waterColor, 0.5) * (0.5 * eBS + caustics) * WATER_CAUSTICS_STRENGTH;
 	}
@@ -72,7 +66,7 @@ void main() {
 
 //Varyings//
 #ifdef WATER_CAUSTICS
-out float mat;
+flat out int mat;
 #endif
 
 out vec2 texCoord;
@@ -112,13 +106,12 @@ void main() {
 
 	#ifdef WAVING_BLOCKS
 	vec2 lightMapCoord = (gl_TextureMatrix[1] * gl_MultiTexCoord1).xy;
-	lightMapCoord = clamp((lightMapCoord - 0.03125) * 1.06667, vec2(0.0), vec2(0.9333, 1.0));
+	lightMapCoord = clamp(lightMapCoord, vec2(0.0), vec2(0.9333, 1.0));
 	#endif
 
 	//Materials
 	#ifdef WATER_CAUSTICS
-	mat = 0.0;
-	if (mc_Entity.x == 1) mat = 1.0;
+	mat = int(mc_Entity.x);
 	#endif
 	
 	//Color & Position

@@ -1,3 +1,4 @@
+@@ -1,73 +0,0 @@
 //huge thanks to niemand for helping me with depth aware blur
 float getLinearDepth(float depth) {
    return (2.0 * near) / (far + near - depth * (far - near));

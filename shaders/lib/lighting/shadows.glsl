@@ -23,17 +23,6 @@ const vec2 shadowOffsets8[8] = vec2[8](
    vec2(-0.40412395850181015, -0.8212788214021378)
 );
 
-vec3 calculateShadowPos(vec3 worldPos) {
-    vec3 shadowPos = ToShadow(worldPos);
-    float distb = sqrt(shadowPos.x * shadowPos.x + shadowPos.y * shadowPos.y);
-    float distortFactor = distb * shadowMapBias + (1.0 - shadowMapBias);
-
-    shadowPos.xy /= distortFactor;
-    shadowPos.z *= 0.2;
-    
-    return shadowPos * 0.5 + 0.5;
-}
-
 float texture2DShadow(sampler2D shadowtex, vec3 shadowPos) {
     float shadow = texture2D(shadowtex, shadowPos.st).r;
 
