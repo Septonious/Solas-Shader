@@ -109,8 +109,10 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, in float z1
 
 				//Color calculations
 				float cloudLighting = clamp(smoothstep(VC_HEIGHT + stretching * noise, VC_HEIGHT - stretching * noise, rayPos.y), 0.0, 1.0);
-					cloudLighting = pow(cloudLighting, 5.0 + VoL);
-					cloudLighting = mix(noise * 0.85, mix(cloudLighting * 0.8 + noise * 0.2, cloudLighting * 0.6 + noise * 0.4, VoL), cloudLighting);
+					 #ifndef BLOCKY_CLOUDS
+					 cloudLighting = pow(cloudLighting, 5.0 + VoL);
+					 cloudLighting = mix(noise * 0.85, mix(cloudLighting * 0.8 + noise * 0.2, cloudLighting * 0.6 + noise * 0.4, VoL), cloudLighting);
+					 #endif
 
 				float cloudFog = clamp((distanceFactor - lWorldPos) / distanceFactor * 2.0, 0.0, 1.0);
 
