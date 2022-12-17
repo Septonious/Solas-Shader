@@ -40,11 +40,14 @@ float getCloudSample(vec3 rayPos, float rayPosY) {
 	vec3 floorPos = floor(rayPos);
 	vec3 fractPos = fract(rayPos);
 
-	vec2 noiseCoord = (floorPos.xz + fractPos.xz + floorPos.y * 16.0) * 0.015625;
+	vec2 noiseCoord = (floorPos.xz + fractPos.xz + floorPos.y * 16.0) / 48.0;
 
-	float noise = texture2D(shadowcolor1, noiseCoord + 0.25).a * 100.0;
+	float planeA = texture2D(shadowcolor1, noiseCoord).r;
+	float planeB = texture2D(shadowcolor1, noiseCoord + 0.25).r;
+	
+	float noise = mix(planeA, planeB, fractPos.y) * 100.0;
 
-	return clamp(noise - 12.0 + rainStrength, 0.0, 1.0);
+	return clamp(noise - 1.0, 0.0, 1.0);
 }
 #endif
 
@@ -80,8 +83,11 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, in float z1
 			float VoL = clamp(dot(normalize(viewPos), lightVec), 0.0, 1.0) * shadowFade;
 
 			//Blend colors with the sky
-			lightCol *= 1.0 + pow8(VoL);
-			ambientCol = mix(ambientCol, atmosphereColor, max(sunVisibility * 0.35 - rainStrength * 0.35, 0.0));
+			float atmosphereMixer = 0.5 * sunVisibility * sunVisibility;
+			vec3 cloudLightCol = mix(lightCol, pow(atmosphereColor, vec3(1.5)), atmosphereMixer) * (1.0 + pow8(VoL));
+			vec3 cloudAmbientCol = mix(ambientCol, atmosphereColor * atmosphereColor, atmosphereMixer);
+
+			//ambientCol = mix(ambientCol, pow(atmosphereColor, vec3(1.5)), max(sunVisibility * sunVisibility * 0.5 - rainStrength * 0.5, 0.0));
 
 			//Precompute the ray position
 			vec3 rayPos = cameraPosition + nWorldPos * minDist;
@@ -116,7 +122,7 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, in float z1
 
 				float cloudFog = clamp((distanceFactor - lWorldPos) / distanceFactor * 2.0, 0.0, 1.0);
 
-				vec4 cloudColor = vec4(mix(lightCol, ambientCol, cloudLighting), noise * cloudFog);
+				vec4 cloudColor = vec4(mix(cloudLightCol, cloudAmbientCol, cloudLighting), noise * cloudFog);
 					cloudColor.rgb *= cloudColor.a;
 
 				vc += cloudColor * (1.0 - vc.a);
