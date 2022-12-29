@@ -15,13 +15,13 @@ no switches?
  ⠀⠀⠀⠀⠁⠇⠡⠩⡫⢿⣝⡻⡮⣒⢽⠋
 */
 
-void getIntegratedSpecular(inout vec4 albedo, in vec3 normal, in vec2 worldPos, in vec2 lightmap, inout float specular) {
+void getIntegratedSpecular(inout vec4 albedo, in vec3 normal, in vec2 worldPos, in vec2 lightmap, in float emission, inout float specular) {
     float lAlbedo = length(albedo.rgb);
 
     if (mat == 300) {// Sand
-        specular = int(albedo.b > 0.65 || albedo.b > 0.7) * 0.125;
+        specular = pow7(albedo.b);
     } else if (mat == 301) {// Iron Block
-        specular = int(pow16(albedo.r)) * 16.0;
+        specular = pow16(albedo.r) * 16.0;
     } else if (mat == 302) {// Gold Block & Gold Pressure Plate & Amethyst
         specular = pow8(clamp(lAlbedo, 0.0, 1.0));
     } else if (mat == 303) {// Emerald & Diamond Blocks
@@ -33,12 +33,9 @@ void getIntegratedSpecular(inout vec4 albedo, in vec3 normal, in vec2 worldPos, 
     }
 
     #if defined RAIN_PUDDLES && defined GBUFFERS_TERRAIN
-    float NoU = clamp(dot(normal, upVec), 0.0, 1.0);
-    float puddles = wetness * pow8(lightmap.y) * (texture2D(noisetex, (worldPos + cameraPosition.xz) * 0.00125).b - 0.35) * NoU * 0.25;
-
-
-    if (puddles > 0.0) {
-        albedo.rgb *= 1.0 - puddles * 0.5;
+    if (specular == 0.0 && emission == 0.0) {
+        float NoU = clamp(dot(normal, upVec), 0.0, 1.0);
+        float puddles = wetness * pow8(lightmap.y) * (texture2D(noisetex, (worldPos + cameraPosition.xz) * 0.00125).b - 0.35) * NoU * 0.25;
         specular += puddles;
     }
     #endif

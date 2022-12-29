@@ -5,7 +5,7 @@ float GetNoise(vec2 pos) {
 
 void getStars(inout vec3 color, in vec3 worldPos, in float VoU, in float nebulaFactor, in float caveFactor, inout float star) {
 	#ifdef OVERWORLD
-	float visibility = (1.0 - timeBrightness) * (1.0 - rainStrength) * pow(VoU, 0.125) * caveFactor;
+	float visibility = (1.0 - sunVisibility * sunVisibility) * (1.0 - rainStrength) * pow(VoU, 0.125) * caveFactor;
 	#else
 	float visibility = 0.75 + nebulaFactor * 0.25;
 	#endif
@@ -98,7 +98,7 @@ void getNebula(inout vec3 color, in vec3 worldPos, in float VoU, inout float neb
 
 #ifdef RAINBOW
 void getRainbow(inout vec3 color, in vec3 worldPos, in float VoU, in float size, in float radius, in float caveFactor) {
-	float visibility = sunVisibility * (1.0 - rainStrength) * (1.0 - isSnowy) * wetness * max(VoU, 0.0) * caveFactor * 2.0;
+	float visibility = sunVisibility * (1.0 - rainStrength) * (1.0 - isSnowy) * wetness * max(VoU, 0.0) * caveFactor;
 
 	if (visibility > 0.0) {
 		vec2 planeCoord = worldPos.xy / (worldPos.y + length(worldPos.xz) * 0.65);

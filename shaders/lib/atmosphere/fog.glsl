@@ -8,20 +8,14 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 atmo
 	//Overworld Fog
 	#ifdef OVERWORLD
 	//Variables
-	float fogAltitude = clamp(pow16((worldPos.y + cameraPosition.y + 1000.0 - FOG_HEIGHT) * 0.001), 0.0, 0.5 - rainStrength * 0.25);
-	float clearDay = sunVisibility * (1.0 - rainStrength * 0.25);
-	vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.0);
-	float VoL = clamp(dot(normalize(viewPos), lightVec), 0.0, 1.0);
+	float fogAltitude = clamp(pow16((worldPos.y + cameraPosition.y + 1000.0 - FOG_HEIGHT) * 0.001), 0.0, 1.0);
 
-	float fog = lViewPos * FOG_DENSITY / 128.0;
-		  fog *= 0.25 / (4.0 * clearDay + 1.0);
-		  fog = 1.0 - exp(-8.0 * pow(fog, 0.15 * clearDay * eBS + 1.25));
-		  fog *= 0.5 + sunVisibility * 0.5; //Night shouldn't have very dense fog
-		  fog *= 1.0 + max(sunVisibility - timeBrightness, 0.0); //Increase fog in morning/evening
-		  fog *= 1.0 - fogAltitude; //Make fog stronger at low altitudes
+	float fog = lViewPos * FOG_DENSITY / 768.0;
+		  fog = 1.0 - exp(-mix(3.0, 5.0, rainStrength) * fog);
+		  fog *= 1.0 - fogAltitude * mix(0.25, 0.0, rainStrength);
 		  fog = clamp(fog, 0.0, 1.0);
 
-	vec3 fogColor = pow(mix(atmosphereColor, skyColor, (0.5 - timeBrightness * 0.25) * sunVisibility * (1.0 - rainStrength)), vec3(1.5)) * fog;
+	vec3 fogColor = mix(mix(mix(skyColSqrt * skyColSqrt * 2.0, skyColor * skyColor, mefade), atmosphereColor, 0.25), atmosphereColor, clamp(fogAltitude + rainStrength + (1.0 - sunVisibility), 0.0, 1.0)) * fog;
 
     //Underground Fog
 	fogColor = mix(caveMinLightCol * fog, fogColor, caveFactor);
@@ -29,19 +23,26 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 atmo
 	//Distant Fade
 	#ifdef DISTANT_FADE
 	if (isEyeInWater < 0.5) {
-		float vanillaFog = pow3(lViewPos * 0.002);
-
-		#if DISTANT_FADE_STYLE == 0
-		vanillaFog += pow6(lWorldPos / far);
-		#elif DISTANT_FADE_STYLE == 1
-		vanillaFog += pow6(lViewPos / far);
+		#if MC_VERSION >= 11800
+		float fogOffset = 0.0;
+		#else
+		float fogOffset = 12.0;
 		#endif
 
-		vanillaFog = clamp(vanillaFog, 0.0, 1.0);
-		fog = mix(fog, 1.0, vanillaFog);
+		#if DISTANT_FADE_STYLE == 0
+		float fogFactor = lWorldPos;
+		#else
+		float fogFactor = lViewPos;
+		#endif
 
-		if (fog > 0.0) {
-			fogColor = mix(fogColor, atmosphereColor, vanillaFog) / fog;
+		float vanillaFog = 1.0 - (far - (fogFactor + fogOffset)) * 8.0 / (FOG_DENSITY * far);
+		vanillaFog = pow3(vanillaFog);
+		vanillaFog = clamp(vanillaFog, 0.0, 1.0);
+	
+		if (vanillaFog > 0.0){
+			fogColor *= fog;
+			fog = mix(fog, 1.0, vanillaFog);
+			if (fog > 0.0) fogColor = mix(fogColor, atmosphereColor, vanillaFog) / fog;
 		}
 	}
 	#endif

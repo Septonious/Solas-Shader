@@ -106,7 +106,7 @@ void main() {
 		getIntegratedEmission(albedo.rgb, lightmap, emission);
 		#endif
 
-		getSceneLighting(albedo.rgb, screenPos, viewPos, worldPos, normal, lightmap, NoU, NoL, NoE, emission + entityColor.a + lightningBolt * 0.25, 0.0, 0.0, 0.0);
+		getSceneLighting(albedo.rgb, screenPos, viewPos, worldPos, normal, lightmap, NoU, NoL, NoE, emission + lightningBolt * 0.25 + entityColor.a, 0.0, 0.0, 0.0);
 	}
 	#endif
 	

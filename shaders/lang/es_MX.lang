@@ -26,7 +26,7 @@ option.VC_OPACITY=Opacidad
 screen.VL_CONFIG=Configuración de Luz Volumétrica
 
 option.VL=Luz Volumétrica
-option.VL_OPACITY=Opacidad
+option.VL_STRENGTH=Opacidad
 option.VL_SAMPLES=Pasadas
 
 

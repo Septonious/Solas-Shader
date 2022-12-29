@@ -30,7 +30,7 @@ option.VC_OPACITY=Opacité
 screen.VL_CONFIG=Configuration des Lumières Volumétrique
 
 option.VL=Lumière Volumétrique
-option.VL_OPACITY=Opacité
+option.VL_STRENGTH=Opacité
 option.VL_SAMPLES=Échantillons
 
 

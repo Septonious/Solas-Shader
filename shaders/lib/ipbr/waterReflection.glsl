@@ -1,4 +1,4 @@
-void getReflection(inout vec4 color, in vec3 viewPos, in vec3 normal, in float fresnel, in float skyLightMap, inout float emission) {
+void getReflection(inout vec4 albedo, in vec3 viewPos, in vec3 normal, in float fresnel, in float skyLightMap, in float water, inout float emission) {
 	vec3 nViewPos = normalize(viewPos);
 	vec3 reflectedViewPos = reflect(nViewPos, normal);
 
@@ -17,12 +17,12 @@ void getReflection(inout vec4 color, in vec3 viewPos, in vec3 normal, in float f
 	reflection.a = texture2D(gaux3, reflectPos.xy).a;
 	if (reflection.a > 0.0) {
 		reflection.rgb = texture2D(gaux3, reflectPos.xy).rgb;
-		reflection.rgb = pow(reflection.rgb * 2.0, vec3(8.0));
+		reflection.rgb = pow8(reflection.rgb * 2.0);
 	}
 	reflection.a *= border;
 
 	#ifdef OVERWORLD
-	vec3 reflectionFade = color.rgb;
+	vec3 reflectionFade = albedo.rgb;
 	#elif defined NETHER
 	vec3 reflectionFade = netherColSqrt.rgb * 0.25;
 	#elif defined END
@@ -91,10 +91,10 @@ void getReflection(inout vec4 color, in vec3 viewPos, in vec3 normal, in float f
 		#endif
 
 		reflectionFade *= 1.0 - blindFactor;
-		reflectionFade = mix(color.rgb, reflectionFade, skyLightMap);
+		reflectionFade = mix(albedo.rgb, reflectionFade, skyLightMap);
 	}
 
 	vec3 finalReflection = max(mix(reflectionFade, reflection.rgb, reflection.a), vec3(0.0));
 
-	color.rgb = mix(color.rgb, finalReflection, min(fresnel * 4.0, 1.0) * WATER_SPECULAR_STRENGTH);
+	albedo.rgb = mix(albedo.rgb, finalReflection, fresnel * WATER_SPECULAR_STRENGTH * (1.0 - sign(isEyeInWater) * 0.75) * (0.25 + water * 0.75));
 }

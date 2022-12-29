@@ -1,88 +1,105 @@
 //Settings//
 #include "/lib/common.glsl"
 
+#define COMPOSITE_3
+
 #ifdef FSH
 
 //Varyings//
 in vec2 texCoord;
 
+#ifdef WATER_FOG
+in vec3 sunVec, upVec;
+#endif
+
 //Uniforms//
-#ifdef INTEGRATED_SPECULAR
+#if defined WATER_FOG || defined WATER_REFRACTION
 uniform int isEyeInWater;
-
-#ifdef TAA
-uniform float frameTimeCounter;
 #endif
 
-uniform sampler2D colortex2;
+#ifdef WATER_FOG
+#if MC_VERSION >= 11900
+uniform float darknessFactor;
 #endif
 
-#if defined INTEGRATED_SPECULAR || defined VL
-uniform float viewHeight, viewWidth;
-#endif
+uniform float blindFactor;
+uniform float timeBrightness, timeAngle, rainStrength, shadowFade;
 
-#ifdef VL
-uniform sampler2D colortex6;
+uniform ivec2 eyeBrightnessSmooth;
+
+uniform vec3 fogColor;
 #endif
 
 uniform sampler2D colortex0;
 
-#ifdef INTEGRATED_SPECULAR
-uniform sampler2D depthtex0, depthtex1;
+#ifdef WATER_REFRACTION
+uniform float frameTimeCounter;
 
-uniform mat4 gbufferProjection;
-uniform mat4 gbufferProjectionInverse;
+uniform vec3 cameraPosition;
+
+uniform sampler2D colortex4;
+uniform sampler2D shadowcolor1;
+
 uniform mat4 gbufferModelViewInverse;
 #endif
 
+#if defined WATER_FOG || defined WATER_REFRACTION
+uniform sampler2D depthtex0;
+
+uniform mat4 gbufferProjectionInverse;
+#endif
+
 //Common Variables//
-#ifdef INTEGRATED_SPECULAR
-vec2 viewResolution = vec2(viewWidth, viewHeight);
+#ifdef WATER_FOG
+float eBS = eyeBrightnessSmooth.y / 240.0;
+float sunVisibility = clamp(dot(sunVec, upVec) + 0.025, 0.0, 0.1) * 10.0;
 #endif
 
 //Includes//
-#ifdef INTEGRATED_SPECULAR
-#include "/lib/util/ToScreen.glsl"
+#if defined WATER_FOG || defined WATER_REFRACTION
 #include "/lib/util/ToView.glsl"
-#include "/lib/util/encode.glsl"
-#include "/lib/util/bayerDithering.glsl"
-#include "/lib/util/raytracer.glsl"
-#include "/lib/ipbr/simpleReflection.glsl"
+
+#ifdef WATER_REFRACTION
+#include "/lib/util/ToWorld.glsl"
+#include "/lib/water/waterRefraction.glsl"
+#endif
+
+#ifdef WATER_FOG
+#include "/lib/color/dimensionColor.glsl"
+#include "/lib/water/waterFog.glsl"
+#endif
 #endif
 
 void main() {
-	vec4 color = texture2D(colortex0, texCoord);
+	vec2 newTexCoord = texCoord;
 
-	#ifdef VL
-    vec3 vl1 = texture2D(colortex6, texCoord + vec2( 0.0,  1.0 / viewHeight)).rgb;
-    vec3 vl2 = texture2D(colortex6, texCoord + vec2( 0.0, -1.0 / viewHeight)).rgb;
-    vec3 vl3 = texture2D(colortex6, texCoord + vec2( 1.0 / viewWidth,   0.0)).rgb;
-    vec3 vl4 = texture2D(colortex6, texCoord + vec2(-1.0 / viewWidth,   0.0)).rgb;
-    vec3 vlSum = (vl1 + vl2 + vl3 + vl4) * 0.25;
-    vec3 vl = texture2D(colortex6, texCoord).rgb;
-	color.rgb += vl * vl;
-	#endif
-
-	#ifdef INTEGRATED_SPECULAR
-	vec4 terrainData = texture2D(colortex2, texCoord);
-	vec3 normal = DecodeNormal(terrainData.rg);
-
-	float z0 = texture2D(depthtex0, texCoord).r;
-	float z1 = texture2D(depthtex1, texCoord).r;
-	#endif
-
-	#ifdef INTEGRATED_SPECULAR
+	#if defined WATER_FOG || defined WATER_REFRACTION
+	float z0 = texture2D(depthtex0, newTexCoord).r;
 	vec3 viewPos = ToView(vec3(texCoord, z0));
+	#endif
 
-	if (terrainData.a > 0.05 && terrainData.a < 1.0 && z0 > 0.56 && z0 >= z1) {
-		float fresnel = pow4(clamp(1.0 + dot(normal, normalize(viewPos)), 0.0, 1.0));
+	#ifdef WATER_REFRACTION
+	float waterData = texture2D(colortex4, texCoord).a;
 
-		getReflection(color, viewPos, normal, fresnel * terrainData.a);
+	if (waterData > 0.0 && waterData < 0.004000001 && isEyeInWater == 0 && z0 > 0.56) {
+		vec2 refractedCoord = getRefraction(ToWorld(viewPos) + cameraPosition, viewPos);
+
+		newTexCoord = refractedCoord;
+	}
+	#endif
+
+	vec3 color = texture2D(colortex0, newTexCoord).rgb;
+
+	#ifdef WATER_FOG
+	if (isEyeInWater == 1){
+		vec4 waterFog = getWaterFog(viewPos);
+		color = mix(sqrt(color), sqrt(waterFog.rgb), waterFog.a);
+		color *= color;
 	}
 	#endif
 
 	/* DRAWBUFFERS:0 */
-	gl_FragData[0] = color;
+	gl_FragData[0].rgb = color;
 }
 
 #endif
@@ -94,9 +111,35 @@ void main() {
 //Varyings//
 out vec2 texCoord;
 
+#ifdef WATER_FOG
+out vec3 sunVec, upVec;
+
+//Uniforms
+uniform float timeAngle;
+
+uniform mat4 gbufferModelView;
+#endif
+
 void main() {
 	//Coords
 	texCoord = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;
+	
+	//Sun & Other Vectors
+	#ifdef WATER_FOG
+	sunVec = vec3(0.0);
+
+    #if defined OVERWORLD
+	const vec2 sunRotationData = vec2(cos(sunPathRotation * 0.01745329251994), -sin(sunPathRotation * 0.01745329251994));
+	float ang = fract(timeAngle - 0.25);
+	ang = (ang + (cos(ang * PI) * -0.5 + 0.5 - ang) / 3.0) * TAU;
+	sunVec = normalize((gbufferModelView * vec4(vec3(-sin(ang), cos(ang) * sunRotationData) * 2000.0, 1.0)).xyz);
+    #elif defined END
+	const vec2 sunRotationData = vec2(cos(sunPathRotation * 0.01745329251994), -sin(sunPathRotation * 0.01745329251994));
+    sunVec = normalize((gbufferModelView * vec4(vec3(0.0, sunRotationData * 2000.0), 1.0)).xyz);
+    #endif
+
+	upVec = normalize(gbufferModelView[1].xyz);
+	#endif
 
 	//Position
 	gl_Position = ftransform();

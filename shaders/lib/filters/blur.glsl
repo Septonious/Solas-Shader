@@ -61,12 +61,12 @@ vec4 getDiskBlur8(sampler2D colortex, vec2 coord, float strength) {
 	return blur;
 }
 
-vec3 getDiskBlur8RGB(sampler2D colortex, vec2 coord, float strength) {
+vec3 getDiskBlur8RGBLOD(sampler2D colortex, vec2 coord, float strength, float lod) {
 	vec3 blur = vec3(0.0);
 
 	for (int i = 0; i < 8; i++) {
 		vec2 pixelOffset = blurOffsets8[i] * pixelSize * strength;
-		blur += texture2D(colortex, coord + pixelOffset).rgb;
+		blur += texture2DLod(colortex, coord + pixelOffset, lod).rgb;
 	}
 	blur *= 0.125;
 

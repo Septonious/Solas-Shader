@@ -30,7 +30,9 @@ option.VC_OPACITY=Opacity
 screen.VL_CONFIG=Volumetric Light Config
 
 option.VL=Volumetric Light
-option.VL_OPACITY=Opacity
+option.VL_SCENE_BLURRING=VL Scene Blurring
+option.VL_SCENE_BLURRING.comment=Makes VL blur objects behind itself.
+option.VL_STRENGTH=Strength
 option.VL_SAMPLES=Samples
 
 
@@ -42,7 +44,7 @@ option.DISTANT_FADE_STYLE.comment=Spherical works like vanilla fog. Cylindrical 
 value.DISTANT_FADE_STYLE.0=Spherical
 value.DISTANT_FADE_STYLE.1=Cylindrical
 option.FOG_DENSITY=Fog Density
-option.FOG_HEIGHT=Fog Height
+option.FOG_HEIGHT=Ground Fog Height
 option.BLOOMY_FOG=Bloomy Fog
 option.BLOOMY_FOG_DENSITY=Bloomy Fog Density
 option.BLOOMY_FOG.comment=Enables fog that is colored by bloom. Requires Bloom and Bloom Colored Lighting to be enabled!

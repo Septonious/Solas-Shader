@@ -46,7 +46,6 @@ float getLuminance(vec3 color) {
 #include "/lib/post/tonemap.glsl"
 
 #ifdef BLOOM
-#include "/lib/filters/blur.glsl"
 #include "/lib/post/getBloom.glsl"
 
 #ifdef BLOOMY_FOG
@@ -88,7 +87,7 @@ void main() {
 	bloomFog *= 4.0;
 	#endif
 
-	color += bloomFog * 0.05;
+	color += bloomFog * 0.025;
 	#endif
 	#endif
 

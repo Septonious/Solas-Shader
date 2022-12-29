@@ -56,16 +56,16 @@ void getIntegratedEmission(inout vec4 albedo, in vec3 viewPos, in vec3 worldPos,
 		coloredLightingIntensity = emission;
 	} else if (mat == 106) { // Soul Emissives
 		emission = int(albedo.b > 0.5);
-		coloredLightingIntensity = emission * 1.5;
+		coloredLightingIntensity = emission;
 	} else if (mat == 107) { // Brewing Stand
 		emission = int(albedo.r > 0.5 && albedo.b < 0.4);
 		coloredLightingIntensity = emission * 2.0;
 	} else if (mat == 108) { // Glow berries
 		emission = int(albedo.r > 0.5);
-		coloredLightingIntensity = emission * 2.5;
+		coloredLightingIntensity = emission * 5.0;
 	} else if (mat == 109) { // Torch
 		emission = int(lAlbedo > 0.9);
-		coloredLightingIntensity = emission * 2.0;
+		coloredLightingIntensity = emission;
 	} else if (mat == 110) { // Furnaces
 		emission = int(albedo.r > 0.8 || (albedo.r > 0.6 && albedo.b < 0.5));
 		coloredLightingIntensity = emission * 2.0;
@@ -81,7 +81,7 @@ void getIntegratedEmission(inout vec4 albedo, in vec3 viewPos, in vec3 worldPos,
 	} else if (mat == 114) { // Froglights
 		emission = 1.5 - lAlbedo;
 		albedo.rgb = pow3(albedo.rgb);
-		coloredLightingIntensity = emission * 1.5;
+		coloredLightingIntensity = emission * 2.0;
 	} else if (mat == 115) { // Sculks
 		emission = int(lAlbedo > 0.45 && albedo.r < 0.2) * 0.25;
 		coloredLightingIntensity = emission * 0.5;
@@ -128,11 +128,11 @@ void getIntegratedEmission(inout vec4 albedo, in vec3 viewPos, in vec3 worldPos,
 			emission *= 2.0 - clamp(length(viewPos) * 0.2, 0.0, 1.0);
 			emission *= 0.3 + clamp(sin(frameTimeCounter) * cos(frameTimeCounter * 0.5), 0.0, 0.2);
 			emission *= 1.0 - lightmap.y * 0.5;
-			coloredLightingIntensity = emission * 4.0;
+			coloredLightingIntensity = emission * 8.0;
 		}
 	}
 	#endif
 
 	emission = clamp(emission * EMISSION_STRENGTH, 0.0, 4.0);
-	coloredLightingIntensity *= COLORED_LIGHTING_STRENGTH;
+	coloredLightingIntensity *= EMISSION_STRENGTH;
 }

@@ -4,23 +4,24 @@ vec3 getAtmosphere(vec3 viewPos) {
 
     float VoSRaw = dot(nViewPos, sunVec);
     float VoURaw = dot(nViewPos, upVec);
-    float VouClamped = clamp(VoURaw, 0.0, 1.0);
+    float VoUClamped = clamp(VoURaw, 0.0, 1.0);
     float VoSClamped = clamp(VoSRaw, 0.0, 1.0);
     float invVoS = 1.0 + clamp(VoSRaw, -1.0, 0.0);
-    float horizonFactor = 1.0 - abs(VoURaw);
 
     //Fake Light Scattering
-    float skyDensity = exp(-0.75 * VouClamped);
-    float baseScatteringMixer = mix(0.10, 0.20, invVoS) * sunVisibility * pow3(horizonFactor);
-    float sunScatteringMixer = mix(0.10 * horizonFactor, 0.25, invVoS) * pow2(horizonFactor);
-    float totalScatteringMixer = mix(baseScatteringMixer, sunScatteringMixer, sunVisibility * sunVisibility - timeBrightness * timeBrightness) * (1.0 - rainStrength) * (1.0 - timeBrightness * timeBrightness * 0.25) * horizonFactor;
+    float skyDensity = mix(exp(-0.75 * VoUClamped), 1.0, rainStrength * 0.5);
+    float belowHorizon = 1.0 + clamp(VoURaw, -1.0, -0.25);
+    float scatteringColorMixer = clamp((1.0 + VoURaw) * 0.5, 0.25, 1.0);
+    float scatteringWidth = pow(1.0 - VoUClamped, 2.0 - VoSClamped + sunVisibility * sunVisibility);
+
+    float scatteringMixer = mix(1.0, 0.25 + invVoS * 0.5, sunVisibility * sunVisibility) * pow(sunVisibility, 0.75) * scatteringWidth * belowHorizon * (1.0 - sunVisibility * sunVisibility * 0.25) * (1.0 - timeBrightness * 0.5) * (1.0 - rainStrength);
+    vec3 scatteringColor = mix(vec3(1.1, 0.3, 0.1), vec3(0.5, 0.8, 0.2), scatteringColorMixer);
+         scatteringColor = mix(scatteringColor, lightCol, sunVisibility * sunVisibility * 0.4 + timeBrightness * 0.3);
 
     //Day, Night and Rain Sky
     vec3 daySky = mix(skyColSqrt, pow(skyColor, vec3(1.25)) * 1.25, timeBrightness);
     vec3 sky = mix(mix(lightNight, daySky, sunVisibility), weatherCol * clamp(sunVisibility, 0.25, 0.75), rainStrength) * skyDensity;
-
-    vec3 scattering = mix(mix(lowScatteringColor, highScatteringColor, sqrt(VouClamped) * (1.0 - timeBrightnessSqrt)), lightCol, sunVisibility * sunVisibility * 0.75);
-    sky = mix(sky, scattering, totalScatteringMixer);
+         sky = mix(sky, scatteringColor, scatteringMixer);
 
     //Underground Sky
 	sky = mix(caveMinLightCol, sky, caveFactor);

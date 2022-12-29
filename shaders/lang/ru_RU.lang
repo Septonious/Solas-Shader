@@ -30,7 +30,7 @@ option.VC_OPACITY=Непрозрачность
 screen.VL_CONFIG=Настройки Солнечных Лучей
 
 option.VL=Солнечные Лучи
-option.VL_OPACITY=Непрозрачность
+option.VL_STRENGTH=Сила
 option.VL_SAMPLES=Качество
 
 

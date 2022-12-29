@@ -136,7 +136,8 @@ void main() {
 
 		#ifdef INTEGRATED_EMISSION
 		if (atlasSize.x < 900.0) { // We don't want to detect particles from the block atlas
-		float lAlbedo = length(albedo.rgb);
+			float lAlbedo = length(albedo.rgb);
+			
 			if (max(abs(albedoTexture.r - albedoTexture.b), abs(albedoTexture.b - albedoTexture.g)) < 0.001) { // Grayscale Particles
 				if (lAlbedo > 0.5 && color.g < 0.5 && color.b > color.r * 1.1 && color.r > 0.3) // Ender Particle, Crying Obsidian Drop
 					emission = max(pow2(albedo.r), 0.1);

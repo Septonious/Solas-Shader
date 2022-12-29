@@ -10,8 +10,11 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
 
 	float VoU = 1.0 - max(dot(nViewPos, upVec), 0.0);
 	float VoL = exp(dot(nViewPos, lightVec) * 2.0) * 0.5;
-	float nVoL = mix(0.75 + VoL, VoL * (1.0 - eBS * 0.5), timeBrightness);
-	float visibility = int(z0 > 0.56) * max(VoU * nVoL, sign(isEyeInWater) * 2.0) * 0.0125 * VL_OPACITY;
+	float nVoL = mix(1.0 + VoL, VoL * (1.0 - eBS * 0.5), timeBrightness);
+	float visibility = mix(pow2(VoU), 1.0, timeBrightness) * int(z0 > 0.56);
+		  visibility *= 4.0 - sunVisibility * 3.0;
+		  visibility = mix(visibility, 1.0 + timeBrightness, float(isEyeInWater == 1));
+		  visibility *= 0.0025;
 
 	#if MC_VERSION >= 11900
 	visibility *= 1.0 - darknessFactor;
@@ -26,7 +29,7 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
 		float linearDepth0 = getLinearDepth(z0);
 		float linearDepth1 = getLinearDepth(z1);
 
-		float distanceFactor = mix(7.0 + eBS * 3.0, 2.0, sign(isEyeInWater));
+		float distanceFactor = mix(7.0 * (1.0 - timeBrightness * 0.5) + eBS * 3.0, 4.0, sign(isEyeInWater));
 
 		//Ray marching and main calculations
 		for (int i = 0; i < VL_SAMPLES; i++) {
@@ -38,7 +41,7 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
 
 			vec3 worldPos = ToWorld(ToView(vec3(texCoord, getLogarithmicDepth(currentDepth))));
 
-			if (length(worldPos) > 256.0) break;
+			if (length(worldPos) > 128.0) break;
 
 			vec3 shadowPos = ToShadow(worldPos);
 
@@ -55,6 +58,20 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
 			#endif
 			vec3 shadow = clamp(shadowCol * 8.0 * (1.0 - shadow0) + shadow0, 0.0, 1.0);
 
+			#ifdef VL_CLOUDY_NOISE
+			float noise = 1.0;
+
+			if (rainStrength != 0.0 && isEyeInWater == 0) {
+				vec3 npos = (worldPos + cameraPosition) * 0.75 + vec3(frameTimeCounter, 0.0, 0.0);
+				float n3da = texture2D(noisetex, npos.xz * 0.0001 + floor(npos.y * 0.1) * 0.05).r;
+				float n3db = texture2D(noisetex, npos.xz * 0.0001 + floor(npos.y * 0.1 + 1.0) * 0.05).r;
+				noise = mix(n3da, n3db, fract(npos.y * 0.1));
+				noise = sin(noise * 16.0 + frameTimeCounter * 0.5) * (0.4 + rainStrength * 0.2) + (0.6 - rainStrength * 0.2);
+			}
+
+			shadow *= mix(1.0, noise, rainStrength);
+			#endif
+
 			//Translucency Blending
 			if (linearDepth0 < currentDepth) {
 				shadow *= translucent.rgb;
@@ -64,6 +81,6 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
 		}
 
 		vl *= visibility;
-		vl *= mix(mix(lightCol, skyColor, sunVisibility * (0.25 + 0.25 * timeBrightness)), waterColor, sign(isEyeInWater));
+		vl *= mix(mix(lightCol, skyColor * lightCol, timeBrightness), waterColor, sign(isEyeInWater) * (1.0 - rainStrength * 0.5));
 	}
 }

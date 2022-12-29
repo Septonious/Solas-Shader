@@ -230,12 +230,8 @@ void main() {
 
 		#ifdef WATER_NORMALS
 		if (water > 0.5) {
-			mat3 tbnMatrix = mat3(tangent.x, binormal.x, normal.x,
-								  tangent.y, binormal.y, normal.y,
-								  tangent.z, binormal.z, normal.z);
-
-			float fresnel0 = pow2(clamp(1.0 + dot(newNormal, normalize(viewPos)), 0.0, 1.0));
-			newNormal = clamp(normalize(getWaterNormal(worldPos, viewVector, lightmap, fresnel0) * tbnMatrix), vec3(-1.0), vec3(1.0));
+			float fresnel = pow8(clamp(1.0 + dot(normalize(normal), normalize(viewPos)), 0.0, 1.0));
+			getWaterNormal(newNormal, worldPos, viewVector, lightmap, fresnel);
 		}
 		#endif
 
@@ -257,21 +253,20 @@ void main() {
 			vec3 diffPos = viewPos - oViewPos;
 
 			float DoN = clamp(dot(normalize(diffPos), newNormal), 0.0, 1.0);
-			float absorptionFactor = 1.0 - clamp(length(diffPos) * DoN * 0.075, 0.0, 1.0);
-			float brightnessFactor = mix(mix(0.5, 1.0, sunVisibility), 0.75, rainStrength);
+			float absorptionFactor = 1.0 - clamp(length(diffPos) * DoN * 0.075, 0.0, 1.0) * (1.0 - rainStrength * 0.5) * (0.5 + sunVisibility * 0.5);
 
-			vec3 absorptionColor = albedo.rgb * mix(vec3(1.0), mix(waterColor, vec3(0.0, 1.0, 1.0), absorptionFactor) * brightnessFactor * 2.0, 1.0 - absorptionFactor * absorptionFactor);
+			vec3 absorptionColor = albedo.rgb * mix(vec3(1.0), mix(waterColor, vec3(0.0, 1.0, 1.0), absorptionFactor), 1.0 - absorptionFactor * absorptionFactor);
 
-			albedo.rgb = mix(waterColor * brightnessFactor * 0.5, absorptionColor, absorptionFactor);
+			albedo.rgb = mix(waterColor * 0.5, absorptionColor, absorptionFactor);
 			albedo.a = mix(albedo.a, 0.25, absorptionFactor);
 		}
 		#endif
 
 		#ifdef INTEGRATED_SPECULAR
 		if (portal < 0.5) {
-			float fresnel1 = pow2(clamp(1.0 + dot(newNormal, normalize(viewPos)), 0.0, 1.0)) * (1.0 - float(isEyeInWater == 1) * 0.75) * (0.15 + water * 0.85);
-
-			getReflection(albedo, viewPos, newNormal, fresnel1, lightmap.y, emission);
+			float fresnel = pow2(clamp(1.0 + dot(normalize(newNormal), normalize(viewPos)), 0.0, 1.0));
+			getReflection(albedo, viewPos, newNormal, fresnel, lightmap.y, water, coloredLightingIntensity);
+			albedo.a = mix(albedo.a, 1.0, fresnel);
 		}
 		#endif
 
@@ -349,7 +344,7 @@ float getWavingWater(vec3 worldPos, float skyLightMap) {
 	float wave = sin(TAU * (frameTimeCounter * 0.7 + worldPos.x * 0.16 + worldPos.z * 0.08)) +
 				 sin(TAU * (frameTimeCounter * 0.5 + worldPos.x * 0.1 + worldPos.z * 0.2));
 
-	if (fractY > 0.01) return wave * 0.075 * skyLightMap;
+	if (fractY > 0.01) return wave * 0.05 * skyLightMap;
 	
 	return 0.0;
 }

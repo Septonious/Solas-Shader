@@ -30,7 +30,7 @@ option.VC_OPACITY=透明度
 screen.VL_CONFIG=体积光配置
 
 option.VL=体积光
-option.VL_OPACITY=透明度
+option.VL_STRENGTH=透明度
 option.VL_SAMPLES=采样值
 
 

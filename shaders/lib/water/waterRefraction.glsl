@@ -21,5 +21,6 @@ vec2 getRefraction(vec3 waterPos, vec3 viewPos){
 		float yDelta = (h4 - h3) / WATER_NORMAL_OFFSET;
 
 		return clamp(texCoord + vec2(xDelta, yDelta) * WATER_REFRACTION_STRENGTH * 0.05 * viewDistance, 0.0, 1.0);
-	} return texCoord;
+	}
+	return texCoord;
 }

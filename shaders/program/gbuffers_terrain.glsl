@@ -11,6 +11,13 @@ in float isPlant;
 in vec2 texCoord, lightMapCoord;
 in vec3 sunVec, upVec, eastVec;
 in vec3 normal;
+
+#ifdef INTEGRATED_NORMAL_MAPPING
+in vec2 signMidCoordPos;
+flat in vec2 absMidCoordPos;
+in vec3 binormal, tangent;
+#endif
+
 in vec4 color;
 
 //Uniforms//
@@ -37,6 +44,10 @@ uniform float rainStrength, timeBrightness, timeAngle;
 uniform float wetness;
 
 uniform sampler2D noisetex;
+#endif
+
+#ifdef INTEGRATED_NORMAL_MAPPING
+uniform ivec2 atlasSize;
 #endif
 
 uniform vec3 cameraPosition;
@@ -85,6 +96,10 @@ float sunVisibility = clamp(dot(sunVec, upVec) + 0.025, 0.0, 0.1) * 10.0;
 #include "/lib/lighting/dynamicHandLight.glsl"
 #endif
 
+#ifdef INTEGRATED_NORMAL_MAPPING
+#include "/lib/ipbr/integratedNormalMapping.glsl"
+#endif
+
 #ifdef INTEGRATED_EMISSION
 #include "/lib/ipbr/integratedEmissionTerrain.glsl"
 #endif
@@ -106,7 +121,7 @@ void main() {
 	float coloredLightingIntensity = 0.0;
 
 	if (albedo.a > 0.001) {
-		float foliage = int(mat == 1) + int(mat == 108);
+		float foliage = int(mat == 1 || mat == 108);
 		float leaves = int(mat == 2) + int(mat == 16) * 0.5;
 
 		vec3 screenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z);
@@ -118,7 +133,11 @@ void main() {
 		vec3 worldPos = ToWorld(viewPos);
 		vec2 lightmap = clamp(lightMapCoord, 0.0, 1.0);
 
-		if (foliage > 0.9) {
+		#ifdef INTEGRATED_NORMAL_MAPPING
+		getTerrainNormal(newNormal, albedo.rgb);
+		#endif
+
+		if (foliage > 0.5) {
 			newNormal = upVec;
 		}
 
@@ -131,7 +150,7 @@ void main() {
 		#endif
 
 		#ifdef INTEGRATED_SPECULAR
-		getIntegratedSpecular(albedo, newNormal, worldPos.xz, lightmap, specular);
+		getIntegratedSpecular(albedo, newNormal, worldPos.xz, lightmap, emission, specular);
 		#endif
 
 		getSceneLighting(albedo.rgb, screenPos, viewPos, worldPos, newNormal, lightmap, NoU, NoL, NoE, emission, coloredLightingIntensity, leaves, foliage, specular * clamp(NoU - 0.01, 0.0, 1.0));
@@ -158,6 +177,13 @@ out float isPlant;
 out vec2 texCoord, lightMapCoord;
 out vec3 sunVec, upVec, eastVec;
 out vec3 normal;
+
+#ifdef INTEGRATED_NORMAL_MAPPING
+out vec2 signMidCoordPos;
+flat out vec2 absMidCoordPos;
+out vec3 binormal, tangent;
+#endif
+
 out vec4 color;
 
 //Uniforms//
@@ -183,7 +209,11 @@ uniform mat4 gbufferModelViewInverse;
 //Attributes//
 attribute vec4 mc_Entity;
 
-#ifdef WAVING_BLOCKS
+#ifdef INTEGRATED_NORMAL_MAPPING
+attribute vec4 at_tangent;
+#endif
+
+#if defined WAVING_BLOCKS || defined INTEGRATED_NORMAL_MAPPING
 attribute vec4 mc_midTexCoord;
 #endif
 
@@ -204,8 +234,20 @@ void main() {
 	lightMapCoord = (gl_TextureMatrix[1] * gl_MultiTexCoord1).xy;
 	lightMapCoord = clamp(lightMapCoord, vec2(0.0), vec2(0.9333, 1.0));
 
+	#ifdef INTEGRATED_NORMAL_MAPPING
+	vec2 midCoord = (gl_TextureMatrix[0] * mc_midTexCoord).st;
+	vec2 texMinMidCoord = texCoord - midCoord;
+	signMidCoordPos = sign(texMinMidCoord);
+	absMidCoordPos = abs(texMinMidCoord);
+	#endif
+
 	//Normal
 	normal = normalize(gl_NormalMatrix * gl_Normal);
+
+	#ifdef INTEGRATED_NORMAL_MAPPING
+	binormal = normalize(gl_NormalMatrix * cross(at_tangent.xyz, gl_Normal.xyz) * at_tangent.w);
+	tangent = normalize(gl_NormalMatrix * at_tangent.xyz);
+	#endif
 
 	//Sun & Other vectors
 	sunVec = vec3(0.0);

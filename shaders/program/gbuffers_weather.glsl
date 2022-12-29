@@ -18,7 +18,7 @@ void main() {
     vec4 albedo = texture2D(texture, texCoord) * rainStrength;
 
     /* DRAWBUFFERS:0 */
-    gl_FragData[0] = vec4(albedo.rgb, albedo.a * 0.125);
+    gl_FragData[0] = vec4(albedo.rgb, albedo.a * 0.1);
 }
 
 #endif
