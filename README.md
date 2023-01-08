@@ -9,14 +9,14 @@ Solas is a new Minecraft Java Edition shaderpack which aims to provide stunning 
 ## The Downloads
 [![Download on curseforge](https://img.shields.io/badge/-Curseforge-F16436?style=for-the-badge&logo=curseforge&logoColor=white)](https://www.curseforge.com/minecraft/customization/solas-shader)
 
-[![Download on modrinth](https://img.shields.io/badge/-Modrinth--Soon-1BD96A?style=for-the-badge&logo=modrinth&logoColor=white)](https://modrinth.com)
+[![Download on modrinth](https://img.shields.io/badge/-Modrinth-1BD96A?style=for-the-badge&logo=modrinth&logoColor=white)](https://modrinth.com/shader/solas-shader)
 
-[![Download on GitHub](https://img.shields.io/badge/-GitHub-F9E26C?style=for-the-badge&logo=github&logoColor=40463C)](https://github.com/Septonious/Solas-Shader/archive/refs/heads/main.zip)
+[![Download on GitHub](https://img.shields.io/badge/-Nightly-F9E26C?style=for-the-badge&logo=github&logoColor=40463C)](https://github.com/Septonious/Solas-Shader/archive/refs/heads/main.zip)
 
 ## The Communities & Social Media
 [![Discord](https://discordapp.com/api/guilds/816223286958489631/widget.png?style=banner2)](https://discord.gg/4uTAUQR2xu)
 
-[![Youtube](https://img.shields.io/youtube/channel/subscribers/UCa-oHqFdqa88Xp3wcBugazQ?color=%23ff0000&label=Youtube&logo=youtube&logoColor=white&style=for-the-badge)](https://www.youtube.com/channel/UCa-oHqFdqa88Xp3wcBugazQ)
+[![Youtube](https://img.shields.io/youtube/channel/subscribers/UCa-oHqFdqa88Xp3wcBugazQ?color=%23ff0000&label=Youtube&logo=youtube&logoColor=white&style=for-the-badge&logoWidth=20)](https://www.youtube.com/channel/UCa-oHqFdqa88Xp3wcBugazQ)
 
 ## About Solas
 
@@ -49,18 +49,16 @@ Another problem a lot of shaderpacks have is shadow light leaking and peter pann
 <p>
 
 ![screenshot1](https://media.discordapp.net/attachments/887769802721067038/1051949806664294430/image.png)
-![screenshot2](https://media.discordapp.net/attachments/1025820650394357891/1038128154570662058/mia.png)
 ![screenshot3](https://media.discordapp.net/attachments/887769802721067038/1038859728060686477/2022-11-06_19.57.21.png)
 ![screenshot4](https://media.discordapp.net/attachments/887769802721067038/1038606749604786237/2022-11-06_01.11.11.png)
 ![screenshot5](https://media.discordapp.net/attachments/887769802721067038/1037307450430345297/2022-11-02_12.59.01.png)
-![screenshot6](https://media.discordapp.net/attachments/887769802721067038/1031944106148114462/2022-10-18_22.28.10.png)
-![screenshot7](https://media.discordapp.net/attachments/887769802721067038/1029560129634447360/2022-10-11_19.44.41.png)
-![screenshot8](https://media.discordapp.net/attachments/887769802721067038/1028324379366522970/unknown.png)
-![screenshot9](https://media.discordapp.net/attachments/887769802721067038/1026511341390921759/unknown.png)
-![screenshot10](https://media.discordapp.net/attachments/887769802721067038/1026434164980985856/2022-10-03_17.40.18.png)
-![screenshot11](https://media.discordapp.net/attachments/887769802721067038/1050853939886690325/2022-12-09_22.18.15.png)
-![screenshot12](https://media.discordapp.net/attachments/887769802721067038/1050856258128859157/2022-12-09_22.27.17.png)
-![screenshot13](https://media.discordapp.net/attachments/887769843963691048/1052545218286731385/image.png)
+![screenshot6](https://media.discordapp.net/attachments/887769802721067038/1029560129634447360/2022-10-11_19.44.41.png)
+![screenshot7](https://media.discordapp.net/attachments/887769802721067038/1028324379366522970/unknown.png)
+![screenshot8](https://media.discordapp.net/attachments/887769802721067038/1026511341390921759/unknown.png)
+![screenshot9](https://media.discordapp.net/attachments/887769802721067038/1026434164980985856/2022-10-03_17.40.18.png)
+![screenshot10](https://media.discordapp.net/attachments/887769802721067038/1050853939886690325/2022-12-09_22.18.15.png)
+![screenshot11](https://media.discordapp.net/attachments/887769802721067038/1050856258128859157/2022-12-09_22.27.17.png)
+![screenshot12](https://media.discordapp.net/attachments/887769843963691048/1052545218286731385/image.png)
 
 </p>
 </details>
