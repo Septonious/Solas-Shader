@@ -9,14 +9,13 @@ vec3 getAtmosphere(vec3 viewPos) {
     float invVoS = 1.0 + clamp(VoSRaw, -1.0, 0.0);
 
     //Fake Light Scattering
-    float skyDensity = mix(exp(-0.75 * VoUClamped), 1.0, rainStrength * 0.5);
+    float skyDensity = mix(exp(-0.8 * VoUClamped), 1.0, rainStrength * 0.5);
     float belowHorizon = 1.0 + clamp(VoURaw, -1.0, -0.25);
-    float scatteringColorMixer = clamp((1.0 + VoURaw) * 0.5, 0.25, 1.0);
-    float scatteringWidth = pow(1.0 - VoUClamped, 2.0 - VoSClamped + sunVisibility * sunVisibility);
+    float scatteringColorMixer = clamp((1.0 + VoURaw) * 0.5, 0.25, 1.0 - sunVisibility * sunVisibility * 0.75);
+    float scatteringWidth = pow(1.0 - VoUClamped, (3.0 + sunVisibility) - VoSClamped * 2.0);
 
-    float scatteringMixer = mix(1.0, 0.25 + invVoS * 0.5, sunVisibility * sunVisibility) * pow(sunVisibility, 0.75) * scatteringWidth * belowHorizon * (1.0 - sunVisibility * sunVisibility * 0.25) * (1.0 - timeBrightness * 0.5) * (1.0 - rainStrength);
-    vec3 scatteringColor = mix(vec3(1.1, 0.3, 0.1), vec3(0.5, 0.8, 0.2), scatteringColorMixer);
-         scatteringColor = mix(scatteringColor, lightCol, sunVisibility * sunVisibility * 0.4 + timeBrightness * 0.3);
+    float scatteringMixer = pow(sunVisibility, 0.75) * mix(0.5 + invVoS * 0.5, 1, sunVisibility * sunVisibility) * scatteringWidth * belowHorizon * (1.0 - sunVisibility * sunVisibility * 0.25) * (1.0 - timeBrightness * 0.5) * (1.0 - rainStrength);
+    vec3 scatteringColor = mix(mix(vec3(1.2, 0.2, 0.1), lightCol, sunVisibility * sunVisibility * 0.5 + timeBrightness * 0.5), vec3(0.5, 0.8, 0.2), scatteringColorMixer);
 
     //Day, Night and Rain Sky
     vec3 daySky = mix(skyColSqrt, pow(skyColor, vec3(1.25)) * 1.25, timeBrightness);

@@ -44,12 +44,6 @@ uniform mat4 shadowModelView;
 #endif
 
 //Common Variables//
-#if defined GLOBAL_ILLUMINATION || defined BLOOM_COLORED_LIGHTING
-float getLuminance(vec3 color) {
-	return dot(color, vec3(0.299, 0.587, 0.114));
-}
-#endif
-
 #ifdef OVERWORLD
 float sunVisibility = clamp(dot(sunVec, upVec) + 0.025, 0.0, 0.1) * 10.0;
 #endif
@@ -79,11 +73,11 @@ float sunVisibility = clamp(dot(sunVec, upVec) + 0.025, 0.0, 0.1) * 10.0;
 //Program//
 void main() {
 	vec4 albedo = texture2D(texture, texCoord) * color;
-		 albedo.rgb = mix(albedo.rgb, entityColor.rgb, entityColor.a);
+		 albedo.rgb = mix(albedo.rgb, entityColor.rgb * entityColor.rgb * 2.0, entityColor.a);
 
 	int lightningBolt = int(entityId == 1);
 	//float nametagText = float(normal == vec3(0.0));
-	float emission = 0.0;
+	float emission = lightningBolt * 0.25 + entityColor.a;
 
 	if (lightningBolt == 1) {
 		albedo.rgb = vec3(1.0);
@@ -106,7 +100,7 @@ void main() {
 		getIntegratedEmission(albedo.rgb, lightmap, emission);
 		#endif
 
-		getSceneLighting(albedo.rgb, screenPos, viewPos, worldPos, normal, lightmap, NoU, NoL, NoE, emission + lightningBolt * 0.25 + entityColor.a, 0.0, 0.0, 0.0);
+		getSceneLighting(albedo.rgb, screenPos, viewPos, worldPos, normal, lightmap, NoU, NoL, NoE, emission, 0.0, 0.0, 0.0);
 	}
 	#endif
 	

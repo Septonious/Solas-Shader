@@ -5,8 +5,8 @@
 
 const bool shadowHardwareFiltering = true;
 const float shadowDistanceRenderMul = 1.0;
-const int noiseTextureResolution = 256;
 const float wetnessHalflife = 128.0;
+const int noiseTextureResolution = 256;
 
 //Optifine Constants//
 /*

@@ -83,9 +83,26 @@ option.WATER_FOG_DENSITY=Water Fog Density
 option.WATER_CAUSTICS=Water Caustics
 option.WATER_CAUSTICS_STRENGTH=Water Caustics Strength
 
-option.WATER_NORMALS=Water Normals (Waves)
+option.WATER_NORMALS=Normals
+option.WATER_NORMALS.comment=Enables realtime-generated normal mapping for water.
+value.WATER_NORMALS.0=§cOFF
+value.WATER_NORMALS.1=Worley
+value.WATER_NORMALS.2=Perlin
 option.WATER_NORMAL_BUMP=Water Normal Bump
 option.WATER_NORMAL_OFFSET=Water Normal Offset
+
+option.WATER_NORMAL_DETAIL=Detail
+option.WATER_NORMAL_DETAIL.comment=Adjusts the ratio between large and small water normals.
+value.WATER_NORMAL_DETAIL.0.05=5%
+value.WATER_NORMAL_DETAIL.0.10=10%
+value.WATER_NORMAL_DETAIL.0.15=15%
+value.WATER_NORMAL_DETAIL.0.20=20%
+value.WATER_NORMAL_DETAIL.0.25=25%
+value.WATER_NORMAL_DETAIL.0.30=30%
+value.WATER_NORMAL_DETAIL.0.35=35%
+value.WATER_NORMAL_DETAIL.0.40=40%
+value.WATER_NORMAL_DETAIL.0.45=45%
+value.WATER_NORMAL_DETAIL.0.50=50%
 
 option.WATER_REFRACTION=Water Light Refraction
 option.WATER_REFRACTION_STRENGTH=Refraction Strength
@@ -270,16 +287,6 @@ option.SKY_R=Red
 option.SKY_G=Green
 option.SKY_B=Blue
 option.SKY_I=Intensity
-
-option.SKY_LR=Red (Low Scattering)
-option.SKY_LG=Green (Low Scattering)
-option.SKY_LB=Blue (Low Scattering)
-option.SKY_LI=Intensity (Low Scattering)
-
-option.SKY_HR=Red (High Scattering)
-option.SKY_HG=Green (High Scattering)
-option.SKY_HB=Blue (High Scattering)
-option.SKY_HI=Intensity (High Scattering)
 
 
 #POST

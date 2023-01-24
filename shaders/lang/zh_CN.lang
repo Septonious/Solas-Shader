@@ -30,7 +30,9 @@ option.VC_OPACITY=透明度
 screen.VL_CONFIG=体积光配置
 
 option.VL=体积光
-option.VL_STRENGTH=透明度
+option.VL_SCENE_BLURRING=情景式体积光模糊
+option.VL_SCENE_BLURRING.comment=让体积光模糊在它后方的事物.
+option.VL_STRENGTH=强度
 option.VL_SAMPLES=采样值
 
 
@@ -42,7 +44,7 @@ option.DISTANT_FADE_STYLE.comment=球形类似于原版雾气. 圆柱形会忽�
 value.DISTANT_FADE_STYLE.0=球形
 value.DISTANT_FADE_STYLE.1=圆柱形
 option.FOG_DENSITY=雾气密度
-option.FOG_HEIGHT=雾气高度
+option.FOG_HEIGHT=地表雾气高度
 option.BLOOMY_FOG=泛光雾
 option.BLOOMY_FOG_DENSITY=泛光雾密度
 option.BLOOMY_FOG.comment=启用通过泛光来着色的雾气. 需要启用 泛光 和 基于泛光的彩色照明 !
@@ -81,9 +83,26 @@ option.WATER_FOG_DENSITY=水雾密度
 option.WATER_CAUSTICS=水焦散
 option.WATER_CAUSTICS_STRENGTH=水焦散强度
 
-option.WATER_NORMALS=水面法线
+option.WATER_NORMALS=法线
+option.WATER_NORMALS.comment=为水面启用实时生成的法线.
+value.WATER_NORMALS.0=§cOFF
+value.WATER_NORMALS.1=Worley
+value.WATER_NORMALS.2=Perlin
 option.WATER_NORMAL_BUMP=水面法线凹凸
 option.WATER_NORMAL_OFFSET=水体法线偏移
+
+option.WATER_NORMAL_DETAIL=细节
+option.WATER_NORMAL_DETAIL.comment=调整大型法线和小型法线间的比例.
+value.WATER_NORMAL_DETAIL.0.05=5%
+value.WATER_NORMAL_DETAIL.0.10=10%
+value.WATER_NORMAL_DETAIL.0.15=15%
+value.WATER_NORMAL_DETAIL.0.20=20%
+value.WATER_NORMAL_DETAIL.0.25=25%
+value.WATER_NORMAL_DETAIL.0.30=30%
+value.WATER_NORMAL_DETAIL.0.35=35%
+value.WATER_NORMAL_DETAIL.0.40=40%
+value.WATER_NORMAL_DETAIL.0.45=45%
+value.WATER_NORMAL_DETAIL.0.50=50%
 
 option.WATER_REFRACTION=水体光线折射
 option.WATER_REFRACTION_STRENGTH=折射强度
@@ -104,8 +123,6 @@ option.SHADOW_SAMPLE_COUNT=阴影采样计数
 option.SHADOW_COLOR=着色阴影
 option.ENTITY_SHADOWS=实体阴影
 
-option.SHIMMER_MOD_SUPPORT=微光模组支持
-option.SHIMMER_MOD_SUPPORT.comment=增加由微光(Shimmer)模组提供的彩色照明.
 option.BLOOM_COLORED_LIGHTING=基于泛光的彩色照明
 option.COLORED_LIGHTING_RADIUS=彩色照明半径
 option.COLORED_LIGHTING_STRENGTH=彩色照明强度
@@ -270,16 +287,6 @@ option.SKY_R=天空 - 红色比重
 option.SKY_G=天空 - 绿色比重
 option.SKY_B=天空 - 蓝色比重
 option.SKY_I=天空 - 颜色强度
-
-option.SKY_LR=天空下部 - 红色比重
-option.SKY_LG=天空下部 - 绿色比重
-option.SKY_LB=天空下部 - 蓝色比重
-option.SKY_LI=天空下部 - 颜色强度
-
-option.SKY_HR=天空上部 - 红色比重
-option.SKY_HG=天空上部 - 绿色比重
-option.SKY_HB=天空上部 - 蓝色比重
-option.SKY_HI=天空上部 - 颜色强度
 
 
 #POST

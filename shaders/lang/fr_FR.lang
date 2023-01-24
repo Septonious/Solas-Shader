@@ -269,16 +269,6 @@ option.SKY_G=Vert
 option.SKY_B=Bleu
 option.SKY_I=Intensité
 
-option.SKY_LR=Rouge (Faible dispersion)
-option.SKY_LG=Vert (Faible dispersion)
-option.SKY_LB=Bleu (Faible dispersion)
-option.SKY_LI=Intensité (Faible dispersion)
-
-option.SKY_HR=Rouge (Haute dispersion)
-option.SKY_HG=Vert (Haute dispersion)
-option.SKY_HB=Bleu (Haute dispersion)
-option.SKY_HI=Intensité (Haute dispersion)
-
 
 #POST
 

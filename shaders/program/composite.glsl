@@ -39,6 +39,10 @@ uniform sampler2D depthtex0, depthtex1;
 uniform sampler2D shadowcolor0;
 #endif
 
+#ifdef VL_CLOUDY_NOISE
+uniform sampler2D shadowcolor1;
+#endif
+
 uniform sampler2DShadow shadowtex0, shadowtex1;
 
 uniform mat4 shadowModelView, shadowProjection;

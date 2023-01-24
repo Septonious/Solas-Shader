@@ -33,7 +33,7 @@ uniform float rainStrength, timeBrightness, timeAngle;
 
 uniform vec3 cameraPosition;
 
-#if defined BLOOM_COLORED_LIGHTING || defined GLOBAL_ILLUMINATION
+#ifdef BLOOM_COLORED_LIGHTING
 uniform sampler2D gaux1;
 #endif
 
@@ -46,7 +46,7 @@ uniform mat4 shadowModelView;
 #endif
 
 //Common Variables//
-#if defined GLOBAL_ILLUMINATION || defined BLOOM_COLORED_LIGHTING
+#ifdef BLOOM_COLORED_LIGHTING
 float getLuminance(vec3 color) {
 	return dot(color, vec3(0.299, 0.587, 0.114));
 }

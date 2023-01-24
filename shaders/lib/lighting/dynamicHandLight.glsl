@@ -1,4 +1,4 @@
-vec3 getHandLightColor(float lViewPos) {
+void getHandLightColor(inout vec3 blockLighting, float lViewPos) {
 	float heldLightValue = max(float(heldBlockLightValue), float(heldBlockLightValue2));
 	float handlight = clamp((heldLightValue - 2.5 * lViewPos) * 0.025, 0.0, 1.0);
 
@@ -17,5 +17,5 @@ vec3 getHandLightColor(float lViewPos) {
         if (heldItemId == 52 || heldItemId2 == 52) handLightColor = vec3(1.00, 0.31, 0.07);
     }
 
-    return mix(handLightColor * handlight * 2.5, vec3(0.0), 1.0 - handlight);
+    blockLighting += mix(handLightColor * handlight * 2.5, vec3(0.0), 1.0 - handlight);
 }

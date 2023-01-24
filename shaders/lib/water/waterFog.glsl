@@ -4,7 +4,7 @@ vec4 getWaterFog(vec3 viewPos) {
 
     vec3 waterFogColor = mix(waterColor * waterColor, weatherCol.rgb * 0.25, rainStrength * 0.25);
          #ifdef OVERWORLD
-         waterFogColor *= (0.125 + timeBrightness * 0.875) * 0.5;
+         waterFogColor *= (0.25 + timeBrightness * 0.50) * 0.5;
 
          if (isEyeInWater == 1) {
             vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.0);

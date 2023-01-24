@@ -74,7 +74,11 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, in float z1
 		float maxDist = min(max(lowerPlane, upperPlane), distanceFactor);
 		float rayLength = maxDist - minDist;
 
-		int sampleCount = clamp(int(rayLength) / 8, 0, VC_SAMPLES);
+		#ifndef BLOCKY_CLOUDS
+		int sampleCount = clamp(int(rayLength) / 4, 0, VC_SAMPLES);
+		#else
+		int sampleCount = clamp(int(rayLength), 0, VC_SAMPLES);
+		#endif
 
 		if (sampleCount > 0) {
 			//Other variables
@@ -112,7 +116,7 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, in float z1
 				//Color calculations
 				float cloudLighting = clamp(smoothstep(VC_HEIGHT + stretching * noise, VC_HEIGHT - stretching * noise, rayPos.y), 0.0, 1.0);
 					  #ifndef BLOCKY_CLOUDS
-					  cloudLighting = mix(noise * 0.85, mix(cloudLighting * 0.8 + noise * 0.2, cloudLighting * 0.6 + noise * 0.4, VoL), cloudLighting);
+					  cloudLighting = mix(noise * 0.85, cloudLighting * 0.75 + noise * 0.25, cloudLighting);
 					  #endif
 
 				float cloudFogFactor = pow(clamp((distanceFactor - lWorldPos) / distanceFactor, 0.0, 1.0), 1.0 + rainStrength);

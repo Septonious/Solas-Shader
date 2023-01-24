@@ -8,7 +8,7 @@
 //Varyings//
 flat in int mat;
 
-#ifdef WATER_NORMALS
+#if WATER_NORMALS > 0
 in float viewDistance;
 #endif
 
@@ -16,7 +16,7 @@ in vec2 texCoord, lightMapCoord;
 in vec3 sunVec, upVec, eastVec;
 in vec3 normal;
 
-#ifdef WATER_NORMALS
+#if WATER_NORMALS > 0
 in vec3 viewVector, binormal, tangent;
 #endif
 
@@ -73,7 +73,7 @@ uniform vec3 cameraPosition;
 uniform vec3 skyColor, fogColor;
 #endif
 
-#if defined WATER_NORMALS || (defined INTEGRATED_SPECULAR && (defined END_NEBULA || defined AURORA))
+#if WATER_NORMALS > 0 || (defined INTEGRATED_SPECULAR && (defined END_NEBULA || defined AURORA))
 uniform sampler2D noisetex, shadowcolor1;
 #endif
 
@@ -112,12 +112,6 @@ uniform mat4 shadowModelView;
 #endif
 
 //Common Variables//
-#if defined GLOBAL_ILLUMINATION || defined BLOOM_COLORED_LIGHTING
-float getLuminance(vec3 color) {
-	return dot(color, vec3(0.299, 0.587, 0.114));
-}
-#endif
-
 #if defined OVERWORLD || ((defined OVERWORLD || defined END) && defined INTEGRATED_SPECULAR)
 float eBS = eyeBrightnessSmooth.y / 240.0;
 float caveFactor = mix(clamp((cameraPosition.y - 56.0) / 16.0, float(isEyeInWater == 1), 1.0), 1.0, eBS);
@@ -162,7 +156,7 @@ vec2 viewResolution = vec2(viewWidth, viewHeight);
 #include "/lib/atmosphere/sky.glsl"
 #endif
 
-#ifdef WATER_NORMALS
+#if WATER_NORMALS > 0
 #include "/lib/water/waterNormals.glsl"
 #endif
 
@@ -222,13 +216,13 @@ void main() {
 		#ifdef VC
 		float cloudDepth = texture2D(gaux1, screenPos.xy).a;
 
-		if (cloudDepth > 0.1 && water > 0.9 && cameraPosition.y + VC_STRETCHING * 0.5 > VC_HEIGHT) discard;
+		if (cloudDepth > 0.1 && cameraPosition.y + VC_STRETCHING > VC_HEIGHT) discard;
 		#endif
 
 		vec2 lightmap = clamp(lightMapCoord, 0.0, 1.0);
 		if (water > 0.9) albedo *= max(lightmap.y, 0.5);
 
-		#ifdef WATER_NORMALS
+		#if WATER_NORMALS > 0
 		if (water > 0.5) {
 			float fresnel = pow8(clamp(1.0 + dot(normalize(normal), normalize(viewPos)), 0.0, 1.0));
 			getWaterNormal(newNormal, worldPos, viewVector, lightmap, fresnel);
@@ -258,7 +252,7 @@ void main() {
 			vec3 absorptionColor = albedo.rgb * mix(vec3(1.0), mix(waterColor, vec3(0.0, 1.0, 1.0), absorptionFactor), 1.0 - absorptionFactor * absorptionFactor);
 
 			albedo.rgb = mix(waterColor * 0.5, absorptionColor, absorptionFactor);
-			albedo.a = mix(albedo.a, 0.25, absorptionFactor);
+			albedo.a = mix(albedo.a, 0.15, absorptionFactor);
 		}
 		#endif
 
@@ -283,13 +277,13 @@ void main() {
 #endif
 
 /////////////////////////////////////////////////////////////////////////////////////
-
+   
 #ifdef VSH
 
 //Varyings//
 flat out int mat;
 
-#ifdef WATER_NORMALS
+#if WATER_NORMALS > 0
 out float viewDistance;
 #endif
 
@@ -297,7 +291,7 @@ out vec2 texCoord, lightMapCoord;
 out vec3 sunVec, upVec, eastVec;
 out vec3 normal;
 
-#ifdef WATER_NORMALS
+#if WATER_NORMALS > 0
 out vec3 viewVector, binormal, tangent;
 #endif
 
@@ -327,7 +321,7 @@ uniform mat4 gbufferModelView, gbufferModelViewInverse;
 //Attributes//
 attribute vec4 mc_Entity;
 
-#ifdef WATER_NORMALS
+#if WATER_NORMALS > 0
 attribute vec4 at_tangent;
 #endif
 
@@ -366,7 +360,7 @@ void main() {
 	//Normal
 	normal = normalize(gl_NormalMatrix * gl_Normal);
 
-	#ifdef WATER_NORMALS
+	#if WATER_NORMALS > 0
 	binormal = normalize(gl_NormalMatrix * cross(at_tangent.xyz, gl_Normal.xyz) * at_tangent.w);
 	tangent  = normalize(gl_NormalMatrix * at_tangent.xyz);
 	

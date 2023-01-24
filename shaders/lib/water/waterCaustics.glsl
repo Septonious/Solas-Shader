@@ -1,22 +1,40 @@
-float getNoise(vec3 pos){
-	pos.xz += pos.y;
+float getWaterHeightMap(vec3 worldPos, vec2 offset) {
+    float noise = 0.0;
+    
+    vec2 wind = vec2(frameTimeCounter) * 0.5 * WATER_NORMAL_SPEED;
 
-	float noise = texture2D(shadowcolor1, (pos.xz - frameTimeCounter * 0.2) * 0.002).r;
-		  noise+= texture2D(shadowcolor1, (pos.xz + frameTimeCounter * 0.3) * 0.008).r * 0.50;
-		  noise+= texture2D(shadowcolor1, (pos.xz - frameTimeCounter * 0.4) * 0.032).r * 0.25;
+	offset /= 256.0;
+	worldPos.xz -= worldPos.y * 0.2;
 
-	return noise * 8.0;
+	#if WATER_NORMALS == 1
+	float noiseA = texture2D(shadowcolor1, (worldPos.xz - wind) / 256.0 + offset).g;
+	float noiseB = texture2D(shadowcolor1, (worldPos.xz + wind) / 48.0 + offset).g;
+	#elif WATER_NORMALS == 2
+	float noiseA = texture2D(shadowcolor1, (worldPos.xz - wind) / 256.0 + offset).r;
+	float noiseB = texture2D(shadowcolor1, (worldPos.xz + wind) / 96.0 + offset).r;
+	noiseA *= noiseA; noiseB *= noiseB;
+	#endif
+	
+	#if WATER_NORMALS > 0
+	noise = mix(noiseA, noiseB, WATER_NORMAL_DETAIL);
+	#endif
+
+    return noise * WATER_NORMAL_BUMP;
 }
 
-float getCaustics(vec3 pos){
-	pos.xz += vec2(WATER_NORMAL_OFFSET, 0.0);
-	float harmonic1 = getNoise(pos);
-	pos.xz += vec2(-WATER_NORMAL_OFFSET, 0.0);
-	float harmonic2 = getNoise(pos);
-	pos.xz += vec2(0.0, WATER_NORMAL_OFFSET);
-	float harmonic3 = getNoise(pos);
-	pos.xz += vec2(0.0, -WATER_NORMAL_OFFSET);
-	float harmonic4 = getNoise(pos);
+float getWaterCaustics(vec3 waterPos) {
+	float h0 = getWaterHeightMap(waterPos, vec2(0.0));
+	float h1 = getWaterHeightMap(waterPos, vec2( WATER_NORMAL_OFFSET, 0.0));
+	float h2 = getWaterHeightMap(waterPos, vec2(-WATER_NORMAL_OFFSET, 0.0));
+	float h3 = getWaterHeightMap(waterPos, vec2(0.0,  WATER_NORMAL_OFFSET));
+	float h4 = getWaterHeightMap(waterPos, vec2(0.0, -WATER_NORMAL_OFFSET));
 
-	return clamp(1.0 - (abs(harmonic1 - harmonic2) + abs(harmonic3 - harmonic4)), 0.0, 1.0);
+	float xDeltaA = (h1 - h0) / WATER_NORMAL_OFFSET;
+	float xDeltaB = (h2 - h0) / WATER_NORMAL_OFFSET;
+	float yDeltaA = (h3 - h0) / WATER_NORMAL_OFFSET;
+	float yDeltaB = (h4 - h0) / WATER_NORMAL_OFFSET;
+
+	float height = max((xDeltaA * -xDeltaB + yDeltaA * -yDeltaB) * 48.0, 0.0);
+
+	return height;
 }
