@@ -159,7 +159,7 @@ void main() {
 	/* DRAWBUFFERS:0 */
 	gl_FragData[0] = albedo;
 	
-	#if defined BLOOM || defined INTEGRATED_SPECULAR
+	#if defined BLOOM || defined INTEGRATED_SPECULAR || defined SSGI
 	/* DRAWBUFFERS:02 */
 	gl_FragData[1] = vec4(EncodeNormal(normal), coloredLightingIntensity * 0.1, specular);
 	#endif

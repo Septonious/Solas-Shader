@@ -61,6 +61,10 @@ vec4 TemporalAA(inout vec3 color, sampler2D colortex, sampler2D temptex, float t
 	vec3 coord = vec3(texCoord, z1);
 	vec2 prvCoord = Reprojection(coord);
 	
+	#ifdef SSGI
+	vec3 ssgi = texture2D(colortex6, texCoord).rgb;
+	#endif
+
 	vec3 tempColor = texture2D(temptex, prvCoord).gba;
 
 	if (tempColor == vec3(0.0)) return vec4(tempData, color);
@@ -68,15 +72,25 @@ vec4 TemporalAA(inout vec3 color, sampler2D colortex, sampler2D temptex, float t
 	vec2 viewResolution = vec2(viewWidth, viewHeight);
 
 	tempColor = NeighbourhoodClamping(color, tempColor, 1.0 / viewResolution, colortex);
-	
+
 	float blendFactor = float(
 		prvCoord.x > 0.0 && prvCoord.x < 1.0 &&
 		prvCoord.y > 0.0 && prvCoord.y < 1.0
 	);
 	
+	#ifndef SSGI
 	vec2 velocity = (texCoord - prvCoord.xy) * viewResolution;
 
 	blendFactor *= exp(-length(velocity)) * 0.3 + 0.6;
+	#else
+	if (ssgi == vec3(0.0)) {
+		vec2 velocity = (texCoord - prvCoord.xy) * viewResolution;
+
+		blendFactor *= exp(-length(velocity)) * 0.3 + 0.6;
+	} else {
+		blendFactor = 0.99;
+	}
+	#endif
 
 	color = mix(color, tempColor, blendFactor);
 

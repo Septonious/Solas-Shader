@@ -15,9 +15,9 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 #define VANILLA_AO
 #define AO_STRENGTH 0.9 //[0.5 0.6 0.7 0.8 0.9 1.0]
 
-//Bloom GI//
-//#define GLOBAL_ILLUMINATION
-#define GLOBAL_ILLUMINATION_STRENGTH 1.00 //[0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00]
+//SSGI//
+#define SSGI
+#define SSGI_SAMPLE_COUNT 10 //[10 15 20 25 30 35 40]
 
 //Colored Lighting//
 #define BLOOM_COLORED_LIGHTING
@@ -341,12 +341,10 @@ const float TAU = 6.2831853;
 #undef VC
 #undef VL
 #undef WAVING_BLOCKS
-#undef GLOBAL_ILLUMINATION
 #endif
 
 #ifdef NETHER
 #undef WATER_FOG
-#undef GLOBAL_ILLUMINATION
 #endif
 
 #ifndef INTEGRATED_SPECULAR
@@ -392,4 +390,11 @@ const float TAU = 6.2831853;
 #if defined GBUFFERS_ENTITIES || defined GBUFFERS_TEXTURED || defined GBUFFERS_HAND || defined GBUFFERS_WATER
 #undef BLOOM_COLORED_LIGHTING
 #endif
+#endif
+
+#ifndef INTEGRATED_EMISSION
+#undef SSGI
+#endif
+
+#ifdef DOF
 #endif

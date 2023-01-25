@@ -25,6 +25,10 @@ uniform vec3 cameraPosition, previousCameraPosition;
 uniform mat4 gbufferPreviousProjection;
 uniform mat4 gbufferPreviousModelView, gbufferModelViewInverse;
 
+#ifdef SSGI
+uniform sampler2D colortex6;
+#endif
+
 uniform sampler2D colortex5;
 #endif
 
@@ -78,14 +82,14 @@ void main() {
 	float z1 = texture2D(depthtex1, texCoord).r;
 	#endif
 
-	#ifdef TAA
-    vec4 tempData = vec4(texture2D(colortex5, texCoord).r, 0.0, 0.0, 0.0);
-	tempData = TemporalAA(color, colortex1, colortex5, tempData.r, z1);
-	#endif
-
 	#ifdef DOF
 	vec3 viewPos = ToView(vec3(texCoord, z1));
 	color = getDepthOfField(color, viewPos, z1);
+	#endif
+
+	#ifdef TAA
+    vec4 tempData = vec4(texture2D(colortex5, texCoord).r, 0.0, 0.0, 0.0);
+	tempData = TemporalAA(color, colortex1, colortex5, tempData.r, z1);
 	#endif
 
 	/* DRAWBUFFERS:1 */

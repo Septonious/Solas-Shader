@@ -143,4 +143,8 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
         albedo.rgb *= 1.0 + pow4(lightmap.x);
     }
     #endif
+
+    #if defined SSGI && defined GBUFFERS_TERRAIN
+    coloredLightingIntensity = mix(coloredLightingIntensity, 0.17, float(length(fullShadow) > 0.0));
+    #endif
 }

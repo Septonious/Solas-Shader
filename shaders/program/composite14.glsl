@@ -21,6 +21,10 @@ uniform mat4 gbufferProjectionInverse;
 uniform sampler2D colortex1;
 #endif
 
+#ifdef SSGI
+uniform sampler2D colortex6;
+#endif
+
 #ifdef TAA
 uniform sampler2D colortex5;
 #endif
@@ -32,6 +36,10 @@ const bool colortex4Clear = false;
 
 #ifdef TAA
 const bool colortex5Clear = false;
+#endif
+
+#ifdef SSGI
+const bool colortex6MipmapEnabled = true;
 #endif
 
 //Common Functions//
@@ -61,6 +69,15 @@ void main() {
 
 	float dither = Bayer64(gl_FragCoord.xy);
 	float z0 = texture2D(depthtex0, texCoord).r;
+
+	#ifdef SSGI
+    vec3 ssgi1 = texture2D(colortex6, texCoord + vec2( 0.0,  4.0 / viewHeight)).rgb;
+    vec3 ssgi2 = texture2D(colortex6, texCoord + vec2( 0.0, -4.0 / viewHeight)).rgb;
+    vec3 ssgi3 = texture2D(colortex6, texCoord + vec2( 4.0 / viewWidth,   0.0)).rgb;
+    vec3 ssgi4 = texture2D(colortex6, texCoord + vec2(-4.0 / viewWidth,   0.0)).rgb;
+    vec3 ssgi = (ssgi1 + ssgi2 + ssgi3 + ssgi4) * 0.25;
+	color *= vec3(1.0) + ssgi * ssgi * 32.0;
+	#endif
 
 	#ifdef BLOOM
 	rawBloom = getBloom(texCoord, dither - 0.25, z0);
