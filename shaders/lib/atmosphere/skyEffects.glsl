@@ -5,7 +5,7 @@ float GetNoise(vec2 pos) {
 
 void getStars(inout vec3 color, in vec3 worldPos, in float VoU, in float nebulaFactor, in float caveFactor, inout float star) {
 	#ifdef OVERWORLD
-	float visibility = (1.0 - sunVisibility * sunVisibility) * (1.0 - rainStrength) * pow(VoU, 0.125) * caveFactor;
+	float visibility = (1.0 - timeBrightnessSqrt) * (1.0 - rainStrength) * pow(VoU, 0.125) * caveFactor;
 	#else
 	float visibility = 0.75 + nebulaFactor * 0.25;
 	#endif
@@ -56,7 +56,7 @@ void getEndVortex(inout vec3 color, in vec3 worldPos, in float VoU, in float VoS
 #if (defined MILKY_WAY && !defined GBUFFERS_WATER) || defined END_NEBULA
 void getNebula(inout vec3 color, in vec3 worldPos, in float VoU, inout float nebulaFactor, in float caveFactor) {
 	#ifdef OVERWORLD
-	float visibility = (1.0 - sunVisibility) * (1.0 - rainStrength) * sqrt(max(VoU, 0.0)) * MILKY_WAY_BRIGHTNESS * caveFactor;
+	float visibility = (1.0 - timeBrightnessSqrt) * (1.0 - rainStrength) * sqrt(max(VoU, 0.0)) * MILKY_WAY_BRIGHTNESS * caveFactor;
 	#else
 	float visibility = 1.0 - abs(VoU);
 	#endif

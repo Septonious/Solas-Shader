@@ -89,7 +89,7 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, in float z1
 			//Blend colors with the sky
 			float atmosphereMixer = 0.5 * sunVisibility;
 			vec3 cloudLightCol = mix(lightCol, pow(atmosphereColor, vec3(1.5)), atmosphereMixer) * (1.0 + (VoL + pow6(VoL)) * mefade * 0.5);
-			vec3 cloudAmbientCol = mix(ambientCol, atmosphereColor * atmosphereColor, atmosphereMixer + 0.25);
+			vec3 cloudAmbientCol = mix(ambientCol, atmosphereColor * atmosphereColor, atmosphereMixer);
 
 			//Precompute the ray position
 			vec3 rayPos = cameraPosition + nWorldPos * minDist;

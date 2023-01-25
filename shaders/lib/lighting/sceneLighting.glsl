@@ -6,7 +6,7 @@ vec3 lightVec = sunVec;
 
 #ifdef BLOOM_COLORED_LIGHTING
 void computeBCL(inout vec3 blockLighting, in vec3 bloom, in vec2 lightmap, in float blockLightMap) {
-	bloom = clamp(0.01 * bloom * pow(getLuminance(bloom), -COLORED_LIGHTING_RADIUS * lightmap.x), 0.0, 1.0) * 100.0;
+	bloom = clamp(0.01 * bloom * pow(getLuminance(bloom), -COLORED_LIGHTING_RADIUS), 0.0, 1.0) * 100.0;
 
     blockLighting += bloom * COLORED_LIGHTING_STRENGTH * blockLightMap;
 }
@@ -19,6 +19,8 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
 void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in vec3 worldPos, in vec3 normal, in vec2 lightmap,
                       in float NoU, in float NoL, in float NoE, in float emission, in float leaves, in float foliage, in float specular) {
 #endif
+    lightmap.y *= lightmap.y;
+
     //Variables
     float lViewPos = length(viewPos);
     float ao = color.a * color.a;
@@ -56,7 +58,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     float VoL = dot(normalize(viewPos), lightVec);
 	float glareDisk = clamp(VoL * 0.5 + 0.5, 0.0, 1.0);
 		  glareDisk = 0.03 / (1.0 - 0.97 * glareDisk) - 0.03;
-    float scattering = mix(mix(0.0, 1.0, glareDisk), 3.0, pow3(glareDisk));
+    float scattering = mix(mix(0.0, 1.0, glareDisk), 2.0, pow3(glareDisk));
 
     #ifndef GBUFFERS_WATER
     NoL = mix(NoL, 1.0, subsurface * (0.5 + min(scattering * 0.5, 0.5)));
@@ -68,7 +70,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
         //Shadows without peter-panning from Emin's Complementary Reimagined shaderpack, tysm for allowing me to use them ^^
         //Developed by Emin#7309 and gri573#7741
         #ifdef TAA
-        float dither = fract(Bayer64(gl_FragCoord.xy) + frameTimeCounter * 16.0) * TAU;
+        float dither = fract(Bayer64(gl_FragCoord.xy) + frameTimeCounter * 16.0) * TAU * (1.0 - subsurface * 0.5);
         #else
         float dither = 0.0;
         #endif
@@ -98,7 +100,8 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
         }
 
         float viewDistance = 1.0 - clamp(lViewPos * 0.01, 0.0, 1.0);
-        float offset = mix(0.0009765, 0.0009765 * ao, (1.0 - ao)) * (1.0 + subsurface * 3.0 * viewDistance);
+        float offset = mix(0.0009765, 0.0009765 * ao, (1.0 - ao));
+              offset *= 1.0 + subsurface * 4.0 * viewDistance;
 
         shadow = computeShadow(shadowPos, offset, dither, lightmap.y, ao, subsurface, viewDistance);
     }
