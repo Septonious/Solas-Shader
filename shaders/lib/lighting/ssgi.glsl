@@ -54,7 +54,7 @@ vec3 computeSSGI(vec3 screenPos, vec3 normal) {
     if (hit) {
         vec3 hitAlbedo = texture2D(colortex0, hitPos.xy).rgb;
         float emission = texture2D(colortex2, hitPos.xy).b * 10.0;
-              //emission = float(emission > 0.16 && emission < 0.18);
+              emission = float(emission > 0.32 && emission < 0.34) * 5.0;
 
         weight *= hitAlbedo;
         illumination += weight * emission;

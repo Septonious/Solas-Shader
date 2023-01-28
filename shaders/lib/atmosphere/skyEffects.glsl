@@ -126,7 +126,7 @@ float getAuroraNoise(vec2 coord) {
 }
 
 void getAurora(inout vec3 color, in vec3 worldPos, in float caveFactor) {
-	float visibility = pow6(1.0 - sunVisibility) * (1.0 - rainStrength) * caveFactor;
+	float visibility = pow6(1.0 - sunVisibility) * (1.0 - rainStrength) * caveFactor * 0.75;
 
 	#ifdef AURORA_FULL_MOON_VISIBILITY
 	visibility *= int(moonPhase == 0);

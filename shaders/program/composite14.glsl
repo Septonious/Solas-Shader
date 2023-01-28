@@ -78,7 +78,7 @@ void main() {
 
 	#ifdef SSGI
     ssgi = NormalAwareBlur();
-	color *= vec3(1.0) + ssgi * 32.0;
+	color *= vec3(1.0 + ssgi * 4.0);
 	#endif
 
 	#ifdef BLOOM
@@ -124,7 +124,7 @@ void main() {
 	gl_FragData[0].rgb = color;
 	gl_FragData[1].rgb = pow(rawBloom / 128.0, vec3(0.25)) * float(z0 < 1.0);
 	gl_FragData[2].gba = tempData;
-	gl_FragData[3] = vec4(ssgi, float(ssgi != vec3(0.0)));
+	gl_FragData[3].rgb = ssgi;
 }
 
 #endif

@@ -111,7 +111,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     #ifdef OVERWORLD
     float rainFactor = 1.0 - rainStrength * 0.75;
 
-    vec3 sceneLighting = mix(ambientCol, mix(lightCol, lightColSqrt, timeBrightnessSqrt), fullShadow * rainFactor * shadowFade) * lightmap.y;
+    vec3 sceneLighting = mix(ambientCol, lightCol, fullShadow * rainFactor * shadowFade) * lightmap.y;
     sceneLighting *= 1.0 + scattering * shadow;
     #endif
 
@@ -145,6 +145,6 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     #endif
 
     #if defined SSGI && defined GBUFFERS_TERRAIN
-    coloredLightingIntensity = mix(coloredLightingIntensity, 0.17, float(length(fullShadow) > 0.0));
+    if (length(fullShadow) > 0.0) coloredLightingIntensity = 0.33;
     #endif
 }
