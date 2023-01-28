@@ -65,7 +65,7 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, in float z1
 		//Positions & Variables
 		vec3 viewPos = ToView(vec3(texCoord, z1));
 		vec3 nWorldPos = normalize(ToWorld(viewPos));
-		const float distanceFactor = 1300;
+		const float distanceFactor = 1500;
 		
 		//Set the two planes here between which the ray marching will be done
 		float lowerPlane = (VC_HEIGHT + stretching - cameraPosition.y) / nWorldPos.y;

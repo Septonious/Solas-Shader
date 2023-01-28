@@ -250,7 +250,6 @@ option.AMBIENT_NG=Green
 option.AMBIENT_NB=Blue
 option.AMBIENT_NI=Intensity
 
-
 screen.END_COLOR=End Light & Ambient Color
 option.LIGHT_END_R=Red
 option.LIGHT_END_G=Green

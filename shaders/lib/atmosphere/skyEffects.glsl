@@ -145,7 +145,7 @@ void getAurora(inout vec3 color, in vec3 worldPos, in float caveFactor) {
 		dither = fract(dither + frameTimeCounter * 16.0);
 		#endif
 
-		int samples = 8;
+		int samples = 10;
 		float sampleStep = 1.0 / samples;
 		float currentStep = dither * sampleStep;
 
@@ -158,10 +158,14 @@ void getAurora(inout vec3 color, in vec3 worldPos, in float caveFactor) {
 			if (noise > 0.0) {
 				noise *= texture2D(noisetex, coord * 0.125 + frameTimeCounter * 0.002).g * 0.5 + 0.5;
 				noise *= texture2D(noisetex, coord * 0.250 + frameTimeCounter * 0.003).b * 0.5 + 0.5;
-				noise = noise * noise * sampleStep;
-				noise *= max(1.0 - length(planeCoord.xz) * 0.1, 0.0);
+				noise *= noise * sampleStep;
+				noise *= max(1.0 - length(planeCoord.xz) * 0.175, 0.0);
 
-				vec3 auroraColor = mix(auroraLowCol, auroraHighCol, pow(currentStep, 0.5));
+				float noiseColorMixer = texture2D(noisetex, coord * 0.001).r;
+					  noiseColorMixer *= noiseColorMixer;
+				vec3 auroraColor1 = mix(vec3(0.6, 0.9, 2.0), vec3(2.0, 0.4, 0.9), pow(currentStep, 0.5)) * 4.0;
+				vec3 auroraColor2 = mix(vec3(1.0, 3.0, 2.1) * vec3(1.0, 3.0, 2.1), vec3(1.07, 1.3, 2.75) * vec3(1.07, 1.3, 2.75), pow(currentStep, 0.5));
+				vec3 auroraColor = mix(auroraColor1, auroraColor2, noiseColorMixer);
 				aurora += noise * auroraColor * exp2(-6.0 * i * sampleStep);
 			}
 

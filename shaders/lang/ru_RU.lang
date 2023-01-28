@@ -78,9 +78,26 @@ option.WATER_FOG_DENSITY=Плотность Водного Тумана
 option.WATER_CAUSTICS=Каустики
 option.WATER_CAUSTICS_STRENGTH=Видимость Каустиков
 
-option.WATER_NORMALS=Волны
-option.WATER_NORMAL_BUMP=Амплитуда Волн
-option.WATER_NORMAL_OFFSET=Смещение Волн
+option.WATER_NORMALS=Режим волн
+option.WATER_NORMALS.comment=Переключает режим генерации волн на воде (метод шума).
+value.WATER_NORMALS.0=§cOFF
+value.WATER_NORMALS.1=Ворли
+value.WATER_NORMALS.2=Перлин
+option.WATER_NORMAL_BUMP=Высота волн
+option.WATER_NORMAL_OFFSET=Смещение волн
+
+option.WATER_NORMAL_DETAIL=Детализация волн
+option.WATER_NORMAL_DETAIL.comment=Изменяет соотношение размера малых и больших волн.
+value.WATER_NORMAL_DETAIL.0.05=5%
+value.WATER_NORMAL_DETAIL.0.10=10%
+value.WATER_NORMAL_DETAIL.0.15=15%
+value.WATER_NORMAL_DETAIL.0.20=20%
+value.WATER_NORMAL_DETAIL.0.25=25%
+value.WATER_NORMAL_DETAIL.0.30=30%
+value.WATER_NORMAL_DETAIL.0.35=35%
+value.WATER_NORMAL_DETAIL.0.40=40%
+value.WATER_NORMAL_DETAIL.0.45=45%
+value.WATER_NORMAL_DETAIL.0.50=50%
 
 option.WATER_REFRACTION=Преломление Света Водой
 option.WATER_REFRACTION_STRENGTH=Сила Преломления

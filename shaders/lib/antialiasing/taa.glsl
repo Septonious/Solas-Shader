@@ -88,7 +88,7 @@ vec4 TemporalAA(inout vec3 color, sampler2D colortex, sampler2D temptex, float t
 
 		blendFactor *= exp(-length(velocity)) * 0.3 + 0.6;
 	} else {
-		blendFactor = 0.99;
+		blendFactor = 0.975;
 	}
 	#endif
 

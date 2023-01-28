@@ -3,6 +3,10 @@ float getWaterHeightMap(vec3 worldPos, vec2 offset) {
     
     vec2 wind = vec2(frameTimeCounter) * 0.5 * WATER_NORMAL_SPEED;
 
+	#ifdef OVERWORLD
+	wind *= 1.0 + rainStrength * 0.5;
+	#endif
+
 	offset /= 256.0;
 	worldPos.xz -= worldPos.y * 0.2;
 
@@ -17,6 +21,10 @@ float getWaterHeightMap(vec3 worldPos, vec2 offset) {
 	
 	#if WATER_NORMALS > 0
 	noise = mix(noiseA, noiseB, WATER_NORMAL_DETAIL);
+	#endif
+
+	#ifdef OVERWORLD
+	noise *= 1.0 + rainStrength * 0.5;
 	#endif
 
     return noise * WATER_NORMAL_BUMP;

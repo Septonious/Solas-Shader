@@ -11,9 +11,9 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 atmo
 	float fogAltitude = clamp(pow32((worldPos.y + cameraPosition.y + 1000.0 - FOG_HEIGHT) * 0.001), 0.0, 1.0);
 
 	float fog = lViewPos * FOG_DENSITY * 0.001;
-		  fog = 1.0 - exp(-mix(3.0 - fogAltitude, 5.0, rainStrength) * fog);
-		  fog *= 1.0 - fogAltitude * mix(0.75 + timeBrightness * 0.25, 0.25, rainStrength);
-		  fog *= mix(mix(1.0 - timeBrightness * 0.5, 1.5, sunVisibility), 1.0, rainStrength);
+		  fog = 1.0 - exp(-(3.0 + rainStrength) * fog);
+		  fog *= 1.0 - fogAltitude * mix(0.5 + timeBrightness * 0.25, 0.25, rainStrength);
+		  fog *= mix(mix(1.5, 1.0 - timeBrightness * 0.5, sunVisibility), 1.0, rainStrength);
 		  fog = clamp(fog, 0.0, 1.0);
 
 	vec3 fogColor = mix(skyColor, atmosphereColor, 0.4 + clamp(fogAltitude + rainStrength + (1.0 - sunVisibility), 0.0, 0.6)) * fog;

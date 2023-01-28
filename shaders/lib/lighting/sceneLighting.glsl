@@ -96,7 +96,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
 
         if (lViewPos < shadowDistance + 32.0) {
             if (leaves > 0.5) shadowPos.z -= 0.0005;
-            else if (foliage > 0.5) shadowPos.z += 0.00025;
+            else if (foliage > 0.5) shadowPos.z += 0.000125;
         }
 
         float viewDistance = 1.0 - clamp(lViewPos * 0.01, 0.0, 1.0);

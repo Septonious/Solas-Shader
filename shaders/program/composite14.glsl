@@ -9,6 +9,10 @@ in vec2 texCoord;
 //Uniforms//
 uniform float viewWidth, viewHeight;
 
+#ifdef SSGI
+uniform float far, near;
+#endif
+
 #if defined BLOOM && defined TAA
 uniform float frameTimeCounter;
 #endif
@@ -22,7 +26,7 @@ uniform sampler2D colortex1;
 #endif
 
 #ifdef SSGI
-uniform sampler2D colortex6;
+uniform sampler2D colortex2, colortex6;
 #endif
 
 #ifdef TAA
@@ -36,10 +40,6 @@ const bool colortex4Clear = false;
 
 #ifdef TAA
 const bool colortex5Clear = false;
-#endif
-
-#ifdef SSGI
-const bool colortex6MipmapEnabled = true;
 #endif
 
 //Common Functions//
@@ -61,22 +61,24 @@ float getLuminance(vec3 color) {
 #endif
 #endif
 
+#ifdef SSGI
+#include "/lib/util/encode.glsl"
+#include "/lib/filters/ssgiDenoiser.glsl"
+#endif
+
 //Program//
 void main() {
 	vec3 color = texture2D(colortex0, texCoord).rgb;
 	vec3 tempData = vec3(0.0);
 	vec3 rawBloom = vec3(0.0);
+	vec3 ssgi = vec3(0.0);
 
 	float dither = Bayer64(gl_FragCoord.xy);
 	float z0 = texture2D(depthtex0, texCoord).r;
 
 	#ifdef SSGI
-    vec3 ssgi1 = texture2D(colortex6, texCoord + vec2( 0.0,  4.0 / viewHeight)).rgb;
-    vec3 ssgi2 = texture2D(colortex6, texCoord + vec2( 0.0, -4.0 / viewHeight)).rgb;
-    vec3 ssgi3 = texture2D(colortex6, texCoord + vec2( 4.0 / viewWidth,   0.0)).rgb;
-    vec3 ssgi4 = texture2D(colortex6, texCoord + vec2(-4.0 / viewWidth,   0.0)).rgb;
-    vec3 ssgi = (ssgi1 + ssgi2 + ssgi3 + ssgi4) * 0.25;
-	color *= vec3(1.0) + ssgi * ssgi * 32.0;
+    ssgi = NormalAwareBlur();
+	color *= vec3(1.0) + ssgi * 32.0;
 	#endif
 
 	#ifdef BLOOM
@@ -118,10 +120,11 @@ void main() {
 
 	color += (dither - 0.25) / 64.0;
 
-	/* DRAWBUFFERS:154 */
+	/* DRAWBUFFERS:1456 */
 	gl_FragData[0].rgb = color;
-	gl_FragData[1].gba = tempData;
-	gl_FragData[2].rgb = pow(rawBloom / 128.0, vec3(0.25)) * float(z0 < 1.0);
+	gl_FragData[1].rgb = pow(rawBloom / 128.0, vec3(0.25)) * float(z0 < 1.0);
+	gl_FragData[2].gba = tempData;
+	gl_FragData[3] = vec4(ssgi, float(ssgi != vec3(0.0)));
 }
 
 #endif

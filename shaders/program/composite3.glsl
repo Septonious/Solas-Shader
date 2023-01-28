@@ -78,7 +78,8 @@ void main() {
 	float viewDistance = 1.0 - clamp(length(viewPos) * 0.02, 0.0, 1.0);
 
 	if (viewDistance > 0.0 && z0 > 0.56 && terrainData.b == 0.0) {
-		ssgi = computeSSGI(vec3(texCoord, z0), normal) * viewDistance;
+		ssgi = computeSSGI(vec3(texCoord, z0), normal);
+		ssgi = sqrt(ssgi);
 	}
 	#endif
 
@@ -91,13 +92,9 @@ void main() {
 	#endif
 	#endif
 
-	/* DRAWBUFFERS:0 */
-	gl_FragData[0] = color;
-
-	#ifdef SSGI
 	/* DRAWBUFFERS:06 */
-	gl_FragData[1].rgb = sqrt(ssgi);
-	#endif
+	gl_FragData[0] = color;
+	gl_FragData[1] = vec4(ssgi, float(ssgi != vec3(0.0)));
 }
 
 #endif

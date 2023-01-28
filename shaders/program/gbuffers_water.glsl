@@ -224,7 +224,7 @@ void main() {
 
 		#if WATER_NORMALS > 0
 		if (water > 0.5) {
-			float fresnel = pow8(clamp(1.0 + dot(normalize(normal), normalize(viewPos)), 0.0, 1.0));
+			float fresnel = pow4(clamp(1.0 + dot(normalize(normal), normalize(viewPos)), 0.0, 1.0));
 			getWaterNormal(newNormal, worldPos, viewVector, lightmap, fresnel);
 		}
 		#endif
@@ -258,7 +258,7 @@ void main() {
 
 		#ifdef INTEGRATED_SPECULAR
 		if (portal < 0.5) {
-			float fresnel = pow2(clamp(1.0 + dot(normalize(newNormal), normalize(viewPos)), 0.0, 1.0));
+			float fresnel = clamp(1.0 + dot(normalize(newNormal), normalize(viewPos)), 0.0, 1.0);
 			getReflection(albedo, viewPos, newNormal, fresnel, lightmap.y, water, coloredLightingIntensity);
 			albedo.a = mix(albedo.a, 1.0, fresnel);
 		}
