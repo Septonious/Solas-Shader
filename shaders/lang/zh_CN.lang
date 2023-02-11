@@ -85,7 +85,7 @@ option.WATER_CAUSTICS_STRENGTH=水焦散强度
 
 option.WATER_NORMALS=法线
 option.WATER_NORMALS.comment=为水面启用实时生成的法线.
-value.WATER_NORMALS.0=§cOFF
+value.WATER_NORMALS.0=§c关闭
 value.WATER_NORMALS.1=Worley
 value.WATER_NORMALS.2=Perlin
 option.WATER_NORMAL_BUMP=水面法线凹凸
@@ -212,7 +212,6 @@ option.LIGHT_NR=红色
 option.LIGHT_NG=绿色
 option.LIGHT_NB=蓝色
 option.LIGHT_NI=强度
-
 
 screen.AMBIENT_EM=凌晨环境光颜色
 option.AMBIENT_EMR=红色
@@ -350,3 +349,17 @@ option.WAVING_PLANTS=植物摇晃
 option.WAVING_LEAVES=树叶摇晃
 option.WAVING_SPEED=摇晃速度
 option.WAVING_AMPLITUDE=摇晃幅度
+
+
+#Some options that do not exist in the en_US file
+
+screen.AO=环境光遮蔽
+
+
+option.INTEGRATED_NORMAL_MAPPING=自动生成集成法线
+
+screen.INORMALS=集成法线配置
+
+option.NORMAL_STRENGTH=法线强度
+option.NORMAL_RESOLUTION=法线分辨率
+option.NORMAL_THRESHOLD=法线阈值
