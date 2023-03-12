@@ -1,21 +1,98 @@
-MIT License
+Copyright (C) 2023 Septonious
+ All Rights Reserved unless otherwise explicitly stated.
+ 
+By downloading this project or associated files you agree to the terms
+and conditions detailed below.
 
-Copyright (c) 2022 Septonious
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+                       TERMS AND CONDITIONS
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+  0. Definitions.
+  
+  "Copyright" also means copyright-like laws that apply to other kinds of
+works, such as semiconductor masks.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+  "The Project" refers to any copyrightable work licensed under this
+License. Each licensee is addressed as "you". "Licensees", "users" and
+"recipients" may be individuals or organizations.
+
+  "The Author" refers to the original creator of this project and it's
+source code. 
+
+  To "modify" a work means to copy from or adapt all or part of the work
+in a fashion requiring copyright permission, other than the making of an
+exact copy.  The resulting work is called a "modified version" of the
+earlier work or a work "based on" the earlier work.
+
+  A "covered work" means either the unmodified Project or a work based
+on the Project.
+
+  To "propagate" a work means to do anything with it that, without
+permission, would make you directly or secondarily liable for infringement
+under applicable copyright law, except executing it on a computer or
+modifying a private copy.  Propagation includes copying, distribution
+(with or without modification), making available to the public, and in
+some countries other activities as well.
+
+  To "convey" a work means any kind of propagation that enables other
+parties to make or receive copies.  Mere interaction with a user through a
+computer network, with no transfer of a copy, is not conveying.
+
+
+  1. Redistribution
+
+  Public propagation of this project or parts of it requires you to
+exclusively use the official links provided by the author. This means that
+independently hosting a copy of this project and propagating it using this
+hosted version is prohibited. The usage of link monetization services on
+redistribution is strictly prohibited.
+  Websites and Blogs collecting projects similar to this project are
+required to ask for explicit permission before adding this project to
+its database.
+
+
+  2. Private Modifications
+
+  Users are allowed to create private modifications of this project
+without explicit permission. Redistribution of these modified versions
+however require explicit permission by the author of the original project.
+  See section 3 for more information about public modifications.
+
+
+  3. Public Modifications
+
+  Public redistribution of a modified version of this project requires
+explicit permission from the original author. In order for the
+modification to be applicable for this it has to contain a certain amount
+of original work by the user. This modified version has to use the same
+license as the original project.
+  Furthermore the original project and its author have to be clearly
+credited. Any means of monetization through this modified version is
+strictly prohibited unless explicit permission by the original project's
+author is given.
+
+
+  4. Usage of parts of this project as part of another, original project
+
+  Using parts of this projects source code as part of another, original
+project requires explicit permission from this projects author.
+  Furthermore this project, its author and the parts used have to be
+clearly credited. Additionally any means of monetization on this modified
+version are prohibited unless explicit permission is given.
+
+
+  5. Liability
+
+  The project is provided "as is", without warranty of any kind, express
+or implied, including but not limited to the warranties of merchantability,
+fitness for a particular purpose and noninfringement. In no event shall the
+author or copyright holders be liable for any claim, damages or other
+liability, whether in an action of contract, tort or otherwise, arising from,
+out of or in connection with the project or the use or other dealings in the
+project.
+
+
+  6. Disclaimer
+
+  This License and its terms are subject to change and review at any time
+by this projects author.
