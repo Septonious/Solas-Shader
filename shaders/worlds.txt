@@ -1,3 +1,0 @@
-0 - overworld
-1 - end
--1 - nether
