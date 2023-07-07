@@ -145,7 +145,8 @@ void main() {
 		}
 		#endif
 
-		getSceneLighting(albedo.rgb, screenPos, viewPos, worldPos, normal, lightmap, NoU, NoL, NoE, emission, 0.0, 0.0, 0.0);
+		vec3 shadow = vec3(0.0);
+		getSceneLighting(albedo.rgb, screenPos, viewPos, worldPos, normal, shadow, lightmap, NoU, NoL, NoE, emission, 0.0, 0.0, 0.0);
 
 		#ifndef END
 		Fog(albedo.rgb, viewPos, worldPos, skyColor);

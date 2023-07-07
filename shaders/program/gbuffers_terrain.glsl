@@ -126,6 +126,7 @@ vec3 lightVec = sunVec;
 #include "/lib/lighting/coloredLightingGbuffers.glsl"
 #endif
 
+#include "/lib/ipbr/ggx.glsl"
 #include "/lib/lighting/sceneLighting.glsl"
 
 //Program//
@@ -170,7 +171,8 @@ void main() {
 		getIntegratedSpecular(albedo, newNormal, worldPos.xz, lightmap, emission, specular);
 		#endif
 
-		getSceneLighting(albedo.rgb, screenPos, viewPos, worldPos, newNormal, lightmap, NoU, NoL, NoE, emission, leaves, foliage, specular, coloredLightingIntensity);
+		vec3 shadow = vec3(0.0);
+		getSceneLighting(albedo.rgb, screenPos, viewPos, worldPos, newNormal, shadow, lightmap, NoU, NoL, NoE, emission, leaves, foliage, specular, coloredLightingIntensity);
 	}
 
 	/* DRAWBUFFERS:03 */

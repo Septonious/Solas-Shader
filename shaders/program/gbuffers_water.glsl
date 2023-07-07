@@ -175,6 +175,7 @@ vec2 viewResolution = vec2(viewWidth, viewHeight);
 #endif
 
 #include "/lib/ipbr/waterReflection.glsl"
+#include "/lib/ipbr/ggx.glsl"
 #endif
 
 //Program//
@@ -215,6 +216,13 @@ void main() {
 		#endif
 		vec3 worldPos = ToWorld(viewPos);
 
+		#if WATER_NORMALS > 0
+		if (water > 0.5) {
+			float fresnel = clamp(1.0 + dot(normalize(normal), normalize(viewPos)), 0.0, 1.0);
+			getWaterNormal(newNormal, worldPos, viewVector, fresnel);
+		}
+		#endif
+
 		float NoU = clamp(dot(normal, upVec), -1.0, 1.0);
 		float NoL = clamp(dot(normal, lightVec), 0.0, 1.0);
 		float NoE = clamp(dot(normal, eastVec), -1.0, 1.0);
@@ -226,19 +234,13 @@ void main() {
 		#endif
 
 		vec2 lightmap = clamp(lightMapCoord, 0.0, 1.0);
-		
-		#if WATER_NORMALS > 0
-		if (water > 0.5) {
-			float fresnel = clamp(1.0 + dot(normalize(normal), normalize(viewPos)), 0.0, 1.0);
-			getWaterNormal(newNormal, worldPos, viewVector, fresnel);
-		}
-		#endif
 
 		refraction = ((newNormal.xy - normal.xy) * 0.5 + 0.5);
 
 		vlAlbedo = mix(vec3(1.0), albedo.rgb, sqrt(albedo.a)) * (1.0 - pow(albedo.a, 64.0));
 
-		getSceneLighting(albedo.rgb, screenPos, viewPos, worldPos, newNormal, lightmap, NoU, NoL, NoE, emission, 0.0, 0.0, 0.95);
+		vec3 shadow = vec3(0.0);
+		getSceneLighting(albedo.rgb, screenPos, viewPos, worldPos, newNormal, shadow, lightmap, NoU, NoL, NoE, emission, 0.0, 0.0, 0.95);
 
 		#if defined OVERWORLD
 		skyColor = getAtmosphere(viewPos);
@@ -270,6 +272,12 @@ void main() {
 			float fresnel = clamp(1.0 + dot(normalize(newNormal), normalize(viewPos)), 0.0, 1.0);
 			getReflection(albedo, viewPos, newNormal, fresnel, lightmap.y, water, coloredLightingIntensity);
 			albedo.a = mix(albedo.a, 1.0, fresnel);
+
+			vec3 baseReflectance = vec3(0.1);
+			float smoothness = 0.5;
+			float vanillaDiffuse = (0.25 * NoU + 0.75) + (0.667 - abs(NoE)) * (1.0 - abs(NoU)) * 0.15;
+			albedo.rgb += GetSpecularHighlight(newNormal, viewPos, smoothness, baseReflectance,
+										   	   lightColSqrt, shadow * vanillaDiffuse, color.a);
 		}
 		#endif
 

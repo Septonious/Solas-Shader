@@ -1,8 +1,8 @@
 #ifdef GBUFFERS_TERRAIN
-void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in vec3 worldPos, in vec3 normal, in vec2 lightmap,
+void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in vec3 worldPos, in vec3 normal, inout vec3 shadow, in vec2 lightmap,
                       in float NoU, in float NoL, in float NoE, inout float emission, in float leaves, in float foliage, in float specular, inout float coloredLightingIntensity) {
 #else
-void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in vec3 worldPos, in vec3 normal, in vec2 lightmap,
+void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in vec3 worldPos, in vec3 normal, inout vec3 shadow, in vec2 lightmap,
                       in float NoU, in float NoL, in float NoE, inout float emission, in float leaves, in float foliage, in float specular) {
 #endif
     //Variables
@@ -71,7 +71,6 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
 
     //Main Scene Lighting (Sunlight & Shadows)
     #if defined OVERWORLD || defined END
-    vec3 shadow = vec3(0.0);
     float subsurface = 0.0;
 
     //Subsurface Scattering & Specular Highlight
@@ -81,18 +80,11 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     if (lViewPos < shadowDistance) subsurface = leaves + foliage;
 
     //Subsurface Scattering & Specular Highlight
-    float VoL = dot(normalize(viewPos), lightVec);
-	float glareDisk = clamp(VoL * 0.5 + 0.5, 0.0, 1.0);
-		  glareDisk = 0.02 / (1.0 - 0.98 * glareDisk) - 0.02;
-          glareDisk *= glareDisk;
-    float subsurfaceScattering = mix(mix(0.0, 2.0, glareDisk), 4.0, glareDisk * glareDisk) * subsurface;
-    float specularHighlight = mix(mix(0.0, 4.0, glareDisk), 8.0, glareDisk * glareDisk) * (0.5 + specular) * (1.0 - subsurface);
-    float scattering = subsurfaceScattering + specularHighlight;
-
-    #ifndef GBUFFERS_WATER
-    NoL = mix(NoL, 1.0, subsurface * (0.5 + min(scattering * 0.5, 0.5)));
-    lightCol *= 1.0 + scattering;
-    #endif
+    float VoL = clamp(dot(normalize(viewPos.xyz), lightVec) * 0.5 + 0.5, 0.0, 1.0);
+    float scattering = pow(VoL, 16.0) * (1.0 - rainStrength) * subsurface * shadowFade;
+    NoL = clamp(NoL * 1.01 - 0.01, 0.0, 1.0);
+    NoL = mix(NoL, 1.0, subsurface * 0.7);
+    NoL = mix(NoL, 1.0, scattering);
     #endif
 
     if (NoL > 0.0001) {
@@ -133,6 +125,13 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
 
     vec3 sceneLighting = mix(ambientCol, lightCol, fullShadow * rainFactor * shadowFade) * lightmap.y;
          sceneLighting *= 1.0 + scattering * shadow;
+
+    #ifdef GBUFFERS_TERRAIN
+	vec3 baseReflectance = vec3(0.1);
+	float smoothness = mix(0.25, 0.75, clamp(specular * 4.0, 0.0, 1.0));
+		 sceneLighting += GetSpecularHighlight(normal, viewPos, smoothness, baseReflectance,
+										   	   lightColSqrt * 2.0, shadow * vanillaDiffuse, color.a);
+    #endif
     #endif
 
     #ifdef END

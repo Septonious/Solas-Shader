@@ -61,10 +61,10 @@ void computeColoredLighting(in float z0, inout vec3 coloredLighting, inout vec3 
     }
 
     #ifdef COLORED_LIGHTING
-	coloredLighting = sqrt(mix(previousColoredLight, lightAlbedo, 0.05));
+	coloredLighting = sqrt(mix(previousColoredLight, lightAlbedo, 0.01));
     #endif
 
     #ifdef GLOBAL_ILLUMINATION
-    globalIllumination = sqrt(mix(previousGlobalIllumination, giAlbedo, 0.05));
+    globalIllumination = sqrt(mix(previousGlobalIllumination, giAlbedo, 0.25));
     #endif
 }

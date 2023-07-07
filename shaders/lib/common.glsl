@@ -17,9 +17,8 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 
 //Colored Lighting//
 #define COLORED_LIGHTING
-#define COLORED_LIGHTING_STRENGTH 1.00 //[1.00 1.50 2.00 2.50 3.00 3.50 4.00]
-#define COLORED_LIGHTING_RADIUS 2.00 //[1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00]
-#define COLORED_LIGHTING_MIX 0.6 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
+#define COLORED_LIGHTING_RADIUS 2.50 //[1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00]
+#define COLORED_LIGHTING_MIX 0.7 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
 
 //Global Illumination//
 #define GLOBAL_ILLUMINATION
@@ -43,7 +42,7 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 #define EMISSION_STRENGTH 2.5 //[1.0 1.5 2.0 2.5 3.0 3.5 4.0 4.5 5.0]
 #define RAIN_PUDDLES
 #define INTEGRATED_SPECULAR
-#define SPECULAR_STRENGTH 1.1 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2.0]
+#define SPECULAR_STRENGTH 0.9 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2.0]
 #define WATER_SPECULAR_STRENGTH 0.9 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
 #define REFLECTION_RT_SAMPLE_COUNT 20 //[4 8 12 16 20 24 28 32]
 
@@ -76,8 +75,8 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 //Fog//
 #define DISTANT_FADE
 #define DISTANT_FADE_STYLE 0 //[0 1]
-#define FOG_DENSITY 3.00 //[0.00 0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00]
-#define FOG_HEIGHT 110.0 //[50.0 60.0 70.0 80.0 90.0 100.0 110.0 120.0 130.0 140.0 150.0 170.0 180.0 190.0 200.0]
+#define FOG_DENSITY 4.00 //[0.00 0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00]
+#define FOG_HEIGHT 100.0 //[50.0 60.0 70.0 80.0 90.0 100.0 110.0 120.0 130.0 140.0 150.0 170.0 180.0 190.0 200.0]
 
 //Volumetric Nether & End Fog//
 #define VF_NETHER_END

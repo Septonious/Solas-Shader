@@ -96,7 +96,8 @@ void main() {
 		getIntegratedEmission(albedo.rgb, lightmap, emission);
 		#endif
 
-		getSceneLighting(albedo.rgb, screenPos, viewPos, worldPos, newNormal, lightmap, NoU, NoL, NoE, emission, 0.0, 0.0, 0.0);
+		vec3 shadow = vec3(0.0);
+		getSceneLighting(albedo.rgb, screenPos, viewPos, worldPos, newNormal, shadow, lightmap, NoU, NoL, NoE, emission, 0.0, 0.0, 0.0);
 	}
 
 	/* DRAWBUFFERS:03 */

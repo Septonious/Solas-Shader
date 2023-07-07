@@ -91,7 +91,8 @@ void main() {
 		float NoL = clamp(dot(normal, lightVec), 0.0, 1.0);
 		float NoE = clamp(dot(normal, eastVec), -1.0, 1.0);
 
-		getSceneLighting(albedo.rgb, screenPos, viewPos, worldPos, normal, lightmap, NoU, NoL, NoE, emission, 0.0, 0.0, 0.0);
+		vec3 shadow = vec3(0.0);
+		getSceneLighting(albedo.rgb, screenPos, viewPos, worldPos, normal, shadow, lightmap, NoU, NoL, NoE, emission, 0.0, 0.0, 0.0);
 	}
 
 	/* DRAWBUFFERS:0 */
