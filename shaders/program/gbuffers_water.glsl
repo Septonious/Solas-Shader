@@ -273,11 +273,13 @@ void main() {
 			getReflection(albedo, viewPos, newNormal, fresnel, lightmap.y, water, coloredLightingIntensity);
 			albedo.a = mix(albedo.a, 1.0, fresnel);
 
+			#ifndef NETHER
 			vec3 baseReflectance = vec3(0.1);
 			float smoothness = 0.5;
 			float vanillaDiffuse = (0.25 * NoU + 0.75) + (0.667 - abs(NoE)) * (1.0 - abs(NoU)) * 0.15;
 			albedo.rgb += GetSpecularHighlight(newNormal, viewPos, smoothness, baseReflectance,
 										   	   lightColSqrt, shadow * vanillaDiffuse, color.a);
+			#endif
 		}
 		#endif
 
