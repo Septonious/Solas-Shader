@@ -51,7 +51,11 @@ uniform sampler2D shadowcolor0;
 
 #if defined VL || (defined VF_NETHER_END && defined END)
 #ifdef VL
-uniform sampler2DShadow shadowcolor1;
+#ifdef SHADOW_COLOR
+uniform sampler2DShadow shadowtex1;
+#endif
+
+uniform sampler2D shadowcolor1;
 #endif
 
 uniform sampler2DShadow shadowtex0;
@@ -110,7 +114,7 @@ void main() {
 
 	#ifdef VL
 	computeVolumetricLight(vl.rgb, translucent, blueNoiseDither);
-	vl.rgb = sqrt(vl.rgb);
+	vl.rgb = pow(vl.rgb / 128.0, vec3(0.25));
 	vl.a = int(vl.rgb != vec3(0.0));
 	#endif
 

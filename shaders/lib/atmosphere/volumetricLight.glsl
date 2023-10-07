@@ -25,6 +25,7 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
 
 	if (visibility > 0.0) {
 		vec3 shadowCol = vec3(0.0);
+		vec3 vlColor = lightCol * skyColor;
 
 		//Linear Depths
 		float linearDepth0 = getLinearDepth(z0);
@@ -44,23 +45,23 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
 
 			vec3 worldPos = ToWorld(ToView(vec3(texCoord, getLogarithmicDepth(currentDepth))));
 
-			if (length(worldPos) > 196.0) break;
+			if (length(worldPos) > shadowDistance) break;
 
 			//Shadows
 			vec3 shadowPos = ToShadow(worldPos);
 
-			float shadow0 = shadow2D(shadowtex0, shadowPos).z;
+			float shadow0 = shadow2D(shadowtex0, shadowPos.xyz).z;
 
 			#ifdef SHADOW_COLOR
 			if (shadow0 < 1.0) {
 				float shadow1 = shadow2D(shadowtex1, shadowPos.xyz).z;
 				if (shadow1 > 0.0) {
 					shadowCol = texture2D(shadowcolor0, shadowPos.xy).rgb;
-					shadowCol *= shadow1 * 32.0;
+					shadowCol *= shadowCol * shadow1;
 				}
 			}
 			#endif
-			vec3 shadow = clamp(shadowCol * shadowCol * (1.0 - shadow0) + shadow0, 0.0, 1.0);
+			vec3 shadow = clamp(shadowCol * (1.0 - shadow0) + shadow0 * vlColor, 0.0, 1.0);
 
 			#ifdef VL_CLOUDY_NOISE
 			float noise = 1.0;
@@ -83,8 +84,6 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
 			vl += shadow;
 		}
 
-		float colorMixer = mix(0.0, mix(0.3, 0.15, timeBrightness), sqrt(sunVisibility));
-		vl *= mix(mix(lightCol, skyColor, colorMixer), waterColor * (0.25 + sunVisibility * 0.75), float(isEyeInWater == 1));
 		vl *= visibility;
 	}
 }

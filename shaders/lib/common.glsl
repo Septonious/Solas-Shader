@@ -102,7 +102,7 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 //Volumetric Light
 #define VL
 #define VL_CLOUDY_NOISE
-#define VL_STRENGTH 1.50 //[0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00]
+#define VL_STRENGTH 2.00 //[0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00]
 #define VL_SAMPLES 8 //[6 7 8 9 10 11 12]
 
 //Volumetric Clouds

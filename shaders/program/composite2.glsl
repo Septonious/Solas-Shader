@@ -36,7 +36,7 @@ void main() {
 	#endif
 
 	#ifdef OVERWORLD
-	vl *= vl * VL_STRENGTH * 0.25;
+	vl = pow4(vl) * 128.0 * VL_STRENGTH * 0.25;
 	color.rgb += vl;
 	#else
 	vl.rgb *= vl.rgb;
