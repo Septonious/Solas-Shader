@@ -33,10 +33,23 @@ uniform float shadowFade;
 uniform vec3 cameraPosition;
 uniform vec4 entityColor;
 
+#ifdef COLORED_LIGHTING
+uniform vec3 previousCameraPosition;
+
+#ifdef COLORED_LIGHTING
+uniform sampler2D gaux1;
+#endif
+#endif
+
 uniform sampler2D texture;
 
 uniform mat4 gbufferProjectionInverse;
 uniform mat4 gbufferModelViewInverse;
+
+#ifdef COLORED_LIGHTING
+uniform mat4 gbufferPreviousModelView, gbufferPreviousProjection;
+uniform mat4 gbufferProjection;
+#endif
 
 #if defined OVERWORLD || defined END
 uniform mat4 shadowProjection;
@@ -66,6 +79,11 @@ vec3 lightVec = sunVec;
 #include "/lib/lighting/dynamicHandLight.glsl"
 #endif
 
+#ifdef COLORED_LIGHTING
+#include "/lib/util/reprojection.glsl"
+#include "/lib/lighting/coloredLightingGbuffers.glsl"
+#endif
+
 #include "/lib/color/dimensionColor.glsl"
 #include "/lib/lighting/sceneLighting.glsl"
 
@@ -81,7 +99,23 @@ void main() {
 
 	float emission = 0.0;
 
-	if (albedo.a > 0.001) {
+	#ifdef TEST1
+	float lightningBolt = float(mat == 0);
+	#else
+	float lightningBolt = float(mat == 1);
+	#endif
+
+	if (lightningBolt > 0.5) {
+		#ifndef TEST1
+		albedo.rgb = vec3(1.0, 1.2, 1.7) * 0.5;
+		albedo.a = 0.75;
+		#else
+		albedo.rgb *= 2.0;
+		albedo.a = 0.25;
+		#endif
+	}
+
+	if (albedo.a > 0.001 && lightningBolt < 0.5) {
 		vec3 screenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z);
 		vec3 viewPos = ToNDC(screenPos);
 		vec3 worldPos = ToWorld(viewPos);
@@ -102,7 +136,7 @@ void main() {
 
 	/* DRAWBUFFERS:03 */
 	gl_FragData[0] = albedo;
-	gl_FragData[1].rgb = vec3(EncodeNormal(newNormal), 1.0);
+	gl_FragData[1] = vec4(EncodeNormal(normal), 0.0, 1.0);
 }
 
 #endif
@@ -121,9 +155,7 @@ out vec3 sunVec, upVec, eastVec;
 out vec4 color;
 
 //Uniforms//
-#ifdef INTEGRATED_EMISSION
 uniform int entityId;
-#endif
 
 #ifdef OVERWORLD
 uniform float timeAngle;
@@ -159,9 +191,7 @@ void main() {
 	eastVec = normalize(gbufferModelView[0].xyz);
 
 	//Materials
-	#ifdef INTEGRATED_EMISSION
 	mat = int(entityId);
-	#endif
 
 	//Color & Position
     color = gl_Color;

@@ -47,19 +47,24 @@ float eBS = eyeBrightnessSmooth.y / 240.0;
 void main() {
     vec4 albedo = texture2D(tex, texCoord) * color;
 
+	float glass = float(mat == 3);
+
+	if (albedo.a < 0.01) discard;
+
     #ifdef SHADOW_COLOR
-	albedo.rgb *= 1.0 - pow8(pow32(albedo.a));
+	albedo.rgb = mix(vec3(1.0), albedo.rgb, 1.0 - pow(1.0 - albedo.a, 1.5));
+	albedo.rgb *= albedo.rgb;
 
 	#ifdef WATER_CAUSTICS
 	if (mat == 1){
 		float caustics = getWaterCaustics(worldPos + cameraPosition);
-		if (isEyeInWater == 0) {
-			albedo.rgb = vec3(0.25 + mix(waterColor, vec3(1.0), 0.5) * caustics * WATER_CAUSTICS_STRENGTH);
-		} else {
-			albedo.rgb = vec3(mix(waterColor, vec3(1.0), 0.35) * caustics * WATER_CAUSTICS_STRENGTH);
-		}
+		albedo.rgb = vec3(0.5, 0.9, 1.7) * caustics * WATER_CAUSTICS_STRENGTH;
 	}
 	#endif
+
+	albedo.rgb *= 1.0 - pow32(albedo.a);
+
+	if (glass > 0.5 && albedo.a < 0.35) discard;
 	#endif
 	
 	gl_FragData[0] = albedo;
@@ -71,9 +76,7 @@ void main() {
 #ifdef VSH
 
 //Varyings//
-#ifdef WATER_CAUSTICS
 flat out int mat;
-#endif
 
 out vec2 texCoord;
 
@@ -116,9 +119,7 @@ void main() {
 	#endif
 
 	//Materials
-	#ifdef WATER_CAUSTICS
 	mat = int(mc_Entity.x);
-	#endif
 	
 	//Color & Position
 	color = gl_Color;

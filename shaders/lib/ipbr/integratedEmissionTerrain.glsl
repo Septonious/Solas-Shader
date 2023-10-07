@@ -47,9 +47,9 @@ void getIntegratedEmission(inout vec4 albedo, in vec3 viewPos, in vec3 worldPos,
 		emission = int(albedo.r > 0.8 || (albedo.r > 0.6 && albedo.b < 0.5));
 		coloredLightingIntensity = emission;
 	} else if (mat == 111) { // Chorus
-		emission = pow3(albedo.g);
+		emission = int(albedo.g > 0.45 && albedo.b < 0.8);
 	} else if (mat == 112) { // Enchanting Table
-		emission = int(albedo.b > 0.5);
+		emission = int(albedo.b > 0.5) * 0.25;
 		coloredLightingIntensity = emission;
 	} else if (mat == 113) { // Normal Campfire && Magma Block
 		emission = int(albedo.r > 0.65 && albedo.b < 0.35);
@@ -66,7 +66,6 @@ void getIntegratedEmission(inout vec4 albedo, in vec3 viewPos, in vec3 worldPos,
 	} else if (mat == 118) { // End Portal Frame
 		emission = 16.0 * pow2(albedo.b - albedo.g) * int(albedo.r < 0.65);
 		lightmap.x *= 0.5;
-		coloredLightingIntensity = emission;
 	} else if (mat == 119) {// End Rod
 		emission = 0.05 * pow4(lAlbedo);
 		coloredLightingIntensity = emission;
@@ -75,7 +74,7 @@ void getIntegratedEmission(inout vec4 albedo, in vec3 viewPos, in vec3 worldPos,
 		emission = int(albedo.g < 0.25);
 	} else if (mat == 121 || mat == 122 || mat == 123) { // Fully emissive blocks
 		emission = 0.5;
-		coloredLightingIntensity = 1.0;
+		coloredLightingIntensity = emission;
 	}
 	
 	#ifdef EMISSIVE_POWDER_SNOW
@@ -91,7 +90,6 @@ void getIntegratedEmission(inout vec4 albedo, in vec3 viewPos, in vec3 worldPos,
 	#ifdef EMISSIVE_CONCRETE
 	if (mat == 202) {
 		emission = 1.0;
-		coloredLightingIntensity = 1.0;
 	}
 	#endif
 
@@ -107,5 +105,5 @@ void getIntegratedEmission(inout vec4 albedo, in vec3 viewPos, in vec3 worldPos,
 	#endif
 
 	emission = clamp(emission * EMISSION_STRENGTH, 0.0, 8.0);
-	coloredLightingIntensity = clamp(coloredLightingIntensity * 64.0, 0.0, 1.0);
+	coloredLightingIntensity = clamp(coloredLightingIntensity * 64.0 * int(lightmap.x > 0.25), 0.0, 0.98);
 }

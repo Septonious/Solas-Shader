@@ -7,7 +7,7 @@
 in vec2 texCoord;
 
 //Uniforms//
-#if defined COLORED_LIGHTING || defined GLOBAL_ILLUMINATION
+#ifdef COLORED_LIGHTING
 uniform int frameCounter;
 
 uniform float far, near;
@@ -22,15 +22,11 @@ uniform sampler2D colortex3;
 #ifdef COLORED_LIGHTING
 uniform sampler2D colortex4;
 #endif
-
-#ifdef GLOBAL_ILLUMINATION
-uniform sampler2D colortex5;
-#endif
 #endif
 
 uniform sampler2D colortex0;
 
-#if defined COLORED_LIGHTING || defined GLOBAL_ILLUMINATION
+#ifdef COLORED_LIGHTING
 uniform mat4 gbufferModelViewInverse;
 uniform mat4 gbufferPreviousModelView, gbufferPreviousProjection;
 uniform mat4 gbufferProjection, gbufferProjectionInverse;
@@ -38,10 +34,9 @@ uniform mat4 gbufferProjection, gbufferProjectionInverse;
 
 //Optifine Constants//
 const bool colortex4Clear = false;
-const bool colortex5Clear = false;
 
 //Includes//
-#if defined COLORED_LIGHTING || defined GLOBAL_ILLUMINATION
+#ifdef COLORED_LIGHTING
 #include "/lib/util/bayerDithering.glsl"
 #include "/lib/util/reprojection.glsl"
 #include "/lib/lighting/coloredLighting.glsl"
@@ -52,18 +47,16 @@ void main() {
 	vec3 color = texture2D(colortex0, texCoord).rgb;
 
 	vec3 coloredLighting = vec3(0.0);
-	vec3 globalIllumination = vec3(0.0);
-
-	#if defined COLORED_LIGHTING || defined GLOBAL_ILLUMINATION
+	
+	#ifdef COLORED_LIGHTING
 	float z0 = texture2D(depthtex0, texCoord).r;
 
-	computeColoredLighting(z0, coloredLighting, globalIllumination);
+	computeColoredLighting(z0, coloredLighting);
 	#endif
 
-	/* DRAWBUFFERS:045 */
+	/* DRAWBUFFERS:04 */
 	gl_FragData[0].rgb = color;
 	gl_FragData[1].rgb = coloredLighting;
-	gl_FragData[2].rgb = globalIllumination;
 }
 
 #endif

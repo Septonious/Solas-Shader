@@ -34,7 +34,7 @@ uniform float viewWidth, viewHeight;
 
 #ifdef OVERWORLD
 uniform float shadowFade;
-uniform float rainStrength, timeBrightness, timeAngle;
+uniform float rainStrength, timeBrightness, timeAngle, wetness;
 #endif
 
 uniform float far, blindFactor;
@@ -75,6 +75,7 @@ vec3 lightVec = sunVec;
 #include "/lib/util/ToNDC.glsl"
 #include "/lib/util/ToWorld.glsl"
 #include "/lib/util/bayerDithering.glsl"
+#include "/lib/util/encode.glsl"
 
 #ifdef TAA
 #include "/lib/util/jitter.glsl"
@@ -105,7 +106,7 @@ vec3 lightVec = sunVec;
 void main() {
 	vec4 albedoTexture = texture2D(texture, texCoord);
 	vec4 albedo = albedoTexture * color;
-	albedo.a *= albedo.a;
+		 albedo.a *= albedo.a;
 	float emission = 0.0;
 
 	if (albedo.a > 0.001) {
@@ -121,7 +122,7 @@ void main() {
 		#if defined OVERWORLD
 		vec3 atmosphereColor = getAtmosphere(viewPos);
 		#elif defined NETHER
-		vec3 atmosphereColor = netherColSqrt.rgb * 0.25;
+		vec3 atmosphereColor = netherColSqrt.rgb * 0.5;
 		#endif
 
 		#ifndef END
@@ -155,7 +156,7 @@ void main() {
 
 	/* DRAWBUFFERS:03 */
 	gl_FragData[0] = albedo;
-	gl_FragData[1] = vec4(0.0, 0.0, 0.0, 1.0);
+	gl_FragData[1] = vec4(EncodeNormal(normal), 0.0, 1.0);
 }
 
 #endif

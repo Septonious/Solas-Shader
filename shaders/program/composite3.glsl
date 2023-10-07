@@ -10,17 +10,17 @@ in vec2 texCoord;
 #ifdef INTEGRATED_SPECULAR
 uniform int isEyeInWater;
 
-uniform float viewHeight, viewWidth;
-
 #ifdef TAA
-uniform float frameTimeCounter;
+uniform int frameCounter;
 #endif
+
+uniform float viewHeight, viewWidth;
 #endif
 
 uniform sampler2D colortex0;
 
 #ifdef INTEGRATED_SPECULAR
-uniform sampler2D colortex3;
+uniform sampler2D noisetex, colortex3;
 uniform sampler2D depthtex0, depthtex1;
 
 uniform mat4 gbufferProjection;
@@ -30,6 +30,9 @@ uniform mat4 gbufferModelViewInverse;
 
 //Common Variables//
 #ifdef INTEGRATED_SPECULAR
+const bool colortex0MipmapEnabled = true;
+const bool colortex3MipmapEnabled = true;
+
 vec2 viewResolution = vec2(viewWidth, viewHeight);
 #endif
 
@@ -55,10 +58,10 @@ void main() {
 	vec3 viewPos = ToView(vec3(texCoord, z0));
 
 	#ifdef INTEGRATED_SPECULAR
-	if (terrainData.b > 0.05 && terrainData.b < 1.0 && z0 > 0.56 && z0 >= z1) {
-		float fresnel = pow4(clamp(1.0 + dot(normal, normalize(viewPos)), 0.0, 1.0));
+	if (terrainData.b > 0.05 && terrainData.b <= 0.95 && z0 > 0.56 && z0 >= z1) {
+		float fresnel = clamp(1.0 + dot(normal, normalize(viewPos)), 0.0, 1.0);
 
-		getReflection(color, viewPos, normal, fresnel * terrainData.b);
+		getReflection(color, viewPos, normal, pow4(fresnel) * terrainData.b, terrainData.b);
 	}
 	#endif
 	#endif

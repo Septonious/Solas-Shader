@@ -35,20 +35,6 @@ uniform int heldBlockLightValue2;
 uniform int framemod8;
 #endif
 
-#ifdef INTEGRATED_SPECULAR
-#ifdef OVERWORLD
-uniform int moonPhase;
-#endif
-
-#if (defined AURORA && defined AURORA_COLD_BIOME_VISIBILITY) || defined RAINBOW
-uniform float isSnowy;
-#endif
-
-#ifdef RAINBOW
-uniform float wetness;
-#endif
-#endif
-
 #if MC_VERSION >= 11900
 uniform float darknessFactor;
 #endif
@@ -59,8 +45,12 @@ uniform float blindFactor, far;
 uniform float viewWidth, viewHeight;
 
 #ifdef OVERWORLD
+#if defined VC && defined VC_DYNAMIC_WEATHER
+uniform int worldDay;
+#endif
+
 uniform float shadowFade;
-uniform float rainStrength, timeBrightness, timeAngle;
+uniform float rainStrength, timeBrightness, timeAngle, wetness;
 #endif
 
 #if defined OVERWORLD || ((defined OVERWORLD || defined END) && defined INTEGRATED_SPECULAR)
@@ -70,23 +60,19 @@ uniform ivec2 eyeBrightnessSmooth;
 uniform vec3 cameraPosition;
 
 #ifdef OVERWORLD
-uniform vec3 skyColor, fogColor;
+uniform vec3 skyColor;
 #endif
 
-#if WATER_NORMALS > 0 || (defined INTEGRATED_SPECULAR && (defined END_NEBULA || defined AURORA))
+#if WATER_NORMALS > 0
 uniform sampler2D noisetex;
 #endif
 
 #ifdef INTEGRATED_SPECULAR
-#ifdef MILKY_WAY
-uniform sampler2D depthtex2;
-#endif
-
 uniform sampler2D gaux3;
 #endif
 
 #ifdef VC
-uniform sampler2D gaux1;
+uniform sampler2D gaux2;
 #endif
 
 uniform sampler2D texture;
@@ -167,15 +153,10 @@ vec2 viewResolution = vec2(viewWidth, viewHeight);
 
 #ifdef INTEGRATED_SPECULAR
 #ifdef OVERWORLD
-#include "/lib/atmosphere/sunMoon.glsl"
-#endif
-
-#if defined OVERWORLD || defined END
-#include "/lib/atmosphere/skyEffects.glsl"
+#include "/lib/ipbr/ggx.glsl"
 #endif
 
 #include "/lib/ipbr/waterReflection.glsl"
-#include "/lib/ipbr/ggx.glsl"
 #endif
 
 //Program//
@@ -187,10 +168,8 @@ void main() {
 
 	float water = int(mat == 1);
 	float portal = int(mat == 2);
-	float emission = portal * 4.0;
-	float coloredLightingIntensity = emission;
+	float emission = portal;
 
-	albedo.a = mix(albedo.a, 1.0, portal);
 	albedo.a += int(mat == 3) * 0.25;
 
 	#ifndef VANILLA_WATER
@@ -228,9 +207,20 @@ void main() {
 		float NoE = clamp(dot(normal, eastVec), -1.0, 1.0);
 
 		#ifdef VC
-		float cloudDepth = texture2D(gaux1, screenPos.xy).r;
+		#ifdef VC_DYNAMIC_WEATHER
+		float day = float(worldDay % 14);
+		float mixFactor = 0.6 + sunVisibility * 0.4;
 
-		if (cloudDepth > 0.2 && cameraPosition.y + VC_STRETCHING > VC_HEIGHT) discard;
+		float cloudHeight = mix(mix(VC_HEIGHT, min(day * 15.0 + 100.0, 250.0), mixFactor), 125.0, wetness);
+		#else
+		float cloudHeight = VC_HEIGHT;
+		#endif
+
+		float cloudDepth = texture2D(gaux2, screenPos.xy).r * far * 2.0;
+
+		if (length(viewPos) < cloudDepth && cameraPosition.y > cloudHeight - 5.0) {
+			discard;
+		}
 		#endif
 
 		vec2 lightmap = clamp(lightMapCoord, 0.0, 1.0);
@@ -245,7 +235,7 @@ void main() {
 		#if defined OVERWORLD
 		skyColor = getAtmosphere(viewPos);
 		#elif defined NETHER
-		skyColor = netherColSqrt.rgb * 0.25;
+		skyColor = netherColSqrt.rgb * 0.5;
 		#elif defined END
 		skyColor = endLightCol.rgb * 0.15;
 		#endif
@@ -270,12 +260,12 @@ void main() {
 		#ifdef INTEGRATED_SPECULAR
 		if (portal < 0.5) {
 			float fresnel = clamp(1.0 + dot(normalize(newNormal), normalize(viewPos)), 0.0, 1.0);
-			getReflection(albedo, viewPos, newNormal, fresnel, lightmap.y, water, coloredLightingIntensity);
+			getReflection(depthtex1, albedo, viewPos, newNormal, fresnel, lightmap.y, water, emission);
 			albedo.a = mix(albedo.a, 1.0, fresnel);
 
-			#ifndef NETHER
-			vec3 baseReflectance = vec3(0.1);
-			float smoothness = 0.5;
+			#ifdef OVERWORLD
+			vec3 baseReflectance = vec3(0.05);
+			float smoothness = 0.6;
 			float vanillaDiffuse = (0.25 * NoU + 0.75) + (0.667 - abs(NoE)) * (1.0 - abs(NoU)) * 0.15;
 			albedo.rgb += GetSpecularHighlight(newNormal, viewPos, smoothness, baseReflectance,
 										   	   lightColSqrt, shadow * vanillaDiffuse, color.a);
@@ -289,7 +279,7 @@ void main() {
 	/* DRAWBUFFERS:013 */
 	gl_FragData[0] = albedo;
 	gl_FragData[1].rgb = vlAlbedo;
-	gl_FragData[2] = vec4(refraction, 0.0, 1.0);
+	gl_FragData[2] = vec4(refraction, 1.0, mix(1.0, 0.75, float(emission > 0.5 || (lightMapCoord.x > 0.8 && water < 0.5))));
 }
 
 #endif

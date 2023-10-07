@@ -1,4 +1,4 @@
-void getReflection(inout vec4 albedo, in vec3 viewPos, in vec3 normal, in float fresnel, in float skyLightMap, in float water, inout float emission) {
+void getReflection(sampler2D depthtex, inout vec4 albedo, in vec3 viewPos, in vec3 normal, in float fresnel, in float skyLightMap, in float water, inout float emission) {
 	vec3 nViewPos = normalize(viewPos);
 	vec3 reflectedViewPos = reflect(nViewPos, normal);
 
@@ -9,7 +9,7 @@ void getReflection(inout vec4 albedo, in vec3 viewPos, in vec3 normal, in float 
 	dither = fract(dither + frameTimeCounter * 16.0);
 	#endif
 
-	vec3 reflectPos = rayTrace(viewPos, normal, dither, border, 4, 1.0, 0.1, 2.0);
+	vec3 reflectPos = rayTrace(depthtex, viewPos, normal, dither, border, 4, 12, 0.1, 2.0);
 	vec4 reflection = vec4(0.0);
 
 	border = clamp(13.333 * (1.0 - border), 0.0, 1.0);
@@ -31,59 +31,11 @@ void getReflection(inout vec4 albedo, in vec3 viewPos, in vec3 normal, in float 
 
 	if (reflection.a < 1.0) {
 		if (skyLightMap > 0.0) {
-			#if defined OVERWORLD || (defined END && (defined END_NEBULA || defined END_STARS))
-			float nebulaFactor = 0.0;
-			float endVortex = 0.0;
+			#ifdef OVERWORLD
 			float sunMoon = 0.0;
-			float star = 0.0;
 
-			vec3 worldPos = mat3(gbufferModelViewInverse) * reflectedViewPos;
-			vec3 nViewPos = normalize(reflectedViewPos);
-			float VoU = dot(nViewPos, upVec);
-			float VoS = clamp(dot(nViewPos, sunVec), 0.0, 1.0);
-			float VoM = clamp(dot(nViewPos, -sunVec), 0.0, 1.0);
-			#endif
-
-			#if defined OVERWORLD
 			reflectionFade = getAtmosphere(reflectedViewPos);
-
-			if (VoU > 0.0) {
-				VoU = pow2(VoU);
-
-				#ifdef STARS
-				getStars(reflectionFade, worldPos, VoU, nebulaFactor, caveFactor);
-				#endif
-					
-				#ifdef RAINBOW
-				getRainbow(reflectionFade, worldPos, VoU, 1.75, 0.05, caveFactor);
-				#endif
-
-				#ifdef AURORA
-				getAurora(reflectionFade, worldPos, caveFactor, dither);
-				#endif
-			}
-
-			//Increasing sun/moon reflections intensity
-			#ifdef WATER_NORMALS
-			lightSun *= 3.0;
-			lightNight *= 2.0;
-			#endif
-
-			getSunMoon(reflectionFade, nViewPos, lightSun, lightNight, VoS, VoM, caveFactor, sunMoon);
 			reflectionFade *= skyLightMap;
-
-			#elif defined END
-			#ifdef END_NEBULA
-			getNebula(reflectionFade, worldPos, VoU, nebulaFactor, 1.0);
-			#endif
-
-			#ifdef END_STARS
-			getStars(reflectionFade, worldPos, VoU, nebulaFactor, 1.0);
-			#endif
-
-			#ifdef END_VORTEX
-			getEndVortex(reflectionFade, worldPos, VoU, VoS);
-			#endif
 			#endif
 		}
 

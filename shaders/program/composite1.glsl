@@ -84,7 +84,7 @@ void main() {
 		float fovScale = gbufferProjection[1][1] / 1.37;
 		vec3 distort = texture2D(colortex3, texCoord).rgb;
 
-		if (distort.xy != vec2(0.0)) {
+		if (distort.xy != vec2(0.0) && distort.b > 0.99) {
 			 distort = DecodeNormal(distort.xy) * REFRACTION_STRENGTH;
 			 distort.xy *= vec2(1.0 / aspectRatio, 1.0) * fovScale / max(length(viewPos.xyz), 8.0);
 

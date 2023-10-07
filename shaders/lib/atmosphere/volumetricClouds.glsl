@@ -1,54 +1,59 @@
-#ifndef BLOCKY_CLOUDS
-const float stretching = VC_STRETCHING;
+#ifdef VC_DYNAMIC_WEATHER
+float day = float(worldDay % 14);
+float mixFactor = 0.6 + sunVisibility * 0.4;
+
+float cloudHeight = mix(mix(VC_HEIGHT, min(day * 15.0 + 100.0, 250.0), mixFactor), 125.0, wetness);
+float cloudDensity = mix(VC_DENSITY, clamp(day, 4.0, 10.0), mixFactor);
+float cloudAmount = mix(VC_AMOUNT, clamp(day * 2.0, 10.0, 12.0), mixFactor);
+float cloudThickness = mix(VC_THICKNESS, clamp(day, 4.0, 8.0), mixFactor);
 #else
-const float stretching = 10.0;
+float cloudHeight = VC_HEIGHT;
+float cloudDensity = VC_DENSITY;
+float cloudAmount = VC_AMOUNT;
+float cloudThickness = VC_THICKNESS;
 #endif
 
-#ifndef BLOCKY_CLOUDS
-float getCloudSample(vec3 rayPos, float rayPosY) {
-	rayPos *= 0.0025;
+uniform vec4 lightningBoltPosition;
 
-	vec3 floorPos = floor(rayPos);
-	vec3 fractPos = fract(rayPos);
+float lightningFlashEffect(vec3 worldPos, vec3 lightningBoltPosition, float lightDistance){ //Thanks to Xonk!
+    vec3 lightningPos = worldPos - vec3(lightningBoltPosition.x, max(worldPos.y, lightningBoltPosition.y), lightningBoltPosition.z);
 
-	vec2 noiseCoord = (floorPos.xz + fractPos.xz + floorPos.y * 16.0) * 0.5;
+    float lightningLight = max(1.0 - length(lightningPos) / lightDistance, 0.0);
+          lightningLight = exp(-24.0 * (1.0 - lightningLight));
 
-	float cloudLayer = abs(VC_HEIGHT - rayPosY) / stretching;
-	float noise = 0.0;
-
-	if (cloudLayer < 2.0) {
-		noise = texture2D(noisetex, noiseCoord + frameTimeCounter * 0.00005).r;
-		noise+= texture2D(noisetex, noiseCoord * 0.50000 + frameTimeCounter * 0.0001).r * 2.0;
-		noise+= texture2D(noisetex, noiseCoord * 0.25000 + frameTimeCounter * 0.0002).r * 3.0;
-		noise+= texture2D(noisetex, noiseCoord * 0.12500 + frameTimeCounter * 0.0003).r * 4.0;
-		noise+= texture2D(noisetex, noiseCoord * 0.06250 + frameTimeCounter * 0.0004).r * 5.0;
-		noise+= texture2D(noisetex, noiseCoord * 0.03125 + frameTimeCounter * 0.0005).r * 6.0;
-		noise = clamp(noise - (10.0 + cloudLayer - rainStrength), 0.0, 1.0);
-	}
-
-	return noise;
+    return lightningLight;
 }
-#else
-float getCloudSample(vec3 rayPos, float rayPosY) {
-	rayPos = floor(rayPos * 0.5);
-	rayPos *= 0.025;
 
-	vec3 floorPos = floor(rayPos);
-	vec3 fractPos = fract(rayPos);
+void getCloudSample(vec3 lightVec, vec2 rayPos, vec2 wind, float attenuation, inout float noise, inout float lightingNoise) {
+	rayPos *= 0.00025;
 
-	vec2 noiseCoord = (floorPos.xz + fractPos.xz + floorPos.y * 16.0) / 64.0;
+	float noiseBase = texture2D(noisetex, rayPos + 0.5 + wind * 0.5).g;
+		  noiseBase = pow2(1.0 - noiseBase) * 0.5 + 0.25;
 
-	float planeA = texture2D(shadowcolor1, noiseCoord).r;
-	float planeB = texture2D(shadowcolor1, noiseCoord + 0.25).r;
+	//float noiseBaseL = texture2D(noisetex, (rayPos + normalize(ToWorld(lightVec * 10000000.0)).xy * 0.3) + 0.5 + wind * 0.5).g;
+	//	  noiseBaseL = pow2(1.0 - noiseBaseL) * 0.5 + 0.25;
+
+	float detailZ = floor(attenuation * cloudThickness) * 0.05;
+	float noiseDetailA = texture2D(noisetex, rayPos * 1.5 - wind + detailZ).b;
+	float noiseDetailB = texture2D(noisetex, rayPos * 1.5 - wind + detailZ + 0.05).b;
+	float noiseDetail = mix(noiseDetailA, noiseDetailB, fract(attenuation * cloudThickness));
+
+	float noiseCoverage = abs(attenuation - 0.125) * (attenuation > 0.125 ? 1.14 : 8.0);
+		  noiseCoverage *= noiseCoverage * 6.0;
 	
-	float noise = mix(planeA, planeB, fractPos.y) * 100.0;
+	noise = mix(noiseBase, noiseDetail, VC_DETAIL * 0.05 * int(noiseBase > 0.0)) * 22.0 - noiseCoverage;
+	noise = mix(noise, 22.0, wetness * 0.2);
+	noise = max(noise - cloudAmount, 0.0) * (cloudDensity * 0.2);
+	noise /= sqrt(noise * noise + 0.25);
 
-	return clamp(noise - 1.0, 0.0, 1.0);
+	//lightingNoise = noiseBaseL * 22.0 - noiseCoverage;
+	//lightingNoise = mix(lightingNoise, 22.0, wetness * 0.2);
+	//lightingNoise = max(lightingNoise - cloudAmount, 0.0) * (cloudDensity * 0.2);
+	//lightingNoise /= sqrt(lightingNoise * lightingNoise + 0.25);
 }
-#endif
 
-void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, in float z1, in float dither, inout float cloudDepth) {
-	//Total visibility of clouds
+void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z1, float dither, inout float currentDepth) {
+	//Total visibility
 	float visibility = caveFactor * int(z1 > 0.56);
 
 	#if MC_VERSION >= 11900
@@ -58,73 +63,93 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, in float z1
 	visibility *= 1.0 - blindFactor;
 
 	if (visibility > 0.0) {
-		//Positions & Variables
+		//Positions
 		vec3 viewPos = ToView(vec3(texCoord, z1));
+		vec3 nViewPos = normalize(viewPos);
 		vec3 nWorldPos = normalize(ToWorld(viewPos));
-		const float distanceFactor = 2000;
-		
-		//Set the two planes here between which the ray marching will be done
-		float lowerPlane = (VC_HEIGHT + stretching - cameraPosition.y) / nWorldPos.y;
-		float upperPlane = (VC_HEIGHT - stretching - cameraPosition.y) / nWorldPos.y;
+		vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.0);
+
+		//Setting the ray marcher
+		float cloudTop = cloudHeight + cloudThickness * 10.0;
+		float lowerPlane = (cloudHeight - cameraPosition.y) / nWorldPos.y;
+		float upperPlane = (cloudTop - cameraPosition.y) / nWorldPos.y;
 		float minDist = max(min(lowerPlane, upperPlane), 0.0);
-		float maxDist = min(max(lowerPlane, upperPlane), distanceFactor);
-		float rayLength = maxDist - minDist;
+		float maxDist = max(lowerPlane, upperPlane);
 
-		#ifndef BLOCKY_CLOUDS
-		int sampleCount = clamp(int(rayLength) / 4, 0, VC_SAMPLES);
-		#else
-		int sampleCount = clamp(int(rayLength), 0, VC_SAMPLES);
-		#endif
+		float planeDifference = maxDist - minDist;
+		float rayLength = cloudThickness * 5.0;
+			  rayLength /= nWorldPos.y * nWorldPos.y * 3.0 + 1.0;
+		vec3 startPos = cameraPosition + minDist * nWorldPos;
+		vec3 sampleStep = nWorldPos * rayLength;
+		int sampleCount = int(min(planeDifference / rayLength, 32) + dither);
 
-		if (sampleCount > 0) {
-			//Other variables
-			vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.0);
-			float VoL = clamp(dot(normalize(viewPos), lightVec), 0.0, 1.0) * shadowFade;
-				  VoL = pow4(VoL);
-			float lViewPos = length(viewPos) - 1.0;
+		if (maxDist >= 0.0 && sampleCount > 0) {
+			float cloud = 0.0;
+			float cloudAlpha = 0.0;
+			float cloudLighting = 0.0;
 
-			//Blend colors with the sky
-			float atmosphereMixer = sunVisibility * 0.5;
-			vec3 cloudLightCol = mix(lightCol, pow(atmosphereColor, vec3(1.5)), atmosphereMixer) * (1.0 + VoL * 2.0);
-			vec3 cloudAmbientCol = mix(ambientCol, atmosphereColor * atmosphereColor, atmosphereMixer);
+			//Scattering variables
+			float VoU = dot(nViewPos, upVec);
+			float VoL = dot(nViewPos, lightVec);
+			float halfVoLSqrt = VoL * shadowFade * 0.5 + 0.5;
+			float halfVoL = halfVoLSqrt * halfVoLSqrt;
+			float scattering = pow6(halfVoLSqrt);
+			float noiseLightFactor = (2.0 - VoL * shadowFade) * cloudDensity;
 
-			//Precompute the ray position
-			vec3 rayPos = cameraPosition + nWorldPos * minDist;
-			vec3 rayDir = nWorldPos * (rayLength / sampleCount);
-			rayPos += rayDir * dither;
-			rayPos.y -= rayDir.y;
+			vec3 rayPos = startPos + sampleStep * dither;
+			
+			float maxDepth = currentDepth;
+			float minimalNoise = 0.25 + dither * 0.25;
+			float sampleTotalLength = minDist + rayLength * dither;
 
-			//Ray marching
-			for (int i = 0; i < sampleCount; i++, rayPos += rayDir) {
-				vec3 worldPos = rayPos - cameraPosition;
+			vec2 wind = vec2(frameTimeCounter * VC_SPEED * 0.0005, sin(frameTimeCounter * VC_SPEED * 0.001) * 0.005) * cloudHeight * 0.005;
 
-				float lWorldPos = length(worldPos);
+			//Ray marcher
+			for (int i = 0; i < sampleCount; i++, rayPos += sampleStep, sampleTotalLength += rayLength) {
+				if (cloudAlpha > 0.99 || (sampleTotalLength > length(viewPos) && z1 < 1.0)) break;
 
-				if (lViewPos < lWorldPos) break;
+                vec3 worldPos = rayPos - cameraPosition;
 
 				//Indoor leak prevention
-				if (eyeBrightnessSmooth.y <= 150.0) {
+				if (eyeBrightnessSmooth.y < 150.0) {
 					if (shadow2D(shadowtex1, ToShadow(worldPos)).z == 0.0) break;
 				}
 
-				//Shaping
-				float noise = getCloudSample(rayPos, rayPos.y);
+				float noise = 0.0;
+				float lightingNoise = 0.0;
+				float rayDistance = length(worldPos.xz) * 0.1;
+				float attenuation = smoothstep(cloudHeight, cloudTop, rayPos.y);
 
-				//Color calculations
-				float cloudLighting = clamp(smoothstep(VC_HEIGHT + stretching * noise, VC_HEIGHT - stretching * noise, rayPos.y), 0.0, 1.0);
-					  #ifndef BLOCKY_CLOUDS
-					  cloudLighting = mix(noise, cloudLighting * 0.9 + noise * 0.1, cloudLighting);
-					  #endif
+				getCloudSample(lightVec, rayPos.xz, wind, attenuation, noise, lightingNoise);
 
-				float cloudFogFactor = clamp((distanceFactor - lWorldPos) / distanceFactor, 0.0, 1.0);
+				float sampleLighting = pow(attenuation, 0.9 + halfVoL * 1.1) * 1.25 + 0.25;
+					  sampleLighting *= 1.0 - pow(noise, noiseLightFactor);
 
-				vec4 cloudColor = vec4(mix(cloudLightCol, cloudAmbientCol, cloudLighting), noise * cloudFogFactor);
-					 cloudColor.rgb *= cloudColor.a;
+				//cloudLighting = mix(cloudLighting, sampleLighting * mix(1.0, clamp((noise - sqrt(lightingNoise)), 0.0, 1.0), 0.7), noise * (1.0 - cloud * cloud));
+				cloudLighting = mix(cloudLighting, sampleLighting, noise * (1.0 - cloud * cloud));
+				cloud = mix(cloud, 1.0, noise);
+				noise *= pow24(smoothstep(VC_DISTANCE, 8.0, rayDistance)); //Fog
+				cloudAlpha = mix(cloudAlpha, 1.0, noise);
 
-				vc += cloudColor * (1.0 - vc.a);
+                #ifdef IS_IRIS
+                    float lightning = min(lightningFlashEffect(worldPos, lightningBoltPosition.xyz, 256.0) * lightningBoltPosition.w * 4.0, 1.0);
+					cloudLighting = mix(cloudLighting, pow(sampleLighting, 0.25) * 6.0, lightning);
+                #endif
+
+				//gbuffers_water cloud discard check
+				if (noise > minimalNoise && currentDepth == maxDepth) {
+					currentDepth = sampleTotalLength;
+				}
 			}
+
+			//Final color calculations
+			vec3 cloudAmbientColor = mix(ambientCol, skyColor, 0.25 * sunVisibility * sunVisibility) * (0.35 + sunVisibility * sunVisibility * 0.3);
+			vec3 cloudLightColor = mix(lightCol, skyColor, 0.15 * sunVisibility * sunVisibility) * (1.0 + scattering * 3.0);
+			vec3 cloudColor = mix(cloudAmbientColor, cloudLightColor, cloudLighting);
+
+			float opacity = clamp(mix(0.99, VC_OPACITY, float(z1 == 1.0 || cameraPosition.y < cloudTop)), 0.0, 1.0 - wetness * 0.75);
+
+			vc = vec4(cloudColor, cloudAlpha * opacity) * visibility;
 		}
 	}
-	vc *= visibility;
-	cloudDepth = vc.a;
 }

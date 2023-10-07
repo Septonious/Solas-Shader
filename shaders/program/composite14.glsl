@@ -34,6 +34,10 @@ uniform mat4 gbufferProjectionInverse;
 const bool colortex2Clear = false;
 #endif
 
+#ifdef BLOOM
+const bool colortex1MipmapEnabled = true;
+#endif
+
 //Includes//
 #include "/lib/util/bayerDithering.glsl"
 #include "/lib/post/tonemap.glsl"
@@ -53,17 +57,14 @@ void main() {
 	vec3 rawBloom = getBloom(texCoord, dither, z0);
 
 	float intensity = BLOOM_STRENGTH;
-	#ifdef NETHER
-	intensity = clamp(intensity * 2.0, 0.0, 12.0);
-	#endif
 
 	#if BLOOM_CONTRAST == 0
-	color = mix(color, rawBloom, 0.05 * intensity);
+	color = mix(color, rawBloom, 0.1 * intensity);
 	#else
 	vec3 bloomContrast = vec3(exp2(BLOOM_CONTRAST * 0.25));
 	color = pow(color, bloomContrast);
 
-	vec3 bloomStrength = pow(vec3(0.05 * intensity), bloomContrast);
+	vec3 bloomStrength = pow(vec3(0.1 * intensity), bloomContrast);
 	color = mix(color, pow(rawBloom, bloomContrast), bloomStrength);
 	color = pow(color, 1.0 / bloomContrast);
 	#endif

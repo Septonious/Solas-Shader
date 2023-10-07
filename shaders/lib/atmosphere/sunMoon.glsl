@@ -2,7 +2,7 @@ void getSunMoon(inout vec3 color, in vec3 nViewPos, in vec3 lightSun, in vec3 li
 	float visibility = (1.0 - rainStrength) * caveFactor;
 
 	if (visibility > 0.0) {
-		float sun = pow32(pow32(VoS * VoS));
+		float sun = pow16(pow32(VoS * VoS));
 		float moon = pow32(pow32(VoM));
 		
 		if (moon > 0.0 && moonPhase > 0) { // Moon phases, uses the same method as Complementary v4
@@ -21,6 +21,6 @@ void getSunMoon(inout vec3 color, in vec3 nViewPos, in vec3 lightSun, in vec3 li
 			 sunMoonColor = max(sunMoonColor, 0.0) * visibility;
 			 
 		sunMoon = sun + moon;
-		color += sunMoonColor * 3.0;
+		color += sunMoonColor * 2.0;
 	}
 }

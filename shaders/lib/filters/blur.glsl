@@ -84,3 +84,15 @@ vec4 getDiskBlur16(sampler2D colortex, vec2 coord, float strength) {
 
 	return blur;
 }
+
+vec4 getDiskBlur16LOD(sampler2D colortex, vec2 coord, float strength, float lod) {
+	vec4 blur = vec4(0.0);
+
+	for (int i = 0; i < 16; i++) {
+		vec2 pixelOffset = blurOffsets16[i] * pixelSize * strength;
+		blur += texture2DLod(colortex, coord + pixelOffset, lod);
+	}
+	blur *= 0.0625;
+
+	return blur;
+}

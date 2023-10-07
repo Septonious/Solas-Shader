@@ -10,12 +10,12 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
 
 	//Total Visibility
 	float VoU = clamp(dot(nViewPos, upVec), 0.0, 1.0);
-		  VoU = 1.0 - VoU;
+		  VoU = 1.0 - pow(VoU, 1.5);
 		  VoU = mix(VoU, 1.0, timeBrightness * (1.0 - eBS));
 	float VoL = clamp(dot(nViewPos, lightVec), 0.0, 1.0);
-		  VoL = mix(exp(VoL * VoL * (1.0 + sunVisibility * sunVisibility)) * 0.5, VoL * 0.5, timeBrightness);
+		  VoL = mix(exp(VoL * VoL * 2.0) * 0.5 + 0.25, VoL, timeBrightness);
 
-	float visibility = 0.0125 * mix(pow4(VoU) * VoL, VoU, rainStrength) * int(z0 > 0.56) * (1.0 + float(isEyeInWater == 1) * 2.0);
+	float visibility = 0.01 * mix(pow3(VoU) * VoL, VoU, rainStrength) * int(z0 > 0.56);
 
 	#if MC_VERSION >= 11900
 	visibility *= 1.0 - darknessFactor;
@@ -31,7 +31,7 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
 		float linearDepth1 = getLinearDepth(z1);
 
 		//Variables
-		float distanceFactor = mix(8.0, 4.0, float(isEyeInWater == 1));
+		float distanceFactor = mix(4.0, 10.0, float(isEyeInWater > 0.5));
 		float lViewPos = length(viewPos);
 
 		//Ray Marching
@@ -56,11 +56,11 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
 				float shadow1 = shadow2D(shadowtex1, shadowPos.xyz).z;
 				if (shadow1 > 0.0) {
 					shadowCol = texture2D(shadowcolor0, shadowPos.xy).rgb;
-					shadowCol *= shadow1 * 16.0;
+					shadowCol *= shadow1 * 32.0;
 				}
 			}
 			#endif
-			vec3 shadow = clamp(shadowCol * (1.0 - shadow0) + shadow0, 0.0, 1.0);
+			vec3 shadow = clamp(shadowCol * shadowCol * (1.0 - shadow0) + shadow0, 0.0, 1.0);
 
 			#ifdef VL_CLOUDY_NOISE
 			float noise = 1.0;
@@ -83,7 +83,8 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
 			vl += shadow;
 		}
 
-		vl *= mix(mix(pow(lightCol, vec3(0.75)), lightCol * skyColor * skyColor, sunVisibility * 0.5 + timeBrightness * 0.25), waterColor, float(isEyeInWater == 1));
+		float colorMixer = mix(0.0, mix(0.3, 0.15, timeBrightness), sqrt(sunVisibility));
+		vl *= mix(mix(lightCol, skyColor, colorMixer), waterColor * (0.25 + sunVisibility * 0.75), float(isEyeInWater == 1));
 		vl *= visibility;
 	}
 }

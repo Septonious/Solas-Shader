@@ -35,10 +35,23 @@ uniform float rainStrength, timeBrightness, timeAngle;
 
 uniform vec3 cameraPosition;
 
+#ifdef COLORED_LIGHTING
+uniform vec3 previousCameraPosition;
+
+#ifdef COLORED_LIGHTING
+uniform sampler2D gaux1;
+#endif
+#endif
+
 uniform sampler2D texture, noisetex;
 
 uniform mat4 gbufferProjectionInverse;
 uniform mat4 gbufferModelViewInverse;
+
+#ifdef COLORED_LIGHTING
+uniform mat4 gbufferPreviousModelView, gbufferPreviousProjection;
+uniform mat4 gbufferProjection;
+#endif
 
 #if defined OVERWORLD || defined END
 uniform mat4 shadowProjection;
@@ -70,6 +83,11 @@ vec3 lightVec = sunVec;
 
 #ifdef DYNAMIC_HANDLIGHT
 #include "/lib/lighting/dynamicHandLight.glsl"
+#endif
+
+#ifdef COLORED_LIGHTING
+#include "/lib/util/reprojection.glsl"
+#include "/lib/lighting/coloredLightingGbuffers.glsl"
 #endif
 
 #include "/lib/color/dimensionColor.glsl"
@@ -123,7 +141,7 @@ void main() {
 
 	/* DRAWBUFFERS:03 */
 	gl_FragData[0] = albedo;
-	gl_FragData[1].rg = EncodeNormal(normal);
+	gl_FragData[1] = vec4(EncodeNormal(normal), 0.0, 1.0);
 }
 
 #endif

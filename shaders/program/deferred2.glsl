@@ -18,11 +18,11 @@ uniform int isEyeInWater;
 #ifdef OVERWORLD
 uniform int moonPhase;
 
-#if defined VC && defined TAA
+#if (defined VC || defined AURORA) && defined TAA
 uniform int frameCounter;
 #endif
 
-uniform float timeBrightness, timeAngle, rainStrength;
+uniform float timeBrightness, timeAngle, rainStrength, wetness;
 #endif
 
 #if MC_VERSION >= 11900
@@ -36,14 +36,11 @@ uniform float viewWidth, viewHeight;
 
 #ifdef VC
 uniform float shadowFade;
+uniform int worldDay;
 #endif
 
 #if (defined AURORA && defined AURORA_COLD_BIOME_VISIBILITY) || defined RAINBOW
 uniform float isSnowy;
-#endif
-
-#ifdef RAINBOW
-uniform float wetness;
 #endif
 
 #ifdef OVERWORLD
@@ -122,7 +119,7 @@ void main() {
 	#if defined OVERWORLD
 	vec3 atmosphereColor = getAtmosphere(viewPos);
 	#elif defined NETHER
-	vec3 atmosphereColor = netherColSqrt.rgb * 0.25;
+	vec3 atmosphereColor = netherColSqrt.rgb * 0.5;
 	#elif defined END
 	vec3 atmosphereColor = endLightCol * 0.15;
 	#endif
@@ -139,14 +136,16 @@ void main() {
 	float VoM = clamp(dot(nViewPos, -sunVec), 0.0, 1.0);
 	#endif
 
-	#ifdef VC
-	vec4 vc = vec4(0.0);
-
+	#if defined VC || defined AURORA
 	float blueNoiseDither = texture2D(noisetex, gl_FragCoord.xy / 512.0).b;
 
 	#ifdef TAA
 	blueNoiseDither = fract(blueNoiseDither + frameCounter * 0.618);
 	#endif
+	#endif
+
+	#ifdef VC
+	vec4 vc = vec4(0.0);
 
 	computeVolumetricClouds(vc, atmosphereColor, z1, blueNoiseDither, cloudDepth);
 	vc.rgb = pow(vc.rgb, vec3(1.0 / 2.2));
@@ -205,12 +204,12 @@ void main() {
 	} else Fog(color, viewPos, worldPos, skyColor);
 
 	#ifdef VC
-	color = mix(color, vc.rgb, pow4(vc.a) * mix(1.0, VC_OPACITY, float(z1 == 1.0)));
+	color = mix(color, vc.rgb, vc.a);
 	#endif
 
 	vec3 reflectionColor = pow(color.rgb, vec3(0.125)) * 0.5;
 
-	/* DRAWBUFFERS:016 */
+	/* DRAWBUFFERS:056 */
 	gl_FragData[0].rgb = color;
 	gl_FragData[1].r = cloudDepth;
 	gl_FragData[2] = vec4(reflectionColor, int(z1 < 1.0));

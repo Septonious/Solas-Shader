@@ -20,6 +20,7 @@ const bool colortex0MipmapEnabled = true;
 
 //Includes//
 #ifdef BLOOM
+#include "/lib/util/bayerDithering.glsl"
 #include "/lib/post/computeBloom.glsl"
 #endif
 

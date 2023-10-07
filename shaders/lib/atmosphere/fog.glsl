@@ -7,14 +7,14 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 atmo
 
 	//Overworld Fog
 	#ifdef OVERWORLD
-	float fogAltitude = clamp(pow32((worldPos.y + cameraPosition.y + 1000.0 - FOG_HEIGHT) * 0.001), 0.0, 1.0);
+	float fogAltitude = clamp(pow16((worldPos.y + cameraPosition.y + 1000.0 - FOG_HEIGHT) * 0.001), 0.0, 1.0);
 
-	float fog = lViewPos * FOG_DENSITY * 0.001;
-		  fog = 1.0 - exp(-(3.0 + rainStrength) * fog);
-		  fog *= 1.0 - fogAltitude * mix(0.75, 0.25, rainStrength);
+	float fog = lViewPos * FOG_DENSITY * 0.0025;
+		  fog = 1.0 - exp(-(3.0 + rainStrength * 2.0) * fog);
+		  fog *= 1.0 - fogAltitude * (0.5 - rainStrength * 0.25);
 		  fog = clamp(fog, 0.0, 1.0);
 
-	vec3 fogColor = mix(skyColor, atmosphereColor, 0.4 + clamp(fogAltitude + rainStrength + (1.0 - sunVisibility), 0.0, 0.6)) * fog;
+	vec3 fogColor = mix(skyColor, atmosphereColor, 0.25 + fogAltitude * 0.25) * fog;
 
     //Underground Fog
 	fogColor = mix(caveMinLightCol * fog, fogColor, caveFactor);
@@ -49,7 +49,7 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 atmo
 
 	//Nether Fog
 	#ifdef NETHER
-	float fog = lViewPos * 0.005;
+	float fog = lViewPos * 0.0075;
 
 	#ifdef DISTANT_FADE
 	fog += 2.0 * pow4(lWorldPos / far);
@@ -57,7 +57,7 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 atmo
 
 	fog = 1.0 - exp(-fog);
 
-	vec3 fogColor = netherColSqrt.rgb * 0.25;
+	vec3 fogColor = netherColSqrt.rgb * 0.5;
 	#endif
 
 	//We don't want fog in the End because it looks cringe
@@ -69,8 +69,8 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 atmo
 //Fog that appears when you have a darkness effect
 #if MC_VERSION >= 11900
 void getDarknessFog(inout vec3 color, vec3 viewPos) {
-	float fog = length(viewPos) * (darknessFactor * 0.04);
-		  fog = (1.0 - exp(-2.0 * pow3(fog))) * darknessFactor;
+	float fog = length(viewPos) * (darknessFactor * 0.025);
+		  fog = (1.0 - exp(-1.0 * fog)) * darknessFactor;
 
 	color = mix(color, vec3(0.0), fog);
 }
@@ -91,8 +91,8 @@ vec3 denseFogColor[2] = vec3[2](
 );
 
 void getDenseFog(inout vec3 color, vec3 viewPos) {
-	float fog = length(viewPos) * 0.5;
-		  fog = 1.0 - exp(-3.0 * pow3(fog));
+	float fog = length(viewPos) * 0.1;
+		  fog = 1.0 - exp(-2.0 * pow2(fog));
 
 	color = mix(color, denseFogColor[isEyeInWater - 2], fog);
 }

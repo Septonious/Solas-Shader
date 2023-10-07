@@ -1,5 +1,5 @@
-float getLinearDepth(float depth) {
-   return (2.0 * near) / (far + near - depth * (far - near));
+float getLinearDepth(in float depth) {
+    return 1.0 / ((depth * 2.0 - 1.0) * gbufferProjectionInverse[2].w + gbufferProjectionInverse[3].w);
 }
 
 vec2 offsetDist(float x) {

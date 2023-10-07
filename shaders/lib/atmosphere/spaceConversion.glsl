@@ -6,7 +6,7 @@ float getLogarithmicDepth(float dist) {
 	return (far * (dist - near)) / (dist * (far - near));
 }
 
-float getLinearDepth(float depth) {
-    return 2.0 * near * far / (far + near - (2.0 * depth - 1.0) * (far - near));
+float getLinearDepth(in float depth) {
+    return 1.0 / ((depth * 2.0 - 1.0) * gbufferProjectionInverse[2].w + gbufferProjectionInverse[3].w);
 }
 #endif

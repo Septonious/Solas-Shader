@@ -11,11 +11,12 @@ const float wetnessHalflife = 128.0;
 //Optifine Constants//
 /*
 const int colortex0Format = R11F_G11F_B10F; //scene
-const int colortex1Format = RGB16; //translucent
+const int colortex1Format = RGBA16; //translucent
 const int colortex2Format = RGBA16; //temporal data
-const int colortex3Format = RGBA8; //gbuffers data
+const int colortex3Format = RGBA16; //gbuffers data
 const int colortex4Format = RGB16; //colored light
-const int colortex5Format = RGB16; //global illumination
+const int colortex5Format = RGB16; //random stuff
+const int colortex6Format = RGB16; //rvr
 */
 
 //Varyings//

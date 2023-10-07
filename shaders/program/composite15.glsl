@@ -19,7 +19,7 @@ uniform float aspectRatio;
 uniform float centerDepthSmooth;
 #endif
 
-#ifdef TAA
+#if defined TAA || defined MOTION_BLUR
 uniform vec3 cameraPosition, previousCameraPosition;
 
 uniform mat4 gbufferPreviousProjection;
@@ -41,8 +41,8 @@ uniform mat4 gbufferProjection;
 #endif
 
 //Optifine Constants//
-#ifdef DOF
-const bool colortex0MipmapEnabled = true;
+#if defined DOF || defined MOTION_BLUR
+const bool colortex1MipmapEnabled = true;
 #endif
 
 //Common Functions//
@@ -56,6 +56,11 @@ float getLuminance(vec3 color) {
 #ifdef DOF
 #include "/lib/post/dofBlur.glsl"
 #include "/lib/util/ToView.glsl"
+#endif
+
+#ifdef MOTION_BLUR
+#include "/lib/util/bayerDithering.glsl"
+#include "/lib/post/motionBlur.glsl"
 #endif
 
 #ifdef FXAA
@@ -74,8 +79,13 @@ void main() {
 	color = FXAA311(color);	
 	#endif
 
-	#if defined DOF || defined TAA
+	#if defined DOF || defined TAA || defined MOTION_BLUR
 	float z1 = texture2D(depthtex1, texCoord).r;
+	#endif
+
+	#ifdef MOTION_BLUR
+	float dither = Bayer64(gl_FragCoord.xy);
+	color = getMotionBlur(color, z1, dither);
 	#endif
 
 	#ifdef DOF

@@ -14,6 +14,9 @@ in vec3 normal;
 #ifdef INTEGRATED_NORMAL_MAPPING
 in vec2 signMidCoordPos;
 flat in vec2 absMidCoordPos;
+#endif
+
+#if defined INTEGRATED_NORMAL_MAPPING || defined COLORED_LIGHTING
 in vec3 binormal, tangent;
 #endif
 
@@ -51,14 +54,8 @@ uniform ivec2 atlasSize;
 
 uniform vec3 cameraPosition;
 
-#if defined COLORED_LIGHTING || defined GLOBAL_ILLUMINATION
+#ifdef COLORED_LIGHTING
 uniform vec3 previousCameraPosition;
-
-#ifdef GLOBAL_ILLUMINATION
-uniform ivec2 eyeBrightnessSmooth;
-
-uniform sampler2D gaux2;
-#endif
 
 #ifdef COLORED_LIGHTING
 uniform sampler2D gaux1;
@@ -70,7 +67,7 @@ uniform sampler2D texture;
 uniform mat4 gbufferProjectionInverse;
 uniform mat4 gbufferModelViewInverse;
 
-#if defined COLORED_LIGHTING || defined GLOBAL_ILLUMINATION
+#ifdef COLORED_LIGHTING
 uniform mat4 gbufferPreviousModelView, gbufferPreviousProjection;
 uniform mat4 gbufferProjection;
 #endif
@@ -121,12 +118,15 @@ vec3 lightVec = sunVec;
 
 #include "/lib/color/dimensionColor.glsl"
 
-#if defined COLORED_LIGHTING || defined GLOBAL_ILLUMINATION
+#ifdef COLORED_LIGHTING
 #include "/lib/util/reprojection.glsl"
 #include "/lib/lighting/coloredLightingGbuffers.glsl"
 #endif
 
+#ifdef OVERWORLD
 #include "/lib/ipbr/ggx.glsl"
+#endif
+
 #include "/lib/lighting/sceneLighting.glsl"
 
 //Program//
@@ -168,7 +168,7 @@ void main() {
 		#endif
 
 		#ifdef INTEGRATED_SPECULAR
-		getIntegratedSpecular(albedo, newNormal, worldPos.xz, lightmap, emission, specular);
+		getIntegratedSpecular(albedo, newNormal, worldPos.xz, lightmap, emission, foliage + leaves, specular);
 		#endif
 
 		vec3 shadow = vec3(0.0);
@@ -195,6 +195,9 @@ out vec3 normal;
 #ifdef INTEGRATED_NORMAL_MAPPING
 out vec2 signMidCoordPos;
 flat out vec2 absMidCoordPos;
+#endif
+
+#if defined INTEGRATED_NORMAL_MAPPING || defined COLORED_LIGHTING
 out vec3 binormal, tangent;
 #endif
 
@@ -223,7 +226,7 @@ uniform mat4 gbufferModelViewInverse;
 //Attributes//
 attribute vec4 mc_Entity;
 
-#ifdef INTEGRATED_NORMAL_MAPPING
+#if defined INTEGRATED_NORMAL_MAPPING || defined COLORED_LIGHTING
 attribute vec4 at_tangent;
 #endif
 
@@ -258,7 +261,7 @@ void main() {
 	//Normal
 	normal = normalize(gl_NormalMatrix * gl_Normal);
 
-	#ifdef INTEGRATED_NORMAL_MAPPING
+	#if defined INTEGRATED_NORMAL_MAPPING || defined COLORED_LIGHTING
 	binormal = normalize(gl_NormalMatrix * cross(at_tangent.xyz, gl_Normal.xyz) * at_tangent.w);
 	tangent = normalize(gl_NormalMatrix * at_tangent.xyz);
 	#endif

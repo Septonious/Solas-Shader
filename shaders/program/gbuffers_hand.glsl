@@ -55,6 +55,7 @@ vec3 lightVec = sunVec;
 #include "/lib/util/ToNDC.glsl"
 #include "/lib/util/ToWorld.glsl"
 #include "/lib/util/bayerDithering.glsl"
+#include "/lib/util/encode.glsl"
 
 #ifdef TAA
 #include "/lib/util/jitter.glsl"
@@ -95,8 +96,9 @@ void main() {
 		getSceneLighting(albedo.rgb, screenPos, viewPos, worldPos, normal, shadow, lightmap, NoU, NoL, NoE, emission, 0.0, 0.0, 0.0);
 	}
 
-	/* DRAWBUFFERS:0 */
+	/* DRAWBUFFERS:03 */
 	gl_FragData[0] = albedo;
+	gl_FragData[1] = vec4(EncodeNormal(normal), 0.0, 1.0);
 }
 
 #endif
