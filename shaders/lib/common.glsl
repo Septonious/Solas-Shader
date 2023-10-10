@@ -13,7 +13,9 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 
 //Ambient Occlusion//
 #define VANILLA_AO
-#define AO_STRENGTH 0.7 //[0.5 0.6 0.7 0.8 0.9 1.0]
+#define AO
+#define AO_RADIUS 0.7 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
+#define AO_STRENGTH 0.5 //[0.5 0.6 0.7 0.8 0.9 1.0]
 
 //Colored Lighting//
 #define COLORED_LIGHTING

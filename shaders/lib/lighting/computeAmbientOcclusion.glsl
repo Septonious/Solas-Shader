@@ -1,5 +1,5 @@
 float getLinearDepth(in float depth) {
-    return 1.0 / ((depth * 2.0 - 1.0) * gbufferProjectionInverse[2].w + gbufferProjectionInverse[3].w);
+    return (2.0 * near) / (far + near - depth * (far - near));
 }
 
 vec2 offsetDist(float x) {
@@ -8,8 +8,10 @@ vec2 offsetDist(float x) {
     return vec2(cos(n), sin(n)) * x;
 }
 
-float computeAmbientOcclusion(float linearDepth0, float dither) {
+float computeAmbientOcclusion(float dither) {
 	float ao = 0.0;
+	float z0 = texture2D(depthtex0, texCoord).r;
+	float linearDepth0 = getLinearDepth(z0);
 
 	#ifdef TAA
 	dither = fract(dither + frameTimeCounter * 16.0);
