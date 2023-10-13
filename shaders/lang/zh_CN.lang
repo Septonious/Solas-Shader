@@ -85,7 +85,7 @@ option.WATER_CAUSTICS_STRENGTH=水焦散强度
 
 option.WATER_NORMALS=法线
 option.WATER_NORMALS.comment=为水面启用实时生成的法线.
-value.WATER_NORMALS.0=§cOFF
+value.WATER_NORMALS.0=§c关闭
 value.WATER_NORMALS.1=Worley
 value.WATER_NORMALS.2=Perlin
 option.WATER_NORMAL_BUMP=水面法线凹凸
@@ -104,8 +104,8 @@ value.WATER_NORMAL_DETAIL.0.40=40%
 value.WATER_NORMAL_DETAIL.0.45=45%
 value.WATER_NORMAL_DETAIL.0.50=50%
 
-option.WATER_REFRACTION=水体光线折射
-option.WATER_REFRACTION_STRENGTH=折射强度
+option.REFRACTION=光线折射
+option.REFRACTION_STRENGTH=折射强度
 
 option.WAVING_WATER=水体摇晃
 
@@ -175,81 +175,12 @@ option.EMISSION_STRENGTH=自发光强度
 #COLOR
 
 screen.COLOR=颜色
-screen.LIGHTAMBIENT_COLOR=主世界照明 & 环境光颜色
+screen.LIGHTAMBIENT_COLOR=日光/月光 色温
 
-screen.LIGHT_EM=凌晨光照颜色
-option.LIGHT_EMR=红色
-option.LIGHT_EMG=绿色
-option.LIGHT_EMB=蓝色
-option.LIGHT_EMI=强度
-
-screen.LIGHT_M=早晨光照颜色
-option.LIGHT_MR=红色
-option.LIGHT_MG=绿色
-option.LIGHT_MB=蓝色
-option.LIGHT_MI=强度
-
-screen.LIGHT_D=日间光照颜色
-option.LIGHT_DR=红色
-option.LIGHT_DG=绿色
-option.LIGHT_DB=蓝色
-option.LIGHT_DI=强度
-
-screen.LIGHT_E=傍晚光照颜色
-option.LIGHT_ER=红色
-option.LIGHT_EG=绿色
-option.LIGHT_EB=蓝色
-option.LIGHT_EI=强度
-
-screen.LIGHT_LE=深夜光照颜色
-option.LIGHT_LER=红色
-option.LIGHT_LEG=绿色
-option.LIGHT_LEB=蓝色
-option.LIGHT_LEI=强度
-
-screen.LIGHT_N=午夜光照颜色
-option.LIGHT_NR=红色
-option.LIGHT_NG=绿色
-option.LIGHT_NB=蓝色
-option.LIGHT_NI=强度
-
-
-screen.AMBIENT_EM=凌晨环境光颜色
-option.AMBIENT_EMR=红色
-option.AMBIENT_EMG=绿色
-option.AMBIENT_EMB=蓝色
-option.AMBIENT_EMI=强度
-
-screen.AMBIENT_M=早晨环境光颜色
-option.AMBIENT_MR=红色
-option.AMBIENT_MG=绿色
-option.AMBIENT_MB=蓝色
-option.AMBIENT_MI=强度
-
-screen.AMBIENT_D=日间环境光颜色
-option.AMBIENT_DR=红色
-option.AMBIENT_DG=绿色
-option.AMBIENT_DB=蓝色
-option.AMBIENT_DI=强度
-
-screen.AMBIENT_E=傍晚环境光颜色
-option.AMBIENT_ER=红色
-option.AMBIENT_EG=绿色
-option.AMBIENT_EB=蓝色
-option.AMBIENT_EI=强度
-
-screen.AMBIENT_LE=深夜环境光颜色
-option.AMBIENT_LER=红色
-option.AMBIENT_LEG=绿色
-option.AMBIENT_LEB=蓝色
-option.AMBIENT_LEI=强度
-
-screen.AMBIENT_N=午夜环境光颜色
-option.AMBIENT_NR=红色
-option.AMBIENT_NG=绿色
-option.AMBIENT_NB=蓝色
-option.AMBIENT_NI=强度
-
+option.LIGHTTEMP_SS=日出/日落
+option.LIGHTTEMP_ME=清晨/傍晚
+option.LIGHTTEMP_D=白天
+option.LIGHTTEMP_N=夜晚
 
 screen.END_COLOR=末地光照颜色 & 环境光颜色
 option.LIGHT_END_R=红色
@@ -350,3 +281,53 @@ option.WAVING_PLANTS=植物摇晃
 option.WAVING_LEAVES=树叶摇晃
 option.WAVING_SPEED=摇晃速度
 option.WAVING_AMPLITUDE=摇晃幅度
+
+
+#Some options that do not exist in the en_US.lang file
+
+
+#1.5~1.6
+screen.AO=环境光遮蔽
+
+
+option.COLORED_LIGHTING=彩色照明
+
+option.INTEGRATED_NORMAL_MAPPING=自动生成集成法线
+
+screen.INORMALS=集成法线配置
+
+option.NORMAL_STRENGTH=法线强度
+option.NORMAL_RESOLUTION=法线分辨率
+option.NORMAL_THRESHOLD=法线阈值
+
+option.LIGHTINTENSITY_SS=日出/日落 照明强度
+option.LIGHTINTENSITY_ME=清晨/傍晚 照明强度
+option.LIGHTINTENSITY_D=白天 照明强度
+option.LIGHTINTENSITY_N=夜晚 照明强度
+
+
+#1.6b
+option.VC_DYNAMIC_WEATHER=动态体积云天气
+
+option.VC_THICKNESS=体积云厚度
+option.VC_DENSITY=体积云密度
+option.VC_SPEED=体积云速度
+option.VC_DETAIL=体积云细节程度
+
+option.VF_NETHER_END=下界/末地 - 体积雾
+screen.VF_CONFIG=体积雾配置
+
+option.VF_NETHER_STRENGTH=下界 - 体积雾 - 强度
+option.VF_NETHER_SAMPLES=下界 - 体积雾 - 采样值
+option.VF_NETHER_FREQUENCY=下界 - 体积雾 - 频率
+option.VF_NETHER_SPEED=下界 - 体积雾 - 速度
+option.VF_NETHER_REFRACTION=下界 - 体积雾 - 折射
+option.VF_NETHER_REFRACTION_STRENGTH=下界 - 体积雾 - 折射强度
+
+option.VF_END_HEIGHT=末地 - 体积雾 - 高度
+option.VF_END_SAMPLES=末地 - 体积雾 - 采样值
+option.VF_END_THICKNESS=末地 - 体积雾 - 厚度
+
+option.END_NEBULA_BRIGHTNESS=末地星云亮度
+
+option.NETHER_CHROMATIC_ABERRATION=下界色度偏差

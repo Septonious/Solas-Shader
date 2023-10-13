@@ -61,7 +61,7 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
 				}
 			}
 			#endif
-			vec3 shadow = clamp(shadowCol * (1.0 - shadow0) + shadow0 * vlColor, 0.0, 1.0);
+			vec3 shadow = clamp(shadowCol * (1.0 - shadow0) + shadow0 * vlColor * float(isEyeInWater == 0), 0.0, 1.0);
 
 			#ifdef VL_CLOUDY_NOISE
 			float noise = 1.0;
@@ -85,5 +85,6 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
 		}
 
 		vl *= visibility;
+		if (isEyeInWater == 1.0) vl *= waterColorSqrt * 16.0;
 	}
 }

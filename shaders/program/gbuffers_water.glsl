@@ -218,7 +218,7 @@ void main() {
 
 		float cloudDepth = texture2D(gaux2, screenPos.xy).r * far * 2.0;
 
-		if (length(viewPos) < cloudDepth && cameraPosition.y > cloudHeight - 5.0) {
+		if (length(viewPos) < cloudDepth && cameraPosition.y > cloudHeight) {
 			discard;
 		}
 		#endif
