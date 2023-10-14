@@ -67,7 +67,7 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
 			float noise = 1.0;
 
 			if (isEyeInWater == 0) {
-				vec3 npos = (worldPos + cameraPosition) * 0.75 + vec3(frameTimeCounter, 0.0, 0.0);
+				vec3 npos = worldPos + cameraPosition + vec3(frameTimeCounter, 0.0, 0.0);
 				float n3da = texture2D(noisetex, npos.xz * 0.0005 + floor(npos.y * 0.1) * 0.1).r;
 				float n3db = texture2D(noisetex, npos.xz * 0.0005 + floor(npos.y * 0.1 + 1.0) * 0.1).r;
 				noise = sin(mix(n3da, n3db, fract(npos.y * 0.1)) * 16.0) * 0.5 + 0.5;

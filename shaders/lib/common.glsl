@@ -110,14 +110,14 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 //Volumetric Clouds
 #define VC
 //#define BLOCKY_CLOUDS
-#define VC_DYNAMIC_WEATHER
-#define VC_DENSITY 8.0 //[4.0 5.0 6.0 7.0 8.0 9.0 10.0]
+//#define VC_DYNAMIC_WEATHER
+#define VC_DENSITY 7.0 //[4.0 5.0 6.0 7.0 8.0 9.0 10.0]
 #define VC_AMOUNT 11.5 //[13.0 12.5 12.0 11.5 11.0 10.5 10.0]
 #define VC_HEIGHT 150.0 //[100.0 110.0 120.0 130.0 140.0 150.0 160.0 170.0 180.0 190.0 200.0]
 #define VC_THICKNESS 6.0 //[4.0 5.0 6.0 7.0 8.0]
 #define VC_DETAIL 1.6 //[1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2.0]
 #define VC_SPEED 1.00 //[0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00 2.50 3.00 3.50 4.00]
-#define VC_OPACITY 0.7 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
+#define VC_OPACITY 0.6 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
 #define VC_DISTANCE 400.0 //[300.0 400.0 500.0 600.0 700.0 800.0 900.0 1000.0]
 
 //Water//
