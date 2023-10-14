@@ -10,11 +10,11 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 atmo
 	float fogAltitude = clamp(pow16((worldPos.y + cameraPosition.y + 1000.0 - FOG_HEIGHT) * 0.001), 0.0, 1.0);
 
 	float fog = lViewPos * FOG_DENSITY * 0.0025;
-		  fog = 1.0 - exp(-(3.0 + rainStrength * 2.0) * fog);
-		  fog *= 1.0 - fogAltitude * (0.5 - rainStrength * 0.25);
+		  fog = 1.0 - exp(-3.0 * fog);
+		  fog *= 1.0 - fogAltitude * (0.5 - wetness * 0.25);
 		  fog = clamp(fog, 0.0, 1.0);
 
-	vec3 fogColor = mix(skyColor, atmosphereColor, 0.25 + fogAltitude * 0.25) * fog;
+	vec3 fogColor = mix(skyColor, atmosphereColor, mix(0.25 + fogAltitude * 0.25, 1.0, wetness)) * fog;
 
     //Underground Fog
 	fogColor = mix(caveMinLightCol * fog, fogColor, caveFactor);

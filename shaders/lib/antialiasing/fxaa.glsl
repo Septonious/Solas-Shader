@@ -1,6 +1,10 @@
 //FXAA 3.11 from http://blog.simonrodriguez.fr/articles/30-07-2016_implementing_fxaa.html
 const float quality[12] = float[12] (1.0, 1.0, 1.0, 1.0, 1.0, 1.5, 2.0, 2.0, 2.0, 2.0, 4.0, 8.0);
 
+float getLuminance(vec3 color) {
+	return dot(color, vec3(0.299, 0.587, 0.114));
+}
+
 vec3 FXAA311(vec3 color) {
 	const float edgeThresholdMin = 0.0625;
 	const float edgeThresholdMax = 0.2500;
@@ -9,10 +13,10 @@ vec3 FXAA311(vec3 color) {
 	vec2 pixelSize = 1.0 / vec2(viewWidth, viewHeight);
 	
 	float lumaCenter = getLuminance(color);
-	float lumaDown   = getLuminance(texture2D(colortex1, texCoord + vec2( 0.0, -1.0) * pixelSize).rgb);
-	float lumaUp     = getLuminance(texture2D(colortex1, texCoord + vec2( 0.0,  1.0) * pixelSize).rgb);
-	float lumaLeft   = getLuminance(texture2D(colortex1, texCoord + vec2(-1.0,  0.0) * pixelSize).rgb);
-	float lumaRight  = getLuminance(texture2D(colortex1, texCoord + vec2( 1.0,  0.0) * pixelSize).rgb);
+	float lumaDown   = getLuminance(texture2DLod(colortex1, texCoord + vec2( 0.0, -1.0) * pixelSize, 0).rgb);
+	float lumaUp     = getLuminance(texture2DLod(colortex1, texCoord + vec2( 0.0,  1.0) * pixelSize, 0).rgb);
+	float lumaLeft   = getLuminance(texture2DLod(colortex1, texCoord + vec2(-1.0,  0.0) * pixelSize, 0).rgb);
+	float lumaRight  = getLuminance(texture2DLod(colortex1, texCoord + vec2( 1.0,  0.0) * pixelSize, 0).rgb);
 	
 	float lumaMin = min(lumaCenter, min(min(lumaDown, lumaUp), min(lumaLeft, lumaRight)));
 	float lumaMax = max(lumaCenter, max(max(lumaDown, lumaUp), max(lumaLeft, lumaRight)));
@@ -20,10 +24,10 @@ vec3 FXAA311(vec3 color) {
 	float lumaRange = lumaMax - lumaMin;
 	
 	if (lumaRange > max(edgeThresholdMin, lumaMax * edgeThresholdMax)) {
-		float lumaDownLeft  = getLuminance(texture2D(colortex1, texCoord + vec2(-1.0, -1.0) * pixelSize).rgb);
-		float lumaUpRight   = getLuminance(texture2D(colortex1, texCoord + vec2( 1.0,  1.0) * pixelSize).rgb);
-		float lumaUpLeft    = getLuminance(texture2D(colortex1, texCoord + vec2(-1.0,  1.0) * pixelSize).rgb);
-		float lumaDownRight = getLuminance(texture2D(colortex1, texCoord + vec2( 1.0, -1.0) * pixelSize).rgb);
+		float lumaDownLeft  = getLuminance(texture2DLod(colortex1, texCoord + vec2(-1.0, -1.0) * pixelSize, 0).rgb);
+		float lumaUpRight   = getLuminance(texture2DLod(colortex1, texCoord + vec2( 1.0,  1.0) * pixelSize, 0).rgb);
+		float lumaUpLeft    = getLuminance(texture2DLod(colortex1, texCoord + vec2(-1.0,  1.0) * pixelSize, 0).rgb);
+		float lumaDownRight = getLuminance(texture2DLod(colortex1, texCoord + vec2( 1.0, -1.0) * pixelSize, 0).rgb);
 		
 		float lumaDownUp    = lumaDown + lumaUp;
 		float lumaLeftRight = lumaLeft + lumaRight;
@@ -74,8 +78,8 @@ vec3 FXAA311(vec3 color) {
 		vec2 texCoord1 = currentUv - offset;
 		vec2 texCoord2 = currentUv + offset;
 
-		float lumaEnd1 = getLuminance(texture2D(colortex1, texCoord1).rgb);
-		float lumaEnd2 = getLuminance(texture2D(colortex1, texCoord2).rgb);
+		float lumaEnd1 = getLuminance(texture2DLod(colortex1, texCoord1, 0).rgb);
+		float lumaEnd2 = getLuminance(texture2DLod(colortex1, texCoord2, 0).rgb);
 		lumaEnd1 -= lumaLocalAverage;
 		lumaEnd2 -= lumaLocalAverage;
 		
@@ -89,11 +93,11 @@ vec3 FXAA311(vec3 color) {
 		if (!reachedBoth) {
 			for(int i = 2; i < 12; i++) {
 				if (!reached1) {
-					lumaEnd1 = getLuminance(texture2D(colortex1, texCoord1).rgb);
+					lumaEnd1 = getLuminance(texture2DLod(colortex1, texCoord1, 0).rgb);
 					lumaEnd1 = lumaEnd1 - lumaLocalAverage;
 				}
 				if (!reached2) {
-					lumaEnd2 = getLuminance(texture2D(colortex1, texCoord2).rgb);
+					lumaEnd2 = getLuminance(texture2DLod(colortex1, texCoord2, 0).rgb);
 					lumaEnd2 = lumaEnd2 - lumaLocalAverage;
 				}
 				
@@ -142,7 +146,7 @@ vec3 FXAA311(vec3 color) {
 			finalTexCoord.x += finalOffset * stepLength;
 		}
 
-		color = texture2D(colortex1, finalTexCoord).rgb;
+		color = texture2DLod(colortex1, finalTexCoord, 0).rgb;
 	}
 
 	return color;

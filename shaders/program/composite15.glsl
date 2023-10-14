@@ -45,13 +45,6 @@ uniform mat4 gbufferProjection;
 const bool colortex1MipmapEnabled = true;
 #endif
 
-//Common Functions//
-#ifdef FXAA
-float getLuminance(vec3 color) {
-	return dot(color, vec3(0.299, 0.587, 0.114));
-}
-#endif
-
 //Includes//
 #ifdef DOF
 #include "/lib/post/dofBlur.glsl"
