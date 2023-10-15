@@ -63,7 +63,7 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 //Bloom//
 #define BLOOM
 #define BLOOM_STRENGTH 2.50 //[1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00 4.25 4.50 4.75 5.00 5.25 5.50 5.75 6.00]
-#define BLOOM_CONTRAST 1 //[-4 -3 -2 -1 0 1 2 3 4]
+#define BLOOM_CONTRAST 2 //[-4 -3 -2 -1 0 1 2 3 4]
 #define BLOOM_TILE_SIZE 0.0 //[0.0 0.5 1.0 1.5 2.0]
 
 //Atmosphere//
@@ -117,7 +117,7 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 #define VC_THICKNESS 6.0 //[4.0 5.0 6.0 7.0 8.0]
 #define VC_DETAIL 1.6 //[1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2.0]
 #define VC_SPEED 1.00 //[0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00 2.50 3.00 3.50 4.00]
-#define VC_OPACITY 0.6 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
+#define VC_OPACITY 0.8 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
 #define VC_DISTANCE 400.0 //[300.0 400.0 500.0 600.0 700.0 800.0 900.0 1000.0]
 
 //Water//
@@ -128,7 +128,7 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 #define WATER_NORMAL_DETAIL 0.40 //[0.05 0.10 0.15 0.20 0.25 0.30 0.35 0.40 0.45 0.50]
 #define WATER_NORMAL_SPEED 1.50 //[0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00 2.50 3.00 3.50 4.00]
 #define WATER_CAUSTICS
-#define WATER_CAUSTICS_STRENGTH 6.00 //[1.00 1.50 2.00 2.50 3.00 3.50 4.00 4.50 5.00 5.50 6.00 6.50 7.00 7.50 8.00]
+#define WATER_CAUSTICS_STRENGTH 7.00 //[1.00 1.50 2.00 2.50 3.00 3.50 4.00 4.50 5.00 5.50 6.00 6.50 7.00 7.50 8.00]
 #define WATER_FOG
 #define WATER_FOG_DENSITY 0.6 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
 #define REFRACTION

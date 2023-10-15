@@ -39,12 +39,10 @@ uniform float viewWidth, viewHeight;
 
 #ifdef OVERWORLD
 uniform float shadowFade;
-uniform float rainStrength, timeBrightness, timeAngle;
+uniform float wetness, timeBrightness, timeAngle;
 #endif
 
 #ifdef RAIN_PUDDLES
-uniform float wetness;
-
 uniform sampler2D noisetex;
 #endif
 

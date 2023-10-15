@@ -96,7 +96,7 @@ void getIntegratedEmission(inout vec4 albedo, in vec3 viewPos, in vec3 worldPos,
 	#if defined OVERWORLD && defined EMISSIVE_FLOWERS
 	if (mat >= 5 && mat <= 7) { // Flowers
 		if (albedo.b > albedo.g || albedo.r > albedo.g) {
-			emission = lAlbedo * (1.0 - rainStrength);
+			emission = lAlbedo * (1.0 - wetness);
 			emission *= 2.0 - clamp(length(viewPos) * 0.2, 0.0, 1.0);
 			emission *= 1.0 - lightmap.y * 0.5;
 			emission *= 0.25;

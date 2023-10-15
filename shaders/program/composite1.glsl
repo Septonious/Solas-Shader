@@ -23,7 +23,7 @@ uniform float darknessFactor;
 #endif
 
 uniform float blindFactor;
-uniform float timeBrightness, timeAngle, rainStrength, shadowFade;
+uniform float timeBrightness, timeAngle, wetness, shadowFade;
 
 uniform ivec2 eyeBrightnessSmooth;
 

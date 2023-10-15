@@ -23,10 +23,8 @@ uniform float frameTimeCounter;
 uniform float viewWidth, viewHeight;
 
 #ifdef OVERWORLD
-uniform float timeBrightness;
-uniform float timeAngle;
-uniform float rainStrength;
 uniform float shadowFade;
+uniform float wetness, timeBrightness, timeAngle;
 #endif
 
 uniform vec3 cameraPosition;

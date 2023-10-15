@@ -34,7 +34,7 @@ uniform float viewWidth, viewHeight;
 
 #ifdef OVERWORLD
 uniform float shadowFade;
-uniform float rainStrength, timeBrightness, timeAngle, wetness;
+uniform float wetness, timeBrightness, timeAngle;
 #endif
 
 uniform float far, blindFactor;

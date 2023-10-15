@@ -94,7 +94,7 @@ vec3 GetSpecularHighlight(vec3 normal, vec3 viewPos, float smoothness, vec3 base
     
     vec3 specular = GGX(normal, normalize(viewPos), smoothness, baseReflectance, 0.025 * sunVisibility + 0.05);
          specular *= shadow * shadowFade * smoothLighting;
-         specular *= (1.0 - rainStrength) * (1.0 - rainStrength);
+         specular *= (1.0 - wetness) * (1.0 - wetness);
     
     return specular * specularColor;
 }

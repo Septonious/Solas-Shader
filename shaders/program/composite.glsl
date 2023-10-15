@@ -32,7 +32,7 @@ uniform ivec2 eyeBrightnessSmooth;
 uniform vec3 cameraPosition;
 
 #ifdef VL
-uniform float timeAngle, timeBrightness, rainStrength;
+uniform float timeAngle, timeBrightness, wetness;
 
 uniform vec3 skyColor;
 #endif

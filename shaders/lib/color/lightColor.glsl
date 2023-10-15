@@ -12,9 +12,9 @@ vec3 lightNight = mix(pow((colorNight + 0.055) / 1.055, vec3(2.4)), colorNight /
               * LIGHTINTENSITY_N;
 
 vec3 lightColRaw = mix(lightNight, lightSun, sunVisibility * sunVisibility);
-vec3 lightColSqrt = mix(lightColRaw, dot(lightColRaw, vec3(0.299, 0.587, 0.114)) * weatherCol, rainStrength);
+vec3 lightColSqrt = mix(lightColRaw, dot(lightColRaw, vec3(0.299, 0.587, 0.114)) * weatherCol, wetness);
 vec3 lightCol = lightColSqrt * lightColSqrt;
 
 vec3 ambientColRaw = mix(lightNight, mix(lightColRaw, vec3(0.35, 0.65, 1.0), 0.65), sunVisibility * sunVisibility) * 0.5;
-vec3 ambientColSqrt = mix(ambientColRaw, dot(ambientColRaw, vec3(0.299, 0.587, 0.114)) * weatherCol, rainStrength);
+vec3 ambientColSqrt = mix(ambientColRaw, dot(ambientColRaw, vec3(0.299, 0.587, 0.114)) * weatherCol, wetness);
 vec3 ambientCol = ambientColSqrt * ambientColSqrt;

@@ -15,7 +15,7 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
 	float VoL = clamp(dot(nViewPos, lightVec), 0.0, 1.0);
 		  VoL = mix(exp(VoL * VoL * 2.0) * 0.5 + 0.25, VoL, timeBrightness);
 
-	float visibility = 0.01 * mix(pow3(VoU) * VoL, VoU, rainStrength) * int(z0 > 0.56);
+	float visibility = 0.01 * mix(pow3(VoU) * VoL, VoU, wetness) * int(z0 > 0.56);
 
 	#if MC_VERSION >= 11900
 	visibility *= 1.0 - darknessFactor;
@@ -85,6 +85,6 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
 		}
 
 		vl *= visibility;
-		if (isEyeInWater == 1.0) vl *= waterColorSqrt * 16.0;
+		if (isEyeInWater == 1.0) vl *= mix(waterColorSqrt, waterColorSqrt * weatherCol, wetness) * (4.0 + sunVisibility * 16.0);
 	}
 }

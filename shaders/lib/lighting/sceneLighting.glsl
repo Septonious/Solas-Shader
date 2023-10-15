@@ -82,7 +82,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
 
     //Subsurface Scattering & Specular Highlight
     float VoL = clamp(dot(normalize(viewPos.xyz), lightVec) * 0.5 + 0.5, 0.0, 1.0);
-    float scattering = pow(VoL, 16.0) * (1.0 - rainStrength) * subsurface * shadowFade;
+    float scattering = pow(VoL, 16.0) * (1.0 - wetness) * subsurface * shadowFade;
     NoL = clamp(NoL * 1.01 - 0.01, 0.0, 1.0);
     NoL = mix(NoL, 1.0, subsurface * 0.5);
     NoL = mix(NoL, 1.0, scattering);
@@ -122,7 +122,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     vec3 fullShadow = shadow * NoL;
     
     #ifdef OVERWORLD
-    float rainFactor = 1.0 - rainStrength * 0.75;
+    float rainFactor = 1.0 - wetness * 0.75;
 
     vec3 sceneLighting = mix(ambientCol, lightCol, fullShadow * rainFactor * shadowFade) * lightmap.y;
          sceneLighting *= 1.0 + scattering * shadow;
