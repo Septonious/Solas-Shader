@@ -55,9 +55,7 @@ uniform vec3 cameraPosition;
 #ifdef COLORED_LIGHTING
 uniform vec3 previousCameraPosition;
 
-#ifdef COLORED_LIGHTING
 uniform sampler2D gaux1;
-#endif
 #endif
 
 uniform sampler2D texture;

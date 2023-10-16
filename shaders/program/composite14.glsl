@@ -51,14 +51,13 @@ void main() {
 	vec3 color = texture2D(colortex0, texCoord).rgb;
 
     float dither = Bayer64(gl_FragCoord.xy);
+	float z0 = texture2D(depthtex0, texCoord).r;
 
+	#ifdef BLOOM
 	#ifdef TAA
 	dither = fract(dither + frameTimeCounter * 16.0);
 	#endif
 
-	float z0 = texture2D(depthtex0, texCoord).r;
-
-	#ifdef BLOOM
 	vec3 rawBloom = getBloom(texCoord, dither, z0);
 
 	float intensity = BLOOM_STRENGTH;

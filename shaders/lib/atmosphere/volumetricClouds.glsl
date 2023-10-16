@@ -25,7 +25,7 @@ float lightningFlashEffect(vec3 worldPos, vec3 lightningBoltPosition, float ligh
 }
 
 void getCloudSample(vec3 lightVec, vec2 rayPos, vec2 wind, float attenuation, inout float noise, inout float lightingNoise) {
-	rayPos *= 0.00025;
+	rayPos *= 0.0002;
 
 	float noiseBase = texture2D(noisetex, rayPos + 0.5 + wind * 0.5).g;
 		  noiseBase = pow2(1.0 - noiseBase) * 0.5 + 0.25;

@@ -99,7 +99,7 @@ void getIntegratedEmission(inout vec4 albedo, in vec3 viewPos, in vec3 worldPos,
 			emission = lAlbedo * (1.0 - wetness);
 			emission *= 2.0 - clamp(length(viewPos) * 0.2, 0.0, 1.0);
 			emission *= 1.0 - lightmap.y * 0.5;
-			emission *= 0.25;
+			emission *= 0.125;
 		}
 	}
 	#endif

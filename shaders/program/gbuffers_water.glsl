@@ -268,7 +268,7 @@ void main() {
 			float smoothness = 0.6;
 			float vanillaDiffuse = (0.25 * NoU + 0.75) + (0.667 - abs(NoE)) * (1.0 - abs(NoU)) * 0.15;
 			albedo.rgb += GetSpecularHighlight(newNormal, viewPos, smoothness, baseReflectance,
-										   	   lightColSqrt, shadow * vanillaDiffuse, color.a);
+										   	   lightCol * 2.0, shadow * vanillaDiffuse, color.a);
 			#endif
 		}
 		#endif
