@@ -29,9 +29,9 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 
 //Integrated PBR//
 #define INTEGRATED_NORMAL_MAPPING
-#define NORMAL_STRENGTH 8.0 //[1.0 2.0 3.0 4.0 5.0 6.0 7.0 8.0 9.0 10.0 11.0 12.0 13.0 14.0 15.0 16.0]
+#define NORMAL_STRENGTH 5.0 //[1.0 2.0 3.0 4.0 5.0 6.0 7.0 8.0 9.0 10.0 11.0 12.0 13.0 14.0 15.0 16.0]
 #define NORMAL_RESOLUTION 128.0 //[64.0 96.0 128.0 160.0 192.0]
-#define NORMAL_THRESHOLD 0.15 //[0.05 0.10 0.15 0.20 0.25]
+#define NORMAL_THRESHOLD 0.20 //[0.05 0.10 0.15 0.20 0.25]
 #define INTEGRATED_EMISSION
 //#define PLAYER_BRIGHT_PARTS_HIGHLIGHT
 #define EMISSIVE_FLOWERS
@@ -62,7 +62,7 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 
 //Bloom//
 #define BLOOM
-#define BLOOM_STRENGTH 2.50 //[1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00 4.25 4.50 4.75 5.00 5.25 5.50 5.75 6.00]
+#define BLOOM_STRENGTH 2.25 //[1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00 4.25 4.50 4.75 5.00 5.25 5.50 5.75 6.00]
 #define BLOOM_CONTRAST 2 //[-4 -3 -2 -1 0 1 2 3 4]
 #define BLOOM_TILE_SIZE 0.0 //[0.0 0.5 1.0 1.5 2.0]
 
@@ -85,7 +85,7 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 //Fog//
 #define DISTANT_FADE
 #define DISTANT_FADE_STYLE 0 //[0 1]
-#define FOG_DENSITY 2.00 //[0.00 0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00]
+#define FOG_DENSITY 1.75 //[0.00 0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00]
 #define FOG_HEIGHT 100.0 //[50.0 60.0 70.0 80.0 90.0 100.0 110.0 120.0 130.0 140.0 150.0 170.0 180.0 190.0 200.0]
 
 //Volumetric Nether & End Fog//
@@ -356,3 +356,7 @@ const float TAU = 6.2831853;
 
 #ifdef DOF
 #endif
+
+//test options//
+//#define TEST00
+#define TEST01
