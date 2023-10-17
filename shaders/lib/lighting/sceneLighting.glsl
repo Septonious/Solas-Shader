@@ -133,7 +133,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
 
     #if defined GBUFFERS_TERRAIN && !defined NETHER
 	vec3 baseReflectance = vec3(0.1);
-	float smoothness = mix(0.5, 0.9, clamp(specular * 2.0, 0.0, 1.0));
+	float smoothness = mix(0.4, 0.9, clamp(specular * 2.0, 0.0, 1.0));
 		 sceneLighting += GetSpecularHighlight(normal, viewPos, smoothness, baseReflectance,
 										   	   lightCol, shadow * vanillaDiffuse, color.a);
     #endif
