@@ -47,8 +47,6 @@ float eBS = eyeBrightnessSmooth.y / 240.0;
 void main() {
     vec4 albedo = texture2D(tex, texCoord) * color;
 
-	float glass = float(mat == 3);
-
 	if (albedo.a < 0.01) discard;
 
     #ifdef SHADOW_COLOR
@@ -62,9 +60,7 @@ void main() {
 	}
 	#endif
 
-	albedo.rgb *= 1.0 - pow32(albedo.a);
-
-	if (glass > 0.5 && albedo.a < 0.35) discard;
+	albedo.rgb *= 1.0 - pow32(pow32(albedo.a));
 	#endif
 	
 	gl_FragData[0] = albedo;

@@ -248,7 +248,7 @@ void main() {
 			vec3 diffPos = viewPos - oViewPos;
 
 			float DoN = clamp(dot(normalize(diffPos), newNormal), 0.0, 1.0);
-			float absorptionFactor = 1.0 - clamp(length(diffPos) * DoN * 0.1, 0.0, 1.0) * (0.25 + sunVisibility * 0.75);
+			float absorptionFactor = 1.0 - clamp(length(diffPos) * DoN * 0.1, 0.0, 1.0) * (0.25 + sunVisibility * 0.75) * lightmap.y;
 
 			vec3 absorptionColor = albedo.rgb * mix(vec3(1.0), mix(waterColor, vec3(0.0, 3.0, 3.0), absorptionFactor), 1.0 - absorptionFactor * absorptionFactor);
 

@@ -2,7 +2,7 @@ void getIntegratedSpecular(inout vec4 albedo, in vec3 normal, in vec2 worldPos, 
     float lAlbedo = length(albedo.rgb);
 
     if (mat == 300) {// Sand
-        specular = pow7(albedo.b) * 2.0;
+        specular = pow7(albedo.b);
     } else if (mat == 301) {// Iron, Gold, Emerald, Diamond, Copper & Plates
         specular = clamp(pow4(lAlbedo) * 0.4, 0.06, 0.4);
     } else if (mat == 302) {// Polished & smooth blocks
