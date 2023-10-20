@@ -60,7 +60,7 @@ void getIntegratedEmission(inout vec4 albedo, in vec3 viewPos, in vec3 worldPos,
 		albedo.rgb = pow3(albedo.rgb);
 	} else if (mat == 115) { // Sculks
 		emission = int(lAlbedo > 0.45 && albedo.r < 0.2) * 0.25;
-		emission *= texture2D(noisetex, (worldPos + cameraPosition.xz) * 0.00125).b;
+		emission *= texture2D(noisetex, (worldPos.xz + cameraPosition.xz) * 0.00125).b;
 	} else if (mat == 116) { // Redstone Lamp, Glowstone, Sea Lentern
 		emission = min(lAlbedo * 2.0, 1.0) * 1.5;
 		coloredLightingIntensity = emission;
