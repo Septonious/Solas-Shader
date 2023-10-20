@@ -20,7 +20,7 @@ void getIntegratedSpecular(inout vec4 albedo, in vec3 normal, in vec2 worldPos, 
     } else if (mat == 309) {//Quartz & Calcite
         specular = clamp(pow16(lAlbedo) * 0.5, 0.06, 0.7);
     } else if (mat == 310) {// Wet farmland
-        specular = float(lAlbedo < 0.3) * 0.2;
+        specular = float(lAlbedo < 0.3) * 0.1;
     } else if (mat == 311) {// Water cauldron
         if (albedo.b > 0.4 && lAlbedo > 0.5) {
             specular = 0.9;

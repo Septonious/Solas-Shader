@@ -1,3 +1,7 @@
+#ifdef OVERWORLD
+uniform float isLushCaves;
+#endif
+
 void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 atmosphereColor) {
 	float lViewPos = length(viewPos);
 
@@ -17,7 +21,7 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 atmo
 	vec3 fogColor = mix(normalize(skyColor + 0.00001), atmosphereColor, mix(1.0, mix(0.25 + fogAltitude * 0.25, 1.0, wetness), sunVisibility)) * fog;
 
     //Underground Fog
-	fogColor = mix(caveMinLightCol * fog, fogColor, caveFactor);
+	fogColor = mix(caveMinLightCol * fog, fogColor, clamp(caveFactor + isLushCaves, 0.0, 1.0));
 
 	//Distant Fade
 	#ifdef DISTANT_FADE
@@ -98,8 +102,8 @@ void getDenseFog(inout vec3 color, vec3 viewPos) {
 }
 
 void Fog(inout vec3 color, in vec3 viewPos, in vec3 worldPos, in vec3 atmosphereColor) {
-	//if (isEyeInWater < 1) getNormalFog(color, viewPos, worldPos, atmosphereColor);
-	//if (isEyeInWater > 1) getDenseFog(color, viewPos);
+	if (isEyeInWater < 1) getNormalFog(color, viewPos, worldPos, atmosphereColor);
+	if (isEyeInWater > 1) getDenseFog(color, viewPos);
 	if (blindFactor > 0.0) getBlindFog(color, viewPos);
 
 	#if MC_VERSION >= 11900

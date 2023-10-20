@@ -44,7 +44,7 @@ uniform float shadowFade;
 uniform float wetness, timeBrightness, timeAngle;
 #endif
 
-#ifdef RAIN_PUDDLES
+#if defined RAIN_PUDDLES || defined INTEGRATED_EMISSION
 uniform sampler2D noisetex;
 #endif
 
