@@ -1,3 +1,9 @@
+float texture2DShadow(sampler2D shadowtex, vec3 shadowPos, float lod) {
+    float shadow = texture2DLod(shadowtex, shadowPos.xy, lod).r;
+
+    return clamp((shadow - shadowPos.z) * 65536.0, 0.0, 1.0);
+}
+
 void getCloudSample(vec3 sunVec, vec2 rayPos, vec2 wind, float attenuation, inout float noise, inout float lightingNoise) {
 	rayPos *= 0.00025;
 
@@ -83,7 +89,7 @@ void computeVolumetricClouds(inout vec4 vc, float dither, inout float currentDep
 
                 vec3 worldPos = rayPos - cameraPosition;
 
-				float shadow0 = clamp(shadow2D(shadowtex0, ToShadow(worldPos)).z, 0.0, 1.0);
+				float shadow0 = clamp(texture2DShadow(shadowtex0, ToShadow(worldPos), 2), 0.0, 1.0);
 
 				float noise = 0.0;
 				float lightingNoise = 0.0;

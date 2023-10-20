@@ -1,3 +1,9 @@
+float texture2DShadow(sampler2D shadowtex, vec3 shadowPos, float lod) {
+    float shadow = texture2DLod(shadowtex, shadowPos.xy, lod).r;
+
+    return clamp((shadow - shadowPos.z) * 65536.0, 0.0, 1.0);
+}
+
 void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither) {
 	//Depths
 	float z0 = texture2D(depthtex0, texCoord).r;
@@ -50,11 +56,11 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
 			//Shadows
 			vec3 shadowPos = ToShadow(worldPos);
 
-			float shadow0 = shadow2D(shadowtex0, shadowPos.xyz).z;
+			float shadow0 = texture2DShadow(shadowtex0, shadowPos.xyz, 2);
 
 			#ifdef SHADOW_COLOR
 			if (shadow0 < 1.0) {
-				float shadow1 = shadow2D(shadowtex1, shadowPos.xyz).z;
+				float shadow1 = texture2DShadow(shadowtex1, shadowPos.xyz, 2);
 				if (shadow1 > 0.0) {
 					shadowCol = texture2D(shadowcolor0, shadowPos.xy).rgb;
 					shadowCol *= shadowCol * shadow1;

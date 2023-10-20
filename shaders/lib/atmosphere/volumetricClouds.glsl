@@ -24,6 +24,12 @@ float lightningFlashEffect(vec3 worldPos, vec3 lightningBoltPosition, float ligh
     return lightningLight;
 }
 
+float texture2DShadow(sampler2D shadowtex, vec3 shadowPos, float lod) {
+    float shadow = texture2DLod(shadowtex, shadowPos.xy, lod).r;
+
+    return clamp((shadow - shadowPos.z) * 65536.0, 0.0, 1.0);
+}
+
 void getCloudSample(vec3 lightVec, vec2 rayPos, vec2 wind, float attenuation, inout float noise, inout float lightingNoise) {
 	rayPos *= 0.0002;
 
@@ -112,7 +118,7 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z1, f
 
 				//Indoor leak prevention
 				if (eyeBrightnessSmooth.y < 200.0) {
-					if (shadow2D(shadowtex1, ToShadow(worldPos)).z == 0.0) break;
+					if (texture2DShadow(shadowtex1, ToShadow(worldPos), 2) == 0.0) break;
 				}
 
 				float noise = 0.0;

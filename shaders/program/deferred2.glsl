@@ -63,7 +63,7 @@ uniform sampler2D depthtex2;
 #endif
 
 #ifdef VC
-uniform sampler2DShadow shadowtex1;
+uniform sampler2D shadowtex1;
 
 #ifdef BLOCKY_CLOUDS
 uniform sampler2D shadowcolor1;

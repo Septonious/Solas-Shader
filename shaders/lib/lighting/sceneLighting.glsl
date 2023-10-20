@@ -26,7 +26,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
 
     //Block Lighting
     #if defined GBUFFERS_TERRAIN && defined COLORED_LIGHTING
-    float lightmapOut = clamp(pow6(lightmap.x) * 1.5 + pow3(lightmap.x) * 0.5, 0.0, 1.0);
+    float lightmapOut = clamp(pow6(lightmap.x) * 1.25 + pow3(lightmap.x) * 0.75, 0.0, 1.0);
     mat3 tbn = mat3(
         tangent.x, binormal.x, normal.x,
         tangent.y, binormal.y, normal.y,
@@ -44,7 +44,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     lightmapOut = clamp(lightmapOut, 0.0, 1.0);
     #endif
 
-    float blockLightMap = clamp(pow6(lightmap.x) * 1.5 + pow3(lightmap.x) * 0.5, 0.0, 1.0);
+    float blockLightMap = clamp(pow6(lightmap.x) * 1.25 + pow3(lightmap.x) * 0.75, 0.0, 1.0);
 
     #if defined GBUFFERS_TERRAIN && defined COLORED_LIGHTING
     blockLightMap = lightmapOut;

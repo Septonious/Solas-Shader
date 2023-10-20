@@ -52,13 +52,13 @@ uniform sampler2D shadowcolor0;
 #if defined VL || (defined VF_NETHER_END && defined END)
 #ifdef VL
 #ifdef SHADOW_COLOR
-uniform sampler2DShadow shadowtex1;
+uniform sampler2D shadowtex1;
 #endif
 
 uniform sampler2D shadowcolor1;
 #endif
 
-uniform sampler2DShadow shadowtex0;
+uniform sampler2D shadowtex0;
 
 uniform mat4 shadowModelView, shadowProjection;
 #endif

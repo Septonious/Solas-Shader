@@ -104,19 +104,18 @@ void main() {
 	float emission = 0.0;
 
 	#ifdef TEST01
-	float lightningBolt = float(mat == 0);
-	#else
-	float lightningBolt = float(mat == 1);
-	#endif
-
-	if (lightningBolt > 0.5) {
-		#ifndef TEST01
-		albedo.rgb = vec3(1.0, 1.2, 1.7) * 0.5;
-		albedo.a = 0.75;
-		#else
+	float test = float(mat == 0);
+	if (test > 0.5) {
 		albedo.rgb *= 2.0;
 		albedo.a = 0.25;
-		#endif
+	}
+	#endif
+
+	float lightningBolt = float(mat == 1);
+
+	if (lightningBolt > 0.5) {
+		albedo.rgb = vec3(1.0, 1.2, 1.7) * 0.5;
+		albedo.a = 0.75;
 	}
 
 	if (albedo.a > 0.001 && lightningBolt < 0.5) {
