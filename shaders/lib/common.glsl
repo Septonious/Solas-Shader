@@ -2,7 +2,7 @@
 
 //Shadows//
 const int shadowMapResolution = 1024; //[512 1024 1536 2048 3072]
-const float shadowDistance = 192.0; //[128.0 192.0 256.0 320.0 384.0 448.0 512.0]
+const float shadowDistance = 128.0; //[128.0 192.0 256.0 320.0 384.0 448.0 512.0]
 const float sunPathRotation = -40.0; //[-85.0 -80.0 -75.0 -70.0 -65.0 -60.0 -55.0 -50.0 -45.0 -40.0 -35.0 -30.0 -25.0 -20.0 -15.0 -10.0 -5.0 0.0 5.0 10.0 15.0 20.0 25.0 30.0 35.0 40.0 45.0 50.0 55.0 60.0 65.0 70.0 75.0 80.0 85.0]
 const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 
@@ -23,9 +23,9 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 #define COLORED_LIGHTING_MIX 0.8 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
 
 //Global Illumination//
-//#define GLOBAL_ILLUMINATION
-#define GLOBAL_ILLUMINATION_STRENGTH 1.5 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
-#define GLOBAL_ILLUMINATION_RADIUS 4.00 //[1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00]
+//#define GI
+#define GLOBAL_ILLUMINATION_STRENGTH 1 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
+#define GLOBAL_ILLUMINATION_RADIUS 0.5 //[0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5]
 
 //Integrated PBR//
 #define INTEGRATED_NORMAL_MAPPING
@@ -111,7 +111,7 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 #define VC
 //#define BLOCKY_CLOUDS
 //#define VC_DYNAMIC_WEATHER
-#define VC_DENSITY 7.0 //[4.0 5.0 6.0 7.0 8.0 9.0 10.0]
+#define VC_DENSITY 5.0 //[4.0 5.0 6.0 7.0 8.0 9.0 10.0]
 #define VC_AMOUNT 11.5 //[13.0 12.5 12.0 11.5 11.0 10.5 10.0]
 #define VC_HEIGHT 150.0 //[100.0 110.0 120.0 130.0 140.0 150.0 160.0 170.0 180.0 190.0 200.0]
 #define VC_THICKNESS 8.0 //[4.0 5.0 6.0 7.0 8.0 9.0 10.0]
@@ -304,7 +304,7 @@ const float TAU = 6.2831853;
 #undef VC
 #undef VL
 #undef WAVING_BLOCKS
-#undef GLOBAL_ILLUMINATION
+#undef GI
 #undef VF_NETHER_REFRACTION
 #undef RAIN_PUDDLES
 #endif
@@ -351,7 +351,7 @@ const float TAU = 6.2831853;
 
 #if defined GBUFFERS_TEXTURED || defined GBUFFERS_HAND || defined GBUFFERS_BASIC || defined GBUFFERS_WATER
 #undef COLORED_LIGHTING
-#undef GLOBAL_ILLUMINATION
+#undef GI
 #endif
 
 #ifdef DOF

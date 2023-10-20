@@ -72,7 +72,7 @@ uniform sampler2D gaux3;
 #endif
 
 #ifdef VC
-uniform sampler2D gaux2;
+uniform sampler2D colortex7;
 #endif
 
 uniform sampler2D texture;
@@ -216,7 +216,7 @@ void main() {
 		float cloudHeight = VC_HEIGHT;
 		#endif
 
-		float cloudDepth = texture2D(gaux2, screenPos.xy).r * far * 2.0;
+		float cloudDepth = texture2D(colortex7, screenPos.xy).a * far * 2.0;
 
 		if (length(viewPos) < cloudDepth && cameraPosition.y > cloudHeight) {
 			discard;
@@ -268,7 +268,7 @@ void main() {
 			float smoothness = 0.6;
 			float vanillaDiffuse = (0.25 * NoU + 0.75) + (0.667 - abs(NoE)) * (1.0 - abs(NoU)) * 0.15;
 			albedo.rgb += GetSpecularHighlight(newNormal, viewPos, smoothness, baseReflectance,
-										   	   lightCol * 2.0, shadow * vanillaDiffuse, color.a);
+										   	   lightColSqrt * 2.0, shadow * vanillaDiffuse, color.a);
 			#endif
 		}
 		#endif

@@ -16,13 +16,15 @@ in vec2 signMidCoordPos;
 flat in vec2 absMidCoordPos;
 #endif
 
-#if defined INTEGRATED_NORMAL_MAPPING || defined COLORED_LIGHTING
+#if defined INTEGRATED_NORMAL_MAPPING || (defined COLORED_LIGHTING || defined GI)
 in vec3 binormal, tangent;
 #endif
 
 in vec4 color;
 
 //Uniforms//
+uniform int isEyeInWater;
+
 #ifdef DYNAMIC_HANDLIGHT
 uniform int heldItemId, heldItemId2;
 uniform int heldBlockLightValue;
@@ -52,10 +54,16 @@ uniform ivec2 atlasSize;
 
 uniform vec3 cameraPosition;
 
-#ifdef COLORED_LIGHTING
+#if defined COLORED_LIGHTING || defined GI
 uniform vec3 previousCameraPosition;
+#endif
 
+#ifdef COLORED_LIGHTING
 uniform sampler2D gaux1;
+#endif
+
+#ifdef GI
+uniform sampler2D gaux2;
 #endif
 
 uniform sampler2D texture;
@@ -63,7 +71,7 @@ uniform sampler2D texture;
 uniform mat4 gbufferProjectionInverse;
 uniform mat4 gbufferModelViewInverse;
 
-#ifdef COLORED_LIGHTING
+#if defined COLORED_LIGHTING || defined GI
 uniform mat4 gbufferPreviousModelView, gbufferPreviousProjection;
 uniform mat4 gbufferProjection;
 #endif
@@ -114,7 +122,7 @@ vec3 lightVec = sunVec;
 
 #include "/lib/color/dimensionColor.glsl"
 
-#ifdef COLORED_LIGHTING
+#if defined COLORED_LIGHTING || defined GI
 #include "/lib/util/reprojection.glsl"
 #include "/lib/lighting/coloredLightingGbuffers.glsl"
 #endif
@@ -193,7 +201,7 @@ out vec2 signMidCoordPos;
 flat out vec2 absMidCoordPos;
 #endif
 
-#if defined INTEGRATED_NORMAL_MAPPING || defined COLORED_LIGHTING
+#if defined INTEGRATED_NORMAL_MAPPING || (defined COLORED_LIGHTING || defined GI)
 out vec3 binormal, tangent;
 #endif
 
@@ -222,7 +230,7 @@ uniform mat4 gbufferModelViewInverse;
 //Attributes//
 attribute vec4 mc_Entity;
 
-#if defined INTEGRATED_NORMAL_MAPPING || defined COLORED_LIGHTING
+#if defined INTEGRATED_NORMAL_MAPPING || (defined COLORED_LIGHTING || defined GI)
 attribute vec4 at_tangent;
 #endif
 
@@ -257,7 +265,7 @@ void main() {
 	//Normal
 	normal = normalize(gl_NormalMatrix * gl_Normal);
 
-	#if defined INTEGRATED_NORMAL_MAPPING || defined COLORED_LIGHTING
+	#if defined INTEGRATED_NORMAL_MAPPING || (defined COLORED_LIGHTING || defined GI)
 	binormal = normalize(gl_NormalMatrix * cross(at_tangent.xyz, gl_Normal.xyz) * at_tangent.w);
 	tangent = normalize(gl_NormalMatrix * at_tangent.xyz);
 	#endif

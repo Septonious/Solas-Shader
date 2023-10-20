@@ -13,6 +13,8 @@ in vec3 sunVec, upVec, eastVec;
 in vec4 color;
 
 //Uniforms//
+uniform int isEyeInWater;
+
 #ifdef DYNAMIC_HANDLIGHT
 uniform int heldItemId, heldItemId2;
 uniform int heldBlockLightValue, heldBlockLightValue2;

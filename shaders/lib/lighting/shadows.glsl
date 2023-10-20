@@ -1,4 +1,4 @@
-uniform sampler2DShadow shadowtex0;
+uniform sampler2D shadowtex0;
 
 #ifdef SHADOW_COLOR
 uniform sampler2D shadowtex1;
@@ -23,8 +23,8 @@ const vec2 shadowOffsets8[8] = vec2[8](
    vec2(-0.40412395850181015, -0.8212788214021378)
 );
 
-float texture2DShadow(sampler2D shadowtex, vec3 shadowPos) {
-    float shadow = texture2D(shadowtex, shadowPos.xy).r;
+float texture2DShadow(sampler2D shadowtex, vec3 shadowPos, float lod) {
+    float shadow = texture2DLod(shadowtex, shadowPos.xy, lod).r;
 
     return clamp((shadow - shadowPos.z) * 65536.0, 0.0, 1.0);
 }
@@ -64,12 +64,12 @@ vec3 computeShadow(vec3 shadowPos, float offset, float skyLightMap, float ao, fl
 
     for (int i = 0; i < 8; i++) {
         vec2 pixelOffset = ditherMatrix * offset * shadowOffsets8[i];
-        shadow0 += shadow2D(shadowtex0, vec3(shadowPos.xy + pixelOffset, shadowPos.z)).r;
+        shadow0 += texture2DShadow(shadowtex0, vec3(shadowPos.xy + pixelOffset, shadowPos.z), 2.0);
 
         #ifdef SHADOW_COLOR
         if (shadow0 < 0.999) {
             shadowCol += texture2D(shadowcolor0, shadowPos.xy + pixelOffset).rgb *
-                        texture2DShadow(shadowtex1, vec3(shadowPos.xy + pixelOffset, shadowPos.z));
+                        texture2DShadow(shadowtex1, vec3(shadowPos.xy + pixelOffset, shadowPos.z), 2.0);
         }
         #endif
     }
@@ -80,4 +80,15 @@ vec3 computeShadow(vec3 shadowPos, float offset, float skyLightMap, float ao, fl
     shadow0 = mix(shadow0, shadow0 * ao, (1.0 - ao));
 
     return clamp(shadowCol * (1.0 - shadow0) + shadow0, 0.0, 1.0);
+}
+
+vec3 getFakeShadow(float skyLight) {
+	float fakeShadow = 1.0;
+
+	#ifdef OVERWORLD
+	if (isEyeInWater == 0) skyLight = pow16(skyLight);
+	fakeShadow = skyLight;
+	#endif
+
+	return vec3(fakeShadow);
 }

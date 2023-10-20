@@ -52,16 +52,24 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
 
     vec3 blockLighting = blockLightCol * blockLightMap * int(emission == 0.0);
 
-    //Colored Block Lighting
+    //Colored Block Lighting && GI
+    vec3 gi = vec3(0.0);
+    
     #if !defined GBUFFERS_WATER
-    #ifdef COLORED_LIGHTING
+    #if defined COLORED_LIGHTING || defined GI
     vec3 coloredLighting = vec3(0.0);
 
-    applyCLGI(blockLightCol, screenPos, coloredLighting, lightmap.x);
+    applyCLGI(blockLightCol, screenPos, coloredLighting, gi, lightmap);
     #endif
 
     #ifdef COLORED_LIGHTING
     blockLighting = coloredLighting * blockLightMap;
+    #endif
+
+    #ifdef GI
+    gi *= 1.0 - NoL * 0.5;
+    gi *= 1.0 - NoU * 0.5;
+    gi *= lightmap.y;
     #endif
     #endif
 
@@ -88,7 +96,9 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     NoL = mix(NoL, 1.0, scattering);
     #endif
 
-    if (NoL > 0.0001) {
+    float shadowLength = shadowDistance * 0.9166667 - length(vec4(worldPos.x, worldPos.y, worldPos.y, worldPos.z));
+
+    if (NoL > 0.0001 && shadowLength > 0.000001) {
         //Shadows without peter-panning from Emin's Complementary Reimagined shaderpack, tysm for allowing me to use them ^^
         //Developed by Emin#7309 and gri573#7741
         vec3 worldNormal = normalize(ToWorld(normal * 100000.0));
@@ -117,6 +127,8 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
               offset *= 1.0 + subsurface * 2.0 * viewDistance;
 
         shadow = computeShadow(shadowPos, offset, lightmap.y, ao, subsurface, viewDistance);
+    } else {
+        shadow = getFakeShadow(lightmap.y);
     }
 
     vec3 fullShadow = shadow * NoL;
@@ -124,7 +136,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     #ifdef OVERWORLD
     float rainFactor = 1.0 - wetness * 0.75;
 
-    vec3 sceneLighting = mix(ambientCol, lightCol, fullShadow * rainFactor * shadowFade) * lightmap.y;
+    vec3 sceneLighting = mix(ambientCol + mix(vec3(0.0), gi, GLOBAL_ILLUMINATION_STRENGTH), lightCol, fullShadow * rainFactor * shadowFade) * lightmap.y;
          sceneLighting *= 1.0 + scattering * shadow;
 
     #if defined IS_IRIS && !defined GBUFFERS_WATER
@@ -160,4 +172,14 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     albedo = sqrt(max(albedo, vec3(0.0)));
 
     emission *= EMISSION_STRENGTH;
+
+    #ifdef GI
+    #ifdef GBUFFERS_TERRAIN
+    float giVisibility = length(fullShadow * rainFactor * shadowFade * sunVisibility) * int(emission == 0.0);
+
+    if (giVisibility != 0.0) {
+        coloredLightingIntensity = mix(coloredLightingIntensity, 0.095, giVisibility);
+    }
+    #endif
+    #endif
 }

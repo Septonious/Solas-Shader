@@ -209,10 +209,10 @@ void main() {
 
 	vec3 reflectionColor = pow(color.rgb, vec3(0.125)) * 0.5;
 
-	/* DRAWBUFFERS:056 */
+	/* DRAWBUFFERS:067 */
 	gl_FragData[0].rgb = color;
-	gl_FragData[1].r = cloudDepth;
-	gl_FragData[2] = vec4(reflectionColor, int(z1 < 1.0));
+	gl_FragData[1].rgb = reflectionColor;
+	gl_FragData[2].a = float(cloudDepth > 0.0);
 }
 
 #endif

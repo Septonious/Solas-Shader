@@ -14,6 +14,8 @@ in vec3 sunVec, upVec, eastVec;
 in vec4 color;
 
 //Uniforms//
+uniform int isEyeInWater;
+
 #ifdef DYNAMIC_HANDLIGHT
 uniform int heldItemId, heldItemId2;
 uniform int heldBlockLightValue, heldBlockLightValue2;
@@ -31,12 +33,16 @@ uniform float wetness, timeBrightness, timeAngle;
 uniform vec3 cameraPosition;
 uniform vec4 entityColor;
 
-#ifdef COLORED_LIGHTING
+#if defined COLORED_LIGHTING || defined GI
 uniform vec3 previousCameraPosition;
+#endif
 
 #ifdef COLORED_LIGHTING
 uniform sampler2D gaux1;
 #endif
+
+#ifdef GI
+uniform sampler2D gaux2;
 #endif
 
 uniform sampler2D texture;
@@ -44,7 +50,7 @@ uniform sampler2D texture;
 uniform mat4 gbufferProjectionInverse;
 uniform mat4 gbufferModelViewInverse;
 
-#ifdef COLORED_LIGHTING
+#if defined COLORED_LIGHTING || defined GI
 uniform mat4 gbufferPreviousModelView, gbufferPreviousProjection;
 uniform mat4 gbufferProjection;
 #endif
@@ -77,7 +83,7 @@ vec3 lightVec = sunVec;
 #include "/lib/lighting/dynamicHandLight.glsl"
 #endif
 
-#ifdef COLORED_LIGHTING
+#if defined COLORED_LIGHTING || defined GI
 #include "/lib/util/reprojection.glsl"
 #include "/lib/lighting/coloredLightingGbuffers.glsl"
 #endif

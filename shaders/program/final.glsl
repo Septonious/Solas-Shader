@@ -3,9 +3,9 @@
 
 #ifdef FSH
 
-const bool shadowHardwareFiltering = true;
-const int noiseTextureResolution = 512;
 const float shadowDistanceRenderMul = 1.0;
+
+const int noiseTextureResolution = 512;
 const float wetnessHalflife = 128.0;
 
 //Optifine Constants//
@@ -14,9 +14,10 @@ const int colortex0Format = R11F_G11F_B10F; //scene
 const int colortex1Format = RGBA16; //translucent
 const int colortex2Format = RGBA16; //temporal data
 const int colortex3Format = RGBA16; //gbuffers data
-const int colortex4Format = RGB16; //colored light
-const int colortex5Format = RGB16; //random stuff
-const int colortex6Format = RGB16; //rvr
+const int colortex4Format = RGB16F; //colored light
+const int colortex5Format = RGB16F; //gi
+const int colortex6Format = R11F_G11F_B10F; //reflections
+const int colortex7Format = RGB10_A2; //stuff
 */
 
 //Varyings//

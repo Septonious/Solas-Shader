@@ -45,9 +45,6 @@ value.DISTANT_FADE_STYLE.0=Spherical
 value.DISTANT_FADE_STYLE.1=Cylindrical
 option.FOG_DENSITY=Fog Density
 option.FOG_HEIGHT=Ground Fog Height
-option.BLOOMY_FOG=Bloomy Fog
-option.BLOOMY_FOG_DENSITY=Bloomy Fog Density
-option.BLOOMY_FOG.comment=Enables fog that is colored by bloom. Requires Bloom and Bloom Colored Lighting to be enabled!
 
 screen.SKY_CONFIG=Sky Config
 
@@ -123,24 +120,19 @@ option.SHADOW_SAMPLE_COUNT=Shadow Samples
 option.SHADOW_COLOR=Colored Shadows
 option.ENTITY_SHADOWS=Entity Shadows
 
-option.BLOOM_COLORED_LIGHTING=Bloom Colored Lighting (BCL)
-option.COLORED_LIGHTING_RADIUS=BCL Radius
-option.COLORED_LIGHTING_STRENGTH=BCL Strength
+option.COLORED_LIGHTING=Colored Lighting (CL)
+option.COLORED_LIGHTING_RADIUS=CL Radius
+option.COLORED_LIGHTING_STRENGTH=CL Strength
+
+option.GI=Global Illumination (GI)
+option.GLOBAL_ILLUMINATION_STRENGTH=GI Strength
+option.GLOBAL_ILLUMINATION_RADIUS=GI Radius
 
 option.AO=Custom Ambient Occlusion (AO)
 option.VANILLA_AO=Vanilla Ambient Occlusion (AO)
 option.AO_STRENGTH=AO Strength
 option.AO_RADIUS=AO Radius
 
-option.SSPT=Screen Space Path Tracing (SSPT)
-option.SSPT_LUMINANCE=Luminance
-option.SSPT_LUMINANCE.comment=Controls the brightness of SSPT.
-option.SSPT_SAMPLE_COUNT=Sample Count
-option.SSPT_SAMPLE_COUNT.comment=Controls the accuracy and precision of SSPT. Higher values impact performance!
-
-option.GLOBAL_ILLUMINATION=Global Illumination (GI)
-option.GLOBAL_ILLUMINATION.comment=Enables fake GI based on bloom. Both bloom and bloom colored lighting have to be enabled.
-option.GLOBAL_ILLUMINATION_STRENGTH=GI Strength
 option.DYNAMIC_HANDLIGHT=Dynamic Hand Lighting
 
 

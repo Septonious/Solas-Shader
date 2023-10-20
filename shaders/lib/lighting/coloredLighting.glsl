@@ -7,13 +7,24 @@ vec2 offsetDist(float x) {
     return vec2(cos(n), sin(n)) * x * x;
 }
 
-void computeColoredLighting(in float z0, inout vec3 coloredLighting) {
+void computeColoredLighting(in float z0, inout vec3 coloredLighting, inout vec3 globalIllumination) {
     vec2 prvCoord = Reprojection(vec3(texCoord, z0));
 
     float emission = texture2D(colortex3, texCoord).a;
-    float directEmission = float(emission > 0.1 && emission <= 0.98);
-    vec3 albedo = texture2D(colortex0, texCoord).rgb * directEmission;
+    float indirectEmission = float(emission > 0.094 && emission < 0.096);
+    float directEmission = float(emission > 0.1 && emission <= 0.98) * (1.0 - indirectEmission);
+
+    vec3 albedo = texture2D(colortex0, texCoord).rgb;
+
+    #ifdef COLORED_LIGHTING
+    vec3 clAlbedo = albedo * directEmission;
 	vec3 previousColoredLight = vec3(0.0);
+    #endif
+
+    #ifdef GI
+    vec3 giAlbedo = albedo * indirectEmission;
+    vec3 previousGlobalIllumination = vec3(0.0);
+    #endif
 
     if (prvCoord.x > 0.0 && prvCoord.x < 1.0 && prvCoord.y > 0.0 && prvCoord.y < 1.0) {
         float linearDepth0 = getLinearDepth(z0);
@@ -23,16 +34,20 @@ void computeColoredLighting(in float z0, inout vec3 coloredLighting) {
 
         vec2 blurRadius = vec2(1.0 / aspectRatio, 1.0) * fovScale;
 
-        #ifdef COLORED_LIGHTING
         vec2 directLightingRadius = blurRadius * COLORED_LIGHTING_RADIUS / distScale;
-        #endif
+        vec2 indirectLightingRadius = blurRadius * GLOBAL_ILLUMINATION_RADIUS / distScale;
 
         for (int i = 0; i < 4; i++) {
-            vec2 blurOffset = offsetDist((dither + i) * 0.25);
-
             #ifdef COLORED_LIGHTING
-            vec2 directLightingOffset = blurOffset * directLightingRadius;
+            vec2 blurOffsetCL = offsetDist((dither + i) * 0.25);
+            vec2 directLightingOffset = blurOffsetCL * directLightingRadius;
             previousColoredLight += texture2D(colortex4, prvCoord.xy + directLightingOffset).rgb;
+            #endif
+
+            #ifdef GI
+            vec2 blurOffsetGI = offsetDist((dither + i) * 0.15);
+            vec2 indirectLightingOffset = blurOffsetGI * indirectLightingRadius;
+            previousGlobalIllumination += texture2D(colortex5, prvCoord.xy + indirectLightingOffset).rgb;
             #endif
         }
 
@@ -40,9 +55,18 @@ void computeColoredLighting(in float z0, inout vec3 coloredLighting) {
         previousColoredLight *= 0.25;
         previousColoredLight *= previousColoredLight;
         #endif
+
+        #ifdef GI
+        previousGlobalIllumination *= 0.25;
+        previousGlobalIllumination *= previousGlobalIllumination;
+        #endif
     }
 
     #ifdef COLORED_LIGHTING
-	coloredLighting = sqrt(mix(previousColoredLight, albedo, 0.01));
+	coloredLighting = sqrt(mix(previousColoredLight, clAlbedo, 0.01));
+    #endif
+
+    #ifdef GI
+	globalIllumination = sqrt(mix(previousGlobalIllumination, giAlbedo, 0.01));
     #endif
 }

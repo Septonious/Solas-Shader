@@ -6,7 +6,7 @@ void getReflection(inout vec4 color, in vec3 viewPos, in vec3 normal, in float f
 	blueNoiseDither = fract(blueNoiseDither + frameCounter * 0.618);
 	#endif
 
-	vec3 reflectPos = rayTrace(depthtex0, viewPos, normal, blueNoiseDither, border, 6, 20, 0.1, 2.0);
+	vec3 reflectPos = rayTrace(depthtex0, viewPos, normal, blueNoiseDither, border, 6, 10, 0.1, 2.0);
 
 	border = clamp(13.333 * (1.0 - border), 0.0, 1.0);
 
