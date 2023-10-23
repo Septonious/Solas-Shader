@@ -10,6 +10,7 @@ in vec2 texCoord;
 #if defined COLORED_LIGHTING || defined GI
 uniform int frameCounter;
 
+uniform float viewWidth, viewHeight;
 uniform float far, near;
 uniform float aspectRatio;
 

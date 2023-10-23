@@ -16,7 +16,7 @@ vec3 getAtmosphere(vec3 viewPos) {
     float scatteringWidth = pow(sqrt(1.0 - VoUClamped), 3.0 - VoSClamped * 2.0 + sunVisibility);
     float glare = pow8(clamp(dot(nViewPos, lightVec), 0.0, 1.0));
 
-    float scatteringMixer = sqrt(sunVisibility) * (0.4 + invVoS * 0.3) * scatteringWidth * belowHorizon * (1.0 - wetness) * (1.0 - timeBrightness * 0.25);
+    float scatteringMixer = sqrt(sunVisibility) * (0.5 + invVoS * 0.3) * scatteringWidth * belowHorizon * (1.0 - wetness);
     vec3 scatteringColor = mix(mix(vec3(1.2, 0.2, 0.1), vec3(0.5, 0.9, 0.2), scatteringColorMixer), lightColSqrt, sunVisibility * sunVisibility);
 
     //Day, Night and Rain Sky

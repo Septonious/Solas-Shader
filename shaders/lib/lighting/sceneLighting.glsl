@@ -120,8 +120,6 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
 
         vec3 shadowPos = ToShadow(worldPosM);
 
-        if (lViewPos < shadowDistance && leaves > 0.5) shadowPos.z -= 0.0005;
-
         float viewDistance = 1.0 - clamp(lViewPos * 0.01, 0.0, 1.0);
         float offset = mix(0.0009765, 0.0009765 * ao, (1.0 - ao));
               offset *= 1.0 + subsurface * 2.0 * viewDistance;
@@ -167,7 +165,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     #endif
 
     albedo = pow(albedo, vec3(2.2));
-    albedo *= sceneLighting + blockLighting + (albedo * emission * 4.0) + nightVision * 0.25 + (minLightCol * (1.0 - lightmap.y));
+    albedo *= sceneLighting + blockLighting + (albedo * emission * 4.0) + nightVision * 0.25 + minLightCol * (1.0 - lightmap.y);
     albedo *= vanillaDiffuse;
     albedo = sqrt(max(albedo, vec3(0.0)));
 

@@ -40,6 +40,7 @@ void computeColoredLighting(in float z0, inout vec3 coloredLighting, inout vec3 
         for (int i = 0; i < 4; i++) {
             #ifdef COLORED_LIGHTING
             vec2 blurOffsetCL = offsetDist((dither + i) * 0.25);
+                 blurOffsetCL = floor(blurOffsetCL * vec2(viewWidth, viewHeight) + 0.5) / vec2(viewWidth, viewHeight);
             vec2 directLightingOffset = blurOffsetCL * directLightingRadius;
             previousColoredLight += texture2D(colortex4, prvCoord.xy + directLightingOffset).rgb;
             #endif

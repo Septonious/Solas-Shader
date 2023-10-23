@@ -70,7 +70,7 @@ void getIntegratedEmission(inout vec4 albedo, in vec3 viewPos, in vec3 worldPos,
 	} else if (mat == 119) {// End Rod
 		emission = 0.05 * pow4(lAlbedo);
 		coloredLightingIntensity = emission;
-		albedo.rgb *= vec3(1.72, 1.12, 2.47);
+		albedo.rgb *= vec3(1.42, 1.22, 2.07);
 	} else if (mat == 120) { // Powered Rail
 		emission = int(albedo.g < 0.25);
 	} else if (mat == 121 || mat == 122 || mat == 123) { // Fully emissive blocks

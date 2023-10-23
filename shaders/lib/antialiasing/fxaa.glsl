@@ -7,7 +7,7 @@ float getLuminance(vec3 color) {
 
 vec3 FXAA311(vec3 color) {
 	const float edgeThresholdMin = 0.0625;
-	const float edgeThresholdMax = 0.2500;
+	const float edgeThresholdMax = 0.7500;
 	const float subpixelQuality = 0.75;
 	
 	vec2 pixelSize = 1.0 / vec2(viewWidth, viewHeight);
