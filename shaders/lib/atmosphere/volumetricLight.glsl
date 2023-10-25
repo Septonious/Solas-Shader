@@ -38,7 +38,7 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
 		float linearDepth1 = getLinearDepth(z1);
 
 		//Variables
-		float distanceFactor = mix(4.0, 10.0, float(isEyeInWater > 0.5));
+		float distanceFactor = mix(4.0, 12.0, float(isEyeInWater > 0.5));
 		float lViewPos = length(viewPos);
 
 		//Ray Marching

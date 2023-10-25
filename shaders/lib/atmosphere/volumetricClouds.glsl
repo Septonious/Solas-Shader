@@ -149,8 +149,8 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z1, f
 			}
 
 			//Final color calculations
-			vec3 cloudAmbientColor = mix(ambientCol, atmosphereColor, 0.35 * sunVisibility) * (0.35 + sunVisibility * sunVisibility * 0.3);
-			vec3 cloudLightColor = mix(lightCol, atmosphereColor, 0.15 * sunVisibility) * (1.0 + scattering * 2.0);
+			vec3 cloudAmbientColor = mix(ambientCol, atmosphereColor, 0.4 * sunVisibility) * (0.35 + sunVisibility * sunVisibility * 0.3);
+			vec3 cloudLightColor = mix(lightCol, atmosphereColor, 0.2 * sunVisibility) * (1.0 + scattering * 2.0);
 			vec3 cloudColor = mix(cloudAmbientColor, cloudLightColor, cloudLighting);
 
 			float opacity = clamp(mix(0.99, VC_OPACITY, float(z1 == 1.0 || cameraPosition.y < cloudHeight)), 0.0, 1.0 - wetness * 0.6);

@@ -8,7 +8,7 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 
 #define SHADOW_COLOR
 #define VPS
-#define VPS_BLUR_STRENGTH 0.50 //[0.20 0.25 0.30 0.35 0.40 0.45 0.50 0.55 0.60 0.65 0.70 0.75 0.80]
+#define VPS_BLUR_STRENGTH 0.40 //[0.20 0.25 0.30 0.35 0.40 0.45 0.50 0.55 0.60 0.65 0.70 0.75 0.80]
 //#define ENTITY_SHADOWS
 
 //Ambient Occlusion//
@@ -85,7 +85,7 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 //Fog//
 #define DISTANT_FADE
 #define DISTANT_FADE_STYLE 0 //[0 1]
-#define FOG_DENSITY 1.75 //[0.00 0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00]
+#define FOG_DENSITY 1.00 //[0.00 0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00]
 #define FOG_HEIGHT 100.0 //[50.0 60.0 70.0 80.0 90.0 100.0 110.0 120.0 130.0 140.0 150.0 170.0 180.0 190.0 200.0]
 
 //Volumetric Nether & End Fog//

@@ -86,7 +86,7 @@ vec3 getFakeShadow(float skyLight) {
 	float fakeShadow = 1.0;
 
 	#ifdef OVERWORLD
-	if (isEyeInWater == 0) skyLight = pow16(skyLight);
+	if (isEyeInWater == 0) skyLight = pow32(skyLight * skyLight);
 	fakeShadow = skyLight;
 	#endif
 

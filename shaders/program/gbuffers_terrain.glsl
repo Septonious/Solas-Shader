@@ -143,8 +143,8 @@ void main() {
 	float coloredLightingIntensity = 0.0;
 
 	if (albedo.a > 0.001) {
-		float foliage = int(mat == 108 || (mat >= 4 && mat <= 15));
 		float leaves = int(mat == 9 || mat == 10);
+		float foliage = int(mat == 108 || (mat >= 4 && mat <= 15)) * (1.0 - leaves);
 
 		vec3 screenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z);
 		#ifdef TAA

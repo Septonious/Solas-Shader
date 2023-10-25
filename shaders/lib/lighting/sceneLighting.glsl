@@ -17,53 +17,55 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
 void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in vec3 worldPos, in vec3 normal, inout vec3 shadow, in vec2 lightmap,
                       in float NoU, in float NoL, in float NoE, inout float emission, in float leaves, in float foliage, in float specular) {
 #endif
-    //Variables
     float lViewPos = length(viewPos);
+
+    //Vanilla AO
     float ao = color.a * color.a;
+
+    #ifdef VANILLA_AO
+    float aoMixer = (1.0 - pow4(color.a)) * int(emission == 0.0);
+
+    albedo.rgb = mix(albedo.rgb, albedo.rgb * ao, aoMixer * AO_STRENGTH);
+    #endif
 
     //Vanilla Directional Lighting
 	float vanillaDiffuse = (0.25 * NoU + 0.75) + (0.667 - abs(NoE)) * (1.0 - abs(NoU)) * 0.15;
+		  vanillaDiffuse *= vanillaDiffuse;
 
     //Block Lighting
+    float blockLightMap = clamp(pow6(lightmap.x) * 1.25 + pow3(lightmap.x) * 0.75, 0.0, 1.0);
+
+    //Directional lightmap
     #if defined GBUFFERS_TERRAIN && defined COLORED_LIGHTING
-    float lightmapOut = clamp(pow6(lightmap.x) * 1.25 + pow3(lightmap.x) * 0.75, 0.0, 1.0);
     mat3 tbn = mat3(
         tangent.x, binormal.x, normal.x,
         tangent.y, binormal.y, normal.y,
         tangent.z, binormal.z, normal.z
     );
-    vec3 dFdViewposX = dFdx(viewPos);
-    vec3 dFdViewposY = dFdy(viewPos);
-    vec2 dFdTorch = vec2(dFdx(lightmapOut), dFdy(lightmapOut));
-    vec3 torchLightDir = dFdViewposX * dFdTorch.x + dFdViewposY * dFdTorch.y;
 
-    if (length(dFdTorch) > 1e-6) {
-        lightmapOut *= clamp(dot(normalize(torchLightDir), normal) + 0.85, 0.0, 1.0) * 0.5 + 0.5;
+    vec3 dFdViewPosX = dFdx(viewPos);
+    vec3 dFdViewPosY = dFdy(viewPos);
+    vec2 dFdTorch = vec2(dFdx(blockLightMap), dFdy(blockLightMap));
+    vec3 torchLightDir = dFdViewPosX * dFdTorch.x + dFdViewPosY * dFdTorch.y;
+
+    if (length(dFdTorch) > 0.000001) {
+        blockLightMap *= clamp(dot(normalize(torchLightDir), normal) + 0.85, 0.0, 1.0) * 0.5 + 0.5;
     }
-
-    lightmapOut = clamp(lightmapOut, 0.0, 1.0);
-    #endif
-
-    float blockLightMap = clamp(pow6(lightmap.x) * 1.25 + pow3(lightmap.x) * 0.75, 0.0, 1.0);
-
-    #if defined GBUFFERS_TERRAIN && defined COLORED_LIGHTING
-    blockLightMap = lightmapOut;
     #endif
 
     vec3 blockLighting = blockLightCol * blockLightMap * int(emission == 0.0);
 
-    //Colored Block Lighting && GI
+    //Colored lighting & GI
+    vec3 coloredLighting = vec3(0.0);
     vec3 gi = vec3(0.0);
     
     #if !defined GBUFFERS_WATER
     #if defined COLORED_LIGHTING || defined GI
-    vec3 coloredLighting = vec3(0.0);
-
     applyCLGI(blockLightCol, screenPos, coloredLighting, gi, lightmap);
     #endif
 
     #ifdef COLORED_LIGHTING
-    blockLighting = coloredLighting * blockLightMap;
+    blockLighting = coloredLighting * blockLightMap * int(emission == 0.0);
     #endif
 
     #ifdef GI
@@ -78,29 +80,21 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     getHandLightColor(blockLighting, normal, cameraPosition, lViewPos);
     #endif
 
-    //Main Scene Lighting (Sunlight & Shadows)
     #if defined OVERWORLD || defined END
-    float subsurface = 0.0;
+    //Subsurface scattering
+    float subsurface = leaves + foliage;
 
-    //Subsurface Scattering & Specular Highlight
-    specular *= clamp(NoU - 0.01, 0.0, 1.0);
-
-    #ifdef OVERWORLD
-    if (lViewPos < shadowDistance) subsurface = leaves + foliage;
-
-    //Subsurface Scattering & Specular Highlight
-    float VoL = clamp(dot(normalize(viewPos.xyz), lightVec) * 0.5 + 0.5, 0.0, 1.0);
-    float scattering = pow(VoL, 16.0) * (1.0 - wetness) * subsurface * shadowFade;
-    NoL = clamp(NoL * 1.01 - 0.01, 0.0, 1.0);
+    float VoL = dot(normalize(viewPos), lightVec) * 0.5 + 0.5;
+    float scattering = pow16(VoL) * (1.0 - wetness * 0.75) * subsurface * shadowFade;
     NoL = mix(NoL, 1.0, subsurface * 0.75);
     NoL = mix(NoL, 1.0, scattering);
-    #endif
 
+    //Main shadow calculation
+    //Shadows without peter-panning from Emin's Complementary Reimagined shaderpack, tysm for allowing me to use them ^^
+    //Developed by Emin#7309 and gri573#7741
     float shadowLength = shadowDistance * 0.9166667 - length(vec4(worldPos.x, worldPos.y, worldPos.y, worldPos.z));
 
-    if (NoL > 0.0001 && shadowLength > 0.000001) {
-        //Shadows without peter-panning from Emin's Complementary Reimagined shaderpack, tysm for allowing me to use them ^^
-        //Developed by Emin#7309 and gri573#7741
+    if (NoL > 0.0001 && shadowLength > 0.0) {
         vec3 worldNormal = normalize(ToWorld(normal * 100000.0));
         vec3 worldPosM = worldPos;
 
@@ -122,26 +116,24 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
 
         float viewDistance = 1.0 - clamp(lViewPos * 0.01, 0.0, 1.0);
         float offset = mix(0.0009765, 0.0009765 * ao, (1.0 - ao));
-              offset *= 1.0 + subsurface * 2.0 * viewDistance;
 
         shadow = computeShadow(shadowPos, offset, lightmap.y, ao, subsurface, viewDistance);
     } else {
         shadow = getFakeShadow(lightmap.y);
     }
 
-    vec3 fullShadow = shadow * NoL;
+    NoL = clamp(NoL * 1.01 - 0.01, 0.0, 1.0);
+
+    vec3 fullShadow = shadow * NoL * lightmap.y;
     
     #ifdef OVERWORLD
     float rainFactor = 1.0 - wetness * 0.75;
 
-    vec3 sceneLighting = mix(ambientCol + mix(vec3(0.0), gi, GLOBAL_ILLUMINATION_STRENGTH), lightCol, fullShadow * rainFactor * shadowFade) * lightmap.y;
+    vec3 sceneLighting = mix(ambientCol, lightCol, fullShadow * rainFactor * shadowFade);
          sceneLighting *= 1.0 + scattering * shadow;
 
-    #if defined IS_IRIS && !defined GBUFFERS_WATER
-    sceneLighting += lightningFlashEffect(worldPos, lightningBoltPosition.xyz, 196.0) * lightningBoltPosition.w * 2.0;
-    #endif
-
-    #if defined GBUFFERS_TERRAIN && !defined NETHER
+    //Specular highlight
+    #ifdef GBUFFERS_TERRAIN
 	vec3 baseReflectance = vec3(0.1);
 	float smoothness = mix(0.4, 0.9, clamp(specular * 2.0, 0.0, 1.0));
 		 sceneLighting += GetSpecularHighlight(normal, viewPos, smoothness, baseReflectance,
@@ -158,26 +150,27 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     vec3 sceneLighting = pow(netherColSqrt, vec3(0.5)) * 0.1;
     #endif
 
-    #ifdef VANILLA_AO
-    float aoMixer = (1.0 - pow4(color.a)) * int(emission == 0.0);
-
-    albedo.rgb = mix(albedo.rgb, albedo.rgb * ao, aoMixer * AO_STRENGTH);
+    //Iris lightning flash, made by Xonk
+    #if defined IS_IRIS && !defined GBUFFERS_WATER
+    sceneLighting += lightningFlashEffect(worldPos, lightningBoltPosition.xyz, 196.0) * lightningBoltPosition.w * 2.0;
     #endif
 
+    //Emission
+    sceneLighting += albedo.rgb * emission * 4.0;
+
+    //Night vision
+    sceneLighting += nightVision * 0.25;
+
+    //Cave lighting (no skylight)
+    sceneLighting += minLightCol * (1.0 - lightmap.y);
+
+    //Block lighting
+    sceneLighting += blockLighting;
+
     albedo = pow(albedo, vec3(2.2));
-    albedo *= sceneLighting + blockLighting + (albedo * emission * 4.0) + nightVision * 0.25 + minLightCol * (1.0 - lightmap.y);
+    albedo *= sceneLighting;
     albedo *= vanillaDiffuse;
     albedo = sqrt(max(albedo, vec3(0.0)));
 
     emission *= EMISSION_STRENGTH;
-
-    #ifdef GI
-    #ifdef GBUFFERS_TERRAIN
-    float giVisibility = length(fullShadow * rainFactor * shadowFade * sunVisibility) * int(emission == 0.0);
-
-    if (giVisibility != 0.0) {
-        coloredLightingIntensity = mix(coloredLightingIntensity, 0.095, giVisibility);
-    }
-    #endif
-    #endif
 }
