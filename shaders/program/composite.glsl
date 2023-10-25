@@ -61,6 +61,7 @@ uniform sampler2D shadowcolor1;
 uniform sampler2D shadowtex0;
 
 uniform mat4 shadowModelView, shadowProjection;
+uniform mat4 gbufferProjection;
 #endif
 
 uniform mat4 gbufferProjectionInverse, gbufferModelViewInverse;
@@ -109,7 +110,7 @@ void main() {
 	float blueNoiseDither = texture2D(noisetex, gl_FragCoord.xy / 512.0).b;
 
 	#ifdef TAA
-	blueNoiseDither = fract(blueNoiseDither + frameCounter * 0.618);
+	blueNoiseDither = fract(blueNoiseDither + 1.61803398875 * mod(float(frameCounter), 3600.0));
 	#endif
 
 	#ifdef VL

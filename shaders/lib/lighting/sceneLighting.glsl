@@ -33,7 +33,8 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
 		  vanillaDiffuse *= vanillaDiffuse;
 
     //Block Lighting
-    float blockLightMap = clamp(pow6(lightmap.x) * 1.25 + pow3(lightmap.x) * 0.75, 0.0, 1.0);
+	float blockLightMap = pow6(lightmap.x * lightmap.x) * 3.0 + max(lightmap.x - 0.05, 0.0) * 1.5;
+          blockLightMap *= blockLightMap * 0.5;
 
     //Directional lightmap
     #if defined GBUFFERS_TERRAIN && defined COLORED_LIGHTING

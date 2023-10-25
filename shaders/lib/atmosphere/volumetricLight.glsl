@@ -21,7 +21,7 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
 	float VoL = clamp(dot(nViewPos, lightVec), 0.0, 1.0);
 		  VoL = mix(exp(VoL * VoL * 2.0) * 0.5 + 0.25, VoL, timeBrightness);
 
-	float visibility = 0.01 * mix(pow3(VoU) * VoL, VoU, wetness) * int(z0 > 0.56);
+	float visibility = 0.025 * mix(pow3(VoU) * VoL, VoU, wetness) * int(z0 > 0.56);
 
 	#if MC_VERSION >= 11900
 	visibility *= 1.0 - darknessFactor;
@@ -38,7 +38,12 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
 		float linearDepth1 = getLinearDepth(z1);
 
 		//Variables
-		float distanceFactor = mix(4.0, 12.0, float(isEyeInWater > 0.5));
+		float fovFactor = gbufferProjection[1][1] / 1.37;
+		float x = abs(texCoord.x - 0.5);
+			  x = 1.0 - x * x;
+			  x = pow(x, max(3.0 - fovFactor, 0.0));
+		float distanceFactor = mix(10.0, 5.0, float(isEyeInWater == 1)) * clamp(far, 128.0, 512.0) / 192.0 * x;
+
 		float lViewPos = length(viewPos);
 
 		//Ray Marching
