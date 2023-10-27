@@ -52,8 +52,7 @@ void main() {
 	if (albedo.a < 0.01) discard;
 
     #ifdef SHADOW_COLOR
-	albedo.rgb = mix(vec3(1.0), albedo.rgb, 1.0 - pow(1.0 - albedo.a, 1.5));
-	albedo.rgb *= albedo.rgb;
+	albedo.rgb = albedo.rgb * albedo.rgb * 2.0;
 
 	#ifdef WATER_CAUSTICS
 	if (mat == 1){
@@ -64,7 +63,7 @@ void main() {
 
 	albedo.rgb *= 1.0 - pow32(albedo.a);
 
-	if (glass > 0.5 && albedo.a < 0.35) discard;
+	if (glass > 0.5 && albedo.a < 0.01) discard;
 	#endif
 	
 	gl_FragData[0] = albedo;

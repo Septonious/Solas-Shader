@@ -167,9 +167,8 @@ void main() {
 
 	float water = int(mat == 1);
 	float portal = int(mat == 2);
+	float glass = int(mat == 3);
 	float emission = portal;
-
-	albedo.a += int(mat == 3) * 0.25;
 
 	#ifndef VANILLA_WATER
 	if (water > 0.9) {
@@ -182,6 +181,11 @@ void main() {
 		#endif
 	}
 	#endif
+
+	if (glass > 0.5) {
+		albedo.rgb = mix(pow(albedo.rgb, vec3(1.5)) * 1.5, albedo.rgb * 2.0, albedo.a * albedo.a);
+		albedo.a = clamp(albedo.a * 1.25, 0.0, 1.0);
+	}
 
 	if (albedo.a > 0.001) {
 		vec3 skyColor = vec3(0.0);

@@ -34,7 +34,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
 
     //Block Lighting
 	float blockLightMap = pow6(lightmap.x * lightmap.x) * 3.0 + max(lightmap.x - 0.05, 0.0) * 1.5;
-          blockLightMap *= blockLightMap * 0.5;
+          blockLightMap *= blockLightMap * 0.5 * (1.0 - lightmap.y * 0.5 * timeBrightness);
 
     //Directional lightmap
     #if defined GBUFFERS_TERRAIN && defined COLORED_LIGHTING
@@ -131,7 +131,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     #ifdef OVERWORLD
     float rainFactor = 1.0 - wetness * 0.75;
 
-    vec3 sceneLighting = mix(ambientCol, lightCol, fullShadow * rainFactor * shadowFade);
+    vec3 sceneLighting = mix(ambientCol, lightCol, fullShadow * rainFactor * shadowFade) * lightmap.y;
          sceneLighting *= 1.0 + scattering * shadow;
 
     //Specular highlight

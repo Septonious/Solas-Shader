@@ -17,11 +17,10 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
 	//Total Visibility
 	float VoU = clamp(dot(nViewPos, upVec), 0.0, 1.0);
 		  VoU = 1.0 - pow(VoU, 1.5);
-		  VoU = mix(VoU, 1.0, timeBrightness * (1.0 - eBS));
+		  VoU = mix(VoU, 1.0, timeBrightness * (1.0 - eBS * eBS));
 	float VoL = clamp(dot(nViewPos, lightVec), 0.0, 1.0);
-		  VoL = exp(VoL * VoL * 2.0) * 0.5 + 0.25;
 
-	float visibility = 0.01 * pow4(VoU) * mix(exp(VoL + 0.25), VoL, timeBrightness) * int(z0 > 0.56);
+	float visibility = 0.01 * pow4(VoU) * mix(exp(VoL * 1.5) * 0.5 + 0.25, VoL * 2.0, timeBrightness) * int(z0 > 0.56);
 
 	#if MC_VERSION >= 11900
 	visibility *= 1.0 - darknessFactor;
@@ -43,7 +42,7 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
 			  x = 1.0 - x * x;
 			  x = pow(x, max(3.0 - fovFactor, 0.0));
 		float maxDist = 192.0;
-		float distanceFactor = 8.0;
+		float distanceFactor = 2.0 + eBS * eBS * 5.0;
 			  distanceFactor *= clamp(far, 128.0, 512.0) / maxDist;
 			  distanceFactor *= x;
 			  maxDist *= x;
@@ -67,17 +66,16 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
 
 			if (length(shadowPos * 2.0 - 1.0) < 1.0) {
 				float shadow0 = texture2DShadow(shadowtex0, shadowPos.xyz);
+				float shadow1 = 0.0;
 
 				#ifdef SHADOW_COLOR
 				if (shadow0 < 1.0) {
-					float shadow1 = texture2DShadow(shadowtex1, shadowPos.xyz);
+					shadow1 = texture2DShadow(shadowtex1, shadowPos.xyz);
 					if (shadow1 > 0.0) {
 						shadowCol = texture2D(shadowcolor0, shadowPos.xy).rgb;
-						shadowCol *= shadowCol * shadow1;
 					}
 				}
 				#endif
-				vec3 shadow = clamp(shadowCol * (1.0 - shadow0) + shadow0 * vlColor * float(isEyeInWater == 0), 0.0, 1.0);
 
 				#ifdef VL_CLOUDY_NOISE
 				float noise = 1.0;
@@ -89,8 +87,10 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
 					noise = sin(mix(n3da, n3db, fract(npos.y * 0.1)) * 16.0) * 0.5 + 0.5;
 				}
 
-				shadow *= noise;
+				shadow0 *= noise;
 				#endif
+
+				vec3 shadow = clamp(shadow1 * pow2(shadowCol) * 6.0 + shadow0 * vlColor * float(isEyeInWater == 0), 0.0, 8.0);
 
 				//Translucency Blending
 				if (linearDepth0 < currentDist) {
