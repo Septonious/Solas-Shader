@@ -23,6 +23,7 @@ in vec3 viewVector, binormal, tangent;
 in vec4 color;
 
 //Uniforms//
+uniform int frameCounter;
 uniform int isEyeInWater;
 
 #ifdef DYNAMIC_HANDLIGHT
@@ -63,9 +64,7 @@ uniform vec3 cameraPosition;
 uniform vec3 skyColor;
 #endif
 
-#if WATER_NORMALS > 0
 uniform sampler2D noisetex;
-#endif
 
 #ifdef INTEGRATED_SPECULAR
 uniform sampler2D gaux3;

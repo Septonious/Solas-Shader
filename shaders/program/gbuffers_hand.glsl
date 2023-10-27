@@ -12,6 +12,7 @@ in vec3 normal;
 in vec4 color;
 
 //Uniforms//
+uniform int frameCounter;
 uniform int isEyeInWater;
 
 #ifdef DYNAMIC_HANDLIGHT
@@ -36,6 +37,7 @@ uniform float wetness, timeBrightness, timeAngle;
 uniform vec3 cameraPosition;
 
 uniform sampler2D texture;
+uniform sampler2D noisetex;
 
 uniform mat4 gbufferProjectionInverse;
 uniform mat4 gbufferModelViewInverse;

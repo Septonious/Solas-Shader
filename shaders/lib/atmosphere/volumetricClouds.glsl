@@ -5,12 +5,12 @@ float mixFactor = 0.6 + sunVisibility * 0.4;
 float cloudHeight = mix(mix(VC_HEIGHT, min(day * 15.0 + 100.0, 250.0), mixFactor), 100.0, wetness);
 float cloudDensity = mix(VC_DENSITY, clamp(day, 4.0, 10.0), mixFactor);
 float cloudAmount = mix(VC_AMOUNT, clamp(day * 2.0, 10.0, 12.0), mixFactor);
-float cloudThickness = mix(mix(VC_THICKNESS, clamp(day, 4.0, 8.0), mixFactor), 18.0, wetness);
+float cloudThickness = mix(mix(VC_THICKNESS, clamp(day, 4.0, 8.0), mixFactor), 16.0, wetness);
 #else
 float cloudHeight = mix(VC_HEIGHT, 100.0, wetness);
 float cloudDensity = VC_DENSITY;
 float cloudAmount = VC_AMOUNT;
-float cloudThickness = mix(VC_THICKNESS, 18.0, wetness);
+float cloudThickness = mix(VC_THICKNESS, 16.0, wetness);
 #endif
 
 uniform vec4 lightningBoltPosition;
@@ -134,7 +134,7 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z1, f
 				//cloudLighting = mix(cloudLighting, sampleLighting * mix(1.0, clamp((noise - sqrt(lightingNoise)), 0.0, 1.0), 0.7), noise * (1.0 - cloud * cloud));
 				cloudLighting = mix(cloudLighting, sampleLighting, noise * (1.0 - cloud * cloud));
 				cloud = mix(cloud, 1.0, noise);
-				noise *= pow24(smoothstep(VC_DISTANCE - 150.0 * wetness, 32.0, rayDistance)); //Fog
+				noise *= pow24(smoothstep(VC_DISTANCE - 100.0 * wetness, 32.0, rayDistance)); //Fog
 				cloudAlpha = mix(cloudAlpha, 1.0, noise);
 
                 #ifdef IS_IRIS

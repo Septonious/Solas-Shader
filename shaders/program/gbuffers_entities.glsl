@@ -14,6 +14,7 @@ in vec3 sunVec, upVec, eastVec;
 in vec4 color;
 
 //Uniforms//
+uniform int frameCounter;
 uniform int isEyeInWater;
 
 #ifdef DYNAMIC_HANDLIGHT
@@ -46,6 +47,7 @@ uniform sampler2D gaux2;
 #endif
 
 uniform sampler2D texture;
+uniform sampler2D noisetex;
 
 uniform mat4 gbufferProjectionInverse;
 uniform mat4 gbufferModelViewInverse;

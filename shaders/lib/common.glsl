@@ -63,7 +63,7 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 //Bloom//
 #define BLOOM
 #define BLOOM_STRENGTH 2.00 //[1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00 4.25 4.50 4.75 5.00 5.25 5.50 5.75 6.00]
-#define BLOOM_CONTRAST 2 //[-4 -3 -2 -1 0 1 2 3 4]
+#define BLOOM_CONTRAST 3 //[-4 -3 -2 -1 0 1 2 3 4]
 #define BLOOM_TILE_SIZE 0.0 //[0.0 0.5 1.0 1.5 2.0]
 
 //Atmosphere//
@@ -104,7 +104,7 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 //Volumetric Light
 #define VL
 #define VL_CLOUDY_NOISE
-#define VL_STRENGTH 3.00 //[0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00]
+#define VL_STRENGTH 2.50 //[0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00]
 #define VL_SAMPLES 8 //[6 7 8 9 10 11 12]
 
 //Volumetric Clouds

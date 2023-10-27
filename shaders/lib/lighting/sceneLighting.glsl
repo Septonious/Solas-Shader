@@ -116,7 +116,8 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
         vec3 shadowPos = ToShadow(worldPosM);
 
         float viewDistance = 1.0 - clamp(lViewPos * 0.01, 0.0, 1.0);
-        float offset = mix(0.0009765, 0.0009765 * ao, (1.0 - ao));
+        float offset = mix(0.00125, 0.00125 * ao, (1.0 - ao));
+              offset *= 1.0 + subsurface * 2.0 * viewDistance;
 
         shadow = computeShadow(shadowPos, offset, lightmap.y, ao, subsurface, viewDistance);
     } else {

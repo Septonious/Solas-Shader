@@ -12,6 +12,7 @@ in vec3 normal;
 in vec4 color;
 
 //Uniforms//
+uniform int frameCounter;
 uniform int isEyeInWater;
 uniform int blockEntityId;
 

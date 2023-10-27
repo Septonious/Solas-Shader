@@ -23,6 +23,7 @@ in vec3 binormal, tangent;
 in vec4 color;
 
 //Uniforms//
+uniform int frameCounter;
 uniform int isEyeInWater;
 
 #ifdef DYNAMIC_HANDLIGHT
@@ -44,9 +45,7 @@ uniform float shadowFade;
 uniform float wetness, timeBrightness, timeAngle;
 #endif
 
-#if defined RAIN_PUDDLES || defined INTEGRATED_EMISSION
 uniform sampler2D noisetex;
-#endif
 
 #ifdef INTEGRATED_NORMAL_MAPPING
 uniform ivec2 atlasSize;

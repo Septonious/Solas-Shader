@@ -12,6 +12,7 @@ in vec3 normal;
 in vec4 color;
 
 //Uniforms//
+uniform int frameCounter;
 uniform int isEyeInWater;
 
 #ifdef DYNAMIC_HANDLIGHT
@@ -36,6 +37,8 @@ uniform float viewWidth, viewHeight;
 uniform float shadowFade;
 uniform float wetness, timeBrightness, timeAngle;
 #endif
+
+uniform sampler2D noisetex;
 
 uniform float far, blindFactor;
 

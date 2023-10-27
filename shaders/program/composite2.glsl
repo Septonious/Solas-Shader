@@ -19,18 +19,23 @@ uniform sampler2D colortex0;
 #include "/lib/filters/blur.glsl"
 #endif
 
-const bool colortex1MipmapEnabled = true;
+vec2 vlOffsets[4] = vec2[4](
+	vec2( 1.5,  0.5),
+	vec2(-0.5,  1.5),
+	vec2(-1.5, -0.5),
+	vec2( 0.5, -1.5)
+);
 
 void main() {
 	vec4 color = texture2D(colortex0, texCoord);
 
 	#if defined VL || defined VF_NETHER_END
 	#if defined OVERWORLD || defined NETHER
-    vec3 vl1 = texture2DLod(colortex1, texCoord + vec2( 0.0,  2.0 / viewHeight), 1.0).rgb;
-    vec3 vl2 = texture2DLod(colortex1, texCoord + vec2( 0.0, -2.0 / viewHeight), 1.0).rgb;
-    vec3 vl3 = texture2DLod(colortex1, texCoord + vec2( 2.0 / viewWidth,   0.0), 1.0).rgb;
-    vec3 vl4 = texture2DLod(colortex1, texCoord + vec2(-2.0 / viewWidth,   0.0), 1.0).rgb;
-	vec3 vl = (vl1 + vl2 + vl3 + vl4) * 0.25;
+	vec3 vl = texture2D(colortex1, texCoord + vlOffsets[0] / vec2(viewWidth, viewHeight)).rgb;
+		 vl+= texture2D(colortex1, texCoord + vlOffsets[1] / vec2(viewWidth, viewHeight)).rgb;
+		 vl+= texture2D(colortex1, texCoord + vlOffsets[2] / vec2(viewWidth, viewHeight)).rgb;
+		 vl+= texture2D(colortex1, texCoord + vlOffsets[3] / vec2(viewWidth, viewHeight)).rgb;
+	vl *= 0.25;
 	#else
 	vec4 vl = getDiskBlur16(colortex1, texCoord, 6.0);
 	#endif

@@ -48,10 +48,12 @@ vec3 computeShadow(vec3 shadowPos, float offset, float skyLightMap, float ao, fl
     vec3 shadowCol = vec3(0.0);
     float shadow0 = 0.0;
 
+	float blueNoiseDither = texture2D(noisetex, gl_FragCoord.xy / 512.0).b;
+
     #ifdef TAA
-    float dither = fract(Bayer64(gl_FragCoord.xy) + frameTimeCounter * 16.0) * TAU;
+    float dither = fract(blueNoiseDither + 1.61803398875 * mod(float(frameCounter), 3600.0)) * TAU;
     #else
-    float dither = Bayer64(gl_FragCoord.xy) * TAU;
+    float dither = blueNoiseDither * TAU;
     #endif
 
 	float cosTheta = cos(dither);
