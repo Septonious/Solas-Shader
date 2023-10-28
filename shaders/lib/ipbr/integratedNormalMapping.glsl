@@ -7,37 +7,42 @@ float getAlbedoDifference(float lAlbedo, vec2 offsetCoord) {
     else return clamp(min(albedoDifference + 0.05, 0.0), -NORMAL_THRESHOLD, NORMAL_THRESHOLD);
 }
 
-void getTerrainNormal(inout vec3 newNormal, vec3 albedo) {
-    float lAlbedo = length(albedo);
+void getTerrainNormal(inout vec3 newNormal, vec3 albedo, in int mat) {
+    float NoU = clamp(dot(newNormal, upVec), 0.0, 1.0);
+    float disableNormal = float(mat == 1000) * NoU;
 
-    vec2 midCoord = texCoord - absMidCoordPos * signMidCoordPos;
-    vec2 maxOffsetCoord = midCoord + absMidCoordPos;
-    vec2 minOffsetCoord = midCoord - absMidCoordPos;
-    vec2 resolutionOffset = (16.0 / atlasSize) / NORMAL_RESOLUTION;
+    if (disableNormal < 0.5) {
+        float lAlbedo = length(albedo);
 
-	vec3 normalMap = vec3(0.0, 0.0, 1.0);
+        vec2 midCoord = texCoord - absMidCoordPos * signMidCoordPos;
+        vec2 maxOffsetCoord = midCoord + absMidCoordPos;
+        vec2 minOffsetCoord = midCoord - absMidCoordPos;
+        vec2 resolutionOffset = (16.0 / atlasSize) / NORMAL_RESOLUTION;
 
-    vec2 offsetCoord = texCoord + vec2(resolutionOffset.x, 0.0);
-    if (offsetCoord.x < maxOffsetCoord.x) normalMap.x += getAlbedoDifference(lAlbedo, offsetCoord);
-            
-    offsetCoord = texCoord + vec2(-resolutionOffset.x, 0.0);
-    if (offsetCoord.x > minOffsetCoord.x) normalMap.x -= getAlbedoDifference(lAlbedo, offsetCoord);
+        vec3 normalMap = vec3(0.0, 0.0, 1.0);
 
-    offsetCoord = texCoord + vec2(0.0, resolutionOffset.y);
-    if (offsetCoord.y < maxOffsetCoord.y) normalMap.y += getAlbedoDifference(lAlbedo, offsetCoord);
+        vec2 offsetCoord = texCoord + vec2(resolutionOffset.x, 0.0);
+        if (offsetCoord.x < maxOffsetCoord.x) normalMap.x += getAlbedoDifference(lAlbedo, offsetCoord);
+                
+        offsetCoord = texCoord + vec2(-resolutionOffset.x, 0.0);
+        if (offsetCoord.x > minOffsetCoord.x) normalMap.x -= getAlbedoDifference(lAlbedo, offsetCoord);
 
-    offsetCoord = texCoord + vec2(0.0, -resolutionOffset.y);
-    if (offsetCoord.y > minOffsetCoord.y) normalMap.y -= getAlbedoDifference(lAlbedo, offsetCoord);
+        offsetCoord = texCoord + vec2(0.0, resolutionOffset.y);
+        if (offsetCoord.y < maxOffsetCoord.y) normalMap.y += getAlbedoDifference(lAlbedo, offsetCoord);
 
-    normalMap.xy = clamp(normalMap.xy * NORMAL_STRENGTH, -0.5, 0.5);
+        offsetCoord = texCoord + vec2(0.0, -resolutionOffset.y);
+        if (offsetCoord.y > minOffsetCoord.y) normalMap.y -= getAlbedoDifference(lAlbedo, offsetCoord);
 
-    if (normalMap.xy != vec2(0.0)) {
-        mat3 tbnMatrix = mat3(
-            tangent.x, binormal.x, normal.x,
-            tangent.y, binormal.y, normal.y,
-            tangent.z, binormal.z, normal.z
-        );
+        normalMap.xy = clamp(normalMap.xy * NORMAL_STRENGTH, -0.5, 0.5);
 
-        newNormal = clamp(normalize(normalMap * tbnMatrix), -1.0, 1.0);
+        if (normalMap.xy != vec2(0.0)) {
+            mat3 tbnMatrix = mat3(
+                tangent.x, binormal.x, normal.x,
+                tangent.y, binormal.y, normal.y,
+                tangent.z, binormal.z, normal.z
+            );
+
+            newNormal = clamp(normalize(normalMap * tbnMatrix), -1.0, 1.0);
+        }
     }
 }

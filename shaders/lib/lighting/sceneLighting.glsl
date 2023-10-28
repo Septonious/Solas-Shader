@@ -87,10 +87,12 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     //Subsurface scattering
     float subsurface = leaves + foliage;
 
+    #ifdef OVERWORLD
     float VoL = dot(normalize(viewPos), lightVec) * 0.5 + 0.5;
     float scattering = pow16(VoL) * (1.0 - wetness * 0.75) * subsurface * shadowFade;
     NoL = mix(NoL, 1.0, subsurface * 0.75);
     NoL = mix(NoL, 1.0, scattering);
+    #endif
 
     //Main shadow calculation
     //Shadows without peter-panning from Emin's Complementary Reimagined shaderpack, tysm for allowing me to use them ^^

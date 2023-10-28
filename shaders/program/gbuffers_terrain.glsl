@@ -155,11 +155,11 @@ void main() {
 		vec2 lightmap = clamp(lightMapCoord, 0.0, 1.0);
 
 		#ifdef INTEGRATED_NORMAL_MAPPING
-		getTerrainNormal(newNormal, albedo.rgb);
+		getTerrainNormal(newNormal, albedo.rgb, mat);
 		#endif
 
 		if (foliage > 0.5) {
-			newNormal = upVec;
+			newNormal = upVec * 0.5;
 		}
 
 		float NoU = clamp(dot(newNormal, upVec), -1.0, 1.0);
