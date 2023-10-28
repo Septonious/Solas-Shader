@@ -34,7 +34,9 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
 
     //Block Lighting
 	float blockLightMap = pow6(lightmap.x * lightmap.x) * 3.0 + max(lightmap.x - 0.05, 0.0) * 1.5;
+    #ifdef OVERWORLD
           blockLightMap *= blockLightMap * 0.5 * (1.0 - lightmap.y * 0.5 * timeBrightness);
+    #endif
 
     //Directional lightmap
     #if defined GBUFFERS_TERRAIN && defined COLORED_LIGHTING
