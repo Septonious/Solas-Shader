@@ -17,7 +17,7 @@ uniform float aspectRatio;
 uniform vec3 cameraPosition;
 uniform vec3 previousCameraPosition;
 
-uniform sampler2D depthtex0;
+uniform sampler2D depthtex0, depthtex1;
 uniform sampler2D colortex3;
 
 #ifdef COLORED_LIGHTING
@@ -57,8 +57,11 @@ void main() {
 
 	#if defined COLORED_LIGHTING || defined GI
 	float z0 = texture2D(depthtex0, texCoord).r;
+	float z1 = texture2D(depthtex1, texCoord).r;
 
-	computeColoredLighting(z0, coloredLighting, globalIllumination);
+	float lightZ = z1 >= 1.0 ? z0 : z1;
+
+	computeColoredLighting(lightZ, coloredLighting, globalIllumination);
 	#endif
 
 	/* DRAWBUFFERS:045 */

@@ -74,7 +74,8 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     #ifdef GI
     gi *= 1.0 - NoL * 0.5;
     gi *= 1.0 - NoU * 0.5;
-    gi *= lightmap.y;
+    gi *= 1.0 - pow8(lightmap.y) * 0.5;
+    gi *= 1.0 - blockLightMap;
     #endif
     #endif
 
@@ -135,7 +136,13 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     #ifdef OVERWORLD
     float rainFactor = 1.0 - wetness * 0.75;
 
-    vec3 sceneLighting = mix(ambientCol, lightCol, fullShadow * rainFactor * shadowFade) * lightmap.y;
+    vec3 newAmbientCol = ambientCol * lightmap.y;
+
+    #ifdef GI
+    newAmbientCol = newAmbientCol + gi * 0.5;
+    #endif
+
+    vec3 sceneLighting = mix(newAmbientCol, lightCol * lightmap.y, fullShadow * rainFactor * shadowFade);
          sceneLighting *= 1.0 + scattering * shadow;
 
     //Specular highlight
@@ -179,4 +186,14 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     albedo = sqrt(max(albedo, vec3(0.0)));
 
     emission *= EMISSION_STRENGTH;
+
+    #ifdef GI
+    #ifdef GBUFFERS_TERRAIN
+    float giVisibility = length(fullShadow * rainFactor * shadowFade * sunVisibility) * int(emission == 0.0);
+
+    if (giVisibility != 0.0) {
+        coloredLightingIntensity = mix(coloredLightingIntensity, 0.095, giVisibility);
+    }
+    #endif
+    #endif
 }

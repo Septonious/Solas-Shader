@@ -7,9 +7,17 @@ vec2 offsetDist(float x) {
     return vec2(cos(n), sin(n)) * x * x;
 }
 
-void computeColoredLighting(in float z0, inout vec3 coloredLighting, inout vec3 globalIllumination) {
-    vec2 prvCoord = Reprojection(vec3(texCoord, z0));
+void computeColoredLighting(in float z, inout vec3 coloredLighting, inout vec3 globalIllumination) {
+	vec2 prvCoord = Reprojection(vec3(texCoord, z));
+	float linearDepth = getLinearDepth(z);
 
+	float distScaleCL = clamp((far - near) * linearDepth + near, 4.0, 128.0);
+    float distScaleGI = clamp((far - near) * linearDepth + near, 2.0, 64.0);
+	float fovScale = gbufferProjection[1][1] / 1.37;
+
+	vec2 directBlurStrength = vec2(1.0 / aspectRatio, 1.0) * COLORED_LIGHTING_RADIUS * fovScale / distScaleCL;
+    vec2 indirectBlurStrength = vec2(1.0 / aspectRatio, 1.0) * GLOBAL_ILLUMINATION_RADIUS * fovScale / distScaleGI;
+	
     float emission = texture2D(colortex3, texCoord).a;
     float indirectEmission = float(emission > 0.094 && emission < 0.096);
     float directEmission = float(emission > 0.1 && emission <= 0.98) * (1.0 - indirectEmission);
@@ -26,48 +34,50 @@ void computeColoredLighting(in float z0, inout vec3 coloredLighting, inout vec3 
     vec3 previousGlobalIllumination = vec3(0.0);
     #endif
 
-    if (prvCoord.x > 0.0 && prvCoord.x < 1.0 && prvCoord.y > 0.0 && prvCoord.y < 1.0) {
-        float linearDepth0 = getLinearDepth(z0);
-        float fovScale = gbufferProjection[1][1] / 1.37;
-        float distScale = clamp((far - near) * linearDepth0 + near, 0.0, 128.0);
-        float dither = fract(Bayer64(gl_FragCoord.xy) + frameCounter * 1.618);
+	float mask = clamp(2.0 - 2.0 * max(abs(prvCoord.x - 0.5), abs(prvCoord.y - 0.5)), 0.0, 1.0);
+	float dither = fract(Bayer8(gl_FragCoord.xy) + frameCounter * 1.618);
 
-        vec2 blurRadius = vec2(1.0 / aspectRatio, 1.0) * fovScale;
-
-        vec2 directLightingRadius = blurRadius * COLORED_LIGHTING_RADIUS / distScale;
-        vec2 indirectLightingRadius = blurRadius * GLOBAL_ILLUMINATION_RADIUS / distScale;
-
-        for (int i = 0; i < 4; i++) {
-            #ifdef COLORED_LIGHTING
-            vec2 blurOffsetCL = offsetDist((dither + i) * 0.25);
-                 blurOffsetCL = floor(blurOffsetCL * vec2(viewWidth, viewHeight) + 0.5) / vec2(viewWidth, viewHeight);
-            vec2 directLightingOffset = blurOffsetCL * directLightingRadius;
-            previousColoredLight += texture2D(colortex4, prvCoord.xy + directLightingOffset).rgb;
-            #endif
-
-            #ifdef GI
-            vec2 blurOffsetGI = offsetDist((dither + i) * 0.15);
-            vec2 indirectLightingOffset = blurOffsetGI * indirectLightingRadius;
-            previousGlobalIllumination += texture2D(colortex5, prvCoord.xy + indirectLightingOffset).rgb;
-            #endif
-        }
-
+	for (int i = 0; i < 4; i++) {
         #ifdef COLORED_LIGHTING
-        previousColoredLight *= 0.25;
-        previousColoredLight *= previousColoredLight;
+		vec2 clOffset = offsetDist((dither + i) * 0.25) * directBlurStrength;
+		     clOffset = floor(clOffset * vec2(viewWidth, viewHeight) + 0.5) / vec2(viewWidth, viewHeight);
+
+		vec2 sampleZPos = texCoord + clOffset;
+		float sampleZ0 = texture2D(depthtex0, sampleZPos).r;
+		float sampleZ1 = texture2D(depthtex1, sampleZPos).r;
+		float linearSampleZ = getLinearDepth(sampleZ1 >= 1.0 ? sampleZ0 : sampleZ1);
+
+		float sampleWeight = clamp(abs(linearDepth - linearSampleZ) * far / 16.0, 0.0, 1.0);
+		      sampleWeight = 1.0 - sampleWeight * sampleWeight;
+
+		previousColoredLight += texture2D(colortex4, prvCoord.xy + clOffset).rgb * sampleWeight;
         #endif
 
         #ifdef GI
-        previousGlobalIllumination *= 0.25;
-        previousGlobalIllumination *= previousGlobalIllumination;
+		vec2 giOffset = offsetDist((dither + i) * 0.25) * indirectBlurStrength;
+		     giOffset = floor(giOffset * vec2(viewWidth, viewHeight) + 0.5) / vec2(viewWidth, viewHeight);
+
+		vec2 gisampleZPos = texCoord + giOffset;
+		float gisampleZ0 = texture2D(depthtex0, gisampleZPos).r;
+		float gisampleZ1 = texture2D(depthtex1, gisampleZPos).r;
+		float gilinearSampleZ = getLinearDepth(gisampleZ1 >= 1.0 ? gisampleZ0 : gisampleZ1);
+
+		float giSampleWeight = clamp(abs(linearDepth - gilinearSampleZ) * far / 16.0, 0.0, 1.0);
+		      giSampleWeight = 1.0 - giSampleWeight * giSampleWeight;
+
+        previousGlobalIllumination += texture2D(colortex5, prvCoord.xy + giOffset).rgb * giSampleWeight;
         #endif
-    }
+	}
 
     #ifdef COLORED_LIGHTING
-	coloredLighting = sqrt(mix(previousColoredLight, clAlbedo, 0.01));
+	previousColoredLight *= 0.25;
+	previousColoredLight *= previousColoredLight * mask;
+	coloredLighting = sqrt(mix(previousColoredLight, clAlbedo / 0.1, 0.1));
     #endif
 
     #ifdef GI
-	globalIllumination = sqrt(mix(previousGlobalIllumination, giAlbedo, 0.01));
+	previousGlobalIllumination *= 0.25;
+	previousGlobalIllumination *= previousGlobalIllumination * mask;
+	globalIllumination = sqrt(mix(previousGlobalIllumination, giAlbedo / 0.1, 0.1));
     #endif
 }
