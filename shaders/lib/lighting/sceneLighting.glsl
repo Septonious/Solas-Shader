@@ -18,19 +18,20 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
                       in float NoU, in float NoL, in float NoE, inout float emission, in float leaves, in float foliage, in float specular) {
 #endif
     float lViewPos = length(viewPos);
+    float subsurface = leaves + foliage;
 
     //Vanilla AO
     float ao = color.a * color.a;
 
     #ifdef VANILLA_AO
-    float aoMixer = (1.0 - pow4(color.a)) * int(emission == 0.0);
+    float aoMixer = (1.0 - pow2(color.a)) * int(emission == 0.0);
 
-    albedo.rgb = mix(albedo.rgb, albedo.rgb * ao, aoMixer * AO_STRENGTH);
+    albedo.rgb = mix(albedo.rgb, albedo.rgb * ao * ao, aoMixer * AO_STRENGTH);
     #endif
 
     //Vanilla Directional Lighting
 	float vanillaDiffuse = (0.25 * NoU + 0.75) + (0.667 - abs(NoE)) * (1.0 - abs(NoU)) * 0.15;
-		  vanillaDiffuse *= vanillaDiffuse;
+          vanillaDiffuse *= vanillaDiffuse;
 
     //Block Lighting
 	float blockLightMap = pow6(lightmap.x * lightmap.x) * 3.0 + max(lightmap.x - 0.05, 0.0) * 1.5;
@@ -38,33 +39,33 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
           blockLightMap *= blockLightMap * 0.5 * (1.0 - lightmap.y * 0.5 * timeBrightness);
     #endif
 
-    //Directional lightmap
-    #if defined GBUFFERS_TERRAIN && defined COLORED_LIGHTING
+    #ifdef GBUFFERS_TERRAIN
     mat3 tbn = mat3(
         tangent.x, binormal.x, normal.x,
         tangent.y, binormal.y, normal.y,
         tangent.z, binormal.z, normal.z
     );
 
-    vec3 dFdViewPosX = dFdx(viewPos);
-    vec3 dFdViewPosY = dFdy(viewPos);
+    vec3 dFdViewposX = dFdx(viewPos);
+    vec3 dFdViewposY = dFdy(viewPos);
     vec2 dFdTorch = vec2(dFdx(blockLightMap), dFdy(blockLightMap));
-    vec3 torchLightDir = dFdViewPosX * dFdTorch.x + dFdViewPosY * dFdTorch.y;
+    vec3 torchLightDir = dFdViewposX * dFdTorch.x + dFdViewposY * dFdTorch.y;
 
     if (length(dFdTorch) > 1e-6) {
         blockLightMap *= clamp(dot(normalize(torchLightDir), normal) + 0.85, 0.0, 1.0) * 0.5 + 0.5;
     }
     #endif
 
-    vec3 blockLighting = blockLightCol * blockLightMap * int(emission == 0.0);
+    //Block Lighting
+    vec3 blockLighting = blockLightCol * blockLightMap;
 
     //Colored lighting & GI
     vec3 coloredLighting = vec3(0.0);
-    vec3 gi = vec3(0.0);
+    vec3 globalIllumination = vec3(0.0);
     
     #if !defined GBUFFERS_WATER
     #if defined COLORED_LIGHTING || defined GI
-    applyCLGI(blockLightCol, screenPos, coloredLighting, gi, lightmap);
+    applyCLGI(blockLightCol, screenPos, coloredLighting, globalIllumination, lightmap);
     #endif
 
     #ifdef COLORED_LIGHTING
@@ -72,10 +73,10 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     #endif
 
     #ifdef GI
-    gi *= 1.0 - NoL * 0.5;
-    gi *= 1.0 - NoU * 0.5;
-    gi *= 1.0 - pow8(lightmap.y) * 0.5;
-    gi *= 1.0 - blockLightMap;
+    globalIllumination *= 1.0 - NoL * 0.5;
+    globalIllumination *= 1.0 - NoU * 0.5;
+    globalIllumination *= 1.0 - pow8(lightmap.y) * 0.5;
+    globalIllumination *= 1.0 - blockLightMap;
     #endif
     #endif
 
@@ -86,8 +87,6 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
 
     #if defined OVERWORLD || defined END
     //Subsurface scattering
-    float subsurface = leaves + foliage;
-
     #ifdef OVERWORLD
     float VoL = dot(normalize(viewPos), lightVec) * 0.5 + 0.5;
     float scattering = pow16(VoL) * (1.0 - wetness * 0.75) * subsurface * shadowFade;
@@ -139,7 +138,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     vec3 newAmbientCol = ambientCol * lightmap.y;
 
     #ifdef GI
-    newAmbientCol = newAmbientCol + gi * 0.5;
+    newAmbientCol = newAmbientCol + globalIllumination * 0.5;
     #endif
 
     vec3 sceneLighting = mix(newAmbientCol, lightCol * lightmap.y, fullShadow * rainFactor * shadowFade);
@@ -177,7 +176,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     //Cave lighting (no skylight)
     sceneLighting += minLightCol * (1.0 - lightmap.y);
 
-    //Block lighting
+    //Blocklighting
     sceneLighting += blockLighting;
 
     albedo = pow(albedo, vec3(2.2));

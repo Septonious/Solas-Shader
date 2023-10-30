@@ -13,7 +13,7 @@ float computeAmbientOcclusion(float dither) {
 	float z0 = texture2D(depthtex0, texCoord).r;
 	float linearDepth0 = getLinearDepth(z0);
 
-	float currentStep = 0.2 * dither + 0.2;
+	float currentStep = 0.15 * dither + 0.30;
 
 	float fovScale = gbufferProjection[1][1] / 1.37;
 	float distScale = clamp((far - near) * linearDepth0 + near, 0.000001, 32.0);

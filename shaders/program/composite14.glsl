@@ -51,26 +51,20 @@ const bool colortex1MipmapEnabled = true;
 void main() {
 	vec3 color = texture2D(colortex0, texCoord).rgb;
 
-	float blueNoiseDither = texture2D(noisetex, gl_FragCoord.xy / 512.0).b;
+    float dither = Bayer64(gl_FragCoord.xy);
 	float z0 = texture2D(depthtex0, texCoord).r;
 
 	#ifdef BLOOM
-	#ifdef TAA
-	blueNoiseDither = fract(blueNoiseDither + 1.61803398875 * mod(float(frameCounter), 3600.0));
-	#endif
-
-	vec3 rawBloom = getBloom(texCoord, blueNoiseDither, z0);
-
-	float intensity = BLOOM_STRENGTH;
+	vec3 rawBloom = getBloom(texCoord, dither, z0);
 
 	#if BLOOM_CONTRAST == 0
-	color = mix(color, rawBloom, 0.1 * intensity);
+	color = mix(color, rawBloom, 0.25 * BLOOM_STRENGTH);
 	#else
 	vec3 bloomContrast = vec3(exp2(BLOOM_CONTRAST * 0.25));
 	color = pow(color, bloomContrast);
-
-	vec3 bloomStrength = pow(vec3(0.1 * intensity), bloomContrast);
-	color = mix(color, pow(rawBloom, bloomContrast), bloomStrength);
+	rawBloom = pow(rawBloom, bloomContrast);
+	vec3 bloomStrength = pow(vec3(0.2 * BLOOM_STRENGTH), bloomContrast);
+	color = mix(color, rawBloom, bloomStrength);
 	color = pow(color, 1.0 / bloomContrast);
 	#endif
 	#endif
@@ -79,7 +73,7 @@ void main() {
 	BSLTonemap(color);
 	color = pow(color, vec3(1.0 / 2.2));
 	ColorSaturation(color);
-	color += (blueNoiseDither - 0.5) / 64.0;
+	color += (dither - 0.5) / 64.0;
 
 	//TAA
 	#ifdef TAA

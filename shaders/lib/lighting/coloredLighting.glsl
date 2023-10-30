@@ -20,7 +20,7 @@ void computeColoredLighting(in float z, inout vec3 coloredLighting, inout vec3 g
 	
     float emission = texture2D(colortex3, texCoord).a;
     float indirectEmission = float(emission > 0.094 && emission < 0.096);
-    float directEmission = float(emission > 0.1 && emission <= 0.98) * (1.0 - indirectEmission);
+    float directEmission = float(emission > 0.1 && emission <= 0.98) * (1.0 - indirectEmission) * emission;
 
     vec3 albedo = texture2D(colortex0, texCoord).rgb;
 
@@ -35,7 +35,12 @@ void computeColoredLighting(in float z, inout vec3 coloredLighting, inout vec3 g
     #endif
 
 	float mask = clamp(2.0 - 2.0 * max(abs(prvCoord.x - 0.5), abs(prvCoord.y - 0.5)), 0.0, 1.0);
-	float dither = fract(Bayer8(gl_FragCoord.xy) + frameCounter * 1.618);
+
+    float dither = Bayer64(gl_FragCoord.xy);
+
+    #ifdef TAA
+    dither = fract(dither + frameCounter * 1.618);
+    #endif
 
 	for (int i = 0; i < 4; i++) {
         #ifdef COLORED_LIGHTING

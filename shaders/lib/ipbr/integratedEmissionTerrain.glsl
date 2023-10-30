@@ -12,7 +12,7 @@ void getIntegratedEmission(inout vec4 albedo, in vec3 viewPos, in vec3 worldPos,
 
 	if (mat == 101) { // Crying Obsidian and Respawn Anchor
 		emission = lAlbedo * lAlbedo * (1.0 + lightmap.x);
-		coloredLightingIntensity = emission;
+		coloredLightingIntensity = emission * 0.1;
 	} else if (mat == 102) { // Command Block
         vec3 comPos = fract(worldPos + cameraPosition);
              comPos = abs(comPos - vec3(0.5));
@@ -32,7 +32,7 @@ void getIntegratedEmission(inout vec4 albedo, in vec3 viewPos, in vec3 worldPos,
 		coloredLightingIntensity = emission;
 	} else if (mat == 105) { // Redstone Things
 		emission = int(albedo.r > 0.9);
-		coloredLightingIntensity = emission;
+		coloredLightingIntensity = emission * 0.5;
 	} else if (mat == 106) { // Soul Emissives
 		emission = int(albedo.b > 0.5);
 		coloredLightingIntensity = emission;
@@ -75,8 +75,13 @@ void getIntegratedEmission(inout vec4 albedo, in vec3 viewPos, in vec3 worldPos,
 	} else if (mat == 120) { // Powered Rail
 		emission = int(albedo.g < 0.25);
 	} else if (mat == 121 || mat == 122 || mat == 123) { // Fully emissive blocks
-		emission = 0.5;
+		emission = 0.25;
 		coloredLightingIntensity = emission;
+	} else if (mat == 124) { // Jack o Lantern
+		emission = float(pow4(lAlbedo) > 0.99 && albedo.b > 0.3);
+		coloredLightingIntensity = emission;
+	} else if (mat == 125) { // Fungus
+		emission = int(lAlbedo > 0.9);
 	}
 	
 	#ifdef EMISSIVE_POWDER_SNOW
@@ -107,5 +112,5 @@ void getIntegratedEmission(inout vec4 albedo, in vec3 viewPos, in vec3 worldPos,
 	#endif
 
 	emission = clamp(emission * EMISSION_STRENGTH, 0.0, 8.0);
-	coloredLightingIntensity = clamp(coloredLightingIntensity * 64.0 * int(lightmap.x > 0.25), 0.0, 0.98);
+	coloredLightingIntensity = clamp(coloredLightingIntensity * int(lightmap.x > 0.2), 0.0, 0.98);
 }
