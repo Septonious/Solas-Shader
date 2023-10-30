@@ -51,7 +51,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     vec2 dFdTorch = vec2(dFdx(blockLightMap), dFdy(blockLightMap));
     vec3 torchLightDir = dFdViewPosX * dFdTorch.x + dFdViewPosY * dFdTorch.y;
 
-    if (length(dFdTorch) > 0.000001) {
+    if (length(dFdTorch) > 1e-6) {
         blockLightMap *= clamp(dot(normalize(torchLightDir), normal) + 0.85, 0.0, 1.0) * 0.5 + 0.5;
     }
     #endif
@@ -189,7 +189,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
 
     #ifdef GI
     #ifdef GBUFFERS_TERRAIN
-    float giVisibility = length(fullShadow * rainFactor * shadowFade * sunVisibility) * int(emission == 0.0);
+    float giVisibility = length(fullShadow * rainFactor * shadowFade * sunVisibility) * int(emission == 0.0) * int(subsurface == 0.0);
 
     if (giVisibility != 0.0) {
         coloredLightingIntensity = mix(coloredLightingIntensity, 0.095, giVisibility);

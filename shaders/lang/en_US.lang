@@ -128,8 +128,8 @@ option.GI=Global Illumination (GI)
 option.GLOBAL_ILLUMINATION_STRENGTH=GI Strength
 option.GLOBAL_ILLUMINATION_RADIUS=GI Radius
 
-option.AO=Custom Ambient Occlusion (AO)
-option.VANILLA_AO=Vanilla Ambient Occlusion (AO)
+option.AO=Screen Space Occlusion
+option.VANILLA_AO=Vanilla Ambient Occlusion
 option.AO_STRENGTH=AO Strength
 option.AO_RADIUS=AO Radius
 

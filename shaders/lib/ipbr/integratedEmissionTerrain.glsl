@@ -32,6 +32,7 @@ void getIntegratedEmission(inout vec4 albedo, in vec3 viewPos, in vec3 worldPos,
 		coloredLightingIntensity = emission;
 	} else if (mat == 105) { // Redstone Things
 		emission = int(albedo.r > 0.9);
+		coloredLightingIntensity = emission;
 	} else if (mat == 106) { // Soul Emissives
 		emission = int(albedo.b > 0.5);
 		coloredLightingIntensity = emission;

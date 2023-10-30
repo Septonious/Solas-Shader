@@ -30,7 +30,7 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
 
 	if (visibility > 0.0) {
 		vec3 shadowCol = vec3(0.0);
-		vec3 vlColor = mix(lightCol, lightCol * normalize(skyColor + 0.000001), timeBrightness);
+		vec3 vlColor = mix(pow(lightCol, vec3(0.75)), lightCol * normalize(skyColor + 0.000001), timeBrightness);
 
 		//Linear Depths
 		float linearDepth0 = getLinearDepth(z0);
