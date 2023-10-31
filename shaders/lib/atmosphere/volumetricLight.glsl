@@ -20,7 +20,7 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
 		  VoU = mix(VoU, 1.0, timeBrightness * (1.0 - eBS * eBS));
 	float VoL = clamp(dot(nViewPos, lightVec), 0.0, 1.0);
 
-	float visibility = 0.01 * pow4(VoU) * mix(exp(VoL * 1.5) * 0.5 + 0.25, VoL * 2.0, timeBrightness) * int(z0 > 0.56);
+	float visibility = 0.01 * pow4(VoU) * mix(exp(VoL * 1.5) * 0.5, VoL * 2.0, timeBrightness) * int(z0 > 0.56);
 
 	#if MC_VERSION >= 11900
 	visibility *= 1.0 - darknessFactor;

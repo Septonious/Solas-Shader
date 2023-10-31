@@ -54,7 +54,7 @@ uniform float shadowFade;
 uniform float wetness, timeBrightness, timeAngle;
 #endif
 
-#if defined OVERWORLD || ((defined OVERWORLD || defined END) && defined INTEGRATED_SPECULAR)
+#if defined OVERWORLD || ((defined OVERWORLD || defined END) && defined WATER_REFLECTIONS)
 uniform ivec2 eyeBrightnessSmooth;
 #endif
 
@@ -66,7 +66,7 @@ uniform vec3 skyColor;
 
 uniform sampler2D noisetex;
 
-#ifdef INTEGRATED_SPECULAR
+#ifdef WATER_REFLECTIONS
 uniform sampler2D gaux3;
 #endif
 
@@ -76,14 +76,14 @@ uniform sampler2D colortex7;
 
 uniform sampler2D texture;
 
-#if defined WATER_FOG || defined INTEGRATED_SPECULAR
+#if defined WATER_FOG || defined WATER_REFLECTIONS
 uniform sampler2D depthtex1;
 #endif
 
 uniform mat4 gbufferProjectionInverse;
 uniform mat4 gbufferModelViewInverse;
 
-#ifdef INTEGRATED_SPECULAR
+#ifdef WATER_REFLECTIONS
 #ifdef OVERWORLD
 uniform mat4 gbufferModelView;
 #endif
@@ -97,7 +97,7 @@ uniform mat4 shadowModelView;
 #endif
 
 //Common Variables//
-#if defined OVERWORLD || ((defined OVERWORLD || defined END) && defined INTEGRATED_SPECULAR)
+#if defined OVERWORLD || ((defined OVERWORLD || defined END) && defined WATER_REFLECTIONS)
 float eBS = eyeBrightnessSmooth.y / 240.0;
 float caveFactor = mix(clamp((cameraPosition.y - 56.0) / 16.0, float(isEyeInWater == 1), 1.0), 1.0, eBS);
 #endif
@@ -109,7 +109,7 @@ vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.
 vec3 lightVec = sunVec;
 #endif
 
-#ifdef INTEGRATED_SPECULAR
+#ifdef WATER_REFLECTIONS
 vec2 viewResolution = vec2(viewWidth, viewHeight);
 #endif
 
@@ -127,7 +127,7 @@ vec2 viewResolution = vec2(viewWidth, viewHeight);
 #include "/lib/lighting/dynamicHandLight.glsl"
 #endif
 
-#ifdef INTEGRATED_SPECULAR
+#ifdef WATER_REFLECTIONS
 #include "/lib/util/ToScreen.glsl"
 #include "/lib/util/raytracer.glsl"
 #endif
@@ -150,7 +150,7 @@ vec2 viewResolution = vec2(viewWidth, viewHeight);
 
 #include "/lib/atmosphere/fog.glsl"
 
-#ifdef INTEGRATED_SPECULAR
+#ifdef WATER_REFLECTIONS
 #ifdef OVERWORLD
 #include "/lib/ipbr/ggx.glsl"
 #endif
@@ -261,7 +261,7 @@ void main() {
 		}
 		#endif
 
-		#ifdef INTEGRATED_SPECULAR
+		#ifdef WATER_REFLECTIONS
 		if (portal < 0.5) {
 			float fresnel = clamp(1.0 + dot(normalize(newNormal), normalize(viewPos)), 0.0, 1.0);
 			getReflection(depthtex1, albedo, viewPos, newNormal, fresnel, lightmap.y, water, emission);
@@ -282,7 +282,7 @@ void main() {
 	/* DRAWBUFFERS:013 */
 	gl_FragData[0] = albedo;
 	gl_FragData[1].rgb = vlAlbedo;
-	gl_FragData[2] = vec4(refraction, 1.0, mix(1.0, 0.75, float(emission > 0.5 || (lightMapCoord.x > 0.8 && water < 0.5))));
+	gl_FragData[2] = vec4(refraction, mix(0.4, 1.0, water), mix(1.0, 0.75, float(emission > 0.5 || (lightMapCoord.x > 0.8 && water < 0.5))));
 }
 
 #endif

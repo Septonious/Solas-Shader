@@ -39,7 +39,11 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
           blockLightMap *= blockLightMap * 0.5 * (1.0 - lightmap.y * 0.5 * timeBrightness);
     #endif
 
-    #ifdef GBUFFERS_TERRAIN
+    #ifdef NETHER
+          blockLightMap = pow6(lightmap.x) * 3.0;
+    #endif
+
+    #if defined GBUFFERS_TERRAIN && defined COLORED_LIGHTING
     mat3 tbn = mat3(
         tangent.x, binormal.x, normal.x,
         tangent.y, binormal.y, normal.y,
@@ -98,6 +102,9 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     //Shadows without peter-panning from Emin's Complementary Reimagined shaderpack, tysm for allowing me to use them ^^
     //Developed by Emin#7309 and gri573#7741
     float shadowLength = shadowDistance * 0.9166667 - length(vec4(worldPos.x, worldPos.y, worldPos.y, worldPos.z));
+    #ifndef SHADOWS
+    shadowLength *= 0.0;
+    #endif
 
     if (NoL > 0.0001 && shadowLength > 0.0) {
         vec3 worldNormal = normalize(ToWorld(normal * 100000.0));

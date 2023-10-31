@@ -121,16 +121,20 @@ void main() {
 
 	#ifdef VF_NETHER_END
 	#ifdef NETHER
+	#ifdef VF_NETHER
 	computeVolumetricFog(vl.rgb, color, translucent, blueNoiseDither);
 	vl.rgb = sqrt(vl.rgb);
 	vl.a = int(vl.rgb != vec3(0.0));
 	#endif
+	#endif
 
 	#ifdef END
+	#ifdef VF_END
 	float cloudDepth = 0.0;
 
 	computeVolumetricClouds(vl, blueNoiseDither, cloudDepth);
 	vl.rgb = sqrt(vl.rgb);
+	#endif
 	#endif
 	#endif
 	#endif

@@ -1,6 +1,6 @@
 float timeBrightnessSqrt = sqrt(timeBrightness);
 
-float temperatureSun = mix(mix(LIGHTTEMP_SS, LIGHTTEMP_ME, timeBrightnessSqrt), LIGHTTEMP_D, timeBrightness) * 0.01;
+float temperatureSun = mix(mix(LIGHTTEMP_SS, LIGHTTEMP_ME, timeBrightnessSqrt), LIGHTTEMP_D, timeBrightness * timeBrightness) * 0.01;
 float temperatureNight = LIGHTTEMP_N * 0.01;
 
 vec3 colorSun = vec3(1.0, clamp(0.390081578 * log(temperatureSun) - 0.631841443, 0.0, 1.0), clamp(0.543206789 * log(temperatureSun - 10.0) - 1.196254089, 0.0, 1.0));
@@ -11,7 +11,12 @@ vec3 lightSun = mix(pow((colorSun + 0.055) / 1.055, vec3(2.4)), colorSun / 12.92
 vec3 lightNight = mix(pow((colorNight + 0.055) / 1.055, vec3(2.4)), colorNight / 12.92, step(colorNight, vec3(0.04045)))
               * LIGHTINTENSITY_N;
 
+#ifdef PURPLE_MORNINGS_EVENINGS
+vec3 lightColRaw = mix(lightNight, lightSun * mix(vec3(1.0), vec3(1.0, 1.0, 3.0), 1.0 - pow(timeBrightness, 0.25)), sunVisibility * sunVisibility);
+#else
 vec3 lightColRaw = mix(lightNight, lightSun, sunVisibility * sunVisibility);
+#endif
+
 vec3 lightColSqrt = mix(lightColRaw, dot(lightColRaw, vec3(0.299, 0.587, 0.114)) * weatherCol, wetness * 0.5);
 vec3 lightCol = lightColSqrt * lightColSqrt;
 

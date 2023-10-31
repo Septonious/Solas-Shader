@@ -1,5 +1,11 @@
 #shaders/lang/en_US.lang
 
+profile.LOW=Low
+profile.MEDIUM=Medium
+profile.HIGH=High
+profile.VERY_HIGH=Very High (Default)
+profile.ULTRA=Ultra
+
 option.SOLAS_BY_SEPTONIOUS=§6Solas
 value.SOLAS_BY_SEPTONIOUS.0=§bBy Septonious
 option.SOLAS_BY_SEPTONIOUS.comment=Discord: https://discord.gg/4uTAUQR2xu GitHub: https://github.com/Septonious/Solas-Shader
@@ -13,16 +19,14 @@ screen.VC_CONFIG=Volumetric Clouds Config
 
 option.VC=Volumetric Clouds
 option.BLOCKY_CLOUDS=Blocky Clouds
-option.VC_DISTANT_FADE=Clouds Distant Fade
+option.VC_DYNAMIC_WEATHER=Dynamic Weather
+option.VC_DYNAMIC_WEATHER.comment=Automatically controls the size, height and amount of clouds based on various factors
+option.VC_DETAIL=Detail
+option.VC_DENSITY=Density
 option.VC_AMOUNT=Amount
-value.VC_AMOUNT.0.90=Very Low
-value.VC_AMOUNT.0.80=Low
-value.VC_AMOUNT.0.70=Medium
-value.VC_AMOUNT.0.60=High
-value.VC_AMOUNT.0.50=Very High
 option.VC_HEIGHT=Height
-option.VC_STRETCHING=Stretching
-option.VC_SAMPLES=Samples
+option.VC_THICKNESS=Thickness
+option.VC_SPEED=Speed
 option.VC_DISTANCE=Render Distance
 option.VC_OPACITY=Opacity
 
@@ -30,11 +34,25 @@ option.VC_OPACITY=Opacity
 screen.VL_CONFIG=Volumetric Light Config
 
 option.VL=Volumetric Light
-option.VL_SCENE_BLURRING=VL Scene Blurring
-option.VL_SCENE_BLURRING.comment=Makes VL blur objects behind itself.
 option.VL_STRENGTH=Strength
 option.VL_SAMPLES=Samples
 
+option.VF_END=End 3D Fog
+option.VF_NETHER=Nether 3D Fog
+screen.VF_END_CONFIG=End Fog Config
+screen.VF_NETHER_CONFIG=Nether Fog Config
+
+option.VF_END_HEIGHT=Height
+option.VF_END_OPACITY=Opacity
+option.VF_END_AMOUNT=Amount
+option.VF_END_THICKNESS=Thickness
+
+option.VF_NETHER_STRENGTH=Strength
+option.VF_NETHER_SAMPLES=Samples
+option.VF_NETHER_SPEED=Speed
+option.VF_NETHER_FREQUENCY=Frequency
+option.VF_NETHER_REFRACTION=Heat Refraction
+option.VF_NETHER_REFRACTION_STRENGTH=Refraction Strength
 
 screen.FOG_CONFIG=Fog Config
 
@@ -53,6 +71,7 @@ option.END_STARS=Ender Stars
 option.MILKY_WAY=Milky Way
 option.MILKY_WAY_BRIGHTNESS=Milky Way Brightness
 option.END_NEBULA=Ender Nebula
+option.END_NEBULA_BRIGHTNESS=Nebula Brightness
 option.RAINBOW=Rainbow
 option.AURORA=Aurora Borealis
 option.AURORA_COLD_BIOME_VISIBILITY=Aurora Cold Biome Visibility
@@ -145,10 +164,8 @@ option.INTEGRATED_SPECULAR=IPBR Specular Mapping
 screen.ISPECULAR=Specular Config
 
 option.RAIN_PUDDLES=Rain Puddles
-option.REFLECTION_RT_SAMPLE_COUNT=Reflection Samples
 option.SPECULAR_STRENGTH=Specular Strength
 option.WATER_SPECULAR_STRENGTH=Water Reflection Strength
-
 
 option.INTEGRATED_EMISSION=IPBR Emissives
 
@@ -163,6 +180,13 @@ option.PLAYER_BRIGHT_PARTS_HIGHLIGHT=Player Bright Parts Highlight
 option.ENTITY_HIGHLIGHT=Entity Highlight
 option.EMISSION_STRENGTH=Emission Strength
 
+option.INTEGRATED_NORMAL_MAPPING=IPBR Generated Normals
+
+screen.INORMALS=Normals Config
+
+option.NORMAL_STRENGTH=Strength
+option.NORMAL_RESOLUTION=Resolution
+option.NORMAL_THRESHOLD=Generation Threshold
 
 #COLOR
 
@@ -173,6 +197,11 @@ option.LIGHTTEMP_SS=Sunrise/Sunset
 option.LIGHTTEMP_ME=Morning/Evening
 option.LIGHTTEMP_D=Day
 option.LIGHTTEMP_N=Night
+
+option.LIGHTINTENSITY_SS=Intensity Sunset/Sunrise
+option.LIGHTINTENSITY_M=Intensity Morning
+option.LIGHTINTENSITY_D=Intensity Day
+option.LIGHTINTENSITY_N=Intensity Night
 
 screen.END_COLOR=End Light & Ambient Color
 option.LIGHT_END_R=Red
@@ -216,10 +245,15 @@ option.SKY_I=Intensity
 
 screen.POST=Post Effects
 
+screen.DOF_CONFIG=DoF Config
+
 option.DOF=Depth of Field (DOF)
 option.DOF.comment=Blurs the object outside your player's eye focal point.
 
 option.DOF_STRENGTH=DOF Strength
+option.DISTANT_BLUR=Distant Blur
+option.DISTANT_BLUR_RANGE=Dist. Blur Range
+option.DISTANT_BLUR_STRENGTH=Dist. Blur Strength
 
 option.SHARPENING=Image Sharpening
 option.CHROMATIC_ABERRATION=Chromatic Aberration (CA)
@@ -243,7 +277,7 @@ option.SATURATION.comment=Adjusts saturation of all colors.
 option.VIBRANCE=Vibrance
 option.VIBRANCE.comment=Adjusts saturation of less saturated colors, well saturated colors are less affected.
 
-screen.BLOOM=Bloom Config
+screen.BLOOM_CONFIG=Bloom Config
 
 option.BLOOM=Bloom
 option.BLOOM_STRENGTH=Bloom Strength

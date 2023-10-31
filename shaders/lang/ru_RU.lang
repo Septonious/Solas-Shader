@@ -1,5 +1,11 @@
 #shaders/lang/ru_RU.lang
 
+profile.LOW=Низко
+profile.MEDIUM=Средне
+profile.HIGH=Высоко
+profile.VERY_HIGH=Очень Высоко
+profile.ULTRA=Ультра
+
 option.SOLAS_BY_SEPTONIOUS=§6Solas
 value.SOLAS_BY_SEPTONIOUS.1=§bАвтор: Septonious
 option.SOLAS_BY_SEPTONIOUS.comment=Discord: https://discord.com/invite/4uTAUQR2xu. GitHub: https://github.com/Septonious/Solas-Shader. Переводил сам (да, я русский)
@@ -11,18 +17,16 @@ screen.ATMOSPHERICS=Атмосфера
 
 screen.VC_CONFIG=Настройки Облаков
 
-option.VC=Объёмные Облака
+option.VC=3D Облака
 option.BLOCKY_CLOUDS=Квадратные Облака
-option.VC_DISTANT_FADE=Облачный Дальний Туман
-option.VC_AMOUNT=Количество Облаков
-value.VC_AMOUNT.0.90=Очень Низкое
-value.VC_AMOUNT.0.80=Низкое
-value.VC_AMOUNT.0.70=Среднее
-value.VC_AMOUNT.0.60=Большое
-value.VC_AMOUNT.0.50=Очень Большое
+option.VC_DYNAMIC_WEATHER=Динамическая погода
+option.VC_DYNAMIC_WEATHER.comment=Автоматически определяет параметры облаков
+option.VC_DETAIL=Детализация
+option.VC_DENSITY=Плотность
+option.VC_AMOUNT=Количество
 option.VC_HEIGHT=Высота
-option.VC_STRETCHING=Толщина
-option.VC_SAMPLES=Качество
+option.VC_THICKNESS=Толщина
+option.VC_SPEED=Скорость
 option.VC_DISTANCE=Дистанция Рендера
 option.VC_OPACITY=Непрозрачность
 
@@ -43,6 +47,23 @@ value.DISTANT_FADE_STYLE.0=Сферический
 value.DISTANT_FADE_STYLE.1=Цилиндрический
 option.FOG_DENSITY=Плотность Тумана
 option.FOG_HEIGHT=Высота Тумана
+
+option.VF_END=3D Туман (Энд)
+option.VF_NETHER=3D Туман (Незер)
+screen.VF_END_CONFIG=Туман в Энде
+screen.VF_NETHER_CONFIG=Туман в Незере
+
+option.VF_END_HEIGHT=Высота
+option.VF_END_OPACITY=Непрозрачность
+option.VF_END_AMOUNT=Количество
+option.VF_END_THICKNESS=Толщина
+
+option.VF_NETHER_STRENGTH=Видимость
+option.VF_NETHER_SAMPLES=Качество
+option.VF_NETHER_SPEED=Скорость
+option.VF_NETHER_FREQUENCY=Частота
+option.VF_NETHER_REFRACTION=Преломление Света
+option.VF_NETHER_REFRACTION_STRENGTH=Сила Преломления
 
 
 screen.SKY_CONFIG=Настройки Неба
@@ -118,10 +139,9 @@ option.SHADOW_SAMPLE_COUNT=Качество Теней
 option.SHADOW_COLOR=Цветные Тени
 option.ENTITY_SHADOWS=Тени от Существ
 
-option.BLOOM_COLORED_LIGHTING=Цветное Освещение (ЦО) (Й жив)
+option.COLORED_LIGHTING=Цветное Освещение (ЦО) (Й жив)
 option.COLORED_LIGHTING_RADIUS=Радиус ЦО
 option.COLORED_LIGHTING_STRENGTH=Сила ЦО
-
 option.AO=Ambient Occlusion (AO)
 option.VANILLA_AO=Ванильное АО
 option.AO_STRENGTH=Сила АО
@@ -129,6 +149,7 @@ option.AO_RADIUS=Радиус АО
 
 option.GLOBAL_ILLUMINATION=Глобальное Освещение (ГО)
 option.GLOBAL_ILLUMINATION_STRENGTH=Сила ГО
+option.GLOBAL_ILLUMINATION_RADIUS=Радиус ГО
 option.DYNAMIC_HANDLIGHT=Динамичное Освещение
 
 
@@ -159,6 +180,11 @@ option.PLAYER_BRIGHT_PARTS_HIGHLIGHT=Светящиеся Яркие Пиксе�
 option.ENTITY_HIGHLIGHT=Светящиеся Существа
 option.EMISSION_STRENGTH=Яркость Свечения
 
+screen.INORMALS=Сгенерированные Нормали
+
+option.NORMAL_STRENGTH=Сила
+option.NORMAL_RESOLUTION=Разрешение
+option.NORMAL_THRESHOLD=Порог
 
 #COLOR
 
@@ -201,8 +227,13 @@ option.SKY_I=Интенсивность
 
 option.DOF=Глубина Резкости (ГР)
 option.DOF.comment=Размывает объекты вне точки фокуса игрока.
+option.DISTANT_BLUR=Размытие Вдали
+option.DISTANT_BLUR_RANGE=Дальность Размытия
+option.DISTANT_BLUR_STRENGTH=Сила Размытия
 
 option.DOF_STRENGTH=Сила ГР
+
+screen.DOF_CONFIG=Настройки ГР
 
 screen.POST=Постобработка
 
@@ -227,7 +258,7 @@ option.SATURATION.comment=Регулирует насыщенность всех
 
 option.VIBRANCE=Насыщенность блёклых цветов.
 
-screen.BLOOM=Настройки Свечения
+screen.BLOOM_CONFIG=Настройки Свечения
 
 option.BLOOM=Свечение
 option.BLOOM_STRENGTH=Сила Свечения

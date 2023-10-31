@@ -117,7 +117,7 @@ void computeVolumetricClouds(inout vec4 vc, float dither, inout float currentDep
 			//Final color calculations
 			vec3 cloudColor = mix(endAmbientCol * 0.2, endLightCol * 0.4, cloudLighting) * (1.0 + scattering * 3.0);
 
-			vc = vec4(cloudColor, cloudAlpha) * visibility;
+			vc = vec4(cloudColor, cloudAlpha * VF_END_OPACITY) * visibility;
 		}
 	}
 }

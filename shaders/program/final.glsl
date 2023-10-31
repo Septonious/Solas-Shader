@@ -30,7 +30,7 @@ uniform sampler2D colortex1;
 uniform float viewWidth, viewHeight;
 #endif
 
-#ifdef CHROMATIC_ABERRATION
+#if defined CHROMATIC_ABERRATION || defined NETHER_CHROMATIC_ABERRATION
 uniform float aspectRatio;
 #endif
 
@@ -39,7 +39,7 @@ uniform float aspectRatio;
 #include "/lib/post/sharpenFilter.glsl"
 #endif
 
-#ifdef CHROMATIC_ABERRATION
+#if defined CHROMATIC_ABERRATION || defined NETHER_CHROMATIC_ABERRATION
 #include "/lib/post/chromaticAberration.glsl"
 #endif
 
@@ -51,7 +51,7 @@ void main() {
 	sharpenFilter(color, texCoord);
 	#endif
 
-	#ifdef CHROMATIC_ABERRATION
+	#if defined CHROMATIC_ABERRATION || defined NETHER_CHROMATIC_ABERRATION
 	getChromaticAberration(color, texCoord);
 	#endif
 

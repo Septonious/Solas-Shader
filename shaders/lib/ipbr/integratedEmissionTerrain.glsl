@@ -75,7 +75,7 @@ void getIntegratedEmission(inout vec4 albedo, in vec3 viewPos, in vec3 worldPos,
 	} else if (mat == 120) { // Powered Rail
 		emission = int(albedo.g < 0.25);
 	} else if (mat == 121 || mat == 122 || mat == 123) { // Fully emissive blocks
-		emission = 0.25;
+		emission = 0.5;
 		coloredLightingIntensity = emission;
 	} else if (mat == 124) { // Jack o Lantern
 		emission = float(pow4(lAlbedo) > 0.99 && albedo.b > 0.3);
