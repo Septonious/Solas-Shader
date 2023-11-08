@@ -32,7 +32,6 @@ void getIntegratedEmission(inout vec4 albedo, in vec3 viewPos, in vec3 worldPos,
 		coloredLightingIntensity = emission;
 	} else if (mat == 105) { // Redstone Things
 		emission = int(albedo.r > 0.9);
-		coloredLightingIntensity = emission * 0.5;
 	} else if (mat == 106) { // Soul Emissives
 		emission = int(albedo.b > 0.5);
 		coloredLightingIntensity = emission;
@@ -63,8 +62,8 @@ void getIntegratedEmission(inout vec4 albedo, in vec3 viewPos, in vec3 worldPos,
 		emission = int(lAlbedo > 0.45 && albedo.r < 0.2) * 0.25;
 		emission *= texture2D(noisetex, (worldPos.xz + cameraPosition.xz) * 0.00125).b;
 	} else if (mat == 116) { // Redstone Lamp, Glowstone, Sea Lentern
-		emission = min(lAlbedo * 2.0, 1.0) * 1.5;
-		coloredLightingIntensity = emission;
+		emission = min(lAlbedo * 2.0, 1.0);
+		coloredLightingIntensity = emission * 2.0;
 	} else if (mat == 118) { // End Portal Frame
 		emission = 16.0 * pow2(albedo.b - albedo.g) * int(albedo.r < 0.65);
 		lightmap.x *= 0.5;
@@ -103,10 +102,10 @@ void getIntegratedEmission(inout vec4 albedo, in vec3 viewPos, in vec3 worldPos,
 	#if defined OVERWORLD && defined EMISSIVE_FLOWERS
 	if (mat >= 5 && mat <= 7) { // Flowers
 		if (albedo.b > albedo.g || albedo.r > albedo.g) {
-			emission = lAlbedo * (1.0 - wetness);
-			emission *= 2.0 - clamp(length(viewPos) * 0.2, 0.0, 1.0);
+			emission = lAlbedo * (1.0 - wetness * 0.75);
 			emission *= 1.0 - lightmap.y * 0.5;
 			emission *= 0.125;
+			emission = max(emission, 0.0);
 		}
 	}
 	#endif

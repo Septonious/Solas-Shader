@@ -14,14 +14,16 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 atmo
 	float fogAltitude = clamp(pow16((worldPos.y + cameraPosition.y + 1000.0 - FOG_HEIGHT) * 0.001), 0.0, 1.0);
 
 	float fog = lViewPos * FOG_DENSITY * 0.0025;
+		  fog *= 1.0 - timeBrightness * 0.5;
 		  fog = 1.0 - exp(-(3.0 + wetness) * fog);
 		  fog *= 1.0 - fogAltitude * 0.5;
 		  fog = clamp(fog, 0.0, 1.0);
 
-	vec3 fogColor = mix(normalize(skyColor + 0.00001), atmosphereColor, mix(1.0, mix(0.25 + fogAltitude * 0.25, 1.0, wetness), sunVisibility)) * fog;
+	vec3 fogCol = mix(normalize(skyColor + 0.00001), atmosphereColor, mix(1.0, mix(0.25 + fogAltitude * 0.25, 1.0, wetness), sunVisibility)) * fog;
 
     //Underground Fog
-	fogColor = mix(caveMinLightCol * fog, fogColor, clamp(caveFactor + isLushCaves, 0.0, 1.0));
+	fogCol = mix(caveMinLightCol * fog * 0.25, fogCol, clamp(caveFactor + isLushCaves, 0.0, 1.0));
+	fogCol = mix(fogCol, normalize(skyColor + 0.00001) * vec3(1.1, 1.4, 1.0) * fog * 0.25, isLushCaves);
 
 	//Distant Fade
 	#ifdef DISTANT_FADE
@@ -39,13 +41,13 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 atmo
 		#endif
 
 		float vanillaFog = 1.0 - (far - (fogFactor + fogOffset)) * 8.0 / (4.0 * far);
-			  vanillaFog = clamp(pow3(vanillaFog), 0.0, 1.0);
+			  vanillaFog = clamp(pow3(vanillaFog), 0.0, 1.0) * clamp(caveFactor + isLushCaves, 0.0, 1.0);
 	
 		if (vanillaFog > 0.0){
-			fogColor *= fog;
+			fogCol *= fog;
 			fog = mix(fog, 1.0, vanillaFog);
 
-			if (fog > 0.0) fogColor = mix(fogColor, atmosphereColor, vanillaFog) / fog;
+			if (fog > 0.0) fogCol = mix(fogCol, atmosphereColor, vanillaFog) / fog;
 		}
 	}
 	#endif
@@ -61,12 +63,12 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 atmo
 
 	fog = 1.0 - exp(-fog);
 
-	vec3 fogColor = netherColSqrt.rgb * 0.5;
+	vec3 fogCol = netherColSqrt.rgb * 0.5;
 	#endif
 
 	//We don't want fog in the End because it looks cringe
 	#ifndef END
-	color = mix(color, fogColor, fog);
+	color = mix(color, fogCol, fog);
 	#endif
 }
 
@@ -89,7 +91,7 @@ void getBlindFog(inout vec3 color, vec3 viewPos) {
 }
 
 //Powder Snow / Lava Fog
-vec3 denseFogColor[2] = vec3[2](
+vec3 densefogCol[2] = vec3[2](
 	vec3(1.0, 0.18, 0.02),
 	vec3(0.05, 0.07, 0.12)
 );
@@ -98,7 +100,7 @@ void getDenseFog(inout vec3 color, vec3 viewPos) {
 	float fog = length(viewPos) * 0.1;
 		  fog = 1.0 - exp(-2.0 * pow2(fog));
 
-	color = mix(color, denseFogColor[isEyeInWater - 2], fog);
+	color = mix(color, densefogCol[isEyeInWater - 2], fog);
 }
 
 void Fog(inout vec3 color, in vec3 viewPos, in vec3 worldPos, in vec3 atmosphereColor) {

@@ -19,7 +19,7 @@ void getIntegratedEmission(in vec3 albedo, inout vec2 lightmap, inout float emis
     float lAlbedo = length(albedo);
 
     if (mat == 100) { // Experience Orb
-        emission = lAlbedo * 0.5;
+        emission = lAlbedo;
     } else if (mat == 101) { // Stray
         emission = float(lAlbedo > 0.999999999999999999 && albedo.r > 0.9019) * 0.25; // that was painful
     } else if (mat == 102) { // Witch

@@ -119,7 +119,7 @@ void main() {
 		float NoE = clamp(dot(normal, eastVec), -1.0, 1.0);
 
 		if (blockEntityId == 21) {
-			emission = pow2(length(albedo.rgb)) * float(albedo.r < albedo.g);
+			emission = float(pow2(length(albedo.rgb)) > 0.25) * float(albedo.r < albedo.g);
 		}
 
 		if (blockEntityId == 22) {
@@ -135,10 +135,10 @@ void main() {
 			vec2 portalCoordPlayerPos = screenPos.xy;
 
 			float portalNoise = texture2D(noisetex, portalCoordPlayerPos * 0.25).r * 0.25 + 0.375;
-			float portal0 = texture2D(texture,  portalCoordPlayerPos.rg * 0.50 + vec2(0.0, frameTimeCounter * 0.012)).r * 3.00;
-			float portal1 = texture2D(texture,  portalCoordPlayerPos.gr * 0.75 + vec2(0.0, frameTimeCounter * 0.009)).r * 2.50;
-			float portal2 = texture2D(texture,  portalCoordPlayerPos.rg * 1.00 + vec2(0.0, frameTimeCounter * 0.006)).r * 1.75;
-			float portal3 = texture2D(texture,  portalCoordPlayerPos.gr * 1.25 + vec2(0.0, frameTimeCounter * 0.003)).r * 1.25;
+			float portal0 = texture2D(texture, portalCoordPlayerPos.rg * 0.50 + vec2(0.0, frameTimeCounter * 0.012)).r * 3.00;
+			float portal1 = texture2D(texture, portalCoordPlayerPos.gr * 0.75 + vec2(0.0, frameTimeCounter * 0.009)).r * 2.50;
+			float portal2 = texture2D(texture, portalCoordPlayerPos.rg * 1.00 + vec2(0.0, frameTimeCounter * 0.006)).r * 1.75;
+			float portal3 = texture2D(texture, portalCoordPlayerPos.gr * 1.25 + vec2(0.0, frameTimeCounter * 0.003)).r * 1.25;
 			
 			albedo.rgb = pow2(portalNoise) * endAmbientCol + portal3 * vec3(0.3, 0.2, 0.5) + portal2 * vec3(0.4, 0.2, 0.4) + portal1 * vec3(0.2, 0.4, 0.4) + portal0 * vec3(0.2, 0.3, 0.5);
 			emission = length(albedo.rgb) * 8.0;

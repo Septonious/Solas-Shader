@@ -172,7 +172,7 @@ void getEndVortex(inout vec3 color, in vec3 worldPos, in float VoU, in float VoS
 
 #ifdef RAINBOW
 void getRainbow(inout vec3 color, in vec3 worldPos, in float VoU, in float size, in float radius, in float caveFactor) {
-	float visibility = sunVisibility * (1.0 - wetness) * (1.0 - isSnowy) * wetness * max(VoU, 0.0) * caveFactor * 2.0;
+	float visibility = sunVisibility * (1.0 - wetness) * (1.0 - isSnowy) * wetness * max(VoU, 0.0) * caveFactor * 4.0;
 
 	if (visibility > 0.0) {
 		vec2 planeCoord = worldPos.xy / (worldPos.y + length(worldPos.xz) * 0.65);

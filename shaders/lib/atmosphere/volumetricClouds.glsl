@@ -47,7 +47,7 @@ void getCloudSample(vec3 lightVec, vec2 rayPos, vec2 wind, float attenuation, in
 	float noiseCoverage = abs(attenuation - 0.125) * (attenuation > 0.125 ? 1.14 : 8.0);
 		  noiseCoverage *= noiseCoverage * 6.0;
 	
-	noise = mix(noiseBase, noiseDetail, VC_DETAIL * 0.05 * int(noiseBase > 0.0)) * 22.0 - noiseCoverage;
+	noise = mix(noiseBase, noiseDetail, VC_DETAIL * mix(0.05, 0.025, wetness) * int(noiseBase > 0.0)) * 22.0 - noiseCoverage;
 	noise = mix(noise, 20.0, wetness * 0.2);
 	noise = max(noise - cloudAmount, 0.0) * (cloudDensity * 0.2);
 	noise /= sqrt(noise * noise + 0.25);
@@ -149,8 +149,10 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z1, f
 			}
 
 			//Final color calculations
-			vec3 cloudAmbientColor = mix(ambientCol, atmosphereColor, 0.4 * sunVisibility) * (0.35 + sunVisibility * sunVisibility * 0.3);
-			vec3 cloudLightColor = mix(lightCol, atmosphereColor, 0.2 * sunVisibility) * (1.0 + scattering * 2.0);
+			float sunHorizon = sqrt(sunVisibility) * (1.0 - timeBrightnessSqrt);
+
+			vec3 cloudAmbientColor = mix(ambientCol, atmosphereColor * 0.8, 0.5 * sunVisibility) * (0.35 + sunVisibility * sunVisibility * (0.3 - wetness * 0.3));
+			vec3 cloudLightColor = mix(lightCol, atmosphereColor, 0.25 * sunVisibility) * (1.0 + scattering * 2.0) * mix(1.0, 0.5, sunHorizon);
 			vec3 cloudColor = mix(cloudAmbientColor, cloudLightColor, cloudLighting);
 
 			float opacity = clamp(mix(0.99, VC_OPACITY, float(z1 == 1.0 || cameraPosition.y < cloudHeight)), 0.0, 1.0 - wetness * 0.6);

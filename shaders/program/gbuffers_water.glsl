@@ -61,7 +61,7 @@ uniform ivec2 eyeBrightnessSmooth;
 uniform vec3 cameraPosition;
 
 #ifdef OVERWORLD
-uniform vec3 skyColor;
+uniform vec3 skyColor, fogColor;
 #endif
 
 uniform sampler2D noisetex;
@@ -271,7 +271,7 @@ void main() {
 			vec3 baseReflectance = vec3(0.1);
 			float vanillaDiffuse = (0.25 * NoU + 0.75) + (0.667 - abs(NoE)) * (1.0 - abs(NoU)) * 0.15;
 			albedo.rgb += GetSpecularHighlight(newNormal, viewPos, 0.5 + water * 0.2, baseReflectance,
-										   	   lightColSqrt * (1.0 + timeBrightness), shadow * vanillaDiffuse, color.a);
+										   	   lightColSqrt, shadow * vanillaDiffuse, color.a);
 			#endif
 		}
 		#endif

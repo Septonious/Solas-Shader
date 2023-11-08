@@ -9,7 +9,7 @@ in vec2 texCoord;
 //Uniforms//
 #ifdef BLOOM
 #ifdef TAA
-uniform int frameCounter;
+uniform int frameTimeCounter;
 #endif
 
 uniform float viewWidth, viewHeight;

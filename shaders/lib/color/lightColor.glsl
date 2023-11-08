@@ -11,8 +11,9 @@ vec3 lightSun = mix(pow((colorSun + 0.055) / 1.055, vec3(2.4)), colorSun / 12.92
 vec3 lightNight = mix(pow((colorNight + 0.055) / 1.055, vec3(2.4)), colorNight / 12.92, step(colorNight, vec3(0.04045)))
               * LIGHTINTENSITY_N;
 
-#ifdef PURPLE_MORNINGS_EVENINGS
-vec3 lightColRaw = mix(lightNight, lightSun * mix(vec3(1.0), vec3(1.0, 1.0, 3.0), 1.0 - pow(timeBrightness, 0.25)), sunVisibility * sunVisibility);
+#ifdef PURPLE_MORNINGS
+float mefade = 1.0 - clamp(abs(timeAngle - 0.5) * 8.0 - 1.5, 0.0, 1.0);
+vec3 lightColRaw = mix(lightNight, lightSun * mix(vec3(1.0, 1.0, 2.5), vec3(1.0), clamp(mefade + timeBrightness, 0.0, 1.0)), sunVisibility * sunVisibility);
 #else
 vec3 lightColRaw = mix(lightNight, lightSun, sunVisibility * sunVisibility);
 #endif
@@ -20,6 +21,6 @@ vec3 lightColRaw = mix(lightNight, lightSun, sunVisibility * sunVisibility);
 vec3 lightColSqrt = mix(lightColRaw, dot(lightColRaw, vec3(0.299, 0.587, 0.114)) * weatherCol, wetness * 0.5);
 vec3 lightCol = lightColSqrt * lightColSqrt;
 
-vec3 ambientColRaw = mix(lightNight * 0.55, mix(lightColRaw, vec3(0.3, 0.65, 1.05), 0.65) * 0.45, sunVisibility * sunVisibility);
+vec3 ambientColRaw = mix(lightNight * 0.6, mix(lightColRaw, vec3(0.35, 0.65, 1.05), 0.65) * 0.5, sunVisibility * sunVisibility);
 vec3 ambientColSqrt = mix(ambientColRaw, dot(ambientColRaw, vec3(0.299, 0.587, 0.114)) * weatherCol, wetness * 0.5);
 vec3 ambientCol = ambientColSqrt * ambientColSqrt;

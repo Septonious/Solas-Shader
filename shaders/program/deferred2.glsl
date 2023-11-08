@@ -46,7 +46,7 @@ uniform float isSnowy;
 #ifdef OVERWORLD
 uniform ivec2 eyeBrightnessSmooth;
 
-uniform vec3 skyColor;
+uniform vec3 skyColor, fogColor;
 #endif
 
 uniform vec3 cameraPosition;

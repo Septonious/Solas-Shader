@@ -34,9 +34,10 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
           vanillaDiffuse *= vanillaDiffuse;
 
     //Block Lighting
-	float blockLightMap = pow6(lightmap.x * lightmap.x) * 3.0 + max(lightmap.x - 0.05, 0.0) * 1.5;
+	float blockLightMap = pow6(lightmap.x * lightmap.x) * 3.0 + max(lightmap.x - 0.05, 0.0);
+          blockLightMap *= blockLightMap * 0.5;
     #ifdef OVERWORLD
-          blockLightMap *= blockLightMap * 0.5 * (1.0 - lightmap.y * 0.5 * timeBrightness);
+          blockLightMap *= 1.0 - lightmap.y * 0.5 * timeBrightness;
     #endif
 
     #ifdef NETHER
@@ -52,11 +53,11 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
 
     vec3 dFdViewposX = dFdx(viewPos);
     vec3 dFdViewposY = dFdy(viewPos);
-    vec2 dFdTorch = vec2(dFdx(blockLightMap), dFdy(blockLightMap));
+    vec2 dFdTorch = vec2(dFdx(pow4(lightmap.x) * 4.0), dFdy(pow4(lightmap.x) * 4.0));
     vec3 torchLightDir = dFdViewposX * dFdTorch.x + dFdViewposY * dFdTorch.y;
 
-    if (length(dFdTorch) > 1e-6) {
-        blockLightMap *= clamp(dot(normalize(torchLightDir), normal) + 0.85, 0.0, 1.0) * 0.5 + 0.5;
+    if (length(dFdTorch) > 1e-6 && foliage < 0.5) {
+        blockLightMap *= clamp(dot(normalize(torchLightDir), normal) + 0.9, 0.0, 1.0) * 0.5 + 0.5;
     }
     #endif
 
@@ -69,11 +70,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     
     #if !defined GBUFFERS_WATER
     #if defined COLORED_LIGHTING || defined GI
-    applyCLGI(blockLightCol, screenPos, coloredLighting, globalIllumination, lightmap);
-    #endif
-
-    #ifdef COLORED_LIGHTING
-    blockLighting = coloredLighting * blockLightMap * int(emission == 0.0);
+    applyCLGI(blockLightCol, screenPos, blockLighting, globalIllumination, blockLightMap);
     #endif
 
     #ifdef GI
@@ -102,6 +99,11 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     //Shadows without peter-panning from Emin's Complementary Reimagined shaderpack, tysm for allowing me to use them ^^
     //Developed by Emin#7309 and gri573#7741
     float shadowLength = shadowDistance * 0.9166667 - length(vec4(worldPos.x, worldPos.y, worldPos.y, worldPos.z));
+
+    #ifdef GBUFFERS_WATER
+    shadowLength = 1.0;
+    #endif
+
     #ifndef SHADOWS
     shadowLength *= 0.0;
     #endif
@@ -142,13 +144,13 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     #ifdef OVERWORLD
     float rainFactor = 1.0 - wetness * 0.75;
 
-    vec3 newAmbientCol = ambientCol * lightmap.y;
+    vec3 newAmbientCol = ambientCol;
 
     #ifdef GI
-    newAmbientCol = newAmbientCol + globalIllumination * 0.5;
+    ambientCol += globalIllumination * 0.5;
     #endif
 
-    vec3 sceneLighting = mix(newAmbientCol, lightCol * lightmap.y, fullShadow * rainFactor * shadowFade);
+    vec3 sceneLighting = mix(ambientCol, lightCol, fullShadow * rainFactor * shadowFade) * lightmap.y;
          sceneLighting *= 1.0 + scattering * shadow;
 
     //Specular highlight
@@ -184,7 +186,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     sceneLighting += minLightCol * (1.0 - lightmap.y);
 
     //Blocklighting
-    sceneLighting += blockLighting;
+    sceneLighting += blockLighting * int(emission == 0.0);
 
     albedo = pow(albedo, vec3(2.2));
     albedo *= sceneLighting;
@@ -195,7 +197,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
 
     #ifdef GI
     #ifdef GBUFFERS_TERRAIN
-    float giVisibility = length(fullShadow * rainFactor * shadowFade * sunVisibility) * int(emission == 0.0) * int(subsurface == 0.0);
+    float giVisibility = length(fullShadow * rainFactor * shadowFade * sunVisibility) * int(emission == 0.0) * int(subsurface == 0.0) * int(specular == 0.0);
 
     if (giVisibility != 0.0) {
         coloredLightingIntensity = mix(coloredLightingIntensity, 0.095, giVisibility);

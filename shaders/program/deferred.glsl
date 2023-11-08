@@ -8,18 +8,14 @@ varying vec2 texCoord;
 
 //Uniforms//
 #ifdef AO
-uniform int frameCounter;
-
 uniform float far, near;
+uniform float frameTimeCounter;
 uniform float viewWidth, viewHeight, aspectRatio;
 
 uniform sampler2D depthtex0;
-uniform sampler2D noisetex;
 
 uniform mat4 gbufferProjection;
 #endif
-
-uniform sampler2D colortex0;
 
 //Includes//
 #ifdef AO
@@ -29,22 +25,14 @@ uniform sampler2D colortex0;
 
 //Program//
 void main() {
-    vec3 color = texture2D(colortex0, texCoord).rgb;
-
     #ifdef AO
-	float blueNoiseDither = texture2D(noisetex, gl_FragCoord.xy / 512.0).b;
-
-	#ifdef TAA
-	blueNoiseDither = fract(blueNoiseDither + 1.61803398875 * mod(float(frameCounter), 3600.0));
-	#endif
-
-    float ao = computeAmbientOcclusion(blueNoiseDither);
-
-    color.rgb *= ao;
+    float ao = computeAmbientOcclusion(Bayer8(gl_FragCoord.xy));
+    #else
+    float ao = 0.0;
     #endif
 
-	/* DRAWBUFFERS:0 */
-	gl_FragData[0].rgb = color;
+    /* DRAWBUFFERS:1 */
+    gl_FragData[0].a = ao;
 }
 
 #endif

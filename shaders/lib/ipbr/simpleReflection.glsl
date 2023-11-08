@@ -10,7 +10,7 @@ void getReflection(inout vec4 color, in vec3 viewPos, in vec3 normal, in float f
 
 	border = clamp(13.333 * (1.0 - border), 0.0, 1.0);
 
-	vec4 reflection = texture2DLod(colortex0, reflectPos.xy, 3.0 * (1.0 - reflectivity));
+	vec4 reflection = texture2DLod(colortex0, reflectPos.xy, 2.0 * (1.0 - reflectivity));
 		 reflection.a *= border;
 
 	vec3 finalReflection = max(mix(vec3(0.0), reflection.rgb, reflection.a), vec3(0.0));
