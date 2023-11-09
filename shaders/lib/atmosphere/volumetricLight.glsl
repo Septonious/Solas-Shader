@@ -20,7 +20,8 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
 		  VoU = mix(VoU, 1.0, timeBrightness * (1.0 - eBS * eBS));
 	float VoL = clamp(dot(nViewPos, lightVec), 0.0, 1.0);
 
-	float visibility = 0.01 * pow4(VoU) * (1.0 + eBS * 3.0) * mix(mix(0.1 + pow(VoL, 6.0 - VoL * 2.0), pow(VoL, 6.0 - VoL * 3.0), timeBrightness), VoL * 0.5 + 0.125, float(isEyeInWater == 1)) * int(z0 > 0.56);
+	float visibility = pow(VoU, (1.0 - float(isEyeInWater == 1) * 0.5) * (6.0 - timeBrightness * 4.0)) * int(z0 > 0.56);
+	      visibility *= mix(exp(VoL) * 0.5, pow(VoL, (1.0 - float(isEyeInWater == 1) * 0.5) * 4.0 - VoL * 3.0), timeBrightness);
 
 	#if MC_VERSION >= 11900
 	visibility *= 1.0 - darknessFactor;
@@ -37,40 +38,41 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
 		float linearDepth1 = getLinearDepth(z1);
 
 		//Variables
+		float lViewPos = length(viewPos);
+
+		int sampleCount = int(mix(8, VL_SAMPLES, min(visibility, 1.0)));
+
+		float maxDist = max(far, 96.0) * (0.5 - float(isEyeInWater == 1) * 0.25);
+		float minDist = maxDist / sampleCount;
 		float fovFactor = gbufferProjection[1][1] / 1.37;
 		float x = abs(texCoord.x - 0.5);
 			  x = 1.0 - x * x;
 			  x = pow(x, max(3.0 - fovFactor, 0.0));
-		float maxDist = 192.0;
-		float distanceFactor = 5.0 + eBS * eBS * 2.0;
-			  distanceFactor *= clamp(far, 128.0, 512.0) / maxDist;
-			  distanceFactor *= x;
+			  minDist *= x;
 			  maxDist *= x;
 
-		float lViewPos = length(viewPos);
+		float maxCurrentDist = min(linearDepth1, maxDist);
 
 		//Ray Marching
-		for (int i = 0; i < VL_SAMPLES; i++) {
-			float currentDist = (i + dither) * distanceFactor;
+		for (int i = 0; i < sampleCount; i++) {
+			float currentDist = (i + dither) * minDist;
 
-			if (currentDist >= maxDist) break;
+			if (currentDist > maxCurrentDist) break;
 
 			if (linearDepth1 < currentDist || (linearDepth0 < currentDist && translucent.rgb == vec3(0.0))) {
 				break;
 			}
 
-			vec3 worldPos = ToWorld(ToView(vec3(texCoord, getLogarithmicDepth(currentDist))));
+            vec3 worldPos = ToWorld(ToView(vec3(texCoord, getLogarithmicDepth(currentDist))));
+            vec3 shadowPos = ToShadow(worldPos);
 
-			//Shadows
-			vec3 shadowPos = ToShadow(worldPos);
-
-			if (length(shadowPos * 2.0 - 1.0) < 1.0) {
-				float shadow0 = texture2DShadow(shadowtex0, shadowPos.xyz);
+			if (length(shadowPos.xy * 2.0 - 1.0) < 1.0) {
+				float shadow0 = texture2DShadow(shadowtex0, shadowPos);
 				float shadow1 = 0.0;
 
 				#ifdef SHADOW_COLOR
 				if (shadow0 < 1.0) {
-					shadow1 = texture2DShadow(shadowtex1, shadowPos.xyz);
+					shadow1 = texture2DShadow(shadowtex1, shadowPos);
 					if (shadow1 > 0.0) {
 						shadowCol = texture2D(shadowcolor0, shadowPos.xy).rgb;
 					}
@@ -84,7 +86,7 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
 					vec3 npos = worldPos + cameraPosition + vec3(frameTimeCounter, 0.0, 0.0);
 					float n3da = texture2D(noisetex, npos.xz * 0.0005 + floor(npos.y * 0.1) * 0.1).r;
 					float n3db = texture2D(noisetex, npos.xz * 0.0005 + floor(npos.y * 0.1 + 1.0) * 0.1).r;
-					noise = sin(mix(n3da, n3db, fract(npos.y * 0.1)) * 16.0) * 0.5 + 0.5;
+					noise = sin(mix(n3da, n3db, fract(npos.y * 0.1)) * 16.0) * 0.4 + 0.6;
 				}
 
 				shadow0 *= noise;
@@ -97,9 +99,9 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
 					shadow *= translucent.rgb;
 				}
 
-				vl += shadow;
-			} else {
-				vl += 1.0;
+				float currentSampleIntensity = pow4(min(currentDist * 0.33, 1.0)) * (currentDist / maxDist) / sampleCount;
+
+				vl += shadow * currentSampleIntensity;
 			}
 		}
 

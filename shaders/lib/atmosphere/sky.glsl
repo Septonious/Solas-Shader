@@ -25,7 +25,7 @@ vec3 getAtmosphere(vec3 viewPos) {
      //Day, Night and Rain Sky
      vec3 daySky = mix(skyColSqrt, pow(skyColor, vec3(1.4)) * 1.25, timeBrightness);
           daySky = mix(daySky, lightCol, pow8(1.0 - VoUClamped) * 0.2 * (1.0 - wetness));
-     vec3 sky = mix(lightNight, daySky, sunVisibility);
+     vec3 sky = mix(lightNight * 0.8, daySky, sunVisibility);
           sky = mix(sky, weatherCol * clamp(sunVisibility, 0.35, 1.0), wetness * 0.75);
           sky = mix(sky, scatteringColor, scatteringMixer) * skyDensity;
 

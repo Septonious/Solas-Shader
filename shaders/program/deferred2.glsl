@@ -173,7 +173,7 @@ void main() {
 			#endif
 		}
 
-		getSunMoon(skyColor, nViewPos, lightSun * (1.0 - cloudDepth), lightNight * (1.0 - cloudDepth), VoS, VoM, caveFactor, sunMoon);
+		getSunMoon(skyColor, nViewPos, worldPos, lightSun * (1.0 - cloudDepth), lightNight * (1.0 - cloudDepth), VoS, VoM, VoU, caveFactor, sunMoon);
 		#endif
 
 		#ifdef END
