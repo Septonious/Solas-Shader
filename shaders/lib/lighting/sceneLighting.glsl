@@ -182,7 +182,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     #endif
 
     //Emission
-    sceneLighting += albedo.rgb * emission;
+    sceneLighting += albedo.rgb * emission * 2.0;
 
     //Night vision
     sceneLighting += nightVision * 0.25;
