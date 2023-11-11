@@ -146,6 +146,7 @@ option.COLORED_LIGHTING_STRENGTH=CL Strength
 option.GI=Global Illumination (GI)
 option.GLOBAL_ILLUMINATION_STRENGTH=GI Strength
 option.GLOBAL_ILLUMINATION_RADIUS=GI Radius
+option.GLOBAL_ILLUMINATION_BRIGHTNESS=GI Brightness
 
 option.AO=Screen Space Occlusion
 option.VANILLA_AO=Vanilla Ambient Occlusion

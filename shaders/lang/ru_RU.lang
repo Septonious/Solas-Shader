@@ -150,6 +150,8 @@ option.AO_RADIUS=Радиус АО
 option.GLOBAL_ILLUMINATION=Глобальное Освещение (ГО)
 option.GLOBAL_ILLUMINATION_STRENGTH=Сила ГО
 option.GLOBAL_ILLUMINATION_RADIUS=Радиус ГО
+option.GLOBAL_ILLUMINATION_BRIGHTNESS=Яркость ГО
+
 option.DYNAMIC_HANDLIGHT=Динамичное Освещение
 
 

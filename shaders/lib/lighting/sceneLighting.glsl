@@ -69,7 +69,6 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     vec3 blockLighting = blockLightCol * blockLightMap;
 
     //Colored lighting & GI
-    vec3 coloredLighting = vec3(0.0);
     vec3 globalIllumination = vec3(0.0);
     
     #if !defined GBUFFERS_WATER
@@ -78,7 +77,6 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     #endif
 
     #ifdef GI
-    globalIllumination *= 1.0 - pow4(lightmap.y) * 0.5;
     globalIllumination *= 1.0 - blockLightMap;
     #endif
     #endif
@@ -154,7 +152,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     globalIllumination *= 0.75 * abs(NoN) + 0.25;
     #endif
 
-    newAmbientCol += globalIllumination * 5;
+    newAmbientCol += globalIllumination * GLOBAL_ILLUMINATION_BRIGHTNESS * sunVisibility;
     #endif
 
     vec3 sceneLighting = mix(newAmbientCol, lightCol, fullShadow * rainFactor * shadowFade) * lightmap.y;
@@ -204,7 +202,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
 
     #ifdef GI
     #ifdef GBUFFERS_TERRAIN
-    float giVisibility = length(fullShadow * rainFactor * shadowFade * sunVisibility) * int(emission == 0.0) * int(specular == 0.0);
+    float giVisibility = length(fullShadow * rainFactor * shadowFade) * int(emission == 0.0) * int(specular == 0.0) * int(subsurface < 0.5);
 
     if (giVisibility != 0.0) {
         coloredLightingIntensity = mix(coloredLightingIntensity, 0.095, giVisibility);

@@ -27,6 +27,7 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 //#define GI
 #define GLOBAL_ILLUMINATION_STRENGTH 0.9 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
 #define GLOBAL_ILLUMINATION_RADIUS 0.6 //[0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5]
+#define GLOBAL_ILLUMINATION_BRIGHTNESS 2.00 //[1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00]
 
 //Integrated PBR//
 #define INTEGRATED_NORMAL_MAPPING
@@ -64,8 +65,8 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 
 //Bloom//
 #define BLOOM
-#define BLOOM_STRENGTH 1.25 //[1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00 4.25 4.50 4.75 5.00 5.25 5.50 5.75 6.00]
-#define BLOOM_CONTRAST 4 //[-4 -3 -2 -1 0 1 2 3 4]
+#define BLOOM_STRENGTH 1.50 //[1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00 4.25 4.50 4.75 5.00 5.25 5.50 5.75 6.00]
+#define BLOOM_CONTRAST 3 //[-4 -3 -2 -1 0 1 2 3 4]
 #define BLOOM_TILE_SIZE 0.0 //[0.0 0.5 1.0 1.5 2.0]
 
 //Atmosphere//

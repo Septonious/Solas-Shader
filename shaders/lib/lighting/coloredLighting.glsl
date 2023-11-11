@@ -12,7 +12,7 @@ void computeColoredLighting(in float z, inout vec3 coloredLighting, inout vec3 g
 	float linearDepth = getLinearDepth(z);
 
 	float distScaleCL = clamp((far - near) * linearDepth + near, 2.0, 96.0);
-    float distScaleGI = clamp((far - near) * linearDepth + near, 2.0, 32.0);
+    float distScaleGI = clamp((far - near) * linearDepth + near, 2.0, 48.0);
 	float fovScale = gbufferProjection[1][1] / 1.37;
 
 	vec2 directBlurStrength = vec2(1.0 / aspectRatio, 1.0) * COLORED_LIGHTING_RADIUS * fovScale / distScaleCL;
