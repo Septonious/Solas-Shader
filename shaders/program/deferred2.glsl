@@ -51,10 +51,7 @@ uniform vec3 skyColor, fogColor;
 
 uniform vec3 cameraPosition;
 
-#if defined END_NEBULA || defined AURORA || defined VC
 uniform sampler2D noisetex;
-#endif
-
 uniform sampler2D colortex0;
 uniform sampler2D depthtex1;
 
