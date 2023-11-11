@@ -12,7 +12,7 @@ void computeColoredLighting(in float z, inout vec3 coloredLighting, inout vec3 g
 	float linearDepth = getLinearDepth(z);
 
 	float distScaleCL = clamp((far - near) * linearDepth + near, 2.0, 96.0);
-    float distScaleGI = clamp((far - near) * linearDepth + near, 2.0, 64.0);
+    float distScaleGI = clamp((far - near) * linearDepth + near, 2.0, 32.0);
 	float fovScale = gbufferProjection[1][1] / 1.37;
 
 	vec2 directBlurStrength = vec2(1.0 / aspectRatio, 1.0) * COLORED_LIGHTING_RADIUS * fovScale / distScaleCL;
@@ -30,7 +30,7 @@ void computeColoredLighting(in float z, inout vec3 coloredLighting, inout vec3 g
     #endif
 
     #ifdef GI
-    vec3 giAlbedo = albedo * indirectEmission;
+    vec3 giAlbedo = albedo * albedo * indirectEmission;
     vec3 previousGlobalIllumination = vec3(0.0);
     #endif
 
@@ -46,7 +46,7 @@ void computeColoredLighting(in float z, inout vec3 coloredLighting, inout vec3 g
 		for (int i = 0; i < 4; i++) {
 			#ifdef COLORED_LIGHTING
 			vec2 clOffset = offsetDist((dither + i) * 0.25) * directBlurStrength;
-				clOffset = floor(clOffset * vec2(viewWidth, viewHeight) + 0.5) / vec2(viewWidth, viewHeight);
+				 clOffset = floor(clOffset * vec2(viewWidth, viewHeight) + 0.5) / vec2(viewWidth, viewHeight);
 
 			vec2 sampleZPos = texCoord + clOffset;
 			float sampleZ0 = texture2D(depthtex0, sampleZPos).r;
@@ -54,24 +54,16 @@ void computeColoredLighting(in float z, inout vec3 coloredLighting, inout vec3 g
 			float linearSampleZ = getLinearDepth(sampleZ1 >= 1.0 ? sampleZ0 : sampleZ1);
 
 			float sampleWeight = clamp(abs(linearDepth - linearSampleZ) * far / 16.0, 0.0, 1.0);
-				sampleWeight = 1.0 - sampleWeight * sampleWeight;
+				  sampleWeight = 1.0 - sampleWeight * sampleWeight;
 
 			previousColoredLight += texture2D(colortex4, prvCoord.xy + clOffset).rgb * sampleWeight;
 			#endif
 
 			#ifdef GI
 			vec2 giOffset = offsetDist((dither + i) * 0.25) * indirectBlurStrength;
-				giOffset = floor(giOffset * vec2(viewWidth, viewHeight) + 0.5) / vec2(viewWidth, viewHeight);
+				 giOffset = floor(giOffset * vec2(viewWidth, viewHeight) + 0.5) / vec2(viewWidth, viewHeight);
 
-			vec2 gisampleZPos = texCoord + giOffset;
-			float gisampleZ0 = texture2D(depthtex0, gisampleZPos).r;
-			float gisampleZ1 = texture2D(depthtex1, gisampleZPos).r;
-			float gilinearSampleZ = getLinearDepth(gisampleZ1 >= 1.0 ? gisampleZ0 : gisampleZ1);
-
-			float giSampleWeight = clamp(abs(linearDepth - gilinearSampleZ) * far / 16.0, 0.0, 1.0);
-				giSampleWeight = 1.0 - giSampleWeight * giSampleWeight;
-
-			previousGlobalIllumination += texture2D(colortex5, prvCoord.xy + giOffset).rgb * giSampleWeight;
+			previousGlobalIllumination += texture2D(colortex5, prvCoord.xy + giOffset).rgb;
 			#endif
 		}
 

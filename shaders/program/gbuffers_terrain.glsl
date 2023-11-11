@@ -8,7 +8,7 @@
 //Varyings//
 flat in int mat;
 in vec2 texCoord, lightMapCoord;
-in vec3 sunVec, upVec, eastVec;
+in vec3 sunVec, upVec, eastVec, northVec;
 in vec3 normal;
 
 #ifdef INTEGRATED_NORMAL_MAPPING
@@ -192,7 +192,7 @@ void main() {
 //Varyings//
 flat out int mat;
 out vec2 texCoord, lightMapCoord;
-out vec3 sunVec, upVec, eastVec;
+out vec3 sunVec, upVec, eastVec, northVec;
 out vec3 normal;
 
 #ifdef INTEGRATED_NORMAL_MAPPING
@@ -283,6 +283,7 @@ void main() {
     #endif
 	
 	upVec = normalize(gbufferModelView[1].xyz);
+	northVec = normalize(gbufferModelView[2].xyz);
 	eastVec = normalize(gbufferModelView[0].xyz);
 
 	//Materials

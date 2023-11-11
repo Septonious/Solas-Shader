@@ -33,6 +33,10 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
 	float vanillaDiffuse = (0.25 * NoU + 0.75) + (0.667 - abs(NoE)) * (1.0 - abs(NoU)) * 0.15;
           vanillaDiffuse *= vanillaDiffuse;
 
+    if (subsurface < 0.5) {
+        NoL = pow(NoL, 1.25);
+    }
+
     //Block Lighting
 	float blockLightMap = pow6(lightmap.x * lightmap.x) * 3.0 + max(lightmap.x - 0.05, 0.0);
           blockLightMap *= blockLightMap * 0.5;
@@ -74,9 +78,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     #endif
 
     #ifdef GI
-    globalIllumination *= 1.0 - NoL * 0.5;
-    globalIllumination *= 1.0 - NoU * 0.5;
-    globalIllumination *= 1.0 - pow8(lightmap.y) * 0.5;
+    globalIllumination *= 1.0 - pow4(lightmap.y) * 0.5;
     globalIllumination *= 1.0 - blockLightMap;
     #endif
     #endif
@@ -147,10 +149,15 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     vec3 newAmbientCol = ambientCol;
 
     #ifdef GI
-    ambientCol += globalIllumination * 0.5;
+    #ifdef GBUFFERS_TERRAIN
+    float NoN = dot(normal, northVec);
+    globalIllumination *= 0.75 * abs(NoN) + 0.25;
     #endif
 
-    vec3 sceneLighting = mix(ambientCol, lightCol, fullShadow * rainFactor * shadowFade) * lightmap.y;
+    newAmbientCol += globalIllumination * 5;
+    #endif
+
+    vec3 sceneLighting = mix(newAmbientCol, lightCol, fullShadow * rainFactor * shadowFade) * lightmap.y;
          sceneLighting *= 1.0 + scattering * shadow;
 
     //Specular highlight
@@ -177,7 +184,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     #endif
 
     //Emission
-    sceneLighting += albedo.rgb * emission * 4.0;
+    sceneLighting += albedo.rgb * emission;
 
     //Night vision
     sceneLighting += nightVision * 0.25;
@@ -197,7 +204,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
 
     #ifdef GI
     #ifdef GBUFFERS_TERRAIN
-    float giVisibility = length(fullShadow * rainFactor * shadowFade * sunVisibility) * int(emission == 0.0) * int(subsurface == 0.0) * int(specular == 0.0);
+    float giVisibility = length(fullShadow * rainFactor * shadowFade * sunVisibility) * int(emission == 0.0) * int(specular == 0.0);
 
     if (giVisibility != 0.0) {
         coloredLightingIntensity = mix(coloredLightingIntensity, 0.095, giVisibility);

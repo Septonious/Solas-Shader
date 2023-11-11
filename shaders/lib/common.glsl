@@ -26,7 +26,7 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 //Global Illumination//
 //#define GI
 #define GLOBAL_ILLUMINATION_STRENGTH 0.9 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
-#define GLOBAL_ILLUMINATION_RADIUS 0.7 //[0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5]
+#define GLOBAL_ILLUMINATION_RADIUS 0.6 //[0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5]
 
 //Integrated PBR//
 #define INTEGRATED_NORMAL_MAPPING
@@ -163,10 +163,10 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 #define VIBRANCE 1.00 //[0.50 0.55 0.60 0.65 0.70 0.75 0.80 0.85 0.90 0.95 1.00 1.05 1.10 1.15 1.20 1.25 1.30 1.35 1.40 1.45 1.50 1.55 1.60 1.65 1.70 1.75 1.80 1.85 1.90 1.95 2.00]
 
 //Colors//
-#define PURPLE_MORNINGS
+//#define PURPLE_MORNINGS
 
 #define LIGHTTEMP_SS 2750 //[2500 2750 3000 3250 3500]
-#define LIGHTTEMP_ME 4000 //[3500 3750 4000 4250 4500]
+#define LIGHTTEMP_ME 4500 //[3500 3750 4000 4250 4500]
 #define LIGHTTEMP_D 6500 //[5500 5750 6000 6250 6500]
 #define LIGHTTEMP_N 11250 //[10500 10750 11000 11250 11500]
 
