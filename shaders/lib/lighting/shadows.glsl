@@ -44,9 +44,8 @@ void findBlockerDistance(vec3 shadowPos, mat2 ditherMatrix, inout float offset, 
 }
 #endif
 
-vec3 computeShadow(vec3 shadowPos, float offset, float skyLightMap, float ao, float subsurface, float viewLengthFactor) {
+vec3 computeShadow(vec3 shadowPos, float offset, float ao, float skyLightMap, float subsurface, float viewLengthFactor, inout float shadow0) {
     vec3 shadowCol = vec3(0.0);
-    float shadow0 = 0.0;
 
 	float blueNoiseDither = texture2D(noisetex, gl_FragCoord.xy / 512.0).b;
 
@@ -78,10 +77,9 @@ vec3 computeShadow(vec3 shadowPos, float offset, float skyLightMap, float ao, fl
     shadow0 *= 0.125;
     shadowCol *= 0.125;
 
-    //Light leak fix
-    shadow0 = mix(shadow0, shadow0 * ao, (1.0 - ao));
+    float fixedShadow0 = mix(shadow0, shadow0 * ao, (1.0 - ao));
 
-    return clamp(shadowCol * (1.0 - shadow0) + shadow0, 0.0, 1.0);
+    return clamp(shadowCol * (1.0 - fixedShadow0) + fixedShadow0, 0.0, 1.0);
 }
 
 vec3 getFakeShadow(float skyLight) {

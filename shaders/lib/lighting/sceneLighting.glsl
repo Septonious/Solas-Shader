@@ -91,6 +91,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     //Shadows without peter-panning from Emin's Complementary Reimagined shaderpack, tysm for allowing me to use them ^^
     //Developed by Emin#7309 and gri573#7741
     float shadowLength = shadowDistance * 0.9166667 - length(vec4(worldPos.x, worldPos.y, worldPos.y, worldPos.z));
+    float shadow0 = 0.0;
 
     #ifdef GBUFFERS_WATER
     shadowLength = 1.0;
@@ -124,7 +125,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
         float offset = mix(0.00125, 0.00125 * ao, (1.0 - ao));
               offset *= 1.0 + subsurface * 2.0 * viewDistance;
 
-        shadow = computeShadow(shadowPos, offset, lightmap.y, ao, subsurface, viewDistance);
+        shadow = computeShadow(shadowPos, offset, ao, lightmap.y, subsurface, viewDistance, shadow0);
     } else {
         shadow = getFakeShadow(lightmap.y);
     }
@@ -144,7 +145,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     globalIllumination *= 0.75 * abs(NoN) + 0.25;
     #endif
 
-    newAmbientCol += globalIllumination * GLOBAL_ILLUMINATION_BRIGHTNESS * sunVisibility;
+    newAmbientCol += globalIllumination * GLOBAL_ILLUMINATION_BRIGHTNESS * sunVisibility * lightmap.y;
     #endif
 
     vec3 sceneLighting = mix(newAmbientCol, lightCol, fullShadow * rainFactor * shadowFade) * lightmap.y * lightmap.y;
@@ -165,10 +166,6 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     float aoMixer = (1.0 - pow2(color.a)) * int(emission == 0.0);
 
     aoMixer *= 1.0 - min(blockLightMap, 1.0);
-
-    #ifdef GI
-    aoMixer *= 1.0 - min(length(globalIllumination), 1.0);
-    #endif
 
     albedo.rgb = mix(albedo.rgb, albedo.rgb * ao * ao, aoMixer * AO_STRENGTH);
     #endif
@@ -207,11 +204,9 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
 
     #ifdef GI
     #ifdef GBUFFERS_TERRAIN
-    float giVisibility = length(fullShadow * rainFactor * shadowFade) * int(emission == 0.0) * int(subsurface < 0.5);
+    float giVisibility = shadow0 * rainFactor * sunVisibility * int(emission == 0.0) * int(subsurface < 0.5);
 
-    if (giVisibility != 0.0) {
-        coloredLightingIntensity = mix(coloredLightingIntensity, 0.0145, giVisibility);
-    }
+    coloredLightingIntensity += 0.0145 * giVisibility;
     #endif
     #endif
 }

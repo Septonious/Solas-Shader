@@ -11,11 +11,10 @@ void computeColoredLighting(in float z, inout vec3 coloredLighting, inout vec3 g
 	vec2 prvCoord = Reprojection(vec3(texCoord, z));
 	float linearDepth = getLinearDepth(z);
 
-	float distScaleCL = clamp((far - near) * linearDepth + near, 2.0, 96.0);
-    float distScaleGI = clamp((far - near) * linearDepth + near, 2.0, 48.0);
+	float distScale = clamp((far - near) * linearDepth + near, 2.0, 64.0);
 	float fovScale = gbufferProjection[1][1] / 1.37;
 
-	vec2 blurStrength = vec2(1.0 / aspectRatio, 1.0) * fovScale / distScaleCL;
+	vec2 blurStrength = vec2(1.0 / aspectRatio, 1.0) * fovScale / distScale;
 	
     float emission = texture2D(colortex3, texCoord).a;
     float indirectEmission = float(emission > 0.0144 && emission < 0.0146);
@@ -51,7 +50,7 @@ void computeColoredLighting(in float z, inout vec3 coloredLighting, inout vec3 g
 			float sampleZ1 = texture2D(depthtex1, sampleZPos).r;
 			float linearSampleZ = getLinearDepth(sampleZ1 >= 1.0 ? sampleZ0 : sampleZ1);
 
-			float sampleWeight = clamp(abs(linearDepth - linearSampleZ) * far / 16.0, 0.0, 1.0);
+			float sampleWeight = clamp(abs(linearDepth - linearSampleZ) * far * 0.1, 0.0, 1.0);
 				  sampleWeight = 1.0 - sampleWeight * sampleWeight;
 
 			#ifdef COLORED_LIGHTING

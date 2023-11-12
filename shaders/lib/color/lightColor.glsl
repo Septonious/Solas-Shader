@@ -13,7 +13,7 @@ vec3 lightNight = mix(pow((colorNight + 0.055) / 1.055, vec3(2.4)), colorNight /
 
 #ifdef PURPLE_MORNINGS
 float mefade = 1.0 - clamp(abs(timeAngle - 0.5) * 8.0 - 1.5, 0.0, 1.0);
-vec3 lightColRaw = mix(lightNight, lightSun * mix(vec3(1.0, 1.0, 2.5), vec3(1.0), clamp(mefade + timeBrightness, 0.0, 1.0)), sunVisibility * sunVisibility);
+vec3 lightColRaw = mix(lightNight, lightSun * mix(vec3(1.0, 1.0, 2.0), vec3(1.0), clamp(mefade + timeBrightness, 0.0, 1.0)), sunVisibility * sunVisibility);
 #else
 vec3 lightColRaw = mix(lightNight, lightSun, sunVisibility * sunVisibility);
 #endif
