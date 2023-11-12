@@ -162,7 +162,6 @@ vec2 viewResolution = vec2(viewWidth, viewHeight);
 void main() {
 	vec4 albedo = texture2D(texture, texCoord) * color;
 	vec3 newNormal = normal;
-	vec3 vlAlbedo = vec3(0.0);
 	vec2 refraction = vec2(0.0);
 
 	float water = int(mat == 1);
@@ -230,8 +229,6 @@ void main() {
 
 		refraction = ((newNormal.xy - normal.xy) * 0.5 + 0.5);
 
-		vlAlbedo = mix(vec3(1.0), albedo.rgb, sqrt(albedo.a)) * (1.0 - pow(albedo.a, 64.0));
-
 		vec3 shadow = vec3(0.0);
 		getSceneLighting(albedo.rgb, screenPos, viewPos, worldPos, newNormal, shadow, lightmap, NoU, NoL, NoE, emission, 0.0, 0.0, 0.95);
 
@@ -281,7 +278,7 @@ void main() {
 
 	/* DRAWBUFFERS:013 */
 	gl_FragData[0] = albedo;
-	gl_FragData[1].rgb = vlAlbedo;
+	gl_FragData[1] = vec4(albedo.rgb, 1.0);
 	gl_FragData[2] = vec4(refraction, mix(0.4, 1.0, water), mix(1.0, 0.75, float(emission > 0.5 || (lightMapCoord.x > 0.8 && water < 0.5))));
 }
 

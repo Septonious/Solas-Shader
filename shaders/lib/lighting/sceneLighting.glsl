@@ -207,7 +207,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
 
     #ifdef GI
     #ifdef GBUFFERS_TERRAIN
-    float giVisibility = length(fullShadow * rainFactor * shadowFade) * int(emission == 0.0) * int(specular == 0.0) * int(subsurface < 0.5);
+    float giVisibility = length(fullShadow * rainFactor * shadowFade) * int(emission == 0.0) * int(subsurface < 0.5);
 
     if (giVisibility != 0.0) {
         coloredLightingIntensity = mix(coloredLightingIntensity, 0.0145, giVisibility);
