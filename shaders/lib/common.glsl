@@ -20,13 +20,11 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 
 //Colored Lighting//
 #define COLORED_LIGHTING
-#define COLORED_LIGHTING_RADIUS 1.25 //[1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00]
 #define COLORED_LIGHTING_MIX 0.8 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
 
 //Global Illumination//
 #define GI
-#define GLOBAL_ILLUMINATION_STRENGTH 0.9 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
-#define GLOBAL_ILLUMINATION_RADIUS 0.6 //[0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5]
+#define GLOBAL_ILLUMINATION_STRENGTH 0.3 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
 #define GLOBAL_ILLUMINATION_BRIGHTNESS 2.00 //[1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00]
 
 //Integrated PBR//
@@ -46,7 +44,7 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 #define EMISSION_STRENGTH 2.5 //[1.0 1.5 2.0 2.5 3.0 3.5 4.0 4.5 5.0]
 #define RAIN_PUDDLES
 #define INTEGRATED_SPECULAR
-#define SPECULAR_STRENGTH 1.0 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2.0]
+#define SPECULAR_STRENGTH 0.7 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2.0]
 #define WATER_REFLECTIONS
 #define WATER_SPECULAR_STRENGTH 1.0 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
 

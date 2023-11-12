@@ -10,7 +10,7 @@ void getIntegratedSpecular(inout vec4 albedo, in vec3 normal, in vec2 worldPos, 
     } else if (mat == 303) {//Dark blocks (deepslate)
         specular = lAlbedo * lAlbedo * 0.5;
     } else if (mat == 304) {//Near-black blocks (obsidian, blackstone)
-        specular = clamp(lAlbedo * 0.2, 0.06, 0.4);
+        specular = clamp(lAlbedo * 0.35, 0.08, 0.5);
     } else if (mat == 305) {//Endstone
         specular = clamp(lAlbedo * lAlbedo * 0.1, 0.06, 0.15);
     } else if (mat == 306) {//Purpur

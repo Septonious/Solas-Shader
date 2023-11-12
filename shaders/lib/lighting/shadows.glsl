@@ -40,7 +40,7 @@ void findBlockerDistance(vec3 shadowPos, mat2 ditherMatrix, inout float offset, 
     }
     blockerDistance *= 0.25;
     
-    offset = mix(offset, clamp(blockerDistance * VPS_BLUR_STRENGTH, offset, offset * 12.0), skyLightMap * viewLengthFactor);
+    offset = mix(offset, clamp(blockerDistance * VPS_BLUR_STRENGTH, offset, offset * 8.0), skyLightMap * viewLengthFactor);
 }
 #endif
 

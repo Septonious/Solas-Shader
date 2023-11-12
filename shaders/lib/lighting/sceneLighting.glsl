@@ -20,14 +20,10 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     float lViewPos = length(viewPos);
     float subsurface = leaves + foliage;
 
+    vec3 specularHighlight = vec3(0.0);
+
     //Vanilla AO
     float ao = color.a * color.a;
-
-    #ifdef VANILLA_AO
-    float aoMixer = (1.0 - pow2(color.a)) * int(emission == 0.0);
-
-    albedo.rgb = mix(albedo.rgb, albedo.rgb * ao * ao, aoMixer * AO_STRENGTH);
-    #endif
 
     //Vanilla Directional Lighting
 	float vanillaDiffuse = (0.25 * NoU + 0.75) + (0.667 - abs(NoE)) * (1.0 - abs(NoU)) * 0.15;
@@ -74,10 +70,6 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     #if !defined GBUFFERS_WATER
     #if defined COLORED_LIGHTING || defined GI
     applyCLGI(blockLightCol, screenPos, blockLighting, globalIllumination, blockLightMap);
-    #endif
-
-    #ifdef GI
-    globalIllumination *= 1.0 - blockLightMap;
     #endif
     #endif
 
@@ -155,16 +147,8 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     newAmbientCol += globalIllumination * GLOBAL_ILLUMINATION_BRIGHTNESS * sunVisibility;
     #endif
 
-    vec3 sceneLighting = mix(newAmbientCol, lightCol, fullShadow * rainFactor * shadowFade) * lightmap.y;
+    vec3 sceneLighting = mix(newAmbientCol, lightCol, fullShadow * rainFactor * shadowFade) * lightmap.y * lightmap.y;
          sceneLighting *= 1.0 + scattering * shadow;
-
-    //Specular highlight
-    #ifdef GBUFFERS_TERRAIN
-	vec3 baseReflectance = vec3(0.1);
-	float smoothness = mix(0.4, 0.9, clamp(specular * 2.0, 0.0, 1.0));
-		 sceneLighting += GetSpecularHighlight(normal, viewPos, smoothness, baseReflectance,
-										   	   lightCol, shadow * vanillaDiffuse, color.a);
-    #endif
     #endif
 
     #ifdef END
@@ -176,9 +160,29 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     vec3 sceneLighting = pow(netherColSqrt, vec3(0.5)) * 0.1;
     #endif
 
+    //Vanilla AO
+    #ifdef VANILLA_AO
+    float aoMixer = (1.0 - pow2(color.a)) * int(emission == 0.0);
+
+    aoMixer *= 1.0 - min(blockLightMap, 1.0);
+
+    #ifdef GI
+    aoMixer *= 1.0 - min(length(globalIllumination), 1.0);
+    #endif
+
+    albedo.rgb = mix(albedo.rgb, albedo.rgb * ao * ao, aoMixer * AO_STRENGTH);
+    #endif
+
     //Iris lightning flash, made by Xonk
     #if defined IS_IRIS && !defined GBUFFERS_WATER
     sceneLighting += lightningFlashEffect(worldPos, lightningBoltPosition.xyz, 196.0) * lightningBoltPosition.w * 2.0;
+    #endif
+
+    //Specular highlight
+    #if defined GBUFFERS_TERRAIN && defined OVERWORLD
+	vec3 baseReflectance = vec3(0.1);
+	float smoothness = mix(clamp(length(albedo.rgb) * 0.5, 0.1, 0.7), 1.0, specular);
+	specularHighlight = GetSpecularHighlight(normal, viewPos, smoothness, baseReflectance, lightCol, shadow * vanillaDiffuse, color.a);
     #endif
 
     //Emission
@@ -196,6 +200,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     albedo = pow(albedo, vec3(2.2));
     albedo *= sceneLighting;
     albedo *= vanillaDiffuse;
+    albedo += specularHighlight;
     albedo = sqrt(max(albedo, vec3(0.0)));
 
     emission *= EMISSION_STRENGTH;
@@ -205,7 +210,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     float giVisibility = length(fullShadow * rainFactor * shadowFade) * int(emission == 0.0) * int(specular == 0.0) * int(subsurface < 0.5);
 
     if (giVisibility != 0.0) {
-        coloredLightingIntensity = mix(coloredLightingIntensity, 0.095, giVisibility);
+        coloredLightingIntensity = mix(coloredLightingIntensity, 0.0145, giVisibility);
     }
     #endif
     #endif

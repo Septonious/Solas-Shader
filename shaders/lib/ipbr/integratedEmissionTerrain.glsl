@@ -68,7 +68,7 @@ void getIntegratedEmission(inout vec4 albedo, in vec3 viewPos, in vec3 worldPos,
 		emission = 16.0 * pow2(albedo.b - albedo.g) * int(albedo.r < 0.65);
 		lightmap.x *= 0.5;
 	} else if (mat == 119) {// End Rod
-		emission = 0.05 * pow4(lAlbedo);
+		emission = 0.15 * pow4(lAlbedo);
 		coloredLightingIntensity = emission;
 		albedo.rgb *= vec3(1.42, 1.22, 2.07);
 	} else if (mat == 120) { // Powered Rail

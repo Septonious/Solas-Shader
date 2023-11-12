@@ -15,12 +15,11 @@ void computeColoredLighting(in float z, inout vec3 coloredLighting, inout vec3 g
     float distScaleGI = clamp((far - near) * linearDepth + near, 2.0, 48.0);
 	float fovScale = gbufferProjection[1][1] / 1.37;
 
-	vec2 directBlurStrength = vec2(1.0 / aspectRatio, 1.0) * COLORED_LIGHTING_RADIUS * fovScale / distScaleCL;
-    vec2 indirectBlurStrength = vec2(1.0 / aspectRatio, 1.0) * GLOBAL_ILLUMINATION_RADIUS * fovScale / distScaleGI;
+	vec2 blurStrength = vec2(1.0 / aspectRatio, 1.0) * fovScale / distScaleCL;
 	
     float emission = texture2D(colortex3, texCoord).a;
-    float indirectEmission = float(emission > 0.094 && emission < 0.096);
-    float directEmission = float(emission > 0.1 && emission <= 0.98) * (1.0 - indirectEmission) * emission;
+    float indirectEmission = float(emission > 0.0144 && emission < 0.0146);
+    float directEmission = float(emission > 0.11 && emission <= 0.98) * (1.0 - indirectEmission) * emission;
 
     vec3 albedo = texture2D(colortex0, texCoord).rgb;
 
@@ -44,11 +43,10 @@ void computeColoredLighting(in float z, inout vec3 coloredLighting, inout vec3 g
 		#endif
 
 		for (int i = 0; i < 4; i++) {
-			#ifdef COLORED_LIGHTING
-			vec2 clOffset = offsetDist((dither + i) * 0.25) * directBlurStrength;
-				 clOffset = floor(clOffset * vec2(viewWidth, viewHeight) + 0.5) / vec2(viewWidth, viewHeight);
+			vec2 offset = offsetDist((dither + i) * 0.25) * blurStrength;
+				 offset = floor(offset * vec2(viewWidth, viewHeight) + 0.5) / vec2(viewWidth, viewHeight);
 
-			vec2 sampleZPos = texCoord + clOffset;
+			vec2 sampleZPos = texCoord + offset;
 			float sampleZ0 = texture2D(depthtex0, sampleZPos).r;
 			float sampleZ1 = texture2D(depthtex1, sampleZPos).r;
 			float linearSampleZ = getLinearDepth(sampleZ1 >= 1.0 ? sampleZ0 : sampleZ1);
@@ -56,14 +54,12 @@ void computeColoredLighting(in float z, inout vec3 coloredLighting, inout vec3 g
 			float sampleWeight = clamp(abs(linearDepth - linearSampleZ) * far / 16.0, 0.0, 1.0);
 				  sampleWeight = 1.0 - sampleWeight * sampleWeight;
 
-			previousColoredLight += texture2D(colortex4, prvCoord.xy + clOffset).rgb * sampleWeight;
+			#ifdef COLORED_LIGHTING
+			previousColoredLight += texture2D(colortex4, prvCoord.xy + offset).rgb * sampleWeight;
 			#endif
 
 			#ifdef GI
-			vec2 giOffset = offsetDist((dither + i) * 0.25) * indirectBlurStrength;
-				 giOffset = floor(giOffset * vec2(viewWidth, viewHeight) + 0.5) / vec2(viewWidth, viewHeight);
-
-			previousGlobalIllumination += texture2D(colortex5, prvCoord.xy + giOffset).rgb;
+			previousGlobalIllumination += texture2D(colortex5, prvCoord.xy + offset).rgb * sampleWeight;
 			#endif
 		}
 
