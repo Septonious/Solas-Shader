@@ -55,7 +55,7 @@ void getIntegratedEmission(inout vec4 albedo, in vec3 viewPos, in vec3 worldPos,
 		emission = int(albedo.r > 0.65 && albedo.b < 0.35);
 		coloredLightingIntensity = emission;
 	} else if (mat == 114) { // Froglights
-		emission = (1.5 - lAlbedo) * 0.5;
+		emission = 1.5 - lAlbedo;
 		coloredLightingIntensity = emission;
 		albedo.rgb = pow3(albedo.rgb);
 	} else if (mat == 115) { // Sculks

@@ -204,7 +204,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
 
     #ifdef GI
     #ifdef GBUFFERS_TERRAIN
-    float giVisibility = shadow0 * rainFactor * sunVisibility * int(emission == 0.0) * int(subsurface < 0.5);
+    float giVisibility = shadow0 * rainFactor * sunVisibility * int(emission == 0.0);
 
     coloredLightingIntensity += 0.0145 * giVisibility;
     #endif
