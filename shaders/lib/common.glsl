@@ -48,6 +48,22 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 #define WATER_REFLECTIONS
 #define WATER_SPECULAR_STRENGTH 1.0 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
 
+//PBR//
+#define PBR
+#define MATERIAL_FORMAT 1 //[0 1]
+
+#define PARALLAX
+#define PARALLAX_DEPTH 0.20 //[0.05 0.10 0.15 0.20 0.25 0.30 0.35 0.40 0.45 0.50]
+#define PARALLAX_QUALITY 64 //[32 48 64 80 96 112 128]
+#define PARALLAX_DISTANCE 64 //[8 16 32 48 64 80 96 112 128]
+#define SELF_SHADOW
+#define SELF_SHADOW_ANGLE 2.0 //[0.5 1.0 1.5 2.0 2.5 3.0 3.5 4.0 4.5 5.0 5.5 6.0 6.5 7.0 7.5 8.0]
+#define SELF_SHADOW_QUALITY 8 //[8 16 32]
+#define SELF_SHADOW_STRENGTH 16 //[4 8 16 32 64]
+
+//#define DIRECTIONAL_LIGHTMAP
+#define DIRECTIONAL_LIGHTMAP_STRENGTH 1.5 //[0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5]
+
 //Depth of Field//
 //#define DOF
 #define DOF_STRENGTH 3.00 //[0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00]
@@ -313,6 +329,7 @@ const float TAU = 6.2831853;
 #undef GI
 #undef VF_NETHER_REFRACTION
 #undef RAIN_PUDDLES
+#undef SELF_SHADOW
 #endif
 
 #if defined VF_NETHER || defined VF_END
@@ -376,6 +393,10 @@ const float TAU = 6.2831853;
 
 #ifndef SHADOWS
 #undef VL
+#endif
+
+#ifdef PBR
+#undef INTEGRATED_NORMAL_MAPPING
 #endif
 
 //test options//

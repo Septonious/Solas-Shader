@@ -23,6 +23,10 @@ uniform sampler2D colortex0;
 uniform sampler2D noisetex, colortex3;
 uniform sampler2D depthtex0, depthtex1;
 
+#ifdef PBR
+uniform sampler2D colortex7;
+#endif
+
 uniform mat4 gbufferProjection;
 uniform mat4 gbufferProjectionInverse;
 uniform mat4 gbufferModelViewInverse;
@@ -58,10 +62,19 @@ void main() {
 	vec3 viewPos = ToView(vec3(texCoord, z0));
 
 	#ifdef INTEGRATED_SPECULAR
-	if (terrainData.b > 0.05 && terrainData.b <= 0.95 && z0 > 0.56 && z0 >= z1) {
-		float fresnel = clamp(1.0 + dot(normal, normalize(viewPos)), 0.0, 1.0);
+	if (terrainData.b > 0.01 && z0 > 0.56 && z0 >= z1) {
+		#ifndef PBR
+		float smoothness = terrainData.b;
+		#else
+		float smoothness = terrainData.b;
+			  smoothness *= smoothness;
+			  smoothness /= 2.0 - smoothness;
+		#endif
 
-		getReflection(color, viewPos, normal, pow4(fresnel) * terrainData.b, terrainData.b);
+		float fresnel = clamp(1.0 + dot(normal, normalize(viewPos)), 0.0, 1.0);
+			  fresnel = pow4(fresnel) * smoothness;
+
+		getReflection(color, viewPos, normal, fresnel, smoothness);
 	}
 	#endif
 	#endif

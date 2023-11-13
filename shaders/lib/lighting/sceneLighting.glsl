@@ -12,13 +12,12 @@ float lightningFlashEffect(vec3 worldPos, vec3 lightningBoltPosition, float ligh
 
 #ifdef GBUFFERS_TERRAIN
 void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in vec3 worldPos, in vec3 normal, inout vec3 shadow, in vec2 lightmap,
-                      in float NoU, in float NoL, in float NoE, inout float emission, in float leaves, in float foliage, in float specular, inout float coloredLightingIntensity) {
+                      in float NoU, in float NoL, in float NoE, inout float emission, in float foliage, in float subsurface, in float specular, in float parallaxShadow, inout float coloredLightingIntensity) {
 #else
 void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in vec3 worldPos, in vec3 normal, inout vec3 shadow, in vec2 lightmap,
-                      in float NoU, in float NoL, in float NoE, inout float emission, in float leaves, in float foliage, in float specular) {
+                      in float NoU, in float NoL, in float NoE, inout float emission, in float foliage, in float specular) {
 #endif
     float lViewPos = length(viewPos);
-    float subsurface = leaves + foliage;
 
     vec3 specularHighlight = vec3(0.0);
 
@@ -29,9 +28,11 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
 	float vanillaDiffuse = (0.25 * NoU + 0.75) + (0.667 - abs(NoE)) * (1.0 - abs(NoU)) * 0.15;
           vanillaDiffuse *= vanillaDiffuse;
 
+    #ifdef GBUFFERS_TERRAIN
     if (subsurface < 0.5) {
         NoL = pow(NoL, 1.25);
     }
+    #endif
 
     //Block Lighting
 	float blockLightMap = pow6(lightmap.x * lightmap.x) * 3.0 + max(lightmap.x - 0.05, 0.0);
@@ -42,23 +43,6 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
 
     #ifdef NETHER
           blockLightMap = pow6(lightmap.x) * 3.0;
-    #endif
-
-    #if defined GBUFFERS_TERRAIN && defined COLORED_LIGHTING
-    mat3 tbn = mat3(
-        tangent.x, binormal.x, normal.x,
-        tangent.y, binormal.y, normal.y,
-        tangent.z, binormal.z, normal.z
-    );
-
-    vec3 dFdViewposX = dFdx(viewPos);
-    vec3 dFdViewposY = dFdy(viewPos);
-    vec2 dFdTorch = vec2(dFdx(pow4(lightmap.x) * 4.0), dFdy(pow4(lightmap.x) * 4.0));
-    vec3 torchLightDir = dFdViewposX * dFdTorch.x + dFdViewposY * dFdTorch.y;
-
-    if (length(dFdTorch) > 1e-6 && foliage < 0.5) {
-        blockLightMap *= clamp(dot(normalize(torchLightDir), normal) + 0.9, 0.0, 1.0) * 0.5 + 0.5;
-    }
     #endif
 
     //Block Lighting
@@ -79,12 +63,14 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     #endif
 
     #if defined OVERWORLD || defined END
+    float scattering = 0.0;
+    
     //Subsurface scattering
-    #ifdef OVERWORLD
+    #if defined OVERWORLD && defined GBUFFERS_TERRAIN
     float VoL = dot(normalize(viewPos), lightVec) * 0.5 + 0.5;
-    float scattering = pow16(VoL) * (1.0 - wetness * 0.75) * subsurface * shadowFade;
-    NoL = mix(NoL, 1.0, subsurface * 0.75);
-    NoL = mix(NoL, 1.0, scattering);
+    scattering = pow16(VoL) * (1.0 - wetness * 0.75) * subsurface * shadowFade;
+    NoL = mix(NoL, NoL + 0.25, subsurface * 0.5);
+    NoL = mix(NoL, 1.0, scattering * 0.75);
     #endif
 
     //Main shadow calculation
@@ -123,17 +109,27 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
 
         float viewDistance = 1.0 - clamp(lViewPos * 0.01, 0.0, 1.0);
         float offset = mix(0.00125, 0.00125 * ao, (1.0 - ao));
+        #ifdef GBUFFERS_TERRAIN
               offset *= 1.0 + subsurface * 2.0 * viewDistance;
+        #endif
+
+        #ifndef GBUFFERS_TERRAIN
+        float subsurface = 0.0;
+        #endif
 
         shadow = computeShadow(shadowPos, offset, ao, lightmap.y, subsurface, viewDistance, shadow0);
     } else {
         shadow = getFakeShadow(lightmap.y);
     }
 
+    #if defined PBR && defined GBUFFERS_TERRAIN
+    shadow *= parallaxShadow;
+    #endif
+
     NoL = clamp(NoL * 1.01 - 0.01, 0.0, 1.0);
 
     vec3 fullShadow = shadow * NoL * lightmap.y;
-    
+
     #ifdef OVERWORLD
     float rainFactor = 1.0 - wetness * 0.75;
 

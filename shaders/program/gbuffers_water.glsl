@@ -230,7 +230,7 @@ void main() {
 		refraction = ((newNormal.xy - normal.xy) * 0.5 + 0.5);
 
 		vec3 shadow = vec3(0.0);
-		getSceneLighting(albedo.rgb, screenPos, viewPos, worldPos, newNormal, shadow, lightmap, NoU, NoL, NoE, emission, 0.0, 0.0, 0.95);
+		getSceneLighting(albedo.rgb, screenPos, viewPos, worldPos, newNormal, shadow, lightmap, NoU, NoL, NoE, emission, 0.0, 0.95);
 
 		#if defined OVERWORLD
 		skyColor = getAtmosphere(viewPos);
