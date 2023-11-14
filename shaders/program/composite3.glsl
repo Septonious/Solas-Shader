@@ -102,7 +102,7 @@ void main() {
 		#endif
 
 		float fresnel = clamp(1.0 + dot(normal, normalize(viewPos)), 0.0, 1.0);
-			  fresnel = pow4(fresnel) * smoothness;
+			  fresnel = pow4(fresnel * terrainData.b);
 
 		getReflection(color, viewPos, normal, fresnel, smoothness);
 	}
