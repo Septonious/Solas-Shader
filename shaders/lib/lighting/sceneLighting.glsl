@@ -173,8 +173,17 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
 
     //Specular highlight
     #if defined GBUFFERS_TERRAIN && defined OVERWORLD
-	vec3 baseReflectance = vec3(0.1);
+	vec3 baseReflectance = vec3(0.04);
+
+    #ifndef PBR
 	float smoothness = mix(clamp(length(albedo.rgb) * 0.5, 0.1, 0.7), 1.0, specular);
+    #else
+    float smoothness = specular;
+    if (smoothness == 0.0) {
+        smoothness = mix(clamp(length(albedo.rgb) * 0.5, 0.1, 0.7), 1.0, specular);
+    }
+    #endif
+
 	specularHighlight = GetSpecularHighlight(normal, viewPos, smoothness, baseReflectance, lightCol, shadow * vanillaDiffuse, color.a);
     #endif
 

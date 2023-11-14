@@ -149,7 +149,6 @@ vec2 dcdy = dFdy(texCoord);
 #ifdef PBR
 #include "/lib/ipbr/parallax.glsl"
 #include "/lib/ipbr/materialGbuffers.glsl"
-#include "/lib/ipbr/complexFresnel.glsl"
 
 #ifdef DIRECTIONAL_LIGHTMAP
 #include "/lib/ipbr/directionalLightmap.glsl"
@@ -193,7 +192,6 @@ void main() {
 
 		#ifdef PBR
 		float f0 = 0.0, metalness = 0.0, porosity = 0.5, ao = 1.0;
-		vec3 baseReflectance = vec3(0.04);
 
 		mat3 tbnMatrix = mat3(tangent.x, binormal.x, normal.x,
 							tangent.y, binormal.y, normal.y,
@@ -253,21 +251,6 @@ void main() {
 		lightmap.x = getDirectionalLightmap(lightmap.x, lightMapCoord.x, newNormal, lightmapTBN);
 		lightmap.y = getDirectionalLightmap(lightmap.y, lightMapCoord.y, newNormal, lightmapTBN);
 		#endif
-
-		baseReflectance = mix(vec3(f0), rawAlbedo, metalness);
-
-		float fresnel = pow5(clamp(1.0 + dot(newNormal, normalize(viewPos)), 0.0, 1.0));
-		vec3 fresnel3 = mix(baseReflectance, vec3(1.0), fresnel);
-
-		#if MATERIAL_FORMAT == 1
-		if (f0 >= 0.9 && f0 < 1.0) {
-			baseReflectance = GetMetalCol(f0);
-			fresnel3 = complexFresnel(pow(fresnel, 0.2), f0);
-		}
-		#endif
-		
-		fresnel3 *= ao * ao;
-		albedo.rgb *= 1.0 - fresnel3 * smoothness * smoothness * (1.0 - metalness);
 		#endif
 
 		vec3 shadow = vec3(0.0);
