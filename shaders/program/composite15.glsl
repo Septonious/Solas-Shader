@@ -9,9 +9,6 @@ in vec2 texCoord;
 //Uniforms//
 #if defined TAA || defined FXAA || defined DOF
 uniform float viewWidth, viewHeight;
-#endif
-
-#if defined DOF || defined FXAA
 uniform float aspectRatio;
 #endif
 

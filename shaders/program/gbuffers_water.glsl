@@ -267,8 +267,9 @@ void main() {
 			#ifdef OVERWORLD
 			vec3 baseReflectance = vec3(0.1);
 			float vanillaDiffuse = (0.25 * NoU + 0.75) + (0.667 - abs(NoE)) * (1.0 - abs(NoU)) * 0.15;
-			albedo.rgb += GetSpecularHighlight(newNormal, viewPos, 0.5 + water * 0.2, baseReflectance,
+			vec3 specularHighlight = GetSpecularHighlight(newNormal, viewPos, 0.5 + water * 0.2, baseReflectance,
 										   	   lightColSqrt, shadow * vanillaDiffuse, color.a);
+			albedo.rgb += specularHighlight;
 			#endif
 		}
 		#endif

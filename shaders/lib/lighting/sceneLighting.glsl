@@ -12,7 +12,7 @@ float lightningFlashEffect(vec3 worldPos, vec3 lightningBoltPosition, float ligh
 
 #ifdef GBUFFERS_TERRAIN
 void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in vec3 worldPos, in vec3 normal, inout vec3 shadow, in vec2 lightmap,
-                      in float NoU, in float NoL, in float NoE, inout float emission, in float foliage, in float subsurface, in float specular, in float parallaxShadow, inout float coloredLightingIntensity) {
+                      in float NoU, in float NoL, in float NoE, inout float emission, in float foliage, in float leaves, in float subsurface, in float specular, in float parallaxShadow, inout float coloredLightingIntensity) {
 #else
 void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in vec3 worldPos, in vec3 normal, inout vec3 shadow, in vec2 lightmap,
                       in float NoU, in float NoL, in float NoE, inout float emission, in float foliage, in float specular) {
@@ -69,8 +69,13 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     #if defined OVERWORLD && defined GBUFFERS_TERRAIN
     float VoL = dot(normalize(viewPos), lightVec) * 0.5 + 0.5;
     scattering = pow16(VoL) * (1.0 - wetness * 0.75) * subsurface * shadowFade;
-    NoL = mix(NoL, NoL + 0.25, subsurface * 0.5);
-    NoL = mix(NoL, 1.0, scattering * 0.75);
+    if (leaves < 0.5) {
+        NoL = mix(NoL, NoL + 0.25, subsurface * 0.5);
+        NoL = mix(NoL, 1.0, scattering * 0.75);
+    } else {
+        NoL = mix(NoL, 0.6, 0.5);
+        NoL = mix(NoL, 0.9, scattering * 0.5);
+    }
     #endif
 
     //Main shadow calculation
@@ -109,7 +114,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
 
         float viewDistance = 1.0 - clamp(lViewPos * 0.01, 0.0, 1.0);
         float offset = mix(0.00125, 0.00125 * ao, (1.0 - ao));
-        #ifdef GBUFFERS_TERRAIN
+        #if defined GBUFFERS_TERRAIN
               offset *= 1.0 + subsurface * 2.0 * viewDistance;
         #endif
 
@@ -141,7 +146,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     globalIllumination *= 0.75 * abs(NoN) + 0.25;
     #endif
 
-    newAmbientCol += globalIllumination * GLOBAL_ILLUMINATION_BRIGHTNESS * sunVisibility * lightmap.y;
+    newAmbientCol += globalIllumination * float(length(globalIllumination) > 0.1) * GLOBAL_ILLUMINATION_BRIGHTNESS * sunVisibility * lightmap.y;
     #endif
 
     vec3 sceneLighting = mix(newAmbientCol, lightCol, fullShadow * rainFactor * shadowFade) * lightmap.y * lightmap.y;
@@ -176,15 +181,18 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
 	vec3 baseReflectance = vec3(0.04);
 
     #ifndef PBR
-	float smoothness = mix(clamp(length(albedo.rgb) * 0.5, 0.1, 0.7), 1.0, specular);
+	float smoothness = mix(clamp(length(albedo.rgb) * 0.4 + NoL * 0.1, 0.1, 0.7), 1.0, specular);
     #else
-    float smoothness = specular;
+    float smoothness = specular * 1.25;
     if (smoothness == 0.0) {
-        smoothness = mix(clamp(length(albedo.rgb) * 0.5, 0.1, 0.7), 1.0, specular);
+        smoothness = mix(clamp(length(albedo.rgb) * 0.4 + NoL * 0.1, 0.1, 0.7), 1.0, specular);
     }
     #endif
 
+    smoothness = clamp(smoothness, 0.0, 0.9);
+
 	specularHighlight = GetSpecularHighlight(normal, viewPos, smoothness, baseReflectance, lightCol, shadow * vanillaDiffuse, color.a);
+    specularHighlight = clamp(specularHighlight, vec3(0.0), vec3(1.0));
     #endif
 
     //Emission

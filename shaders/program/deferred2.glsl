@@ -192,10 +192,7 @@ void main() {
 		#endif
 
 		skyColor *= 1.0 - blindFactor;
-
-		#ifdef TAA
-		skyColor += fract(Bayer64(gl_FragCoord.xy) + frameTimeCounter * 16.0 - 0.5) / 64.0;
-		#endif
+		skyColor *= 1.0 + Bayer8(gl_FragCoord.xy) / 32.0;
 
 		color = skyColor;
 	} else Fog(color, viewPos, worldPos, skyColor);

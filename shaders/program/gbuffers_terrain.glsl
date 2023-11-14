@@ -200,6 +200,7 @@ void main() {
 		float viewLength = length(viewPos) * 0.01;
 
 		if (viewLength < 1.0) getMaterials(smoothness, metalness, f0, emission, subsurface, porosity, ao, newNormal, newCoord, dcdx, dcdy, tbnMatrix);
+		subsurface += foliage + leaves;
 		#endif
 
 		#ifdef INTEGRATED_NORMAL_MAPPING
@@ -254,7 +255,7 @@ void main() {
 		#endif
 
 		vec3 shadow = vec3(0.0);
-		getSceneLighting(albedo.rgb, screenPos, viewPos, worldPos, newNormal, shadow, lightmap, NoU, NoL, NoE, emission, foliage, subsurface, smoothness, parallaxShadow, coloredLightingIntensity);
+		getSceneLighting(albedo.rgb, screenPos, viewPos, worldPos, newNormal, shadow, lightmap, NoU, NoL, NoE, emission, foliage, leaves, subsurface, smoothness, parallaxShadow, coloredLightingIntensity);
 	}
 
 	/* DRAWBUFFERS:03 */

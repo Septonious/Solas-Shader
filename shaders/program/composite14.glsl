@@ -55,18 +55,7 @@ void main() {
 	float z0 = texture2D(depthtex0, texCoord).r;
 
 	#ifdef BLOOM
-	vec3 rawBloom = getBloom(texCoord, dither, z0);
-
-	#if BLOOM_CONTRAST == 0
-	color = mix(color, rawBloom, 0.25 * BLOOM_STRENGTH);
-	#else
-	vec3 bloomContrast = vec3(exp2(BLOOM_CONTRAST * 0.25));
-	color = pow(color, bloomContrast);
-	rawBloom = pow(rawBloom, bloomContrast);
-	vec3 bloomStrength = pow(vec3(0.2 * BLOOM_STRENGTH), bloomContrast);
-	color = mix(color, rawBloom, bloomStrength);
-	color = pow(color, 1.0 / bloomContrast);
-	#endif
+	getBloom(color, texCoord, z0);
 	#endif
 
     //Tonemapping & Film Grain
