@@ -146,7 +146,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     globalIllumination *= 0.75 * abs(NoN) + 0.25;
     #endif
 
-    newAmbientCol += globalIllumination * float(length(globalIllumination) > 0.1) * GLOBAL_ILLUMINATION_BRIGHTNESS * sunVisibility * lightmap.y;
+    newAmbientCol += globalIllumination * GLOBAL_ILLUMINATION_BRIGHTNESS * sunVisibility * lightmap.y;
     #endif
 
     vec3 sceneLighting = mix(newAmbientCol, lightCol, fullShadow * rainFactor * shadowFade) * lightmap.y * lightmap.y;

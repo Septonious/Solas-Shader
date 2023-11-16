@@ -156,12 +156,14 @@ option.AO_RADIUS=AO Radius
 
 option.DYNAMIC_HANDLIGHT=Dynamic Hand Lighting
 
+screen.PBR_MENU=PBR Config
 
 #IPBR
 
-screen.IPBR=Integrated PBR (IPBR)
+screen.IPBR=Integrated PBR
 
-option.INTEGRATED_SPECULAR=IPBR Specular Mapping
+option.INTEGRATED_SPECULAR=Generated Specular
+option.INTEGRATED_SPECULAR.comment=Automatically determines reflective blocks
 
 screen.ISPECULAR=Specular Config
 
@@ -169,7 +171,8 @@ option.RAIN_PUDDLES=Rain Puddles
 option.SPECULAR_STRENGTH=Specular Strength
 option.WATER_SPECULAR_STRENGTH=Water Reflection Strength
 
-option.INTEGRATED_EMISSION=IPBR Emissives
+option.INTEGRATED_EMISSION=Generated Emission
+option.INTEGRATED_EMISSION.comment=Automatically determines emissive blocks
 
 screen.IEMISSION=Emissives Config
 
@@ -182,13 +185,80 @@ option.PLAYER_BRIGHT_PARTS_HIGHLIGHT=Player Bright Parts Highlight
 option.ENTITY_HIGHLIGHT=Entity Highlight
 option.EMISSION_STRENGTH=Emission Strength
 
-option.INTEGRATED_NORMAL_MAPPING=IPBR Generated Normals
+option.INTEGRATED_NORMAL_MAPPING=Generated Normals
+option.INTEGRATED_NORMAL_MAPPING.comment=Automatically generated normals on blocks
 
 screen.INORMALS=Normals Config
 
 option.NORMAL_STRENGTH=Strength
 option.NORMAL_RESOLUTION=Resolution
 option.NORMAL_THRESHOLD=Generation Threshold
+
+#PBR
+screen.PBR=Resourcepack PBR
+
+option.PBR_MODE=PBR Mode
+option.PBR_MODE.comment=Controls the current PBR mode. §c[-] OVERRIDES OPTIONS IN CONFIG MENUS BELOW
+value.PBR_MODE.0=Integrated PBR
+value.PBR_MODE.1=Resourcepack PBR
+
+option.MATERIAL_FORMAT=Material Format*
+option.MATERIAL_FORMAT.comment=Determines the specular and normal map format used by the resource pack. §e[*]§rTexture artists usually tell which format is used in their resource pack, using the wrong format may give weird results.
+value.MATERIAL_FORMAT.0=SEUS/Old PBR
+value.MATERIAL_FORMAT.1=labPBR 1.3
+
+screen.PARALLAX_CONFIG=Parallax Config
+screen.SELF_SHADOW_CONFIG=Self Shadow Config
+
+option.PARALLAX=Parallax Occlusion Mapping*
+option.PARALLAX.comment=Adds displacement on a surface using height map.
+
+option.PARALLAX_DEPTH=Parallax Depth*
+option.PARALLAX_DEPTH.comment=Adjusts parallax deepness.
+value.PARALLAX_DEPTH.0.05=5 cm
+value.PARALLAX_DEPTH.0.10=10 cm
+value.PARALLAX_DEPTH.0.15=15 cm
+value.PARALLAX_DEPTH.0.20=20 cm
+value.PARALLAX_DEPTH.0.25=25 cm
+value.PARALLAX_DEPTH.0.30=30 cm
+value.PARALLAX_DEPTH.0.35=35 cm
+value.PARALLAX_DEPTH.0.40=40 cm
+value.PARALLAX_DEPTH.0.45=45 cm
+value.PARALLAX_DEPTH.0.50=50 cm
+
+option.PARALLAX_QUALITY=Parallax Samples*
+option.PARALLAX_QUALITY.comment=Adjusts the quality of parallax occlusion mapping.
+
+option.PARALLAX_DISTANCE=Parallax Distance*
+option.PARALLAX_DISTANCE.comment=Adjusts how far parallax occlusion mapping and self shadows can be rendered.
+
+option.SELF_SHADOW=Self Shadows*
+option.SELF_SHADOW.comment=Allows a surface to cast shadow to itself using heightmap.
+
+option.SELF_SHADOW_ANGLE=Self Shadows Angle*
+option.SELF_SHADOW_ANGLE.comment=Adjusts the self shadowing angle, higher value allows the shadow to travel further.
+
+option.SELF_SHADOW_QUALITY=Self Shadows Samples*
+option.SELF_SHADOW_QUALITY.comment=Adjusts the quality of self shadowing.
+
+option.SELF_SHADOW_STRENGTH=Self Shadows Strength*
+option.SELF_SHADOW_STRENGTH.comment=Adjusts the intensity of self shadowing.
+
+option.DIRECTIONAL_LIGHTMAP=Directional Lightmap*
+option.DIRECTIONAL_LIGHTMAP.comment=Adds normal mapping to vanilla lighting. §c[-]§rLightmap may glitch with this effect enabled.
+
+option.DIRECTIONAL_LIGHTMAP_STRENGTH=Dir. Lightmap Strength*
+option.DIRECTIONAL_LIGHTMAP_STRENGTH.comment=Adjusts the intensity of Directional Lightmap.
+value.DIRECTIONAL_LIGHTMAP_STRENGTH.2.0=Very Low
+value.DIRECTIONAL_LIGHTMAP_STRENGTH.1.4=Low
+value.DIRECTIONAL_LIGHTMAP_STRENGTH.1.0=Medium
+value.DIRECTIONAL_LIGHTMAP_STRENGTH.0.7=High
+value.DIRECTIONAL_LIGHTMAP_STRENGTH.0.5=Very High
+
+option.PBR_REFLECTIONS=PBR Reflections
+option.PBR_REFLECTIONS.comment=Toggles reflections from Integrated PBR or Resourcepack PBR.
+
+option.PBR_REFLECTIONS_QUALITY=Reflections Quality
 
 #COLOR
 

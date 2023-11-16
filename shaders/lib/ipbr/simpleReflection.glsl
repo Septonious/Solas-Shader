@@ -7,13 +7,13 @@ void getReflection(inout vec4 color, in vec3 viewPos, in vec3 normal, in float f
 	#endif
 
 	vec3 falloff = vec3(0.0);
-	vec4 reflectPos = rayTrace(depthtex0, viewPos, normal, blueNoiseDither, border, 6, 10, 0.1, 2.0);
+	vec4 reflectPos = rayTrace(depthtex0, viewPos, normal, blueNoiseDither, border, 6, PBR_REFLECTIONS_QUALITY, 0.1, 2.0);
 
 	border = clamp(13.333 * (1.0 - border) * (0.9 * smoothness + 0.1), 0.0, 1.0);
 
 	#ifdef OVERWORLD
 	vec3 skyRefPos = reflect(normalize(viewPos), normal);
-	falloff = getAtmosphere(skyRefPos);
+	falloff = getAtmosphere(skyRefPos) * eBS * eBS;
 	#endif
 
 	#ifdef PBR

@@ -6,12 +6,12 @@
 //Varyings//
 in vec2 texCoord;
 
-#if defined INTEGRATED_SPECULAR && defined OVERWORLD
+#if defined PBR_REFLECTIONS && defined OVERWORLD
 in vec3 sunVec, upVec;
 #endif
 
 //Uniforms//
-#ifdef INTEGRATED_SPECULAR
+#ifdef PBR_REFLECTIONS
 uniform int isEyeInWater;
 
 #ifdef TAA
@@ -38,7 +38,7 @@ uniform vec3 cameraPosition;
 
 uniform sampler2D colortex0;
 
-#ifdef INTEGRATED_SPECULAR
+#ifdef PBR_REFLECTIONS
 uniform sampler2D noisetex, colortex3;
 uniform sampler2D depthtex0, depthtex1;
 
@@ -52,7 +52,7 @@ uniform mat4 gbufferModelViewInverse;
 #endif
 
 //Common Variables//
-#ifdef INTEGRATED_SPECULAR
+#ifdef PBR_REFLECTIONS
 const bool colortex0MipmapEnabled = true;
 const bool colortex3MipmapEnabled = true;
 
@@ -66,7 +66,7 @@ float sunVisibility = clamp(dot(sunVec, upVec) + 0.025, 0.0, 0.1) * 10.0;
 #endif
 
 //Includes//
-#ifdef INTEGRATED_SPECULAR
+#ifdef PBR_REFLECTIONS
 #ifdef OVERWORLD
 #include "/lib/color/lightColor.glsl"
 #include "/lib/atmosphere/sky.glsl"
@@ -83,7 +83,7 @@ float sunVisibility = clamp(dot(sunVec, upVec) + 0.025, 0.0, 0.1) * 10.0;
 void main() {
 	vec4 color = texture2D(colortex0, texCoord);
 
-	#ifdef INTEGRATED_SPECULAR
+	#ifdef PBR_REFLECTIONS
 	float z0 = texture2D(depthtex0, texCoord).r;
 	float z1 = texture2D(depthtex1, texCoord).r;
 
@@ -91,7 +91,7 @@ void main() {
 	vec3 normal = DecodeNormal(terrainData.rg);
 	vec3 viewPos = ToView(vec3(texCoord, z0));
 
-	#ifdef INTEGRATED_SPECULAR
+	#ifdef PBR_REFLECTIONS
 	if (terrainData.b > 0.01 && z0 > 0.56 && z0 >= z1) {
 		#ifndef PBR
 		float smoothness = terrainData.b;
@@ -122,12 +122,12 @@ void main() {
 //Varyings//
 out vec2 texCoord;
 
-#if defined INTEGRATED_SPECULAR && defined OVERWORLD
+#if defined PBR_REFLECTIONS && defined OVERWORLD
 out vec3 sunVec, upVec;
 #endif
 
 //Uniforms//
-#if defined INTEGRATED_SPECULAR && defined OVERWORLD
+#if defined PBR_REFLECTIONS && defined OVERWORLD
 uniform float timeAngle;
 
 uniform mat4 gbufferModelView;
@@ -139,7 +139,7 @@ void main() {
 	texCoord = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;
 	
 	//Sun Vector
-	#if defined INTEGRATED_SPECULAR && defined OVERWORLD
+	#if defined PBR_REFLECTIONS && defined OVERWORLD
 	const vec2 sunRotationData = vec2(cos(sunPathRotation * 0.01745329251994), -sin(sunPathRotation * 0.01745329251994));
 	float ang = fract(timeAngle - 0.25);
 	ang = (ang + (cos(ang * PI) * -0.5 + 0.5 - ang) / 3.0) * TAU;

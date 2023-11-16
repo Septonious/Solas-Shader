@@ -42,7 +42,7 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
 
 		int sampleCount = int(mix(8, VL_SAMPLES, min(visibility, 1.0)));
 
-		float maxDist = max(far, 96.0) * (0.5 - float(isEyeInWater == 1) * 0.25);
+		float maxDist = max(far, 96.0) * (0.5 - float(isEyeInWater == 1) * 0.25) * (1.0 - wetness * 0.25 * float(isEyeInWater == 0));
 		float minDist = maxDist / sampleCount;
 		float fovFactor = gbufferProjection[1][1] / 1.37;
 		float x = abs(texCoord.x - 0.5);

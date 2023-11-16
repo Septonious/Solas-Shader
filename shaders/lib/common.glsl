@@ -27,6 +27,8 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 #define GLOBAL_ILLUMINATION_STRENGTH 0.5 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
 #define GLOBAL_ILLUMINATION_BRIGHTNESS 1.50 //[1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00]
 
+#define PBR_MODE 0 //[0 1]
+
 //Integrated PBR//
 #define INTEGRATED_NORMAL_MAPPING
 #define NORMAL_STRENGTH 8.0 //[1.0 2.0 3.0 4.0 5.0 6.0 7.0 8.0 9.0 10.0]
@@ -52,17 +54,19 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 #define PBR
 #define MATERIAL_FORMAT 1 //[0 1]
 
-#define PARALLAX
-#define PARALLAX_DEPTH 0.25 //[0.05 0.10 0.15 0.20 0.25 0.30 0.35 0.40 0.45 0.50]
+#define PBR_REFLECTIONS
+#define PBR_REFLECTIONS_QUALITY 10 //[8 10 12 14 16 18 20 22 24 26 28 30]
+//#define PARALLAX
+#define PARALLAX_DEPTH 0.20 //[0.05 0.10 0.15 0.20 0.25 0.30 0.35 0.40 0.45 0.50]
 #define PARALLAX_QUALITY 96 //[32 48 64 80 96 112 128]
 #define PARALLAX_DISTANCE 48 //[8 16 32 48 64 80 96 112 128]
-#define SELF_SHADOW
-#define SELF_SHADOW_ANGLE 0.5 //[0.5 1.0 1.5 2.0 2.5 3.0 3.5 4.0 4.5 5.0 5.5 6.0 6.5 7.0 7.5 8.0]
+//#define SELF_SHADOW
+#define SELF_SHADOW_ANGLE 2.0 //[0.5 1.0 1.5 2.0 2.5 3.0 3.5 4.0 4.5 5.0 5.5 6.0 6.5 7.0 7.5 8.0]
 #define SELF_SHADOW_QUALITY 6 //[4 6 8 10 12 14 16]
-#define SELF_SHADOW_STRENGTH 64 //[4 8 16 32 64]
+#define SELF_SHADOW_STRENGTH 32 //[4 8 16 32 64]
 
 //#define DIRECTIONAL_LIGHTMAP
-#define DIRECTIONAL_LIGHTMAP_STRENGTH 1.5 //[0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5]
+#define DIRECTIONAL_LIGHTMAP_STRENGTH 1.4 //[2.0 1.4 1.0 0.7 0.5]
 
 //Depth of Field//
 //#define DOF
@@ -400,8 +404,28 @@ const float TAU = 6.2831853;
 #endif
 
 #ifndef PBR
-#undef POM
+#undef PARALLAX
 #undef SELF_SHADOW
+#endif
+
+#if PBR_MODE == 0
+#define INTEGRATED_SPECULAR_INTERNAL
+#define INTEGRATED_NORMAL_MAPPING_INTERNAL
+#define INTEGRATED_EMISSION_INTERNAL
+#undef SELF_SHADOW
+#undef PARALLAX
+#undef DIRECTIONAL_LIGHTMAP
+#elif PBR_MODE == 1
+#define SELF_SHADOW_INTERNAL
+#define PARALLAX_INTERNAL
+#undef INTEGRATED_NORMAL_MAPPING
+#undef INTEGRATED_SPECULAR
+#endif
+
+#ifdef PARALLAX
+#endif
+
+#ifdef SELF_SHADOW
 #endif
 
 //test options//

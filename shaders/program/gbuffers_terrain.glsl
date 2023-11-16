@@ -147,7 +147,10 @@ vec2 dcdy = dFdy(texCoord);
 #endif
 
 #ifdef PBR
+#if defined PARALLAX || defined PARALLAX_INTERNAL || defined SELF_SHADOW
 #include "/lib/ipbr/parallax.glsl"
+#endif
+
 #include "/lib/ipbr/materialGbuffers.glsl"
 
 #ifdef DIRECTIONAL_LIGHTMAP
@@ -174,7 +177,7 @@ void main() {
 	float surfaceDepth = 1.0;
 	float parallaxFade = clamp((dist - PARALLAX_DISTANCE) / 32.0, 0.0, 1.0);
 	
-	#ifdef PARALLAX
+	#if defined PARALLAX || defined PARALLAX_INTERNAL
 	if (subsurface < 0.5) newCoord = getParallaxCoord(texCoord, parallaxFade, surfaceDepth);
 	albedo = texture2DGradARB(texture, newCoord, dcdx, dcdy) * vec4(color.rgb, 1.0);
 	#endif
@@ -231,7 +234,7 @@ void main() {
 
 		float doParallax = 0.0;
 
-		#ifdef SELF_SHADOW
+		#if defined SELF_SHADOW || defined SELF_SHADOW_INTERNAL
 		float pNoL = dot(newNormal, lightVec);
 
 		#ifdef OVERWORLD

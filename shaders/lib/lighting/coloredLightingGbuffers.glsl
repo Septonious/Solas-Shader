@@ -24,6 +24,6 @@ void applyCLGI(in vec3 blocklightCol, in vec3 screenPos, inout vec3 coloredLight
 	float globalIlluminationMix = min((gi.r + gi.g + gi.b), 1.0);
 	      globalIlluminationMix *= 1.0 - min(blockLightMap, 1.0);
 
-	globalIllumination = mix(vec3(0.0), globalIlluminationNormalized, globalIlluminationMix * GLOBAL_ILLUMINATION_STRENGTH * timeBrightness * float(length(globalIlluminationNormalized) > 0.1));
+	globalIllumination = mix(vec3(0.0), globalIlluminationNormalized, globalIlluminationMix * GLOBAL_ILLUMINATION_STRENGTH * timeBrightness * float(length(globalIlluminationNormalized) > 0.01));
 	#endif
 }
