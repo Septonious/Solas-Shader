@@ -11,7 +11,7 @@ in vec2 texCoord, lightMapCoord;
 in vec3 sunVec, upVec, eastVec, northVec;
 in vec3 normal;
 
-#ifdef INTEGRATED_NORMAL_MAPPING
+#if defined INTEGRATED_NORMAL_MAPPING || defined INTEGRATED_NORMAL_MAPPING_INTERNAL
 in vec2 signMidCoordPos;
 flat in vec2 absMidCoordPos;
 #endif
@@ -22,7 +22,7 @@ in vec3 viewVector;
 in vec4 vTexCoord, vTexCoordAM;
 #endif
 
-#if defined INTEGRATED_NORMAL_MAPPING || (defined COLORED_LIGHTING || defined GI) || defined PBR
+#if defined INTEGRATED_NORMAL_MAPPING || defined INTEGRATED_NORMAL_MAPPING_INTERNAL || (defined COLORED_LIGHTING || defined GI) || defined PBR
 in vec3 binormal, tangent;
 #endif
 
@@ -53,7 +53,7 @@ uniform float wetness, timeBrightness, timeAngle;
 
 uniform sampler2D noisetex;
 
-#if defined INTEGRATED_NORMAL_MAPPING || defined PBR
+#if defined INTEGRATED_NORMAL_MAPPING || defined INTEGRATED_NORMAL_MAPPING_INTERNAL || defined PBR
 uniform ivec2 atlasSize;
 #endif
 
@@ -123,11 +123,11 @@ vec2 dcdy = dFdy(texCoord);
 #include "/lib/lighting/dynamicHandLight.glsl"
 #endif
 
-#ifdef INTEGRATED_NORMAL_MAPPING
+#if defined INTEGRATED_NORMAL_MAPPING || defined INTEGRATED_NORMAL_MAPPING_INTERNAL
 #include "/lib/ipbr/integratedNormalMapping.glsl"
 #endif
 
-#ifdef INTEGRATED_EMISSION
+#if defined INTEGRATED_EMISSION || defined INTEGRATED_EMISSION_INTERNAL
 #include "/lib/ipbr/integratedEmissionTerrain.glsl"
 #endif
 
@@ -206,7 +206,7 @@ void main() {
 		subsurface += foliage + leaves;
 		#endif
 
-		#ifdef INTEGRATED_NORMAL_MAPPING
+		#if defined INTEGRATED_NORMAL_MAPPING || defined INTEGRATED_NORMAL_MAPPING_INTERNAL
 		getTerrainNormal(newNormal, albedo.rgb, mat);
 		#endif
 
@@ -218,7 +218,7 @@ void main() {
 		float NoL = clamp(dot(newNormal, lightVec), 0.0, 1.0);
 		float NoE = clamp(dot(newNormal, eastVec), -1.0, 1.0);
 
-		#ifdef INTEGRATED_EMISSION
+		#if defined INTEGRATED_EMISSION || defined INTEGRATED_EMISSION_INTERNAL
 		getIntegratedEmission(albedo, viewPos, worldPos, lightmap, emission, coloredLightingIntensity);
 		#endif
 
@@ -284,12 +284,12 @@ out vec3 viewVector;
 out vec4 vTexCoord, vTexCoordAM;
 #endif
 
-#if defined INTEGRATED_NORMAL_MAPPING || defined PBR
+#if defined INTEGRATED_NORMAL_MAPPING || defined INTEGRATED_NORMAL_MAPPING_INTERNAL || defined PBR
 out vec2 signMidCoordPos;
 flat out vec2 absMidCoordPos;
 #endif
 
-#if defined INTEGRATED_NORMAL_MAPPING || (defined COLORED_LIGHTING || defined GI) || defined PBR
+#if defined INTEGRATED_NORMAL_MAPPING || defined INTEGRATED_NORMAL_MAPPING_INTERNAL || (defined COLORED_LIGHTING || defined GI) || defined PBR
 out vec3 binormal, tangent;
 #endif
 
@@ -318,11 +318,11 @@ uniform mat4 gbufferModelViewInverse;
 //Attributes//
 attribute vec4 mc_Entity;
 
-#if defined INTEGRATED_NORMAL_MAPPING || (defined COLORED_LIGHTING || defined GI) || defined PBR
+#if defined INTEGRATED_NORMAL_MAPPING || defined INTEGRATED_NORMAL_MAPPING_INTERNAL || (defined COLORED_LIGHTING || defined GI) || defined PBR
 attribute vec4 at_tangent;
 #endif
 
-#if defined WAVING_BLOCKS || defined INTEGRATED_NORMAL_MAPPING || defined PBR
+#if defined WAVING_BLOCKS || defined INTEGRATED_NORMAL_MAPPING || defined INTEGRATED_NORMAL_MAPPING_INTERNAL || defined PBR
 attribute vec4 mc_midTexCoord;
 #endif
 
@@ -343,7 +343,7 @@ void main() {
 	lightMapCoord = (gl_TextureMatrix[1] * gl_MultiTexCoord1).xy;
 	lightMapCoord = clamp((lightMapCoord - 0.03125) * 1.06667, vec2(0.0), vec2(0.9333, 1.0));
 
-	#if defined INTEGRATED_NORMAL_MAPPING || defined PBR
+	#if defined INTEGRATED_NORMAL_MAPPING || defined INTEGRATED_NORMAL_MAPPING_INTERNAL || defined PBR
 	vec2 midCoord = (gl_TextureMatrix[0] * mc_midTexCoord).st;
 	vec2 texMinMidCoord = texCoord - midCoord;
 	signMidCoordPos = sign(texMinMidCoord);
@@ -353,7 +353,7 @@ void main() {
 	//Normal
 	normal = normalize(gl_NormalMatrix * gl_Normal);
 
-	#if defined INTEGRATED_NORMAL_MAPPING || (defined COLORED_LIGHTING || defined GI) || defined PBR
+	#if defined INTEGRATED_NORMAL_MAPPING || defined INTEGRATED_NORMAL_MAPPING_INTERNAL || (defined COLORED_LIGHTING || defined GI) || defined PBR
 	binormal = normalize(gl_NormalMatrix * cross(at_tangent.xyz, gl_Normal.xyz) * at_tangent.w);
 	tangent = normalize(gl_NormalMatrix * at_tangent.xyz);
 
