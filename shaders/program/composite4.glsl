@@ -40,6 +40,8 @@ uniform mat4 gbufferProjection, gbufferProjectionInverse;
 //Optifine Constants//
 const bool colortex4Clear = false;
 const bool colortex5Clear = false;
+const bool colortex4MipmapEnabled = true;
+const bool colortex5MipmapEnabled = true;
 
 //Includes//
 #if defined COLORED_LIGHTING || defined GI
@@ -66,8 +68,8 @@ void main() {
 
 	/* DRAWBUFFERS:045 */
 	gl_FragData[0].rgb = color;
-	gl_FragData[1].rgb = coloredLighting;
-	gl_FragData[2].rgb = globalIllumination;
+	gl_FragData[1].rgb = coloredLighting * float(length(coloredLighting) > 0.001);
+	gl_FragData[2].rgb = globalIllumination * float(length(globalIllumination) > 0.001);
 }
 
 #endif

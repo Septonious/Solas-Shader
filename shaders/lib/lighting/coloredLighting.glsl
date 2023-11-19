@@ -17,6 +17,7 @@ void computeColoredLighting(in float z, inout vec3 coloredLighting, inout vec3 g
 	vec2 blurStrength = vec2(1.0 / aspectRatio, 1.0) * fovScale / distScale;
 	
     float emission = texture2D(colortex3, texCoord).a;
+		  emission *= float(emission < 0.98);
     float indirectEmission = float(emission > 0.0144 && emission < 0.0146);
     float directEmission = float(emission > 0.11 && emission <= 0.98) * (1.0 - indirectEmission) * emission;
 
@@ -64,13 +65,13 @@ void computeColoredLighting(in float z, inout vec3 coloredLighting, inout vec3 g
 
 		#ifdef COLORED_LIGHTING
 		previousColoredLight *= 0.25;
-		previousColoredLight *= previousColoredLight * mask;
+		previousColoredLight *= previousColoredLight;
 		coloredLighting = sqrt(mix(previousColoredLight, clAlbedo * 10.0, 0.1));
 		#endif
 
 		#ifdef GI
 		previousGlobalIllumination *= 0.25;
-		previousGlobalIllumination *= previousGlobalIllumination * mask;
+		previousGlobalIllumination *= previousGlobalIllumination;
 		globalIllumination = sqrt(mix(previousGlobalIllumination, giAlbedo * 10.0, 0.1));
 		#endif
 	}

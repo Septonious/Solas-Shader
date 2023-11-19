@@ -92,6 +92,9 @@ uniform mat4 shadowModelView;
 #endif
 
 //Common Variables//
+const bool gaux1MipmapEnabled = true;
+const bool gaux2MipmapEnabled = true;
+
 #ifdef OVERWORLD
 float sunVisibility = clamp(dot(sunVec, upVec) + 0.025, 0.0, 0.1) * 10.0;
 vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.0);

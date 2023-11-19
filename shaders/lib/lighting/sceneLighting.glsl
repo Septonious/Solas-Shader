@@ -142,8 +142,8 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
 
     #ifdef GI
     #ifdef GBUFFERS_TERRAIN
-    float NoN = dot(normal, northVec);
-    globalIllumination *= 0.75 * abs(NoN) + 0.25;
+    float NoN = clamp(abs(dot(normal, northVec)) + clamp(1.0 - NoU, 0.0, 1.0), 0.0, 1.0);
+    globalIllumination *= 0.75 * NoN + 0.25;
     #endif
 
     newAmbientCol += globalIllumination * GLOBAL_ILLUMINATION_BRIGHTNESS * sunVisibility * lightmap.y;
