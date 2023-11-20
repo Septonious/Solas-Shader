@@ -192,7 +192,7 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     smoothness = clamp(smoothness, 0.0, 0.9);
 
 	specularHighlight = GetSpecularHighlight(normal, viewPos, smoothness, baseReflectance, lightCol, shadow * vanillaDiffuse, color.a);
-    specularHighlight = clamp(specularHighlight, vec3(0.0), vec3(1.0));
+    specularHighlight = clamp(specularHighlight * lightmap.y, vec3(0.0), vec3(1.0));
     #endif
 
     //Emission

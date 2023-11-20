@@ -7,8 +7,10 @@ void applyCLGI(in vec3 blocklightCol, in vec3 screenPos, inout vec3 coloredLight
 		screenPos.xy = Reprojection(screenPos);
 	}
 
+	float eBS = eyeBrightnessSmooth.y / 240.0;
+
 	#ifdef COLORED_LIGHTING
-	vec3 cl = texture2DLod(gaux1, screenPos.xy, 1).rgb;
+	vec3 cl = texture2DLod(gaux1, screenPos.xy, 1 + eBS).rgb;
 	vec3 coloredLightNormalized = normalize(cl + 0.00001);
 	     coloredLightNormalized *= getLuminance(blocklightCol) / getLuminance(coloredLightNormalized);
 	float coloredLightMix = clamp((cl.r + cl.g + cl.b) * 1024.0, 0.0, 1.0);

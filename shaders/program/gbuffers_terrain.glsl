@@ -61,6 +61,8 @@ uniform vec3 cameraPosition;
 
 #if defined COLORED_LIGHTING || defined GI
 uniform vec3 previousCameraPosition;
+
+uniform ivec2 eyeBrightnessSmooth;
 #endif
 
 #ifdef COLORED_LIGHTING
