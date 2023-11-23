@@ -163,7 +163,8 @@ option.INTEGRATED_SPECULAR=Отражения
 
 screen.ISPECULAR=Настройки Отражений
 
-option.RAIN_PUDDLES=Дождевые Лужи
+option.RAIN_PUDDLES=Лужи
+option.RAIN_PUDDLES_STRENGTH=Видимость Луж
 option.REFLECTION_RT_SAMPLE_COUNT=Качество Отражений
 option.SPECULAR_STRENGTH=Сила Отражений
 option.WATER_SPECULAR_STRENGTH=Сила Водных Отражений

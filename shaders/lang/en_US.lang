@@ -168,6 +168,7 @@ option.INTEGRATED_SPECULAR.comment=Automatically determines reflective blocks
 screen.ISPECULAR=Specular Config
 
 option.RAIN_PUDDLES=Rain Puddles
+option.RAIN_PUDDLES_STRENGTH=Rain Puddles Strength
 option.SPECULAR_STRENGTH=Specular Strength
 option.WATER_SPECULAR_STRENGTH=Water Reflection Strength
 
