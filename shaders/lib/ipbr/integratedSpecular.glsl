@@ -38,7 +38,7 @@ void getIntegratedSpecular(inout vec4 albedo, in vec3 normal, in vec2 worldPos, 
         #if defined INTEGRATED_SPECULAR || defined INTEGRATED_SPECULAR_INTERNAL
         specular += puddles;
         #else
-        specular += puddles;
+        specular += puddles * 2.0;
         #endif
     }
     #endif
