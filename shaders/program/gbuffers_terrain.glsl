@@ -136,9 +136,7 @@ vec2 dcdy = dFdy(texCoord);
 #include "/lib/ipbr/integratedEmissionTerrain.glsl"
 #endif
 
-#ifdef INTEGRATED_SPECULAR
 #include "/lib/ipbr/integratedSpecular.glsl"
-#endif
 
 #include "/lib/color/dimensionColor.glsl"
 
@@ -227,9 +225,7 @@ void main() {
 		getIntegratedEmission(albedo, viewPos, worldPos, lightmap, emission, coloredLightingIntensity);
 		#endif
 
-		#if defined INTEGRATED_SPECULAR && !defined PBR
 		getIntegratedSpecular(albedo, newNormal, worldPos.xz, lightmap, emission, foliage + leaves, smoothness);
-		#endif
 
 		float parallaxShadow = 1.0;
 		

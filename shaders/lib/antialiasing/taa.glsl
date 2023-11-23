@@ -1,4 +1,4 @@
-const vec2 neighbourhoodOffsets[8] = vec2[8](
+const vec2 neighbourOffsets[8] = vec2[8](
 	vec2( 0.0, -1.0),
 	vec2(-1.0,  0.0),
 	vec2( 1.0,  0.0),
@@ -9,74 +9,109 @@ const vec2 neighbourhoodOffsets[8] = vec2[8](
 	vec2( 1.0,  1.0)
 );
 
-vec3 RGBToYCoCg(vec3 col) {
+vec3 getBlurredColor(vec2 view) {
+	float blurFactor = 0.1667;
+	vec3 color = texture2DLod(colortex1, texCoord + neighbourOffsets[4] * blurFactor / view, 0).rgb;
+		 color+= texture2DLod(colortex1, texCoord + neighbourOffsets[5] * blurFactor / view, 0).rgb;
+		 color+= texture2DLod(colortex1, texCoord + neighbourOffsets[6] * blurFactor / view, 0).rgb;
+		 color+= texture2DLod(colortex1, texCoord + neighbourOffsets[7] * blurFactor / view, 0).rgb;
+
+	return color * 0.25;
+}
+
+vec3 textureCatmullRom(sampler2D colortex, vec2 coord, vec2 view) {
+    vec2 position = coord * view;
+    vec2 centerPosition = floor(position - 0.5) + 0.5;
+    vec2 diff = position - centerPosition;
+    vec2 diff2 = diff * diff;
+    vec2 diff3 = diff * diff2;
+
+    const float c = 0.7;
+    vec2 w0 = -c * diff3 + 2.0 * c * diff2 - c * diff;
+    vec2 w1 =  (2.0 - c) * diff3 - (3.0 - c) * diff2 + 1.0;
+    vec2 w2 = -(2.0 - c) * diff3 + (3.0 - 2.0 * c) * diff2 + c * diff;
+    vec2 w3 = c * diff3 - c * diff2;
+
+    vec2 w12 = w1 + w2;
+    vec2 tc12 = (centerPosition + w2 / w12) / view;
+
+    vec2 tc0 = (centerPosition - 1.0) / view;
+    vec2 tc3 = (centerPosition + 2.0) / view;
+    vec4 color = vec4(texture2DLod(colortex, vec2(tc12.x, tc0.y ), 0).gba, 1.0) * (w12.x * w0.y ) +
+                 vec4(texture2DLod(colortex, vec2(tc0.x,  tc12.y), 0).gba, 1.0) * (w0.x  * w12.y) +
+                 vec4(texture2DLod(colortex, vec2(tc12.x, tc12.y), 0).gba, 1.0) * (w12.x * w12.y) +
+                 vec4(texture2DLod(colortex, vec2(tc3.x,  tc12.y), 0).gba, 1.0) * (w3.x  * w12.y) +
+                 vec4(texture2DLod(colortex, vec2(tc12.x, tc3.y ), 0).gba, 1.0) * (w12.x * w3.y );
+
+    return color.rgb / color.a;
+}
+
+vec3 RGBToYCoCg(vec3 color) {
 	return vec3(
-		col.r * 0.25 + col.g * 0.5 + col.b * 0.25,
-		col.r * 0.5 - col.b * 0.5,
-		col.r * -0.25 + col.g * 0.5 + col.b * -0.25
+		color.r * 0.25 + color.g * 0.5 + color.b * 0.25,
+		color.r * 0.5 - color.b * 0.5,
+		color.r * -0.25 + color.g * 0.5 + color.b * -0.25
 	);
 }
 
-vec3 YCoCgToRGB(vec3 col) {
-	float n = col.r - col.b;
-
-	return vec3(n + col.g, col.r + col.b, n - col.g);
+vec3 YCoCgToRGB(vec3 color) {
+	float n = color.r - color.b;
+	return vec3(n + color.g, color.r + color.b, n - color.g);
 }
 
-vec3 ClipAABB(vec3 q,vec3 aabb_min, vec3 aabb_max){
-	vec3 p_clip = 0.5 * (aabb_max + aabb_min);
-	vec3 e_clip = 0.5 * (aabb_max - aabb_min) + 0.00000001;
+vec3 ClipAABB(vec3 q, vec3 minAABB, vec3 maxAABB){
+	vec3 clipP = (maxAABB + minAABB) * 0.5;
+	vec3 clipE = (maxAABB - minAABB) * 0.5 + 0.00000001;
 
-	vec3 v_clip = q - vec3(p_clip);
-	vec3 v_unit = v_clip.xyz / e_clip;
-	vec3 a_unit = abs(v_unit);
-	float ma_unit = max(a_unit.x, max(a_unit.y, a_unit.z));
+	vec3 clipV = q - vec3(clipP);
+	vec3 unitV = clipV.xyz / clipE;
+	vec3 unitA = abs(unitV);
+	float maxUnit = max(unitA.x, max(unitA.y, unitA.z));
 
-	if (ma_unit > 1.0)
-		return vec3(p_clip) + v_clip / ma_unit;
-	else
-		return q;
+	if (maxUnit > 1.0) return vec3(clipP) + clipV / maxUnit;
+	else return q;
 }
 
-vec3 NeighbourhoodClamping(vec3 color, vec3 tempColor, vec2 viewScale, sampler2D colortex) {
-	vec3 minclr = RGBToYCoCg(color);
-	vec3 maxclr = minclr;
+vec3 NeighbourhoodClipping(vec3 color, vec3 tempColor, vec2 view) {
+	vec3 minColor = RGBToYCoCg(color);
+	vec3 maxColor = minColor;
 
-	for (int i = 0; i < 8; i++) {
-		vec2 offset = neighbourhoodOffsets[i] * viewScale;
-		vec3 clr = texture2D(colortex, texCoord + offset).rgb;
+	for(int i = 0; i < 8; i++) {
+		vec2 offset = neighbourOffsets[i] * view;
+		vec3 colorSample = texture2DLod(colortex1, texCoord + offset, 0.0).rgb;
+			 colorSample = RGBToYCoCg(colorSample);
 
-		clr = RGBToYCoCg(clr);
-		minclr = min(minclr, clr);
-		maxclr = max(maxclr, clr);
+		minColor = min(minColor, colorSample);
+		maxColor = max(maxColor, colorSample);
 	}
 
 	tempColor = RGBToYCoCg(tempColor);
-	tempColor = ClipAABB(tempColor, minclr, maxclr);
+	tempColor = ClipAABB(tempColor, minColor, maxColor);
 
 	return YCoCgToRGB(tempColor);
 }
 
 vec4 TemporalAA(inout vec3 color, sampler2D colortex, sampler2D temptex, float tempData, float z1) {
+	vec2 view = vec2(viewWidth, viewHeight);
 	vec3 coord = vec3(texCoord, z1);
 	vec2 prvCoord = Reprojection(coord);
 
-	vec3 tempColor = texture2D(temptex, prvCoord).gba;
+	vec3 blur = getBlurredColor(view);
+	vec3 tempColor = textureCatmullRom(temptex, prvCoord, view);
 
-	if (tempColor == vec3(0.0)) return vec4(tempData, color);
+	if (tempColor == vec3(0.0)) {
+		color = blur;
+		return vec4(tempData, color);
+	}
 
-	vec2 viewResolution = vec2(viewWidth, viewHeight);
+	tempColor = NeighbourhoodClipping(color, tempColor, 1.0 / view);
 
-	tempColor = NeighbourhoodClamping(color, tempColor, 1.0 / viewResolution, colortex);
-
+	vec2 velocity = (texCoord - prvCoord.xy) * view;
 	float blendFactor = float(
 		prvCoord.x > 0.0 && prvCoord.x < 1.0 &&
 		prvCoord.y > 0.0 && prvCoord.y < 1.0
 	);
-	
-	vec2 velocity = (texCoord - prvCoord.xy) * viewResolution;
-
-	blendFactor *= exp(-length(velocity)) * 0.3 + 0.6;
+	blendFactor *= exp(-length(velocity)) * 0.2 + 0.7;
 
 	color = mix(color, tempColor, blendFactor);
 

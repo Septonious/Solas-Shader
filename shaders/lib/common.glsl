@@ -25,7 +25,7 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 //Global Illumination//
 #define GI
 #define GLOBAL_ILLUMINATION_STRENGTH 0.5 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
-#define GLOBAL_ILLUMINATION_BRIGHTNESS 1.50 //[1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00]
+#define GLOBAL_ILLUMINATION_BRIGHTNESS 1.00 //[1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00]
 
 #define PBR_MODE 0 //[0 1]
 
@@ -119,7 +119,7 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 #define VF_NETHER_REFRACTION
 #define VF_NETHER_REFRACTION_STRENGTH 0.50 //[0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00]
 
-#define VF_END_HEIGHT -10.0 //[-10.0 0.0 10.0 20.0 30.0 40.0 50.0 60.0 70.0]
+#define VF_END_HEIGHT -20.0 //[-20.0 -10.0 0.0 10.0 20.0 30.0 40.0]
 #define VF_END_AMOUNT 8.0 //[7.5 8.0 8.5 9.0 9.5 10.0]
 #define VF_END_THICKNESS 12.0 //[4.0 6.0 8.0 10.0 12.0 14.0 16.0 18.0 20.0 22.0 24.0]
 #define VF_END_OPACITY 0.7 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
@@ -352,10 +352,6 @@ const float TAU = 6.2831853;
 
 #ifdef NETHER
 #undef WATER_FOG
-#endif
-
-#ifndef INTEGRATED_SPECULAR
-#undef RAIN_PUDDLES
 #endif
 
 #ifndef VC

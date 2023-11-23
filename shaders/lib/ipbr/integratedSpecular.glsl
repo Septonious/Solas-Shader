@@ -1,6 +1,7 @@
 void getIntegratedSpecular(inout vec4 albedo, in vec3 normal, in vec2 worldPos, in vec2 lightmap, in float emission, in float foliage, inout float specular) {
     float lAlbedo = length(albedo.rgb);
 
+    #if defined INTEGRATED_SPECULAR || defined INTEGRATED_SPECULAR_INTERNAL
     if (mat == 300) {// Sand
         specular = pow7(albedo.b);
     } else if (mat == 301) {// Iron, Gold, Emerald, Diamond, Copper & Plates
@@ -27,12 +28,18 @@ void getIntegratedSpecular(inout vec4 albedo, in vec3 normal, in vec2 worldPos, 
             albedo.rgb = waterColor;
         }
     }
+    #endif
 
     #if defined RAIN_PUDDLES && defined GBUFFERS_TERRAIN
-    if (specular == 0.0 && emission == 0.0 && foliage == 0.0) {
+    if (emission == 0.0 && foliage == 0.0) {
         float NoU = clamp(dot(normal, upVec), 0.0, 1.0);
-        float puddles = wetness * pow8(lightmap.y) * texture2D(noisetex, (worldPos + cameraPosition.xz) * 0.00125).b * NoU * 0.125 * lAlbedo;
+        float puddles = wetness * pow8(lightmap.y) * (texture2D(noisetex, (worldPos + cameraPosition.xz) * 0.00125).b - 0.1) * NoU * lAlbedo;
+
+        #if defined INTEGRATED_SPECULAR || defined INTEGRATED_SPECULAR_INTERNAL
         specular += puddles;
+        #else
+        specular += puddles;
+        #endif
     }
     #endif
 
@@ -40,5 +47,7 @@ void getIntegratedSpecular(inout vec4 albedo, in vec3 normal, in vec2 worldPos, 
     specular = 0.95;
     #endif
 
+    #if defined INTEGRATED_SPECULAR || defined INTEGRATED_SPECULAR_INTERNAL
     specular = clamp(specular * SPECULAR_STRENGTH, 0.0, 0.95);
+    #endif
 }
