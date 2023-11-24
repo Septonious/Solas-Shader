@@ -163,7 +163,7 @@ screen.PBR_MENU=PBR Config
 screen.IPBR=Integrated PBR
 
 option.INTEGRATED_SPECULAR=Generated Specular
-option.INTEGRATED_SPECULAR.comment=Automatically determines reflective blocks
+option.INTEGRATED_SPECULAR.comment=Automatically determines reflective blocks. §c[-]§r DO NOT USE WITH AN EXTERNAL PBR RESOURCEPACK
 
 screen.ISPECULAR=Specular Config
 
@@ -197,11 +197,6 @@ option.NORMAL_THRESHOLD=Generation Threshold
 
 #PBR
 screen.PBR=Resourcepack PBR
-
-option.PBR_MODE=PBR Mode
-option.PBR_MODE.comment=Controls the current PBR mode. §c[-] OVERRIDES OPTIONS IN CONFIG MENUS BELOW
-value.PBR_MODE.0=Integrated PBR
-value.PBR_MODE.1=Resourcepack PBR
 
 option.MATERIAL_FORMAT=Material Format*
 option.MATERIAL_FORMAT.comment=Determines the specular and normal map format used by the resource pack. §e[*]§rTexture artists usually tell which format is used in their resource pack, using the wrong format may give weird results.

@@ -1,7 +1,7 @@
 void getIntegratedSpecular(inout vec4 albedo, in vec3 normal, in vec2 worldPos, in vec2 lightmap, in float emission, in float foliage, inout float specular) {
     float lAlbedo = length(albedo.rgb);
 
-    #if defined INTEGRATED_SPECULAR || defined INTEGRATED_SPECULAR_INTERNAL
+    #ifdef INTEGRATED_SPECULAR
     if (mat == 300) {// Sand
         specular = pow7(albedo.b);
     } else if (mat == 301) {// Iron, Gold, Emerald, Diamond, Copper & Plates
@@ -32,10 +32,6 @@ void getIntegratedSpecular(inout vec4 albedo, in vec3 normal, in vec2 worldPos, 
 
     #ifdef TEST00
     specular = 0.95;
-    #endif
-
-    #if defined INTEGRATED_SPECULAR || defined INTEGRATED_SPECULAR_INTERNAL
-    specular = clamp(specular * SPECULAR_STRENGTH, 0.0, 0.95);
     #endif
 
     #if defined RAIN_PUDDLES && defined GBUFFERS_TERRAIN

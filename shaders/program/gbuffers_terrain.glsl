@@ -172,7 +172,7 @@ void main() {
 	float foliage = int(mat == 108 || (mat >= 4 && mat <= 15)) * (1.0 - leaves);
 	float subsurface = foliage + leaves;
 	float emission = 0.0;
-	float smoothness = 0.0;
+	float smoothness = 0.0, metalness = 0.0;
 	float coloredLightingIntensity = 0.0;
 
 	#ifdef PBR
@@ -197,7 +197,7 @@ void main() {
 		vec2 lightmap = clamp(lightMapCoord, 0.0, 1.0);
 
 		#ifdef PBR
-		float f0 = 0.0, metalness = 0.0, porosity = 0.5, ao = 1.0;
+		float f0 = 0.0, porosity = 0.5, ao = 1.0;
 
 		mat3 tbnMatrix = mat3(tangent.x, binormal.x, normal.x,
 							tangent.y, binormal.y, normal.y,
@@ -264,7 +264,7 @@ void main() {
 
 	/* DRAWBUFFERS:03 */
 	gl_FragData[0] = albedo;
-	gl_FragData[1] = vec4(EncodeNormal(newNormal), smoothness, coloredLightingIntensity);
+	gl_FragData[1] = vec4(EncodeNormal(newNormal), clamp(smoothness + metalness, 0.0, 0.95), coloredLightingIntensity);
 }
 
 #endif

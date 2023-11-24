@@ -93,18 +93,10 @@ void main() {
 
 	#ifdef PBR_REFLECTIONS
 	if (terrainData.b > 0.01 && z0 > 0.56 && z0 >= z1) {
-		#ifndef PBR
-		float smoothness = terrainData.b;
-		#else
-		float smoothness = terrainData.b;
-			  smoothness *= smoothness;
-			  smoothness /= 2.0 - smoothness;
-		#endif
-
 		float fresnel = clamp(1.0 + dot(normal, normalize(viewPos)), 0.0, 1.0);
 			  fresnel = pow4(fresnel * terrainData.b);
 
-		getReflection(color, viewPos, normal, fresnel, smoothness);
+		getReflection(color, viewPos, normal, fresnel, terrainData.b);
 	}
 	#endif
 	#endif
