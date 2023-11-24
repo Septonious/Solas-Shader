@@ -45,6 +45,8 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
           blockLightMap = pow6(lightmap.x) * 3.0;
     #endif
 
+    blockLightMap = clamp(blockLightMap, 0.0, 8.0);
+
     //Block Lighting
     vec3 blockLighting = blockLightCol * blockLightMap;
 
