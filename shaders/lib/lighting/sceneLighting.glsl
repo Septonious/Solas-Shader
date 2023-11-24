@@ -35,17 +35,12 @@ void getSceneLighting(inout vec3 albedo, in vec3 screenPos, in vec3 viewPos, in 
     #endif
 
     //Block Lighting
-	float blockLightMap = pow6(lightmap.x * lightmap.x) * 3.0 + max(lightmap.x - 0.05, 0.0);
-          blockLightMap *= blockLightMap * 0.5;
-    #ifdef OVERWORLD
-          blockLightMap *= 1.0 - lightmap.y * 0.5 * timeBrightness;
-    #endif
+	float blockLightMap = pow8(lightmap.x * lightmap.x) * 3.0 + max(lightmap.x - 0.05, 0.0) * 0.5;
+          blockLightMap *= blockLightMap;
 
     #ifdef NETHER
           blockLightMap = pow6(lightmap.x) * 3.0;
     #endif
-
-    blockLightMap = clamp(blockLightMap, 0.0, 8.0);
 
     //Block Lighting
     vec3 blockLighting = blockLightCol * blockLightMap;

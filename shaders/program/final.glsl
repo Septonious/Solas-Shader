@@ -14,8 +14,8 @@ const int colortex0Format = R11F_G11F_B10F; //scene
 const int colortex1Format = RGBA16; //translucent
 const int colortex2Format = RGBA16; //temporal data
 const int colortex3Format = RGBA16; //gbuffers data
-const int colortex4Format = RGB16F; //colored light
-const int colortex5Format = RGB16F; //gi
+const int colortex4Format = RGB16; //colored light
+const int colortex5Format = RGB16; //gi
 const int colortex6Format = R11F_G11F_B10F; //reflections
 const int colortex7Format = RGB10_A2; //stuff
 */
