@@ -5,9 +5,7 @@
 #ifdef FSH
 
 //Varyings//
-#ifdef WATER_CAUSTICS
 flat in int mat;
-#endif
 
 in vec2 texCoord;
 
