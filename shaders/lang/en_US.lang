@@ -6,14 +6,19 @@ profile.HIGH=High
 profile.VERY_HIGH=Very High (Default)
 profile.ULTRA=Ultra
 
-option.SOLAS_BY_SEPTONIOUS=§6Solas
+option.SOLAS_BY_SEPTONIOUS=§6Solas V2
 value.SOLAS_BY_SEPTONIOUS.0=§bBy Septonious
-option.SOLAS_BY_SEPTONIOUS.comment=Discord: https://discord.gg/4uTAUQR2xu GitHub: https://github.com/Septonious/Solas-Shader
+option.SOLAS_BY_SEPTONIOUS.comment=Discord: https://discord.gg/4uTAUQR2xu. GitHub: https://github.com/Septonious/Solas-Shader
 
 #ATMOSPHERICS
 
 screen.ATMOSPHERICS=Atmospherics
 
+screen.SKYBOX_CONFIG=Skybox Config
+option.SKYBOX=Resourcepack Skybox
+option.SKYBOX_MIX_FACTOR=Skybox Mix Factor
+option.SKYBOX_MIX_FACTOR.comment=Controls the mix of resourcepack skybox with the shader's atmosphere
+option.SKYBOX_BRIGHTNESS=Skybox Brightness 
 
 screen.VC_CONFIG=Volumetric Clouds Config
 
@@ -29,7 +34,14 @@ option.VC_THICKNESS=Thickness
 option.VC_SPEED=Speed
 option.VC_DISTANCE=Render Distance
 option.VC_OPACITY=Opacity
+option.VC_SHADOWS=Cloud light rays
+option.VC_SHADOWS.comment=Allows clouds to behave like VL when sunlight is obstructed by blocks.
 
+screen.PC_CONFIG=Planar Clouds Config
+
+option.PLANAR_CLOUDS=Planar Clouds
+option.PLANAR_CLOUDS_BRIGHTNESS=Planar Clouds Brightness
+option.PLANAR_CLOUDS_OPACITY=Planar Clouds Opacity
 
 screen.VL_CONFIG=Volumetric Light Config
 
@@ -51,8 +63,14 @@ option.VF_NETHER_STRENGTH=Strength
 option.VF_NETHER_SAMPLES=Samples
 option.VF_NETHER_SPEED=Speed
 option.VF_NETHER_FREQUENCY=Frequency
-option.VF_NETHER_REFRACTION=Heat Refraction
-option.VF_NETHER_REFRACTION_STRENGTH=Refraction Strength
+
+screen.LPV_FOG_CONFIG=LPV Fog Config
+
+option.LPV_FOG=LPV Fog
+option.LPV_FOG.comment=Enables light sources to contribute to fog Illumination
+option.LPV_FOG_THRESHOLD=Light Threshold
+option.LPV_FOG_STRENGTH=Fog Intensity
+option.LPV_FOG_SAMPLES=Fog Samples
 
 screen.FOG_CONFIG=Fog Config
 
@@ -67,6 +85,8 @@ option.FOG_HEIGHT=Ground Fog Height
 screen.SKY_CONFIG=Sky Config
 
 option.STARS=Stars
+option.STAR_BRIGHTNESS=Stars Brightness
+option.STAR_AMOUNT=Stars Amount
 option.END_STARS=Ender Stars
 option.MILKY_WAY=Milky Way
 option.MILKY_WAY_BRIGHTNESS=Milky Way Brightness
@@ -95,7 +115,7 @@ screen.WATER=Water
 option.VANILLA_WATER=Vanilla Water
 
 option.WATER_FOG=Water Fog
-option.WATER_FOG_DENSITY=Water Fog Density
+option.WATER_FOG_EXPONENT=Water Fog Exponent
 option.WATER_CAUSTICS=Water Caustics
 option.WATER_CAUSTICS_STRENGTH=Water Caustics Strength
 
@@ -123,14 +143,13 @@ value.WATER_NORMAL_DETAIL.0.50=50%
 option.REFRACTION=Light Refraction
 option.REFRACTION_STRENGTH=Refraction Strength
 
-option.WAVING_WATER=Waving Water
-
 #LIGHTING
 
 screen.LIGHTING=Lighting
 
 option.shadowMapResolution=Shadow Resolution
 option.shadowDistance=Shadow Distance
+option.entityShadowDistanceMul=Entity Shadow Distance
 option.sunPathRotation=Sun Angle
 option.VPS=Variable Penumbra Shadows (VPS)
 option.VPS.comment=Enables shadows that become blurrier/sharper depending on the blocker distance.
@@ -162,32 +181,28 @@ screen.PBR_MENU=PBR Config
 
 screen.IPBR=Integrated PBR
 
-option.INTEGRATED_SPECULAR=Generated Specular
-option.INTEGRATED_SPECULAR.comment=Automatically determines reflective blocks. §c[-]§r DO NOT USE WITH AN EXTERNAL PBR RESOURCEPACK
+option.GENERATED_SPECULAR=Generated Specular
+option.GENERATED_SPECULAR.comment=Automatically determines reflective blocks. §c[-]§r DO NOT USE WITH AN EXTERNAL PBR RESOURCEPACK
 
 screen.ISPECULAR=Specular Config
 
 option.RAIN_PUDDLES=Rain Puddles
 option.RAIN_PUDDLES_STRENGTH=Rain Puddles Strength
 option.SPECULAR_STRENGTH=Specular Strength
-option.WATER_SPECULAR_STRENGTH=Water Reflection Strength
+option.WATER_REFLECTIONS=Water Reflections
 
-option.INTEGRATED_EMISSION=Generated Emission
-option.INTEGRATED_EMISSION.comment=Automatically determines emissive blocks
+option.GENERATED_EMISSION=Generated Emission
+option.GENERATED_EMISSION.comment=Automatically determines emissive blocks
 
 screen.IEMISSION=Emissives Config
 
 option.EMISSIVE_FLOWERS=Emissive Flowers
 option.EMISSIVE_ORES=Emissive Ores
-option.EMISSIVE_DEBRIS=Emissive Debris
 option.EMISSIVE_CONCRETE=Emissive Concrete
-option.EMISSIVE_POWDER_SNOW=Emissive Powder Snow
-option.PLAYER_BRIGHT_PARTS_HIGHLIGHT=Player Bright Parts Highlight
-option.ENTITY_HIGHLIGHT=Entity Highlight
 option.EMISSION_STRENGTH=Emission Strength
 
-option.INTEGRATED_NORMAL_MAPPING=Generated Normals
-option.INTEGRATED_NORMAL_MAPPING.comment=Automatically generated normals on blocks
+option.GENERATED_NORMALS=Generated Normals
+option.GENERATED_NORMALS.comment=Automatically generated normals on blocks
 
 screen.INORMALS=Normals Config
 
@@ -197,6 +212,9 @@ option.NORMAL_THRESHOLD=Generation Threshold
 
 #PBR
 screen.PBR=Resourcepack PBR
+
+option.PBR=Resourcepack PBR
+option.PBR.comment=Enables the use of specular and normal mapping which allows for more detail on various things.  §e[*]§rThis option requires a resource pack which contains specular and/or normal maps, disable if none is currently used. §e[*]§rOptions which requires advanced materials are indicated by *, changing these options won't affect the visuals or performance while advanced materials is disabled.
 
 option.MATERIAL_FORMAT=Material Format*
 option.MATERIAL_FORMAT.comment=Determines the specular and normal map format used by the resource pack. §e[*]§rTexture artists usually tell which format is used in their resource pack, using the wrong format may give weird results.
@@ -240,26 +258,13 @@ option.SELF_SHADOW_QUALITY.comment=Adjusts the quality of self shadowing.
 option.SELF_SHADOW_STRENGTH=Self Shadows Strength*
 option.SELF_SHADOW_STRENGTH.comment=Adjusts the intensity of self shadowing.
 
-option.DIRECTIONAL_LIGHTMAP=Directional Lightmap*
-option.DIRECTIONAL_LIGHTMAP.comment=Adds normal mapping to vanilla lighting. §c[-]§rLightmap may glitch with this effect enabled.
-
-option.DIRECTIONAL_LIGHTMAP_STRENGTH=Dir. Lightmap Strength*
-option.DIRECTIONAL_LIGHTMAP_STRENGTH.comment=Adjusts the intensity of Directional Lightmap.
-value.DIRECTIONAL_LIGHTMAP_STRENGTH.2.0=Very Low
-value.DIRECTIONAL_LIGHTMAP_STRENGTH.1.4=Low
-value.DIRECTIONAL_LIGHTMAP_STRENGTH.1.0=Medium
-value.DIRECTIONAL_LIGHTMAP_STRENGTH.0.7=High
-value.DIRECTIONAL_LIGHTMAP_STRENGTH.0.5=Very High
-
-option.PBR_REFLECTIONS=PBR Reflections
-option.PBR_REFLECTIONS.comment=Toggles reflections from Integrated PBR or Resourcepack PBR.
-
-option.PBR_REFLECTIONS_QUALITY=Reflections Quality
+option.FLOODFILL_BRIGHTNESS=Colored Lighting Brightness
+option.VOXEL_VOLUME_SIZE=Voxel Volume Size
 
 #COLOR
 
 screen.COLOR=Colors
-screen.LIGHTAMBIENT_COLOR=Sunlight/Moonlight Temperature
+screen.LIGHTAMBIENT_COLOR=Sunlight/Moonlight
 
 option.LIGHTTEMP_SS=Sunrise/Sunset
 option.LIGHTTEMP_ME=Morning/Evening
@@ -267,7 +272,7 @@ option.LIGHTTEMP_D=Day
 option.LIGHTTEMP_N=Night
 
 option.LIGHTINTENSITY_SS=Intensity Sunset/Sunrise
-option.LIGHTINTENSITY_M=Intensity Morning
+option.LIGHTINTENSITY_ME=Intensity Morning/Evening
 option.LIGHTINTENSITY_D=Intensity Day
 option.LIGHTINTENSITY_N=Intensity Night
 
@@ -301,17 +306,15 @@ option.WATER_B=Blue
 option.WATER_I=Intensity
 option.WATER_A=Alpha
 
-screen.SKY_COLOR=Sky Color
-
-option.SKY_R=Red
-option.SKY_G=Green
-option.SKY_B=Blue
-option.SKY_I=Intensity
-
 
 #POST
 
 screen.POST=Post Effects
+
+screen.TONEMAP=Tonemap Config
+option.LIGHTNESS_INTENSITY=Lightness
+option.DARKNESS_INTENSITY=Darkness
+option.CONTRAST=Contrast
 
 screen.DOF_CONFIG=DoF Config
 
@@ -369,9 +372,11 @@ value.BLOOM_CONTRAST.4=1.00
 
 screen.OTHER=Other
 
-option.WAVING_BLOCKS=Waving Blocks
-option.WAVING_BLOCKS.comment=Allows certain blocks to wave (plants, leaves, etc)
 option.WAVING_PLANTS=Waving Plants
 option.WAVING_LEAVES=Waving Leaves
 option.WAVING_SPEED=Waving Speed
 option.WAVING_AMPLITUDE=Waving Amplitude
+
+option.FIREFLIES=Fireflies
+option.FIREFLIES.comment=Enables volumetric fireflies at night. §c[-]§rAffects performance and works only if LPV Fog is enabled.
+option.FIREFLIES_BRIGHTNESS=Fireflies Brightness

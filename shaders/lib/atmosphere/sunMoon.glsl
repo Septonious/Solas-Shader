@@ -1,9 +1,10 @@
-void getSunMoon(inout vec3 color, in vec3 nViewPos, in vec3 worldPos, in vec3 lightSun, in vec3 lightNight, in float VoS, in float VoM, in float VoU, in float caveFactor, inout float sunMoon) {
+void getSunMoon(inout vec3 color, in vec3 nViewPos, in vec3 worldPos, in vec3 lightSun, in vec3 lightNight, in float VoS, in float VoM, in float VoU, in float caveFactor) {
 	float visibility = (1.0 - rainStrength) * caveFactor;
 
 	if (visibility > 0.0) {
 		float sun = pow16(pow32(VoS * VoS));
 		float moon = pow32(pow32(VoM));
+		float glare = pow24(VoS + VoM);
 
 		if (moon > 0.0 && moonPhase > 0) { // Moon phases, uses the same method as Complementary v4
 			float phaseFactor = int(moonPhase != 4) * (1.0 - int(moonPhase > 4) * 2.0) * 0.00175;
@@ -18,19 +19,19 @@ void getSunMoon(inout vec3 color, in vec3 nViewPos, in vec3 worldPos, in vec3 li
 
 		vec3 sunColor = sun * normalize(lightSun) * 2.0;
 		     sunColor *= pow4(min(length(sunColor), 1.0)) * 2.0;
-		vec3 moonColor = moon * lightNight * (8.0 + int(moonPhase == 4) * 2.0);
+		vec3 moonColor = moon * lightNight * (10.0 + int(moonPhase == 4) * 2.0);
 		     moonColor *= pow6(min(length(moonColor), 1.0));
+		vec3 glareColor = glare * lightColSqrt * 0.5;
 
 		if (moonPhase == 0) {
 			worldPos = normalize(worldPos);
 			vec2 planeCoord = worldPos.xz / (worldPos.y + length(worldPos));
-			moonColor *= texture2D(noisetex, planeCoord * 0.9).r * 0.6 + 0.4;
+			moonColor *= texture2D(noisetex, planeCoord * 0.9).r + 0.5;
 		}
 
-		vec3 sunMoonColor = sunColor + moonColor;
+		vec3 sunMoonColor = sunColor + moonColor + glareColor;
 			 sunMoonColor = max(sunMoonColor, 0.0) * visibility;
-			 
-		sunMoon = sun + moon;
-		color += sunMoonColor * pow(clamp(VoU, 0.0, 1.0), 0.33);
+
+		color += sunMoonColor * clamp(VoU, 0.0, 1.0);
 	}
 }

@@ -15,7 +15,7 @@ option.SOLAS_BY_SEPTONIOUS.comment=Discord: https://discord.com/invite/4uTAUQR2x
 screen.ATMOSPHERICS=Атмосфера
 
 
-screen.VC_CONFIG=Настройки Облаков
+screen.VC_CONFIG=Настройки 3D Облаков
 
 option.VC=3D Облака
 option.BLOCKY_CLOUDS=Квадратные Облака
@@ -30,6 +30,11 @@ option.VC_SPEED=Скорость
 option.VC_DISTANCE=Дистанция Рендера
 option.VC_OPACITY=Непрозрачность
 
+screen.PC_CONFIG=Настройки 2D Облаков
+
+option.PLANAR_CLOUDS=2D Облака
+option.PLANAR_CLOUDS_BRIGHTNESS=Яркость
+option.PLANAR_CLOUDS_OPACITY=Непрозрачность
 
 screen.VL_CONFIG=Настройки Солнечных Лучей
 
@@ -37,8 +42,15 @@ option.VL=Солнечные Лучи
 option.VL_STRENGTH=Сила
 option.VL_SAMPLES=Качество
 
-
 screen.FOG_CONFIG=Настройки Тумана
+
+screen.LPV_FOG_CONFIG=Настройки светового тумана
+
+option.LPV_FOG=Световой туман
+option.LPV_FOG.comment=Симулирует рассеивание света от светящихся блоков в тумане
+option.LPV_FOG_THRESHOLD=Пороговая яркость
+option.LPV_FOG_STRENGTH=Сила
+option.LPV_FOG_SAMPLES=Качество
 
 option.DISTANT_FADE=Дальний Туман
 option.DISTANT_FADE_STYLE=Стиль Дальнего Тумана
@@ -69,6 +81,8 @@ option.VF_NETHER_REFRACTION_STRENGTH=Сила Преломления
 screen.SKY_CONFIG=Настройки Неба
 
 option.STARS=Звёзды
+option.STAR_BRIGHTNESS=Яркость Звёзд
+option.STAR_AMOUNT=Количество Звёзд
 option.END_STARS=Звёзды в Краю
 option.MILKY_WAY=Млечный Путь
 option.MILKY_WAY_BRIGHTNESS=Яркость Млечного Пути
@@ -95,7 +109,7 @@ screen.WATER=Вода
 option.VANILLA_WATER=Ванильная Вода
 
 option.WATER_FOG=Водный Туман
-option.WATER_FOG_DENSITY=Плотность Водного Тумана
+option.WATER_FOG_EXPONENT=Плотность Водного Тумана
 option.WATER_CAUSTICS=Каустики
 option.WATER_CAUSTICS_STRENGTH=Видимость Каустиков
 
@@ -159,7 +173,7 @@ option.DYNAMIC_HANDLIGHT=Динамичное Освещение
 
 screen.IPBR=Встроенный PBR Ресурспак
 
-option.INTEGRATED_SPECULAR=Отражения
+option.GENERATED_SPECULAR=Отражающие блоки
 
 screen.ISPECULAR=Настройки Отражений
 
@@ -167,12 +181,12 @@ option.RAIN_PUDDLES=Лужи
 option.RAIN_PUDDLES_STRENGTH=Видимость Луж
 option.REFLECTION_RT_SAMPLE_COUNT=Качество Отражений
 option.SPECULAR_STRENGTH=Сила Отражений
-option.WATER_SPECULAR_STRENGTH=Сила Водных Отражений
+option.WATER_REFLECTIONS=Отражения в воде
 
 
-option.INTEGRATED_EMISSION=Светящиеся Объекты
+option.GENERATED_EMISSION=Светящиеся блоки
 
-screen.IEMISSION=Настройки Светящихся Объектов
+screen.IEMISSION=Настройки светящихся блоков
 
 option.EMISSIVE_FLOWERS=Светящиеся Цветы
 option.EMISSIVE_OERS=Светящиеся Руды
@@ -183,7 +197,7 @@ option.PLAYER_BRIGHT_PARTS_HIGHLIGHT=Светящиеся Яркие Пиксе�
 option.ENTITY_HIGHLIGHT=Светящиеся Существа
 option.EMISSION_STRENGTH=Яркость Свечения
 
-screen.INORMALS=Сгенерированные Нормали
+screen.GENERATED_NORMALS=Сгенерированные Нормали
 
 option.NORMAL_STRENGTH=Сила
 option.NORMAL_RESOLUTION=Разрешение

@@ -65,7 +65,7 @@ screen.WATER=Agua
 option.VANILLA_WATER=Agua Vanilla
 
 option.WATER_FOG=Niebla de Agua
-option.WATER_FOG_DENSITY=Densidad de la Niebla de Agua
+option.WATER_FOG_EXPONENT=Densidad de la Niebla de Agua
 option.WATER_CAUSTICS=Caústicos del Agua
 option.WATER_CAUSTICS_STRENGTH=Intensidad de los Cáusticos del Agua
 

@@ -1,29 +1,22 @@
 //Settings//
 #include "/lib/common.glsl"
 
-//Fragment Shader///////////////////////////////////////////////////////////////////////////////////
+#define SHADOW
+
 #ifdef FSH
 
 //Varyings//
 flat in int mat;
-
-in vec2 texCoord;
-
-#ifdef WATER_CAUSTICS
-in vec3 worldPos;
-#endif
-
+in vec2 texCoord, lmCoord;
+in vec3 worldPos, normal;
 in vec4 color;
 
 //Uniforms//
 #ifdef WATER_CAUSTICS
-uniform int isEyeInWater;
-
 uniform float frameTimeCounter;
 
 uniform ivec2 eyeBrightnessSmooth;
 
-uniform vec3 fogColor;
 uniform vec3 cameraPosition;
 
 uniform sampler2D noisetex;
@@ -52,58 +45,57 @@ void main() {
     #ifdef SHADOW_COLOR
 	albedo.rgb = mix(vec3(1.0), albedo.rgb, 1.0 - pow(1.0 - albedo.a, 1.5));
 	albedo.rgb *= albedo.rgb;
+	albedo.rgb *= 1.0 - pow32(albedo.a);
 
 	#ifdef WATER_CAUSTICS
-	if (mat == 1){
+	if (mat == 10001){
 		float caustics = getWaterCaustics(worldPos + cameraPosition);
-		albedo.rgb = waterColor * caustics * WATER_CAUSTICS_STRENGTH;
+        albedo.rgb = mix(vec3(1.0), pow(waterColorSqrt, vec3(0.75)), 0.25 + 0.75 * caustics);
+		albedo.rgb *= 0.25 + caustics * WATER_CAUSTICS_STRENGTH;
 	}
 	#endif
 
-	albedo.rgb *= 1.0 - pow32(albedo.a);
+    albedo.rgb *= 1.0 - pow32(albedo.a);
 
 	if (glass > 0.5 && albedo.a < 0.35) discard;
 	#endif
 	
 	gl_FragData[0] = albedo;
+    gl_FragData[1].rgb = normal * 0.5 + 0.5;
 }
 
 #endif
 
-//Vertex Shader/////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
+
 #ifdef VSH
 
 //Varyings//
 flat out int mat;
-
-out vec2 texCoord;
-
-#ifdef WATER_CAUSTICS
-out vec3 worldPos;
-#endif
-
+out vec2 texCoord, lmCoord;
+out vec3 worldPos, normal;
 out vec4 color;
 
 //Uniforms//
-#ifdef WAVING_BLOCKS
-uniform float frameTimeCounter;
+uniform int renderStage;
 
 uniform vec3 cameraPosition;
+
+#ifdef VX_SUPPORT
+#extension GL_ARB_shader_image_load_store : enable
+writeonly uniform uimage3D voxel_img;
 #endif
 
 uniform mat4 shadowProjection, shadowProjectionInverse;
 uniform mat4 shadowModelView, shadowModelViewInverse;
 
 //Attributes//
+attribute vec3 at_midBlock;
 attribute vec4 mc_Entity;
 
-#ifdef WAVING_BLOCKS
-attribute vec4 mc_midTexCoord;
-#endif
-
 //Includes//
-#ifdef WAVING_BLOCKS
-#include "/lib/util/waving.glsl"
+#ifdef VX_SUPPORT
+#include "/lib/vx/voxelization.glsl"
 #endif
 
 //Program//
@@ -111,27 +103,25 @@ void main() {
 	//Coord
 	texCoord = gl_MultiTexCoord0.xy;
 
-	#ifdef WAVING_BLOCKS
-	vec2 lightMapCoord = (gl_TextureMatrix[1] * gl_MultiTexCoord1).xy;
-	lightMapCoord = clamp(lightMapCoord, vec2(0.0), vec2(0.9333, 1.0));
-	#endif
+	lmCoord = (gl_TextureMatrix[1] * gl_MultiTexCoord1).xy;
+	lmCoord = clamp(lmCoord, vec2(0.0), vec2(0.9333, 1.0));
+
+    //Normal
+    normal = normalize(gl_NormalMatrix * gl_Normal);
 
 	//Materials
 	mat = int(mc_Entity.x);
 	
+    //Voxel map
+	#ifdef VX_SUPPORT
+    updateVoxelMap(int(max(mc_Entity.x - 10000, 0)));
+	#endif
+
 	//Color & Position
 	color = gl_Color;
 
 	vec4 position = shadowModelViewInverse * shadowProjectionInverse * ftransform();
-
-	#ifdef WAVING_BLOCKS
-	float istopv = gl_MultiTexCoord0.t < mc_midTexCoord.t ? 1.0 : 0.0;
-	position.xyz = getWavingBlocks(position.xyz, istopv, lightMapCoord.y);
-	#endif
-
-	#ifdef WATER_CAUSTICS
 	worldPos = position.xyz;
-	#endif
 
 	gl_Position = shadowProjection * shadowModelView * position;
 

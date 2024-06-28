@@ -17,7 +17,7 @@ vec3 getBloomTile(float lod, vec2 bloomCoord, vec2 offset) {
 				vec2 pixelOffset = vec2((i - 2.25) * pixelWidth, (j - 2.25) * pixelHeight);
 				vec2 sampleCoord = bloomCoord + pixelOffset * scale;
 
-				bloom += texture2D(colortex0, sampleCoord).rgb * weight[i] * weight[j];
+				bloom += clamp(texture2D(colortex0, sampleCoord).rgb, 0.0, 1.0) * weight[i] * weight[j];
 			}
 		}
 	}
@@ -31,7 +31,6 @@ vec3 computeBloom(vec2 texCoord) {
 	     blur += getBloomTile(2.0 + BLOOM_TILE_SIZE, bloomCoord, vec2(0.50  , 0.0 ) + vec2( 4.0, 0.0) * viewSize);
 	     blur += getBloomTile(3.0 + BLOOM_TILE_SIZE, bloomCoord, vec2(0.50  , 0.25) + vec2( 4.0, 4.0) * viewSize);
 	     blur += getBloomTile(4.0 + BLOOM_TILE_SIZE, bloomCoord, vec2(0.625 , 0.25) + vec2( 8.0, 4.0) * viewSize);
-	     blur += getBloomTile(5.0 + BLOOM_TILE_SIZE, bloomCoord, vec2(0.6875, 0.25) + vec2(12.0, 4.0) * viewSize);
 
     return clamp(blur, 0.0, 1.0);
 }

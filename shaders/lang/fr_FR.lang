@@ -77,7 +77,7 @@ screen.WATER=Eau
 option.VANILLA_WATER=Eau Minecraft par Défaut
 
 option.WATER_FOG=Brume d'Eau
-option.WATER_FOG_DENSITY=Densité de la Brume
+option.WATER_FOG_EXPONENT=Densité de la Brume
 option.WATER_CAUSTICS=Caustique d'Eau
 option.WATER_CAUSTICS_STRENGTH=Force des Caustique
 

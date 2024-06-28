@@ -12,6 +12,7 @@ uniform float viewWidth, viewHeight, aspectRatio;
 #endif
 
 uniform sampler2D colortex0;
+uniform sampler2D depthtex1;
 
 //Optifine Constants//
 #ifdef BLOOM

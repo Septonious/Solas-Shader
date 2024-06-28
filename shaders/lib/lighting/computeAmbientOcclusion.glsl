@@ -13,10 +13,6 @@ float computeAmbientOcclusion(float dither) {
 	float z0 = texture2D(depthtex0, texCoord).r;
 	float linearDepth0 = getLinearDepth(z0);
 
-	#ifdef TAA
-	dither = fract(dither + frameTimeCounter * 16.0);
-	#endif
-
 	float currentStep = 0.2 * dither + 0.3;
 
 	float fovScale = gbufferProjection[1][1] / 1.37;

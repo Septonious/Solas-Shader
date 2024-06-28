@@ -13,7 +13,6 @@ uniform float frameTimeCounter;
 uniform float viewWidth, viewHeight, aspectRatio;
 
 uniform sampler2D depthtex0;
-
 uniform mat4 gbufferProjection;
 #endif
 
@@ -26,7 +25,13 @@ uniform mat4 gbufferProjection;
 //Program//
 void main() {
     #ifdef AO
-    float ao = computeAmbientOcclusion(Bayer8(gl_FragCoord.xy));
+    float dither = Bayer8(gl_FragCoord.xy);
+    
+    #ifdef TAA
+	dither = fract(dither + frameTimeCounter * 16.0);
+	#endif
+
+    float ao = computeAmbientOcclusion(dither);
     #else
     float ao = 1.0;
     #endif

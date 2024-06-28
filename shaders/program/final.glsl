@@ -3,34 +3,39 @@
 
 #ifdef FSH
 
-const float shadowDistanceRenderMul = 1.0;
-
 const int noiseTextureResolution = 512;
+const float shadowDistanceRenderMul = 1.0;
 const float wetnessHalflife = 128.0;
 
-//Optifine Constants//
+//Buffer Options//
 /*
-const int colortex0Format = R11F_G11F_B10F; //scene
-const int colortex1Format = RGBA16; //translucent
-const int colortex2Format = RGBA16; //temporal data
+const int colortex0Format = R11F_G11F_B10F; //Main Scene
+const int colortex1Format = RGBA16; //Main Scene, Translucent
+const int colortex2Format = RGBA16; //Temporal data
 const int colortex3Format = RGBA16; //gbuffers data
-const int colortex4Format = RGB16; //colored light
-const int colortex5Format = RGB16; //gi
-const int colortex6Format = R11F_G11F_B10F; //reflections
-const int colortex7Format = RGB10_A2; //stuff
+const int colortex4Format = RGB8; //rsm gi
+const int colortex5Format = RGBA16; //accumulated rsm
+const int colortex6Format = RGBA16; //reflections
 */
+
+const bool colortex0Clear = false;
+const bool colortex1Clear = false;
+const bool colortex3Clear = false;
+const bool colortex4Clear = false;
+const bool gaux1Clear = false;
 
 //Varyings//
 in vec2 texCoord;
 
 //Uniforms//
 uniform sampler2D colortex1;
+uniform sampler2D shadowtex0;
 
 #ifdef SHARPENING
 uniform float viewWidth, viewHeight;
 #endif
 
-#if defined CHROMATIC_ABERRATION || defined NETHER_CHROMATIC_ABERRATION
+#ifdef CHROMATIC_ABERRATION
 uniform float aspectRatio;
 #endif
 
@@ -39,7 +44,7 @@ uniform float aspectRatio;
 #include "/lib/post/sharpenFilter.glsl"
 #endif
 
-#if defined CHROMATIC_ABERRATION || defined NETHER_CHROMATIC_ABERRATION
+#ifdef CHROMATIC_ABERRATION
 #include "/lib/post/chromaticAberration.glsl"
 #endif
 
@@ -51,9 +56,13 @@ void main() {
 	sharpenFilter(color, texCoord);
 	#endif
 
-	#if defined CHROMATIC_ABERRATION || defined NETHER_CHROMATIC_ABERRATION
-	getChromaticAberration(color, texCoord);
+	#ifdef CHROMATIC_ABERRATION
+	getChromaticAberration(colortex1, color, texCoord);
 	#endif
+
+	if (texCoord.x < 0.0) {
+		color = texture2D(shadowtex0, texCoord).rgb;
+	}
 
 	gl_FragColor.rgb = color;
 }

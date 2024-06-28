@@ -6,25 +6,26 @@
 //Varyings//
 in vec2 texCoord;
 
-#if defined PBR_REFLECTIONS && defined OVERWORLD
+#ifdef VL
 in vec3 sunVec, upVec;
 #endif
 
 //Uniforms//
-#ifdef PBR_REFLECTIONS
+#if defined LPV_FOG || defined VL
 uniform int isEyeInWater;
-
-#ifdef TAA
 uniform int frameCounter;
-#endif
 
-uniform float viewHeight, viewWidth;
-#endif
-
-#ifdef OVERWORLD
-uniform float wetness;
+uniform float viewWidth, viewHeight;
+uniform float far, near;
+uniform float frameTimeCounter;
+uniform float timeBrightness, wetness;
 uniform float blindFactor;
-uniform float timeAngle, timeBrightness;
+
+#ifdef VL
+uniform float timeAngle, shadowFade;
+
+uniform vec3 skyColor;
+#endif
 
 #if MC_VERSION >= 11900
 uniform float darknessFactor;
@@ -32,77 +33,103 @@ uniform float darknessFactor;
 
 uniform ivec2 eyeBrightnessSmooth;
 
-uniform vec3 skyColor;
 uniform vec3 cameraPosition;
 #endif
 
 uniform sampler2D colortex0;
 
-#ifdef PBR_REFLECTIONS
-uniform sampler2D noisetex, colortex3;
+#if defined LPV_FOG || defined VL
+uniform sampler2D noisetex;
+uniform sampler2D colortex1;
 uniform sampler2D depthtex0, depthtex1;
 
-#ifdef PBR
-uniform sampler2D colortex7;
+#ifdef LPV_FOG
+uniform sampler3D floodfillSampler;
 #endif
 
-uniform mat4 gbufferProjection;
-uniform mat4 gbufferProjectionInverse;
+#ifdef VL
+#ifdef SHADOW_COLOR
+uniform sampler2D shadowtex1;
+#endif
+
+uniform sampler2D shadowcolor0, shadowcolor1;
+uniform sampler2D shadowtex0;
+
+uniform mat4 shadowModelView, shadowProjection;
+#endif
+
+uniform mat4 gbufferProjection, gbufferProjectionInverse;
 uniform mat4 gbufferModelViewInverse;
 #endif
 
 //Common Variables//
-#ifdef PBR_REFLECTIONS
-const bool colortex0MipmapEnabled = true;
-const bool colortex3MipmapEnabled = true;
-
-vec2 viewResolution = vec2(viewWidth, viewHeight);
-
-#ifdef OVERWORLD
+#if defined LPV_FOG || defined VL
 float eBS = eyeBrightnessSmooth.y / 240.0;
 float caveFactor = mix(clamp((cameraPosition.y - 56.0) / 16.0, float(sign(isEyeInWater)), 1.0), 1.0, eBS);
-float sunVisibility = clamp(dot(sunVec, upVec) + 0.025, 0.0, 0.1) * 10.0;
+
+#ifdef VL
+float sunVisibility = clamp(dot(sunVec, upVec) + 0.1, 0.0, 0.25) * 4.0;
 #endif
 #endif
 
 //Includes//
-#ifdef PBR_REFLECTIONS
-#ifdef OVERWORLD
-#include "/lib/color/lightColor.glsl"
-#include "/lib/atmosphere/sky.glsl"
-#endif
-
-#include "/lib/util/ToScreen.glsl"
+#if defined LPV_FOG || defined VL
+#include "/lib/atmosphere/spaceConversion.glsl"
 #include "/lib/util/ToView.glsl"
-#include "/lib/util/encode.glsl"
+#include "/lib/util/ToWorld.glsl"
+
+#ifdef LPV_FOG
 #include "/lib/util/bayerDithering.glsl"
-#include "/lib/util/raytracer.glsl"
-#include "/lib/ipbr/simpleReflection.glsl"
+
+#ifdef NETHER
+#include "/lib/color/netherColor.glsl"
 #endif
 
+#include "/lib/atmosphere/lpvFog.glsl"
+#endif
+
+#ifdef VL
+#include "/lib/util/ToShadow.glsl"
+#include "/lib/color/lightColor.glsl"
+#include "/lib/atmosphere/volumetricLight.glsl"
+#endif
+#endif
+
+//Program//
 void main() {
-	vec4 color = texture2D(colortex0, texCoord);
+	vec3 color = texture2D(colortex0, texCoord).rgb;
+	vec4 vl = vec4(0.0);
+	float fireflies = 0.0;
 
-	#ifdef PBR_REFLECTIONS
-	float z0 = texture2D(depthtex0, texCoord).r;
-	float z1 = texture2D(depthtex1, texCoord).r;
+	#if defined LPV_FOG || defined VL
+	vec3 translucent = texture2D(colortex1, texCoord).rgb;
 
-	vec3 terrainData = texture2D(colortex3, texCoord).rgb;
-	vec3 normal = DecodeNormal(terrainData.rg);
-	vec3 viewPos = ToView(vec3(texCoord, z0));
+	#ifdef LPV_FOG
+	float bayerDither = Bayer8(gl_FragCoord.xy);
 
-	#ifdef PBR_REFLECTIONS
-	if (terrainData.b > 0.01 && z0 > 0.56 && z0 >= z1) {
-		float fresnel = clamp(1.0 + dot(normal, normalize(viewPos)), 0.0, 1.0);
-			  fresnel = pow4(fresnel * terrainData.b);
-
-		getReflection(color, viewPos, normal, fresnel, terrainData.b);
-	}
-	#endif
+	#ifdef TAA
+	bayerDither = fract(bayerDither + frameTimeCounter * 16.0);
 	#endif
 
-	/* DRAWBUFFERS:0 */
-	gl_FragData[0] = color;
+	computeLPVFog(vl.rgb, fireflies, translucent, bayerDither);
+	#endif
+
+	#ifdef VL
+	float blueNoiseDither = texture2D(noisetex, gl_FragCoord.xy / 512.0).b;
+
+	#ifdef TAA
+	blueNoiseDither = fract(blueNoiseDither + 1.61803398875 * mod(float(frameCounter), 3600.0));
+	#endif
+
+	computeVL(vl.rgb, translucent, blueNoiseDither);
+	#endif
+
+	vl.rgb = pow(vl.rgb / 128.0, vec3(0.25));
+	#endif
+
+	/* DRAWBUFFERS:01 */
+	gl_FragData[0].rgb = color;
+	gl_FragData[1] = vec4(vl.rgb, fireflies);
 }
 
 #endif
@@ -114,12 +141,12 @@ void main() {
 //Varyings//
 out vec2 texCoord;
 
-#if defined PBR_REFLECTIONS && defined OVERWORLD
+#ifdef VL
 out vec3 sunVec, upVec;
 #endif
 
 //Uniforms//
-#if defined PBR_REFLECTIONS && defined OVERWORLD
+#ifdef VL
 uniform float timeAngle;
 
 uniform mat4 gbufferModelView;
@@ -131,7 +158,7 @@ void main() {
 	texCoord = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;
 	
 	//Sun Vector
-	#if defined PBR_REFLECTIONS && defined OVERWORLD
+	#ifdef VL
 	const vec2 sunRotationData = vec2(cos(sunPathRotation * 0.01745329251994), -sin(sunPathRotation * 0.01745329251994));
 	float ang = fract(timeAngle - 0.25);
 	ang = (ang + (cos(ang * PI) * -0.5 + 0.5 - ang) / 3.0) * TAU;

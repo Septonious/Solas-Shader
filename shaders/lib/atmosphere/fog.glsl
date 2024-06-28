@@ -1,29 +1,23 @@
-#ifdef OVERWORLD
-uniform float isLushCaves;
-#endif
-
 void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 atmosphereColor) {
 	float lViewPos = length(viewPos);
-
-	#ifdef DISTANT_FADE
 	float lWorldPos = length(worldPos.xz);
-    #endif
 
 	//Overworld Fog
 	#ifdef OVERWORLD
+	float wetness2 = wetness * caveFactor;
+	float distanceFactor = mix(65.0, FOG_DISTANCE * (0.5 + sunVisibility * 0.5), caveFactor);
 	float fogAltitude = clamp(pow16((worldPos.y + cameraPosition.y + 1000.0 - FOG_HEIGHT) * 0.001), 0.0, 1.0);
+		  fogAltitude = mix(0.0, fogAltitude, caveFactor);
+		  fogAltitude = mix(fogAltitude, 0.0, wetness * 0.25);
+	float fogDistance = min(192.0 / far, 1.0) * (100.0 / distanceFactor);
+	float fogDensity = FOG_DENSITY * mix(1.0, 0.5, mefade) * (1.0 - fogAltitude * 0.9) * (1.0 - eBS * timeBrightness * 0.5) * (1.5 - eBS * sunVisibility * 0.5);
 
-	float fog = lViewPos * FOG_DENSITY * 0.0025;
-		  fog *= 1.0 - timeBrightness * 0.5;
-		  fog = 1.0 - exp(-(3.0 + wetness) * fog);
-		  fog *= 1.0 - fogAltitude * 0.5;
+    float fog = 1.0 - exp(-pow(lViewPos * (0.001 - 0.0005 * wetness2), 2.0 - wetness2) * lViewPos * fogDistance);
+          fog *= fogDensity;
 		  fog = clamp(fog, 0.0, 1.0);
 
-	vec3 fogCol = mix(normalize(skyColor + 0.00001), atmosphereColor, mix(1.0, mix(0.25 + fogAltitude * 0.25, 1.0, wetness), sunVisibility)) * fog;
-
-    //Underground Fog
-	fogCol = mix(caveMinLightCol * fog * 0.25, fogCol, clamp(caveFactor + isLushCaves, 0.0, 1.0));
-	fogCol = mix(fogCol, normalize(skyColor + 0.00001) * vec3(1.1, 1.4, 1.0) * fog * 0.25, isLushCaves);
+    vec3 fogCol = pow(atmosphereColor, vec3(1.1 - wetness2 * 0.1));
+		 fogCol = mix(caveMinLightCol * fog, fogCol, caveFactor);
 
 	//Distant Fade
 	#ifdef DISTANT_FADE
@@ -41,7 +35,7 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 atmo
 		#endif
 
 		float vanillaFog = 1.0 - (far - (fogFactor + fogOffset)) * 8.0 / (4.0 * far);
-			  vanillaFog = clamp(pow3(vanillaFog), 0.0, 1.0) * clamp(caveFactor + isLushCaves, 0.0, 1.0);
+			  vanillaFog = clamp(pow3(vanillaFog), 0.0, 1.0) * caveFactor;
 	
 		if (vanillaFog > 0.0){
 			fogCol *= fog;
@@ -58,25 +52,30 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 atmo
 	float fog = lViewPos * 0.005;
 
 	#ifdef DISTANT_FADE
-	fog += 2.0 * pow4(lWorldPos / far);
+	fog += 8.0 * pow4(lWorldPos / far);
 	#endif
 
 	fog = 1.0 - exp(-fog);
 
-	vec3 fogCol = netherColSqrt.rgb * 0.5;
+	vec3 fogCol = netherColSqrt.rgb * 0.25;
 	#endif
 
-	//We don't want fog in the End because it looks cringe
-	#ifndef END
-	color = mix(color, fogCol, fog);
+	#ifdef END
+	float fog = 2.0 * pow4(lWorldPos / far);
+
+	fog = 1.0 - exp(-fog);
+
+	vec3 fogCol = atmosphereColor;
 	#endif
+
+	color = mix(color, fogCol, fog);
 }
 
 //Fog that appears when you have a darkness effect
 #if MC_VERSION >= 11900
 void getDarknessFog(inout vec3 color, vec3 viewPos) {
-	float fog = length(viewPos) * (darknessFactor * 0.025);
-		  fog = (1.0 - exp(-1.0 * fog)) * darknessFactor;
+	float fog = length(viewPos) * (darknessFactor * 0.01);
+		  fog = (1.0 - exp(-fog)) * darknessFactor;
 
 	color = mix(color, vec3(0.0), fog);
 }

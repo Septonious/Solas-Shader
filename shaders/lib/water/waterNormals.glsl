@@ -12,7 +12,8 @@ float getWaterHeightMap(vec3 worldPos, vec2 offset) {
 	#elif WATER_NORMALS == 2
 	float noiseA = texture2D(noisetex, (worldPos.xz - wind) / 256.0 + offset).r;
 	float noiseB = texture2D(noisetex, (worldPos.xz + wind) / 96.0 + offset).r;
-	noiseA *= noiseA; noiseB *= noiseB;
+	noiseA *= noiseA;
+    noiseB *= noiseB;
 	#endif
 	
 	#if WATER_NORMALS > 0
@@ -22,7 +23,7 @@ float getWaterHeightMap(vec3 worldPos, vec2 offset) {
     return noise * WATER_NORMAL_BUMP;
 }
 
-vec3 getParallaxWaves(vec3 waterPos, vec3 viewVector) {
+vec3 getParallaxWaves(vec3 waterPos) {
 	vec3 parallaxPos = waterPos;
 	
 	for(int i = 0; i < 4; i++) {
@@ -33,8 +34,8 @@ vec3 getParallaxWaves(vec3 waterPos, vec3 viewVector) {
 	return parallaxPos;
 }
 
-void getWaterNormal(inout vec3 newNormal, vec3 worldPos, vec3 viewVector, float fresnel) {
-	vec3 waterPos = getParallaxWaves(worldPos + cameraPosition, viewVector);
+void getWaterNormal(inout vec3 newNormal, vec3 worldPos, float fresnel) {
+	vec3 waterPos = getParallaxWaves(worldPos + cameraPosition);
 
 	float h0 = getWaterHeightMap(waterPos, vec2( WATER_NORMAL_OFFSET, 0.0));
 	float h1 = getWaterHeightMap(waterPos, vec2(-WATER_NORMAL_OFFSET, 0.0));

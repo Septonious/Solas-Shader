@@ -1,4 +1,4 @@
-const vec2 neighbourOffsets[8] = vec2[8](
+vec2 neighbourOffsets[8] = vec2[8](
 	vec2( 0.0, -1.0),
 	vec2(-1.0,  0.0),
 	vec2( 1.0,  0.0),
@@ -9,16 +9,7 @@ const vec2 neighbourOffsets[8] = vec2[8](
 	vec2( 1.0,  1.0)
 );
 
-vec3 getBlurredColor(vec2 view) {
-	float blurFactor = 0.1667;
-	vec3 color = texture2DLod(colortex1, texCoord + neighbourOffsets[4] * blurFactor / view, 0).rgb;
-		 color+= texture2DLod(colortex1, texCoord + neighbourOffsets[5] * blurFactor / view, 0).rgb;
-		 color+= texture2DLod(colortex1, texCoord + neighbourOffsets[6] * blurFactor / view, 0).rgb;
-		 color+= texture2DLod(colortex1, texCoord + neighbourOffsets[7] * blurFactor / view, 0).rgb;
-
-	return color * 0.25;
-}
-
+//Catmull-Rom sampling from Filmic SMAA presentation
 vec3 textureCatmullRom(sampler2D colortex, vec2 coord, vec2 view) {
     vec2 position = coord * view;
     vec2 centerPosition = floor(position - 0.5) + 0.5;
@@ -73,34 +64,32 @@ vec3 ClipAABB(vec3 q, vec3 minAABB, vec3 maxAABB){
 }
 
 vec3 NeighbourhoodClipping(vec3 color, vec3 tempColor, vec2 view) {
-	vec3 minColor = RGBToYCoCg(color);
-	vec3 maxColor = minColor;
+	vec3 minclr = RGBToYCoCg(color);
+	vec3 maxclr = minclr;
 
 	for(int i = 0; i < 8; i++) {
 		vec2 offset = neighbourOffsets[i] * view;
-		vec3 colorSample = texture2DLod(colortex1, texCoord + offset, 0.0).rgb;
-			 colorSample = RGBToYCoCg(colorSample);
+		vec3 clr = texture2DLod(colortex1, texCoord + offset, 0.0).rgb;
 
-		minColor = min(minColor, colorSample);
-		maxColor = max(maxColor, colorSample);
+		clr = RGBToYCoCg(clr);
+		minclr = min(minclr, clr); maxclr = max(maxclr, clr);
 	}
 
 	tempColor = RGBToYCoCg(tempColor);
-	tempColor = ClipAABB(tempColor, minColor, maxColor);
+	tempColor = ClipAABB(tempColor, minclr, maxclr);
 
 	return YCoCgToRGB(tempColor);
 }
 
-vec4 TemporalAA(inout vec3 color, sampler2D colortex, sampler2D temptex, float tempData, float z1) {
+vec4 TemporalAA(inout vec3 color, float tempData, float z1) {
 	vec2 view = vec2(viewWidth, viewHeight);
 	vec3 coord = vec3(texCoord, z1);
 	vec2 prvCoord = Reprojection(coord);
-
-	vec3 blur = getBlurredColor(view);
-	vec3 tempColor = textureCatmullRom(temptex, prvCoord, view);
+	
+	vec3 tempColor = textureCatmullRom(colortex2, prvCoord, view);
 
 	if (tempColor == vec3(0.0)) {
-		color = blur;
+		color = texture2DLod(colortex1, texCoord, 0).rgb;
 		return vec4(tempData, color);
 	}
 
@@ -112,7 +101,7 @@ vec4 TemporalAA(inout vec3 color, sampler2D colortex, sampler2D temptex, float t
 		prvCoord.y > 0.0 && prvCoord.y < 1.0
 	);
 	blendFactor *= exp(-length(velocity)) * 0.2 + 0.7;
-
+	
 	color = mix(color, tempColor, blendFactor);
 
 	return vec4(tempData, color);

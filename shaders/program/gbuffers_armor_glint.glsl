@@ -6,8 +6,8 @@
 #ifdef FSH
 
 //Varyings//
-in vec2 texCoord;
 in vec4 color;
+in vec2 texCoord;
 
 //Uniforms//
 uniform sampler2D texture;
@@ -15,10 +15,9 @@ uniform sampler2D texture;
 //Program//
 void main() {
     vec4 albedo = texture2D(texture, texCoord) * color;
-
-	/* DRAWBUFFERS:03 */
-	gl_FragData[0] = albedo;
-	gl_FragData[1] = vec4(0.0, 0.0, 0.0, 1.0);
+	
+    /* DRAWBUFFERS:0 */
+    gl_FragData[0] = albedo * 0.5;
 }
 
 #endif
@@ -28,8 +27,8 @@ void main() {
 #ifdef VSH
 
 //Varyings//
-out vec2 texCoord;
 out vec4 color;
+out vec2 texCoord;
 
 //Program//
 void main() {

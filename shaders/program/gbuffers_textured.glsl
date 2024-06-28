@@ -6,14 +6,15 @@
 #ifdef FSH
 
 //Varyings//
-in vec2 texCoord, lightMapCoord;
-in vec3 sunVec, upVec, eastVec;
+in vec2 texCoord;
+in vec2 lmCoord;
 in vec3 normal;
+in vec3 eastVec, northVec, sunVec, upVec;
 in vec4 color;
 
 //Uniforms//
-uniform int frameCounter;
 uniform int isEyeInWater;
+uniform int frameCounter;
 
 #ifdef DYNAMIC_HANDLIGHT
 uniform int heldItemId, heldItemId2;
@@ -21,79 +22,72 @@ uniform int heldBlockLightValue;
 uniform int heldBlockLightValue2;
 #endif
 
-#ifdef TAA
-uniform int framemod8;
-#endif
+uniform float far, near;
+uniform float viewWidth, viewHeight;
 
 #if MC_VERSION >= 11900
 uniform float darknessFactor;
 #endif
 
+uniform float blindFactor;
 uniform float nightVision;
-uniform float frameTimeCounter;
-uniform float viewWidth, viewHeight;
 
 #ifdef OVERWORLD
+uniform float timeBrightness, timeAngle;
 uniform float shadowFade;
-uniform float wetness, timeBrightness, timeAngle;
+uniform float wetness;
 #endif
 
-uniform sampler2D noisetex;
-
-uniform float far, blindFactor;
-
-#ifdef INTEGRATED_EMISSION
+#ifdef GENERATED_EMISSION
 uniform ivec2 atlasSize;
 #endif
 
-#ifdef OVERWORLD
 uniform ivec2 eyeBrightnessSmooth;
 
+#ifdef OVERWORLD
 uniform vec3 skyColor, fogColor;
+#endif
+
+#ifdef AURORA
+uniform float isSnowy;
+uniform int moonPhase;
 #endif
 
 uniform vec3 cameraPosition;
 
 uniform sampler2D texture;
+uniform sampler2D noisetex;
+uniform sampler2D gaux1;
+
+uniform sampler3D floodfillSampler;
+uniform usampler3D voxelSampler;
 
 uniform mat4 gbufferProjectionInverse;
 uniform mat4 gbufferModelViewInverse;
-
-#if defined OVERWORLD || defined END
 uniform mat4 shadowProjection;
 uniform mat4 shadowModelView;
-#endif
 
 //Common Variables//
 #ifdef OVERWORLD
 float eBS = eyeBrightnessSmooth.y / 240.0;
 float caveFactor = mix(clamp((cameraPosition.y - 56.0) / 16.0, float(sign(isEyeInWater)), 1.0), 1.0, eBS);
-float sunVisibility = clamp(dot(sunVec, upVec) + 0.025, 0.0, 0.1) * 10.0;
+float sunVisibility = clamp(dot(sunVec, upVec) + 0.1, 0.0, 0.25) * 4.0;
 vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.0);
 #else
 vec3 lightVec = sunVec;
 #endif
 
 //Includes//
+#include "/lib/util/transformMacros.glsl"
 #include "/lib/util/ToNDC.glsl"
 #include "/lib/util/ToWorld.glsl"
-#include "/lib/util/bayerDithering.glsl"
-#include "/lib/util/encode.glsl"
-
-#ifdef TAA
-#include "/lib/util/jitter.glsl"
-#endif
-
-#if defined OVERWORLD || defined END
 #include "/lib/util/ToShadow.glsl"
+#include "/lib/color/lightColor.glsl"
+#include "/lib/color/netherColor.glsl"
+#include "/lib/vx/blocklightColor.glsl"
+#include "/lib/vx/voxelization.glsl"
 #include "/lib/lighting/shadows.glsl"
-#endif
-
-#ifdef DYNAMIC_HANDLIGHT
-#include "/lib/lighting/dynamicHandLight.glsl"
-#endif
-
-#include "/lib/color/dimensionColor.glsl"
+#include "/lib/lighting/gbuffersLighting.glsl"
 
 #ifndef END
 #ifdef OVERWORLD
@@ -103,63 +97,79 @@ vec3 lightVec = sunVec;
 #include "/lib/atmosphere/fog.glsl"
 #endif
 
-#include "/lib/lighting/sceneLighting.glsl"
-
 //Program//
 void main() {
 	vec4 albedoTexture = texture2D(texture, texCoord);
 	vec4 albedo = albedoTexture * color;
 		 albedo.a *= albedo.a;
+	vec3 newNormal = normal;
+	float cloudBlendOpacity = 1.0;
 	float emission = 0.0;
+
+	if (albedo.r < 0.29 && albedo.g < 0.45 && albedo.b > 0.75) discard;
 
 	if (albedo.a > 0.001) {
 		vec3 screenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z);
-		#ifdef TAA
-		vec3 viewPos = ToNDC(vec3(TAAJitter(screenPos.xy, -0.5), screenPos.z));
-		#else
 		vec3 viewPos = ToNDC(screenPos);
-		#endif
 		vec3 worldPos = ToWorld(viewPos);
-		vec2 lightmap = clamp(lightMapCoord, 0.0, 1.0);
+		vec2 lightmap = clamp(lmCoord, 0.0, 1.0);
+
+		#ifdef VC
+		float cloudDepth = texture2D(gaux1, screenPos.xy).g * (far * 2.0);
+
+		float viewLength = length(viewPos);
+		cloudBlendOpacity = step(viewLength, cloudDepth);
+
+		if (cloudBlendOpacity == 0) {
+			discard;
+		}
+		#endif
+
+		float NoU = clamp(dot(newNormal, upVec), -1.0, 1.0);
+		float NoL = clamp(dot(newNormal, lightVec), 0.0, 1.0);
+		float NoE = clamp(dot(newNormal, eastVec), -1.0, 1.0);
 
 		#if defined OVERWORLD
-		vec3 atmosphereColor = getAtmosphere(viewPos);
+        vec3 sunPos = vec3(gbufferModelViewInverse * vec4(sunVec * 128.0, 1.0));
+        vec3 sunCoord = sunPos / (sunPos.y + length(sunPos.xz));
+        vec3 atmosphereColor = getAtmosphericScattering(normalize(worldPos) * PI, viewPos, normalize(sunCoord));
 		#elif defined NETHER
-		vec3 atmosphereColor = netherColSqrt.rgb * 0.5;
+		vec3 atmosphereColor = netherColSqrt.rgb * 0.25;
 		#endif
 
 		#ifndef END
 		vec3 skyColor = atmosphereColor;
 		#endif
 
-		float NoU = clamp(dot(normal, upVec), -1.0, 1.0);
-		float NoL = clamp(dot(normal, lightVec), 0.0, 1.0);
-		float NoE = clamp(dot(normal, eastVec), -1.0, 1.0);
-
-		#ifdef INTEGRATED_EMISSION
+		#ifdef GENERATED_EMISSION
 		if (atlasSize.x < 900.0) { // We don't want to detect particles from the block atlas
 			float lAlbedo = length(albedo.rgb);
-			
-			if (max(abs(albedoTexture.r - albedoTexture.b), abs(albedoTexture.b - albedoTexture.g)) < 0.001) { // Grayscale Particles
+			vec3 gamePos = worldPos + cameraPosition;
+
+			if (color.a < 0.99 && lAlbedo < 1.0) // Campfire Smoke, World Border
+				albedo.a *= 0.2;
+
+			else if (max(abs(albedoTexture.r - albedoTexture.b), abs(albedoTexture.b - albedoTexture.g)) < 0.001) { // Grayscale Particles
 				if (lAlbedo > 0.5 && color.g < 0.5 && color.b > color.r * 1.1 && color.r > 0.3) // Ender Particle, Crying Obsidian Drop
-					emission = max(pow2(albedo.r), 0.1);
+					emission = max(pow4(albedo.r), 0.1);
 				if (lAlbedo > 0.5 && color.g < 0.5 && color.r > (color.g + color.b) * 3.0) // Redstone Particle
-					emission = max(pow2(albedo.r), 0.1);
+					lightmap = vec2(0.0), emission = max(pow4(albedo.r), 0.1);
 			}
 		}
 		#endif
 
 		vec3 shadow = vec3(0.0);
-		getSceneLighting(albedo.rgb, screenPos, viewPos, worldPos, normal, shadow, lightmap, NoU, NoL, NoE, emission, 0.0, 0.0);
+		gbuffersLighting(albedo, screenPos, viewPos, worldPos, shadow, lightmap, NoU, NoL, NoE, 0.1, 0.0, emission * 2.0, 0.0);
 
 		#ifndef END
 		Fog(albedo.rgb, viewPos, worldPos, skyColor);
 		#endif
 	}
+	
+	albedo.a *= cloudBlendOpacity;
 
-	/* DRAWBUFFERS:03 */
+	/* DRAWBUFFERS:0 */
 	gl_FragData[0] = albedo;
-	gl_FragData[1] = vec4(EncodeNormal(normal), 0.0, 1.0);
 }
 
 #endif
@@ -169,49 +179,60 @@ void main() {
 #ifdef VSH
 
 //Varyings//
-out vec2 texCoord, lightMapCoord;
-out vec3 sunVec, upVec, eastVec;
+out vec2 texCoord;
+out vec2 lmCoord;
 out vec3 normal;
+out vec3 eastVec, northVec, sunVec, upVec;
 out vec4 color;
 
 //Uniforms//
+#ifdef TAA
+uniform float viewWidth, viewHeight;
+#endif
+
 #if defined OVERWORLD || defined END
 uniform float timeAngle;
 #endif
 
-uniform mat4 gbufferModelView;
+uniform mat4 gbufferModelView, gbufferModelViewInverse;
+
+//Includes
+#ifdef TAA
+#include "/lib/util/jitter.glsl"
+#endif
 
 //Program//
 void main() {
 	//Coord
-    texCoord = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;
+	texCoord = mat2(gl_TextureMatrix[0]) * gl_MultiTexCoord0.xy + gl_TextureMatrix[0][3].xy;
 
-	lightMapCoord = (gl_TextureMatrix[1] * gl_MultiTexCoord1).xy;
-	lightMapCoord = clamp((lightMapCoord - 0.03125) * 1.06667, vec2(0.0), vec2(0.9333, 1.0));
+	//Lightmap Coord
+	lmCoord = (gl_TextureMatrix[1] * gl_MultiTexCoord1).xy;
+	lmCoord = clamp((lmCoord - 0.03125) * 1.06667, vec2(0.0), vec2(0.9333, 1.0));
 
 	//Normal
 	normal = normalize(gl_NormalMatrix * gl_Normal);
 
 	//Sun & Other vectors
-	sunVec = vec3(0.0);
-
-    #if defined OVERWORLD
-	const vec2 sunRotationData = vec2(cos(sunPathRotation * 0.01745329251994), -sin(sunPathRotation * 0.01745329251994));
-	float ang = fract(timeAngle - 0.25);
-	ang = (ang + (cos(ang * PI) * -0.5 + 0.5 - ang) / 3.0) * TAU;
-	sunVec = normalize((gbufferModelView * vec4(vec3(-sin(ang), cos(ang) * sunRotationData) * 2000.0, 1.0)).xyz);
-    #elif defined END
-	const vec2 sunRotationData = vec2(cos(sunPathRotation * 0.01745329251994), -sin(sunPathRotation * 0.01745329251994));
-    sunVec = normalize((gbufferModelView * vec4(vec3(0.0, sunRotationData * 2000.0), 1.0)).xyz);
-    #endif
+	#if defined OVERWORLD || defined END
+	sunVec = getSunVector(gbufferModelView, timeAngle);
+	#endif
 	
 	upVec = normalize(gbufferModelView[1].xyz);
+	northVec = normalize(gbufferModelView[2].xyz);
 	eastVec = normalize(gbufferModelView[0].xyz);
 
 	//Color & Position
-    color = gl_Color;
+	vec4 position = gbufferModelViewInverse * gl_ModelViewMatrix * gl_Vertex;
 
-	gl_Position = ftransform();
+	color = gl_Color;
+	if (color.a < 0.1) color.a = 1.0;
+
+	gl_Position = gl_ProjectionMatrix * gbufferModelView * position;
+
+	#ifdef TAA
+	gl_Position.xy = TAAJitter(gl_Position.xy, gl_Position.w);
+	#endif
 }
 
 #endif

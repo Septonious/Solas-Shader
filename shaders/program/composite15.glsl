@@ -7,6 +7,8 @@
 in vec2 texCoord;
 
 //Uniforms//
+uniform int frameCounter;
+
 #if defined TAA || defined FXAA || defined DOF
 uniform float viewWidth, viewHeight;
 uniform float aspectRatio;
@@ -25,11 +27,10 @@ uniform mat4 gbufferPreviousModelView, gbufferModelViewInverse;
 uniform sampler2D colortex2;
 #endif
 
+uniform sampler2D depthtex1;
 uniform sampler2D colortex1;
 
 #if defined TAA || defined DOF
-uniform sampler2D depthtex1;
-
 uniform mat4 gbufferProjectionInverse;
 
 #ifdef DOF
@@ -38,14 +39,13 @@ uniform mat4 gbufferProjection;
 #endif
 
 //Optifine Constants//
-#if defined DOF || defined MOTION_BLUR
 const bool colortex1MipmapEnabled = true;
-#endif
+const bool colortex2MipmapEnabled = true;
 
 //Includes//
 #ifdef DOF
-#include "/lib/post/dofBlur.glsl"
 #include "/lib/util/ToView.glsl"
+#include "/lib/post/computeDOF.glsl"
 #endif
 
 #ifdef MOTION_BLUR
@@ -63,38 +63,37 @@ const bool colortex1MipmapEnabled = true;
 #endif
 
 void main() {
-	vec3 color = texture2DLod(colortex1, texCoord, 0).rgb;
-
-	#ifdef FXAA
-	color = FXAA311(color);	
-	#endif
+	vec2 newTexCoord = texCoord;
 
 	#if defined DOF || defined TAA || defined MOTION_BLUR
-	float z1 = texture2D(depthtex1, texCoord).r;
+	float z1 = texture2D(depthtex1, newTexCoord).r;
+	#endif
+
+    vec3 color = texture2DLod(colortex1, newTexCoord, 0).rgb;
+	#ifdef FXAA
+		 color = FXAA311(color);	
 	#endif
 
 	#ifdef MOTION_BLUR
-	float dither = Bayer64(gl_FragCoord.xy);
-	color = getMotionBlur(color, z1, dither);
+		 color = getMotionBlur(color, z1);
 	#endif
 
 	#ifdef DOF
-	vec3 viewPos = ToView(vec3(texCoord, z1));
-	color = getDepthOfField(color, viewPos, z1);
+		 color = getDepthOfField(color, newTexCoord, z1);
 	#endif
 
 	#ifdef TAA
-    vec4 tempData = vec4(texture2DLod(colortex2, texCoord, 0).r, 0.0, 0.0, 0.0);
-		 tempData = TemporalAA(color, colortex1, colortex2, tempData.r, z1);
+    vec4 previousColor = vec4(texture2DLod(colortex2, newTexCoord, 0).r, 0.0, 0.0, 0.0);
+	     previousColor = TemporalAA(color, previousColor.r, z1);
 	#endif
 
-	/* DRAWBUFFERS:1 */
+    /* DRAWBUFFERS:1 */
 	gl_FragData[0].rgb = color;
 
-	#ifdef TAA
-	/* DRAWBUFFERS:12 */
-	gl_FragData[1] = tempData;
-	#endif
+    #ifdef TAA
+    /* DRAWBUFFERS:12 */
+	gl_FragData[1] = previousColor;
+    #endif
 }
 
 #endif

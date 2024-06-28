@@ -14,10 +14,10 @@ uniform sampler2D texture;
 
 //Program//
 void main() {
-    vec4 albedo = texture2D(texture, texCoord) * color;
+	vec4 albedo = texture2D(texture, texCoord) * color;
 
-    /* DRAWBUFFERS:0 */
-    gl_FragData[0] = albedo;
+	/* DRAWBUFFERS:0 */
+	gl_FragData[0] = albedo;
 }
 
 #endif

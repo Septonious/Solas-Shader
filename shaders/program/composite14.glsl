@@ -15,17 +15,14 @@ uniform int frameTimeCounter;
 uniform float viewWidth, viewHeight;
 #endif
 
-uniform sampler2D noisetex;
 uniform sampler2D colortex0;
-
-#ifdef TAA
 uniform sampler2D colortex2;
-#endif
-
-uniform sampler2D depthtex0;
 
 #ifdef BLOOM
+uniform ivec2 eyeBrightnessSmooth;
+
 uniform sampler2D colortex1;
+uniform sampler2D depthtex0;
 
 uniform mat4 gbufferProjectionInverse;
 #endif
@@ -33,10 +30,7 @@ uniform mat4 gbufferProjectionInverse;
 //Optifine Constants//
 #ifdef TAA
 const bool colortex2Clear = false;
-#endif
-
-#ifdef BLOOM
-const bool colortex1MipmapEnabled = true;
+const bool colortex2MipmapEnabled = true;
 #endif
 
 //Includes//
@@ -51,31 +45,25 @@ const bool colortex1MipmapEnabled = true;
 void main() {
 	vec3 color = texture2D(colortex0, texCoord).rgb;
 
-    float dither = Bayer64(gl_FragCoord.xy);
-	float z0 = texture2D(depthtex0, texCoord).r;
+	#ifdef TAA
+	vec3 temporalColor = texture2DLod(colortex2, texCoord, 0).gba;
+	#endif
 
 	#ifdef BLOOM
+    float z0 = texture2D(depthtex0, texCoord).r;
 	getBloom(color, texCoord, z0);
 	#endif
 
-    //Tonemapping & Film Grain
-	BSLTonemap(color);
-	color = pow(color, vec3(1.0 / 2.2));
-	ColorSaturation(color);
-	color += (dither - 0.5) / 64.0;
-
-	//TAA
-	#ifdef TAA
-	vec3 tempData = texture2D(colortex2, texCoord).gba;
-	#endif
+	color = pow(Uncharted2Tonemap(color * 4.7) / Uncharted2Tonemap(vec3(15.2)), vec3(1.0/2.2));
+	color += (Bayer8(gl_FragCoord.xy) - 0.25) / 64.0;
 
 	/* DRAWBUFFERS:1 */
 	gl_FragData[0].rgb = color;
 
-	#ifdef TAA
-	/* DRAWBUFFERS:12 */
-	gl_FragData[1].gba = tempData;
-	#endif
+    #ifdef TAA
+    /* DRAWBUFFERS:12 */
+	gl_FragData[1].gba = temporalColor;
+    #endif
 }
 
 #endif
@@ -95,6 +83,5 @@ void main() {
 	//Position
 	gl_Position = ftransform();
 }
-
 
 #endif
