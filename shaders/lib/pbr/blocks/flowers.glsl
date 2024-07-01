@@ -7,6 +7,6 @@ if (material >= 35 && material <= 40 || (material >= 305 && material <= 312)) {
         emission = int(lAlbedo > 0.9);
     }
 	#ifdef OVERWORLD
-	emission *= mix(0.075, 0.0, wetness);
+	emission *= mix(0.125, 0.0, wetness);
 	#endif	
 }

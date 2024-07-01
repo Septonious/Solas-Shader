@@ -28,7 +28,7 @@ void computeVL(inout vec3 vl, in vec3 translucent, in float dither) {
 	float waterFactor = 1.0 - float(isEyeInWater == 1) * 0.5;
 		  vlVisibility *= pow(VoU, 3.0 * waterFactor);
 		  vlVisibility *= mix(0.25 + VoL * 0.25, VoL * 0.4, timeBrightness);
-		  vlVisibility = mix(vlVisibility * (2.5 - sunVisibility * 1.5), 0.5, indoorFactor) * waterFactor;
+		  vlVisibility = mix(vlVisibility * (2.0 - sunVisibility), 0.5, indoorFactor) * waterFactor;
 	#else
 		  vlVisibility = exp(pow4(VoL)) * 0.075;
 	#endif
@@ -47,7 +47,7 @@ void computeVL(inout vec3 vl, in vec3 translucent, in float dither) {
 		//Variables
         int sampleCount = VL_SAMPLES;
 
-		float maxDist = 128.0;
+		float maxDist = 96.0;
 		float minDist = (maxDist / sampleCount * (1.0 - float(isEyeInWater == 1) * 0.5));
 		float maxCurrentDist = min(linearDepth1, maxDist);
 

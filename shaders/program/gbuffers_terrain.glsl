@@ -178,7 +178,7 @@ void main() {
 	float NoE = clamp(dot(newNormal, eastVec), -1.0, 1.0);
 
 	#if defined GENERATED_EMISSION || defined GENERATED_SPECULAR
-	generateIPBR(albedoP, worldPos, viewPos, lightmap, emission, smoothness, metalness, subsurface);
+	generateIPBR(albedo, worldPos, viewPos, lightmap, emission, smoothness, metalness, subsurface);
 	#endif
 
 	float parallaxShadow = 1.0;

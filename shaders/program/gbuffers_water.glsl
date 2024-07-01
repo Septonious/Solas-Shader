@@ -132,7 +132,7 @@ void main() {
 
 	vec3 newNormal = normal;
 	vec2 refraction = vec2(0.0);
-	float emission = pow8(lmCoord.x) + int(mat == 10031);
+	float emission = pow8(lmCoord.x) + int(mat == 10031) * pow4(length(albedo.rgb)) * 2.0;
 	float cloudBlendOpacity = 1.0;
 
 	vec3 screenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z);

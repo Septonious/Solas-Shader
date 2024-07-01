@@ -35,7 +35,7 @@ void getCloudSample(vec2 rayPos, vec2 wind, float attenuation, inout float noise
 		  noiseCoverage *= noiseCoverage * 6.0;
 	
 	noise = mix(noiseBase, noiseDetail, VC_DETAIL * mix(0.05, 0.025, min(wetness + cameraPosition.y * 0.0025, 1.0)) * int(noiseBase > 0.0)) * 22.0 - noiseCoverage;
-	noise = mix(noise, 20.0, wetness * 0.2);
+	noise = mix(noise, 20.0, wetness * 0.125);
 	noise = max(noise - cloudAmount, 0.0) * (cloudDensity * 0.2);
 	noise /= sqrt(noise * noise + 0.25);
 }
@@ -144,7 +144,7 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z1, f
 
 				cloudLighting = mix(cloudLighting, sampleLighting, noise * (1.0 - cloud * cloud));
 				cloud = mix(cloud, 1.0, noise);
-				noise *= pow16(smoothstep(VC_DISTANCE - 100.0 * wetness, 16.0, rayDistance)); //Fog
+				noise *= pow16(smoothstep(mix(VC_DISTANCE, 300, wetness), 16.0, rayDistance)); //Fog
 				cloudAlpha = mix(cloudAlpha, 1.0, noise);
 
                 float lightning = min(lightningFlashEffect(worldPos, lightningBoltPosition.xyz, 256.0) * lightningBoltPosition.w * 4.0, 1.0);

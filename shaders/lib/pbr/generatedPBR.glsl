@@ -1,4 +1,4 @@
-void generateIPBR(inout vec4 albedo, in vec3 worldPos, in vec3 viewPos, in vec2 lightmap, inout float emission, inout float smoothness, inout float metalness, inout float subsurface) {
+void generateIPBR(inout vec4 albedo, in vec3 worldPos, in vec3 viewPos, inout vec2 lightmap, inout float emission, inout float smoothness, inout float metalness, inout float subsurface) {
     int material = max(mat - 10000, 0);
     int material2 = max(mat - 20000, 0);
     float lAlbedo = clamp(length(albedo.rgb), 0.0, 1.0);
@@ -13,6 +13,7 @@ void generateIPBR(inout vec4 albedo, in vec3 worldPos, in vec3 viewPos, in vec2 
     #include "/lib/pbr/blocks/concrete.glsl"
     #include "/lib/pbr/blocks/dark_materials.glsl"
     #include "/lib/pbr/blocks/enchanting_table.glsl"
+    #include "/lib/pbr/blocks/end_portal_frame.glsl"
     #include "/lib/pbr/blocks/end_stone.glsl"
     #include "/lib/pbr/blocks/froglights.glsl"
     #include "/lib/pbr/blocks/full_emitters.glsl"
