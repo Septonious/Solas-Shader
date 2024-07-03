@@ -1,23 +1,31 @@
+#shaders/lang/vi_VN.lang
+
 profile.LOW=Thấp
 profile.MEDIUM=Trung bình
 profile.HIGH=Cao
 profile.VERY_HIGH=Rất cao (Mặc định)
 profile.ULTRA=Siêu
 
-option.SOLAS_BY_SEPTONIOUS=§6Solas
+option.SOLAS_BY_SEPTONIOUS=§6Solas V2
 value.SOLAS_BY_SEPTONIOUS.0=§bBy Septonious
-option.SOLAS_BY_SEPTONIOUS.comment=Discord: https://discord.gg/4uTAUQR2xu GitHub: https://github.com/Septonious/Solas-Shader
+option.SOLAS_BY_SEPTONIOUS.comment=Discord: https://discord.gg/4uTAUQR2xu. GitHub: https://github.com/Septonious/Solas-Shader
 
 #KHÍ QUYỂN
 
 screen.ATMOSPHERICS=Khí quyển
+
+screen.SKYBOX_CONFIG: Cấu hình Bầu trời
+option.SKYBOX: Bầu trời của Gói tài nguyên
+option.SKYBOX_MIX_FACTOR: Yếu tố Trộn Bầu trời
+option.SKYBOX_MIX_FACTOR.comment: Điều chỉnh mức độ trộn của bầu trời gói tài nguyên với bầu khí quyển của bộ đổ bóng
+option.SKYBOX_BRIGHTNESS: Độ sáng Bầu trời
 
 screen.VC_CONFIG=Cấu hình Đám mây Thể tích
 
 option.VC=Đám mây Thể tích
 option.BLOCKY_CLOUDS=Đám mây Ô vuông
 option.VC_DYNAMIC_WEATHER=Thời tiết Động
-option.VC_DYNAMIC_WEATHER.comment=Tự động điều chỉnh kích thước, chiều cao và lượng mây dựa trên các yếu tố khác nhau
+option.VC_DYNAMIC_WEATHER.comment=Tự động điều chỉnh kích thước chiều cao và lượng mây dựa trên các yếu tố khác nhau
 option.VC_DETAIL=Chi tiết
 option.VC_DENSITY=Mật độ
 option.VC_AMOUNT=Số lượng
@@ -26,6 +34,14 @@ option.VC_THICKNESS=Độ dày
 option.VC_SPEED=Tốc độ
 option.VC_DISTANCE=Khoảng cách hiển thị
 option.VC_OPACITY=Độ mờ
+option.VC_SHADOWS: Tia sáng mây
+option.VC_SHADOWS.comment: Cho phép mây hoạt động như VL khi ánh sáng mặt trời bị chặn bởi các khối.
+
+screen.PC_CONFIG: Cấu hình Mây Phẳng
+
+option.PLANAR_CLOUDS: Mây Phẳng
+option.PLANAR_CLOUDS_BRIGHTNESS: Độ sáng của Mây Phẳng
+option.PLANAR_CLOUDS_OPACITY: Độ trong suốt của Mây Phẳng
 
 screen.VL_CONFIG=Cấu hình Ánh sáng Thể tích
 
@@ -47,8 +63,14 @@ option.VF_NETHER_STRENGTH=Độ mạnh
 option.VF_NETHER_SAMPLES=Mẫu
 option.VF_NETHER_SPEED=Tốc độ
 option.VF_NETHER_FREQUENCY=Tần số
-option.VF_NETHER_REFRACTION=Khúc xạ Nhiệt
-option.VF_NETHER_REFRACTION_STRENGTH=Độ mạnh Khúc xạ
+
+screen.LPV_FOG_CONFIG: Cấu hình Sương mù LPV
+
+option.LPV_FOG: Sương mù LPV
+option.LPV_FOG.comment: Kích hoạt các nguồn sáng để đóng góp vào chiếu sáng sương mù
+option.LPV_FOG_THRESHOLD: Ngưỡng Ánh sáng
+option.LPV_FOG_STRENGTH: Cường độ Sương mù
+option.LPV_FOG_SAMPLES: Mẫu Sương mù
 
 screen.FOG_CONFIG=Cấu hình Sương mù
 
@@ -63,6 +85,8 @@ option.FOG_HEIGHT=Chiều cao Sương mù Mặt đất
 screen.SKY_CONFIG=Cấu hình Bầu trời
 
 option.STARS=Ngôi sao
+option.STAR_BRIGHTNESS: Độ sáng của Ngôi sao
+option.STAR_AMOUNT: Số lượng Ngôi sao
 option.END_STARS=Ngôi sao Ender
 option.MILKY_WAY=Dải Ngân hà
 option.MILKY_WAY_BRIGHTNESS=Độ sáng Dải Ngân hà
@@ -91,7 +115,7 @@ screen.WATER=Nước
 option.VANILLA_WATER=Nước Vanilla
 
 option.WATER_FOG=Sương mù Nước
-option.WATER_FOG_DENSITY=Mật độ Sương mù Nước
+option.WATER_FOG_EXPONENT: Số mũ của Sương mù Nước
 option.WATER_CAUSTICS=Caustics Nước
 option.WATER_CAUSTICS_STRENGTH=Độ mạnh Caustics Nước
 
@@ -119,14 +143,13 @@ value.WATER_NORMAL_DETAIL.0.50=50%
 option.REFRACTION=Khúc xạ Ánh sáng
 option.REFRACTION_STRENGTH=Độ mạnh Khúc xạ
 
-option.WAVING_WATER=Nước Lượn sóng
-
 #CHIẾU SÁNG
 
 screen.LIGHTING=Chiếu sáng
 
 option.shadowMapResolution=Độ phân giải Bóng đổ
 option.shadowDistance=Khoảng cách Bóng đổ
+option.entityShadowDistanceMul: Khoảng cách Bóng của Thực thể
 option.sunPathRotation=Góc Mặt trời
 option.VPS=Bóng mờ Biến đổi (VPS)
 option.VPS.comment=Bật bóng đổ trở nên mờ hơn/sắc nét hơn tùy thuộc vào khoảng cách của vật cản.
@@ -158,32 +181,28 @@ screen.PBR_MENU=Cấu hình PBR
 
 screen.IPBR=PBR Tích hợp
 
-option.INTEGRATED_SPECULAR=Specular Tự động
-option.INTEGRATED_SPECULAR.comment=Tự động xác định các khối phản chiếu. §c[-]§r KHÔNG SỬ DỤNG VỚI BỘ TÀI NGUYÊN PBR BÊN NGOÀI
+option.GENERATED_SPECULAR: Tự động Phát sinh Bóng phản chiếu
+option.GENERATED_SPECULAR.comment: Tự động xác định các khối phản chiếu. §c[-]§r KHÔNG SỬ DỤNG VỚI GÓI TÀI NGUYÊN PBR NGOÀI
 
 screen.ISPECULAR=Cấu hình Specular
 
 option.RAIN_PUDDLES=Vũng nước Mưa
 option.RAIN_PUDDLES_STRENGTH=Độ mạnh Vũng nước Mưa
 option.SPECULAR_STRENGTH=Độ mạnh Specular
-option.WATER_SPECULAR_STRENGTH=Độ mạnh Phản chiếu Nước
+option.WATER_REFLECTIONS: Phản chiếu Nước
 
-option.INTEGRATED_EMISSION=Phát xạ Tự động
-option.INTEGRATED_EMISSION.comment=Tự động xác định các khối phát sáng
+option.GENERATED_EMISSION: Tự động Phát sinh Phát xạ
+option.GENERATED_EMISSION.comment: Tự động xác định các khối phát sáng
 
 screen.IEMISSION=Cấu hình Phát xạ
 
 option.EMISSIVE_FLOWERS=Hoa Phát sáng
 option.EMISSIVE_ORES=Quặng Phát sáng
-option.EMISSIVE_DEBRIS=Mảnh vỡ Phát sáng
 option.EMISSIVE_CONCRETE=Bê tông Phát sáng
-option.EMISSIVE_POWDER_SNOW=Tuyết Bột Phát sáng
-option.PLAYER_BRIGHT_PARTS_HIGHLIGHT=Nổi bật Phần sáng Người chơi
-option.ENTITY_HIGHLIGHT=Nổi bật Thực thể
 option.EMISSION_STRENGTH=Độ mạnh Phát xạ
 
-option.INTEGRATED_NORMAL_MAPPING=Normals Tự động
-option.INTEGRATED_NORMAL_MAPPING.comment=Tự động tạo các normals trên các khối
+option.GENERATED_NORMALS: Tạo Định Chuẩn
+option.GENERATED_NORMALS.comment: Tự động tạo định chuẩn trên các khối
 
 screen.INORMALS=Cấu hình Normals
 
@@ -194,8 +213,11 @@ option.NORMAL_THRESHOLD=Ngưỡng Tạo normals
 #PBR
 screen.PBR=Resourcepack PBR
 
+option.PBR: PBR Gói Tài Nguyên
+option.PBR.comment: Kích hoạt việc sử dụng ánh xạ gương và định chuẩn cho phép hiển thị chi tiết hơn trên nhiều đối tượng. §e[*]§rTùy chọn này yêu cầu một gói tài nguyên chứa ánh xạ gương và/hoặc định chuẩn hãy tắt nếu không sử dụng gói tài nguyên này. §e[*]§rCác tùy chọn yêu cầu vật liệu nâng cao được chỉ định bởi * thay đổi các tùy chọn này sẽ không ảnh hưởng đến hình ảnh hoặc hiệu suất khi vật liệu nâng cao bị tắt.
+
 option.MATERIAL_FORMAT=Định dạng Vật liệu*
-option.MATERIAL_FORMAT.comment=Xác định định dạng specular và normal map được sử dụng bởi resource pack. §e[*]§rCác nghệ sĩ thường nói rõ định dạng nào được sử dụng trong resource pack của họ, sử dụng sai định dạng có thể cho kết quả kỳ lạ.
+option.MATERIAL_FORMAT.comment=Xác định định dạng specular và normal map được sử dụng bởi resource pack. §e[*]§rCác nghệ sĩ thường nói rõ định dạng nào được sử dụng trong resource pack của họ sử dụng sai định dạng có thể cho kết quả kỳ lạ.
 value.MATERIAL_FORMAT.0=SEUS/PBR Cũ
 value.MATERIAL_FORMAT.1=labPBR 1.3
 
@@ -228,7 +250,7 @@ option.SELF_SHADOW=Bóng tự động*
 option.SELF_SHADOW.comment=Cho phép một bề mặt tự tạo bóng bằng cách sử dụng heightmap.
 
 option.SELF_SHADOW_ANGLE=Góc Bóng tự động*
-option.SELF_SHADOW_ANGLE.comment=Điều chỉnh góc bóng tự động, giá trị cao hơn cho phép bóng di chuyển xa hơn.
+option.SELF_SHADOW_ANGLE.comment=Điều chỉnh góc bóng tự động giá trị cao hơn cho phép bóng di chuyển xa hơn.
 
 option.SELF_SHADOW_QUALITY=Mẫu Bóng tự động*
 option.SELF_SHADOW_QUALITY.comment=Điều chỉnh chất lượng của bóng tự động.
@@ -236,26 +258,13 @@ option.SELF_SHADOW_QUALITY.comment=Điều chỉnh chất lượng của bóng t
 option.SELF_SHADOW_STRENGTH=Độ mạnh Bóng tự động*
 option.SELF_SHADOW_STRENGTH.comment=Điều chỉnh cường độ của bóng tự động.
 
-option.DIRECTIONAL_LIGHTMAP=Directional Lightmap*
-option.DIRECTIONAL_LIGHTMAP.comment=Thêm normal mapping vào chiếu sáng vanilla. §c[-]§rLightmap có thể bị lỗi khi hiệu ứng này được bật.
-
-option.DIRECTIONAL_LIGHTMAP_STRENGTH=Độ mạnh Lightmap Hướng*
-option.DIRECTIONAL_LIGHTMAP_STRENGTH.comment=Điều chỉnh cường độ của Directional Lightmap.
-value.DIRECTIONAL_LIGHTMAP_STRENGTH.2.0=Rất Thấp
-value.DIRECTIONAL_LIGHTMAP_STRENGTH.1.4=Thấp
-value.DIRECTIONAL_LIGHTMAP_STRENGTH.1.0=Trung bình
-value.DIRECTIONAL_LIGHTMAP_STRENGTH.0.7=Cao
-value.DIRECTIONAL_LIGHTMAP_STRENGTH.0.5=Rất Cao
-
-option.PBR_REFLECTIONS=Phản xạ PBR
-option.PBR_REFLECTIONS.comment=Bật/tắt phản xạ từ PBR Tích hợp hoặc Resourcepack PBR.
-
-option.PBR_REFLECTIONS_QUALITY=Chất lượng Phản xạ
+option.FLOODFILL_BRIGHTNESS: Độ Sáng Chiếu Sáng Có Màu
+option.VOXEL_VOLUME_SIZE: Kích Thước Thể Tích Voxel
 
 #MÀU SẮC
 
 screen.COLOR=Màu sắc
-screen.LIGHTAMBIENT_COLOR=Nhiệt độ Ánh sáng Mặt trời/Ánh sáng Mặt trăng
+screen.LIGHTAMBIENT_COLOR=Ánh sáng Mặt trời/Ánh sáng Mặt trăng
 
 option.LIGHTTEMP_SS=Bình minh/Hoàng hôn
 option.LIGHTTEMP_ME=Sáng/Chiều
@@ -263,7 +272,7 @@ option.LIGHTTEMP_D=Ban ngày
 option.LIGHTTEMP_N=Ban đêm
 
 option.LIGHTINTENSITY_SS=Cường độ Bình minh/Hoàng hôn
-option.LIGHTINTENSITY_M=Cường độ Buổi sáng
+option.LIGHTINTENSITY_ME: Cường Độ Sáng Sáng/Tối
 option.LIGHTINTENSITY_D=Cường độ Ban ngày
 option.LIGHTINTENSITY_N=Cường độ Ban đêm
 
@@ -297,16 +306,15 @@ option.WATER_B=Xanh dương
 option.WATER_I=Cường độ
 option.WATER_A=Alpha
 
-screen.SKY_COLOR=Màu Bầu trời
-
-option.SKY_R=Đỏ
-option.SKY_G=Xanh lá
-option.SKY_B=Xanh dương
-option.SKY_I=Cường độ
 
 #HẬU KỲ
 
 screen.POST=Hiệu ứng Hậu kỳ
+
+screen.TONEMAP: Cấu Hình Ánh Xạ Tông Màu
+option.LIGHTNESS_INTENSITY: Độ Sáng
+option.DARKNESS_INTENSITY: Độ Tối
+option.CONTRAST: Độ Tương Phản
 
 screen.DOF_CONFIG=Cấu hình Độ sâu Trường ảnh
 
@@ -338,7 +346,7 @@ option.SATURATION=Độ bão hòa
 option.SATURATION.comment=Điều chỉnh độ bão hòa của tất cả các màu.
 
 option.VIBRANCE=Độ sống động
-option.VIBRANCE.comment=Điều chỉnh độ bão hòa của các màu ít bão hòa, các màu bão hòa tốt ít bị ảnh hưởng.
+option.VIBRANCE.comment=Điều chỉnh độ bão hòa của các màu ít bão hòa các màu bão hòa tốt ít bị ảnh hưởng.
 
 screen.BLOOM_CONFIG=Cấu hình Nở rộ
 
@@ -364,9 +372,11 @@ value.BLOOM_CONTRAST.4=1.00
 
 screen.OTHER=Khác
 
-option.WAVING_BLOCKS=Khối Lượn Sóng
-option.WAVING_BLOCKS.comment=Cho phép một số khối lượn sóng (cây cối, lá, v.v.)
 option.WAVING_PLANTS=Cây Cối Lượn Sóng
 option.WAVING_LEAVES=Lá Lượn Sóng
 option.WAVING_SPEED=Tốc Độ Lượn Sóng
 option.WAVING_AMPLITUDE=Biên Độ Lượn Sóng
+
+option.FIREFLIES: Đom Đóm
+option.FIREFLIES.comment: Kích hoạt hiệu ứng đom đóm thể tích vào ban đêm. §c[-]§rẢnh hưởng đến hiệu suất và chỉ hoạt động khi Sương Mù LPV được bật.
+option.FIREFLIES_BRIGHTNESS: Độ Sáng Đom Đóm
