@@ -24,7 +24,7 @@ const vec3[] blocklightColorArray = vec3[](
 	//Lava
 	vec3(1.00, 0.18, 0.02) * 3.0,
 	//Cave Berries
-	vec3(1.00, 0.35, 0.10) * 0.75,
+	vec3(1.00, 0.35, 0.10) * 2.0,
 	//Amethyst
 	vec3(0.85, 0.30, 1.00),
 	//Red Concrete

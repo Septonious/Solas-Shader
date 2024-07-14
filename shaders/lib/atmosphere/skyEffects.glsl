@@ -157,10 +157,6 @@ void drawAurora(inout vec3 color, in vec3 worldPos, in float VoU, in float caveF
 
 	visibility *= visibilityMultiplier;
 
-	#ifdef OVERWORLD2
-	visibility = 4.0;
-	#endif
-
 	if (visibility > 0.0) {
 		vec3 aurora = vec3(0.0);
 

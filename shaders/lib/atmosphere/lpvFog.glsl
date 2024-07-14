@@ -63,7 +63,7 @@ void computeLPVFog(inout vec3 fog, inout float fireflies, in vec3 translucent, i
 	float density = 14.0;
 	#ifdef OVERWORLD
 		  density = mix(density, 16.0, wetness * eBS);
-		  density = mix(18.0, density, caveFactor);
+		  density = mix(22.0, density, caveFactor);
 	#endif
 	#ifdef NETHER
 		  density = 20.0;

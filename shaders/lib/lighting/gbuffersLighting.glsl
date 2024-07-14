@@ -164,7 +164,7 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
     #elif defined END
     vec3 sceneLighting = mix(endAmbientCol, endLightCol, shadow) * 0.25;
     #elif defined NETHER
-    vec3 sceneLighting = pow(netherColSqrt, vec3(0.75)) * 0.035;
+    vec3 sceneLighting = pow(netherColSqrt, vec3(0.75)) * 0.03;
     #endif
 
     //Specular Highlight

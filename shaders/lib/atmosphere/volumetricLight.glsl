@@ -21,7 +21,7 @@ void computeVL(inout vec3 vl, in vec3 translucent, in float dither) {
 	float VoU = clamp(dot(nViewPos, upVec), 0.0, 1.0);
 		  VoU = 1.0 - pow(VoU, 1.5);
 		  VoU = mix(VoU, 1.0, min(indoorFactor + timeBrightness, 1.0) * 0.75);
-	float VoL = pow(clamp(dot(nViewPos, lightVec), 0.0, 1.0), 1.5);
+	float VoL = mix(pow(clamp(dot(nViewPos, lightVec), 0.0, 1.0), 1.5), 0.5, 0.25 * float(isEyeInWater == 1));
 
 	float vlVisibility = int(z0 > 0.56) * shadowFade;
 	#ifdef OVERWORLD
@@ -47,7 +47,7 @@ void computeVL(inout vec3 vl, in vec3 translucent, in float dither) {
 		//Variables
         int sampleCount = VL_SAMPLES;
 
-		float maxDist = 96.0;
+		float maxDist = 128.0;
 		float minDist = (maxDist / sampleCount * (1.0 - float(isEyeInWater == 1) * 0.5));
 		float maxCurrentDist = min(linearDepth1, maxDist);
 
