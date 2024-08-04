@@ -16,7 +16,7 @@ vec3 hash(vec3 p3){
     return 2.0 * fract((p3.xxy + p3.yxx) * p3.zyx) - 1.0;
 }
 
-float getWispNoise(vec3 pos){
+float getFireflyNoise(vec3 pos){
     pos += 1e-4 * frameTimeCounter;
 
     vec3 floorPos = floor(pos);
@@ -134,8 +134,8 @@ void computeLPVFog(inout vec3 fog, inout float fireflies, in vec3 translucent, i
 
 				#ifdef FIREFLIES
 				vec3 nposA = (worldPos + cameraPosition) + vec3(sin(frameTimeCounter) * 1.5, cos(frameTimeCounter), -frameTimeCounter);
-				float wispNoise = getWispNoise(nposA * 0.75);
-					  wispNoise = clamp(wispNoise - 0.6, 0.0, 1.0);
+				float fireflyNoise = getFireflyNoise(nposA * 0.75);
+					  fireflyNoise = clamp(fireflyNoise - 0.6, 0.0, 1.0);
 
 				float n3da2 = texture2D(noisetex, nposA.xz * 0.0002 + floor(nposA.y * 0.03) * 0.03).r;
 				float n3db2 = texture2D(noisetex, nposA.xz * 0.0002 + floor(nposA.y * 0.03 + 1.0) * 0.03).r;
@@ -144,9 +144,9 @@ void computeLPVFog(inout vec3 fog, inout float fireflies, in vec3 translucent, i
                       wispDisplacementNoise = clamp(wispDisplacementNoise * 4.0, 0.0, 1.0);
                       wispDisplacementNoise *= wispDisplacementNoise * wispDisplacementNoise;
 
-				float wisps = wispNoise * wispDisplacementNoise * (1.0 - clamp(nposA.y * 0.01, 0.0, 1.0));
+				float wisps = fireflyNoise * wispDisplacementNoise * (1.0 - clamp(nposA.y * 0.01, 0.0, 1.0));
 
-				fireflies += wisps * 1024.0 * eBS * (1.0 - sunVisibility);
+				fireflies += wisps * 1024.0 * eBS * eBS * (1.0 - sunVisibility) * float(isEyeInWater == 0);
 				#endif
 			}
 		}
