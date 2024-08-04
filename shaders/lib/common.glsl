@@ -72,20 +72,27 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 
 //VL//
 #define VL
-#define VL_STRENGTH 2.25 //[0.00 0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00]
+#define VL_STRENGTH 2.00 //[0.00 0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00]
 #define VL_SAMPLES 7 //[4 5 6 7 8 9 10]
 #define VL_CLOUDY_FOG
 
 //LPV Fog//
 #define LPV_FOG
-#define LPV_FOG_STRENGTH 1.0 //[0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5]
+#define LPV_FOG_STRENGTH 0.8 //[0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5]
 #define LPV_FOG_SAMPLES 6 //[4 5 6 7 8 9 10]
 
 //Nether Cloudy Fog//
 #define NETHER_CLOUDY_FOG
-#define VF_NETHER_STRENGTH 1.0 //[1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2.0]
+#define VF_NETHER_STRENGTH 1.2 //[0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2.0]
 #define VF_NETHER_FREQUENCY 3.00 //[2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00]
 #define VF_NETHER_SPEED 6.00 //[1.00 1.50 2.00 2.50 3.00 3.50 4.00 4.50 5.00 5.50 6.00 6.50 7.00 7.50 8.00]
+
+//End Cloudy Fog//
+#define END_CLOUDY_FOG
+#define VF_END_HEIGHT -30.0 //[-20.0 -10.0 0.0 10.0 20.0 30.0 40.0]
+#define VF_END_AMOUNT 8.5 //[7.5 8.0 8.5 9.0 9.5 10.0]
+#define VF_END_THICKNESS 10.0 //[4.0 6.0 8.0 10.0 12.0 14.0 16.0 18.0 20.0 22.0 24.0]
+#define VF_END_OPACITY 0.7 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
 
 //Fog//
 #define DISTANT_FADE
@@ -173,7 +180,7 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 #define PARALLAX_DEPTH 0.20 //[0.05 0.10 0.15 0.20 0.25 0.30 0.35 0.40 0.45 0.50]
 #define PARALLAX_QUALITY 64 //[32 48 64 80 96 112 128]
 #define PARALLAX_DISTANCE 32 //[8 16 32 48 64 80 96 112 128]
-//#define SELF_SHADOW
+#define SELF_SHADOW
 #define SELF_SHADOW_ANGLE 3.0 //[0.5 1.0 1.5 2.0 2.5 3.0 3.5 4.0 4.5 5.0 5.5 6.0 6.5 7.0 7.5 8.0]
 #define SELF_SHADOW_QUALITY 6 //[4 6 8 10 12 14 16]
 #define SELF_SHADOW_STRENGTH 48 //[4 8 16 32 48 64]
@@ -320,8 +327,9 @@ float linearStep(float edge0, float edge1, float x) {
 
 #ifdef PARALLAX
 #undef GENERATED_NORMALS
-#define SELF_SHADOW
 #endif
+
+#ifdef SELF_SHADOW
 
 #ifdef PBR
 #undef GENERATED_SPECULAR
@@ -348,6 +356,7 @@ float linearStep(float edge0, float edge1, float x) {
 #ifndef END
 #undef END_NEBULA
 #undef END_VORTEX
+#undef END_CLOUDY_FOG
 #endif
 
 #ifdef NETHER

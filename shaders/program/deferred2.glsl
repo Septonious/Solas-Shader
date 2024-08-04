@@ -14,10 +14,7 @@ in vec3 sunVec, upVec;
 
 //Uniforms//
 uniform int isEyeInWater;
-
-#ifdef VC
 uniform int frameCounter;
-#endif
 
 #ifdef OVERWORLD
 uniform int moonPhase;
@@ -56,7 +53,7 @@ uniform sampler2D noisetex;
 uniform sampler2D colortex0;
 uniform sampler2D depthtex1;
 
-#ifdef VC
+#if defined VC || defined END_CLOUDY_FOG
 uniform sampler2D shadowtex1;
 
 #ifdef BLOCKY_CLOUDS
@@ -91,14 +88,21 @@ float sunVisibility = clamp(dot(sunVec, upVec) + 0.1, 0.0, 0.25) * 4.0;
 #include "/lib/atmosphere/sunMoon.glsl"
 #endif
 
-#ifdef VC
+#if defined VC || defined END_CLOUDY_FOG
 #include "/lib/atmosphere/spaceConversion.glsl"
 #include "/lib/util/ToShadow.glsl"
+#endif
+
+#ifdef VC
 #ifndef BLOCKY_CLOUDS
 #include "/lib/atmosphere/volumetricClouds.glsl"
 #else
 #include "/lib/atmosphere/volumetricBlockyClouds.glsl"
 #endif
+#endif
+
+#ifdef END_CLOUDY_FOG
+#include "/lib/atmosphere/volumetricClouds.glsl"
 #endif
 
 #include "/lib/atmosphere/skyEffects.glsl"
@@ -150,6 +154,17 @@ void main() {
 	#endif
 
 	computeVolumetricClouds(vc, atmosphereColor, z1, blueNoiseDither, cloudDepth);
+	vc.rgb = pow(vc.rgb, vec3(1.0 / 2.2));
+	#endif
+
+	#ifdef END_CLOUDY_FOG
+	float blueNoiseDither = texture2D(noisetex, gl_FragCoord.xy / 512.0).b;
+
+	#ifdef TAA
+	blueNoiseDither = fract(blueNoiseDither + 1.61803398875 * mod(float(frameCounter), 3600.0));
+	#endif
+
+	computeEndVolumetricClouds(vc, atmosphereColor, z1, blueNoiseDither, cloudDepth);
 	vc.rgb = pow(vc.rgb, vec3(1.0 / 2.2));
 	#endif
 
@@ -219,7 +234,7 @@ void main() {
 
 	if (z1 != 1.0) Fog(color, viewPos, worldPos, skyColor);
 
-	#ifdef VC
+	#if defined VC || defined END_CLOUDY_FOG
 	color = mix(color, vc.rgb, vc.a);
 	#endif
 
