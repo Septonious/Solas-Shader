@@ -343,7 +343,7 @@ option.CONTRAST=Contrast
 
 #----------------------------------------------------------------------------------#
 
-screen.DOF_CONFIG=DoF Config
+screen.DOF_CONFIG=Blur Effects Config
 
 option.DOF=Depth of Field (DOF)
 option.DOF.comment=Blurs the object outside your player's eye focal point.
