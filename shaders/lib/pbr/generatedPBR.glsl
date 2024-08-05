@@ -64,7 +64,7 @@ void generateIPBR(inout vec4 albedo, in vec3 worldPos, in vec3 viewPos, inout ve
         float NoU = clamp(dot(normal, upVec), 0.0, 1.0);
         float noise = texture2D(noisetex, (worldPos.xz + cameraPosition.xz) * 0.001).b;
               noise*= texture2D(noisetex, (worldPos.xz + cameraPosition.xz) * 0.002).b;
-        float puddles = clamp(wetness * pow8(lightmap.y) * (0.1 + (noise - 0.05)) * NoU, 0.0, 1.0);
+        float puddles = clamp(wetness * pow8(lightmap.y) * (0.15 + noise) * NoU, 0.0, 1.0);
         smoothness = mix(smoothness, RAIN_PUDDLES_STRENGTH, puddles);
         metalness = mix(smoothness, 1.0, puddles);
     }
