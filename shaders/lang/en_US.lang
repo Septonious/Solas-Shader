@@ -25,8 +25,6 @@ screen.VC_CONFIG=Volumetric Clouds Config
 
 option.VC=Volumetric Clouds
 option.BLOCKY_CLOUDS=Blocky Clouds
-option.VC_DYNAMIC_WEATHER=Dynamic Weather
-option.VC_DYNAMIC_WEATHER.comment=Automatically controls the size, height and amount of clouds based on various factors
 option.VC_DETAIL=Detail
 option.VC_DENSITY=Density
 option.VC_AMOUNT=Amount
@@ -43,8 +41,8 @@ option.VC_SHADOWS.comment=Allows clouds to behave like VL when sunlight is obstr
 screen.PC_CONFIG=Planar Clouds Config
 
 option.PLANAR_CLOUDS=Planar Clouds
-option.PLANAR_CLOUDS_BRIGHTNESS=Planar Clouds Brightness
-option.PLANAR_CLOUDS_OPACITY=Planar Clouds Opacity
+option.PLANAR_CLOUDS_BRIGHTNESS=Brightness
+option.PLANAR_CLOUDS_OPACITY=Opacity
 
 #----------------------------------------------------------------------------------#
 
@@ -79,8 +77,8 @@ screen.LPV_FOG_CONFIG=Light Fog Config
 
 option.LPV_FOG=Light Fog
 option.LPV_FOG.comment=Allows light sources to contribute to fog illumination
-option.LPV_FOG_STRENGTH=Fog Strength
-option.LPV_FOG_SAMPLES=Fog Samples
+option.LPV_FOG_STRENGTH=Strength
+option.LPV_FOG_SAMPLES=Samples
 
 #----------------------------------------------------------------------------------#
 
@@ -127,7 +125,6 @@ option.END_VORTEX_ARMS=Vortex Arms Count
 
 screen.WATER=Water
 
-option.VANILLA_WATER=Vanilla Water
 option.WATER_FOG=Water Fog
 option.WATER_FOG_EXPONENT=Water Fog Exponent
 option.WATER_CAUSTICS=Water Caustics
@@ -177,9 +174,9 @@ option.VOXEL_VOLUME_SIZE=Voxel Volume Size
 #----------------------------------------------------------------------------------#
 
 option.AO=Screen Space AO
-option.AO=Makes areas where blocks or entities touch darker.
+option.AO.comment=Makes areas where blocks or entities touch darker.
 option.VANILLA_AO=Vanilla AO
-option.VANILLA_AO=Makes areas where blocks or entities touch darker. This one looks worse than the SSAO tho :P
+option.VANILLA_AO.comment=Makes areas where blocks or entities touch darker. This one looks worse than the SSAO tho :P
 option.AO_STRENGTH=AO Strength
 option.AO_RADIUS=AO Radius
 

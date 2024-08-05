@@ -49,10 +49,10 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 atmo
 
 	//Nether Fog
 	#ifdef NETHER
-	float fog = lViewPos * 0.005;
+	float fog = lViewPos * 0.004;
 
 	#ifdef DISTANT_FADE
-	fog += 8.0 * pow4(lWorldPos / far);
+	fog += 6.0 * pow4(lWorldPos / far);
 	#endif
 
 	fog = 1.0 - exp(-fog);

@@ -70,7 +70,7 @@ const vec3[] blocklightColorArray = vec3[](
     //Powered Rails
     vec3(1.00, 0.05, 0.00),
     //Nether Portal
-    vec3(0.60, 0.05, 1.00) * 3.0,
+    vec3(0.60, 0.05, 1.00) * 5.0,
     //Orchre Froglight
     normalize(vec3(1.00, 0.55, 0.25)) * 5.5,
     //Verdant Froglight

@@ -1,34 +1,42 @@
-#shaders/lang/ru_RU.lang
+#shaders/lang/en_US.lang
 
 profile.LOW=Низко
 profile.MEDIUM=Средне
-profile.HIGH=Высоко
-profile.VERY_HIGH=Очень Высоко
+profile.HIGH=Высоко (По умолчанию)
 profile.ULTRA=Ультра
 
-option.SOLAS_BY_SEPTONIOUS=§6Solas
-value.SOLAS_BY_SEPTONIOUS.1=§bАвтор: Septonious
-option.SOLAS_BY_SEPTONIOUS.comment=Discord: https://discord.com/invite/4uTAUQR2xu. GitHub: https://github.com/Septonious/Solas-Shader. Переводил сам (да, я русский)
+option.SOLAS_BY_SEPTONIOUS=§6Solas Shader
+value.SOLAS_BY_SEPTONIOUS.0=§bОт Septonious
+option.SOLAS_BY_SEPTONIOUS.comment=Discord: https://discord.gg/4uTAUQR2xu. GitHub: https://github.com/Septonious/Solas-Shader. Переводил сам (да, я русский).
 
-#ATMOSPHERICS
+#=======================================================# ATMOSPHERICS #=======================================================#
 
 screen.ATMOSPHERICS=Атмосфера
+screen.SKYBOX_CONFIG=Настройки Скайбокса
 
+option.SKYBOX=Скайбокс из ресурспака
+option.SKYBOX_MIX_FACTOR=Слияние с атмосферой
+option.SKYBOX_MIX_FACTOR.comment=Определяет степень слияния атмосферы шейдера со скайбоксом из ресурспака.
+option.SKYBOX_BRIGHTNESS=Яркость
+
+#----------------------------------------------------------------------------------#
 
 screen.VC_CONFIG=Настройки 3D Облаков
 
 option.VC=3D Облака
 option.BLOCKY_CLOUDS=Квадратные Облака
-option.VC_DYNAMIC_WEATHER=Динамическая погода
-option.VC_DYNAMIC_WEATHER.comment=Автоматически определяет параметры облаков
-option.VC_DETAIL=Детализация
+option.VC_DETAIL=Детальность
 option.VC_DENSITY=Плотность
 option.VC_AMOUNT=Количество
 option.VC_HEIGHT=Высота
-option.VC_THICKNESS=Толщина
+option.VC_THICKNESS=Размер
 option.VC_SPEED=Скорость
 option.VC_DISTANCE=Дистанция Рендера
 option.VC_OPACITY=Непрозрачность
+option.VC_SHADOWS=Лучи Света в Облаках
+option.VC_SHADOWS.comment=Добавляет облакам объёмное освещение (солнечные лучи).
+
+#----------------------------------------------------------------------------------#
 
 screen.PC_CONFIG=Настройки 2D Облаков
 
@@ -36,21 +44,45 @@ option.PLANAR_CLOUDS=2D Облака
 option.PLANAR_CLOUDS_BRIGHTNESS=Яркость
 option.PLANAR_CLOUDS_OPACITY=Непрозрачность
 
+#----------------------------------------------------------------------------------#
+
 screen.VL_CONFIG=Настройки Солнечных Лучей
 
 option.VL=Солнечные Лучи
 option.VL_STRENGTH=Сила
 option.VL_SAMPLES=Качество
 
-screen.FOG_CONFIG=Настройки Тумана
+#----------------------------------------------------------------------------------#
 
-screen.LPV_FOG_CONFIG=Настройки светового тумана
+screen.VF_NETHER_CONFIG=Настройки 3D Тумана в Аду
 
-option.LPV_FOG=Световой туман
-option.LPV_FOG.comment=Симулирует рассеивание света от светящихся блоков в тумане
-option.LPV_FOG_THRESHOLD=Пороговая яркость
+option.NETHER_CLOUDY_FOG=3D Туман в Аду
+option.VF_NETHER_STRENGTH=Сила
+option.VF_NETHER_SPEED=Скорость
+option.VF_NETHER_FREQUENCY=Частота
+
+#----------------------------------------------------------------------------------#
+
+screen.VF_END_CONFIG=Настройки 3D Тумана в Энде
+
+option.END_CLOUDY_FOG=3D Туман в Энде
+option.VF_END_HEIGHT=Высота
+option.VF_END_OPACITY=Непрозрачность
+option.VF_END_AMOUNT=Количество
+option.VF_END_THICKNESS=Размер
+
+#----------------------------------------------------------------------------------#
+
+screen.LPV_FOG_CONFIG=Настройки Светового Тумана
+
+option.LPV_FOG=Световой Туман
+option.LPV_FOG.comment=Позволяет источникам света подсвечивать туман вокруг.
 option.LPV_FOG_STRENGTH=Сила
 option.LPV_FOG_SAMPLES=Качество
+
+#----------------------------------------------------------------------------------#
+
+screen.FOG_CONFIG=Настройки Тумана
 
 option.DISTANT_FADE=Дальний Туман
 option.DISTANT_FADE_STYLE=Стиль Дальнего Тумана
@@ -60,23 +92,7 @@ value.DISTANT_FADE_STYLE.1=Цилиндрический
 option.FOG_DENSITY=Плотность Тумана
 option.FOG_HEIGHT=Высота Тумана
 
-option.VF_END=3D Туман (Энд)
-option.VF_NETHER=3D Туман (Незер)
-screen.VF_END_CONFIG=Туман в Энде
-screen.VF_NETHER_CONFIG=Туман в Незере
-
-option.VF_END_HEIGHT=Высота
-option.VF_END_OPACITY=Непрозрачность
-option.VF_END_AMOUNT=Количество
-option.VF_END_THICKNESS=Толщина
-
-option.VF_NETHER_STRENGTH=Видимость
-option.VF_NETHER_SAMPLES=Качество
-option.VF_NETHER_SPEED=Скорость
-option.VF_NETHER_FREQUENCY=Частота
-option.VF_NETHER_REFRACTION=Преломление Света
-option.VF_NETHER_REFRACTION_STRENGTH=Сила Преломления
-
+#----------------------------------------------------------------------------------#
 
 screen.SKY_CONFIG=Настройки Неба
 
@@ -87,6 +103,7 @@ option.END_STARS=Звёзды в Краю
 option.MILKY_WAY=Млечный Путь
 option.MILKY_WAY_BRIGHTNESS=Яркость Млечного Пути
 option.END_NEBULA=Туманность в Краю
+option.END_NEBULA_BRIGHTNESS=Яркость Туманности
 option.RAINBOW=Радуга
 option.AURORA=Северное Сияние
 option.AURORA_COLD_BIOME_VISIBILITY=С.С. в холодных биомах
@@ -94,34 +111,31 @@ option.AURORA_COLD_BIOME_VISIBILITY.comment=Переключает видимо�
 option.AURORA_FULL_MOON_VISIBILITY=С.С. при полной луне
 option.AURORA_FULL_MOON_VISIBILITY.comment=Переключает видимость Северного Сияния только при полной луне
 
+#----------------------------------------------------------------------------------#
+
 screen.END_VORTEX=Настройки Чёрной Дыры
 
 option.END_VORTEX=Чёрная Дыра в Энде
-
 option.END_VORTEX_SIZE=Радиус
 option.END_VORTEX_WHIRL=Закручивание
-option.END_VORTEX_ARMS=Количество ветвей
+option.END_VORTEX_ARMS=Количество Спиральных Ветвей
 
-#WATER
+#=======================================================# WATER #=======================================================#
 
 screen.WATER=Вода
-
-option.VANILLA_WATER=Ванильная Вода
 
 option.WATER_FOG=Водный Туман
 option.WATER_FOG_EXPONENT=Плотность Водного Тумана
 option.WATER_CAUSTICS=Каустики
 option.WATER_CAUSTICS_STRENGTH=Видимость Каустиков
-
-option.WATER_NORMALS=Режим волн
+option.WATER_NORMALS=Волны
 option.WATER_NORMALS.comment=Переключает режим генерации волн на воде (метод шума).
 value.WATER_NORMALS.0=§cOFF
-value.WATER_NORMALS.1=Ворли
-value.WATER_NORMALS.2=Перлин
-option.WATER_NORMAL_BUMP=Высота волн
-option.WATER_NORMAL_OFFSET=Смещение волн
-
-option.WATER_NORMAL_DETAIL=Детализация волн
+value.WATER_NORMALS.1=Worley
+value.WATER_NORMALS.2=Perlin
+option.WATER_NORMAL_BUMP=Высота Волн
+option.WATER_NORMAL_OFFSET=Смещение Волн
+option.WATER_NORMAL_DETAIL=Детализация Волн
 option.WATER_NORMAL_DETAIL.comment=Изменяет соотношение размера малых и больших волн.
 value.WATER_NORMAL_DETAIL.0.05=5%
 value.WATER_NORMAL_DETAIL.0.10=10%
@@ -133,155 +147,219 @@ value.WATER_NORMAL_DETAIL.0.35=35%
 value.WATER_NORMAL_DETAIL.0.40=40%
 value.WATER_NORMAL_DETAIL.0.45=45%
 value.WATER_NORMAL_DETAIL.0.50=50%
+option.REFRACTION=Преломление Света
+option.REFRACTION_STRENGTH=Сила Преломления
 
-option.WATER_REFRACTION=Преломление Света Водой
-option.WATER_REFRACTION_STRENGTH=Сила Преломления
-
-option.WAVING_WATER=3Д Волны на Воде
-
-#LIGHTING
+#=======================================================# LIGHTING #=======================================================#
 
 screen.LIGHTING=Освещение
 
 option.shadowMapResolution=Разрешение Теней
 option.shadowDistance=Дистанция Рендера Теней
 option.sunPathRotation=Угол Солнца/Луны
-option.VPS=Variable Penumbra Shadows
-option.VPS.comment=Тени, становящиеся размытыми с дальностью
-option.VPS_BLUR_STRENGTH=Сила VPS
+option.entityShadowDistanceMul=Прорисовка Теней от Существ
+option.VPS=Размывающиеся Тени (РТ)
+option.VPS.comment=Реалистичне тени, становящиеся размытыми с дальностью.
+option.VPS_BLUR_STRENGTH=Сила Размытия РТ
 option.SHADOW_SAMPLE_COUNT=Качество Теней
 option.SHADOW_COLOR=Цветные Тени
 option.ENTITY_SHADOWS=Тени от Существ
+option.DYNAMIC_HANDLIGHT=Ручное Освещение
+option.DYNAMIC_HANDLIGHT.comment=Позволяет предметам в руке излучать свет.
+option.DYNAMIC_HANDLIGHT_STRENGTH=Яркость Ручного Освещения
+option.FLOODFILL_BRIGHTNESS=Яркость Цветного Освещения
+option.VOXEL_VOLUME_SIZE=Размер Массива Вокселей
+option.VOXEL_VOLUME_SIZE.comment=Определяет размер массива вокселей для цветного освещения. §c[-]§r Сильно влияет на производительность.
 
-option.COLORED_LIGHTING=Цветное Освещение (ЦО) (Й жив)
-option.COLORED_LIGHTING_RADIUS=Радиус ЦО
-option.COLORED_LIGHTING_STRENGTH=Сила ЦО
-option.AO=Ambient Occlusion (AO)
-option.VANILLA_AO=Ванильное АО
+#----------------------------------------------------------------------------------#
+
+option.AO=Шейдерное AO
+option.AO.comment=Тени в точках соприкосновения блоков или существ.
+option.VANILLA_AO=Ванильное AO
+option.VANILLA_AO.comment=Тени в точках соприкосновения блоков или существ.
 option.AO_STRENGTH=Сила АО
 option.AO_RADIUS=Радиус АО
 
-option.GLOBAL_ILLUMINATION=Глобальное Освещение (ГО)
-option.GLOBAL_ILLUMINATION_STRENGTH=Сила ГО
-option.GLOBAL_ILLUMINATION_RADIUS=Радиус ГО
-option.GLOBAL_ILLUMINATION_BRIGHTNESS=Яркость ГО
+#=======================================================# Generated PBR #=======================================================#
 
-option.DYNAMIC_HANDLIGHT=Динамичное Освещение
+screen.PBR_MENU=Настройки PBR
 
+screen.IPBR=Встроенный PBR
 
-#IPBR
+option.GENERATED_SPECULAR=Встроенные Отражения
+option.GENERATED_SPECULAR.comment=Автоматически определяет отражающие блоки. §c[-]§r Не рекомендуется использовать со сторонними ресурспаками.
 
-screen.IPBR=Встроенный PBR Ресурспак
-
-option.GENERATED_SPECULAR=Отражающие блоки
+#----------------------------------------------------------------------------------#
 
 screen.ISPECULAR=Настройки Отражений
 
-option.RAIN_PUDDLES=Лужи
-option.RAIN_PUDDLES_STRENGTH=Видимость Луж
-option.REFLECTION_RT_SAMPLE_COUNT=Качество Отражений
+option.RAIN_PUDDLES=Дождевые Лужи
+option.RAIN_PUDDLES_STRENGTH=Сила Дождевых Луж
 option.SPECULAR_STRENGTH=Сила Отражений
-option.WATER_REFLECTIONS=Отражения в воде
+option.WATER_REFLECTIONS=Отражения в Воде
+option.GENERATED_EMISSION=Встроенное Свечение
+option.GENERATED_EMISSION.comment=Автоматически определяет светящиеся элементы блоков и существ. §c[-]§r Не рекомендуется использовать со сторонними ресурспаками.
 
+#----------------------------------------------------------------------------------#
 
-option.GENERATED_EMISSION=Светящиеся блоки
-
-screen.IEMISSION=Настройки светящихся блоков
+screen.IEMISSION=Настройки Светящихся Материалов
 
 option.EMISSIVE_FLOWERS=Светящиеся Цветы
-option.EMISSIVE_OERS=Светящиеся Руды
-option.EMISSIVE_DEBRIS=Светящиеся Древние Обломки
+option.EMISSIVE_ORES=Светящиеся Руды
 option.EMISSIVE_CONCRETE=Светящийся Бетон
-option.EMISSIVE_POWDER_SNOW=Светящийся Рассыпчатый Снег
-option.PLAYER_BRIGHT_PARTS_HIGHLIGHT=Светящиеся Яркие Пиксели на Скине Игрока
-option.ENTITY_HIGHLIGHT=Светящиеся Существа
 option.EMISSION_STRENGTH=Яркость Свечения
 
-screen.GENERATED_NORMALS=Сгенерированные Нормали
+#----------------------------------------------------------------------------------#
 
+screen.INORMALS=Настройки Нормалей
+
+option.GENERATED_NORMALS=Встроенные Нормали
+option.GENERATED_NORMALS.comment=Автоматически генерирует нормали на блоках. §c[-]§r Не рекомендуется использовать со сторонними ресурспаками.
 option.NORMAL_STRENGTH=Сила
 option.NORMAL_RESOLUTION=Разрешение
-option.NORMAL_THRESHOLD=Порог
+option.NORMAL_THRESHOLD=Порог Генерации
 
-#COLOR
+#=======================================================# Resourcepack PBR #=======================================================#
+
+screen.PBR=Сторонний PBR
+
+option.PBR=Сторонний PBR
+option.PBR.comment=Enables the use of specular and normal mapping which allows for more detail on various things.  §e[*]§rThis option requires a resource pack which contains specular and/or normal maps, disable if none is currently used. §e[*]§rOptions which requires advanced materials are indicated by *, changing these options won't affect the visuals or performance while advanced materials is disabled.
+option.MATERIAL_FORMAT=Формат Ресурспака*
+option.MATERIAL_FORMAT.comment=Determines the specular and normal map format used by the resource pack. §e[*]§rTexture artists usually tell which format is used in their resource pack, using the wrong format may give weird results.
+value.MATERIAL_FORMAT.0=SEUS/Old PBR
+value.MATERIAL_FORMAT.1=labPBR 1.3
+
+#----------------------------------------------------------------------------------#
+
+screen.PARALLAX_CONFIG=Настройки Параллакса
+
+option.PARALLAX=Параллакс*
+option.PARALLAX.comment=Adds displacement on a surface using height map.
+option.PARALLAX_DEPTH=Глубина Параллакса*
+option.PARALLAX_DEPTH.comment=Adjusts parallax deepness.
+value.PARALLAX_DEPTH.0.05=5 cm
+value.PARALLAX_DEPTH.0.10=10 cm
+value.PARALLAX_DEPTH.0.15=15 cm
+value.PARALLAX_DEPTH.0.20=20 cm
+value.PARALLAX_DEPTH.0.25=25 cm
+value.PARALLAX_DEPTH.0.30=30 cm
+value.PARALLAX_DEPTH.0.35=35 cm
+value.PARALLAX_DEPTH.0.40=40 cm
+value.PARALLAX_DEPTH.0.45=45 cm
+value.PARALLAX_DEPTH.0.50=50 cm
+option.PARALLAX_QUALITY=Качество Параллакса*
+option.PARALLAX_QUALITY.comment=Adjusts the quality of parallax occlusion mapping.
+option.PARALLAX_DISTANCE=Дистанция Рендера Параллакса*
+option.PARALLAX_DISTANCE.comment=Adjusts how far parallax occlusion mapping and self shadows can be rendered.
+
+#----------------------------------------------------------------------------------#
+
+screen.SELF_SHADOW_CONFIG=Настройки Шейдинга
+
+option.SELF_SHADOW=Шейдинг Нормалей*
+option.SELF_SHADOW.comment=Allows a surface to cast shadow to itself using heightmap.
+option.SELF_SHADOW_ANGLE=Угол Теней*
+option.SELF_SHADOW_ANGLE.comment=Adjusts the self shadowing angle, higher value allows the shadow to travel further.
+option.SELF_SHADOW_QUALITY=Качество Теней*
+option.SELF_SHADOW_QUALITY.comment=Adjusts the quality of self shadowing.
+option.SELF_SHADOW_STRENGTH=Сила Теней*
+option.SELF_SHADOW_STRENGTH.comment=Adjusts the intensity of self shadowing.
+
+#=======================================================# COLOR #=======================================================#
 
 screen.COLOR=Цвета
+
 screen.LIGHTAMBIENT_COLOR=Свет & Тень (Обычный Мир)
 
-option.LIGHTTEMP_SS=Рассвет/Закат
-option.LIGHTTEMP_ME=Утро/Вечер
-option.LIGHTTEMP_D=День
-option.LIGHTTEMP_N=Ночь
+option.LIGHTTEMP_SS=Температура Рассвета/Заката
+option.LIGHTTEMP_ME=Температура Утра/Вечера
+option.LIGHTTEMP_D=Температура Дня
+option.LIGHTTEMP_N=Температура Ночи
+option.LIGHTINTENSITY_SS=Яркость Рассвета/Заката
+option.LIGHTINTENSITY_ME=Яркость Утра/Вечера
+option.LIGHTINTENSITY_D=Яркость Дня
+option.LIGHTINTENSITY_N=Яркость Ночи
+
+#----------------------------------------------------------------------------------#
+
+screen.END_COLOR=Свет & Тень (Энд)
+
+option.LIGHT_END_R=Красный
+option.LIGHT_END_G=Зелёный
+option.LIGHT_END_B=Синий
+option.LIGHT_END_I=Яркость
+option.AMBIENT_END_R=Красный
+option.AMBIENT_END_G=Зелёный
+option.AMBIENT_END_B=Синий
+option.AMBIENT_END_I=Яркость
+
+#----------------------------------------------------------------------------------#
 
 screen.MINLIGHT=Минимальное Освещение
+
 option.MINLIGHT_R=Красный
 option.MINLIGHT_G=Зелёный
 option.MINLIGHT_B=Синий
-option.MINLIGHT_I=Интенсивность
+option.MINLIGHT_I=Яркость
+
+#----------------------------------------------------------------------------------#
 
 screen.BLOCKLIGHT_COLOR=Цвет Освещения от Блоков
+
 option.BLOCKLIGHT_R=Красный
 option.BLOCKLIGHT_G=Зелёный
 option.BLOCKLIGHT_B=Синий
-option.BLOCKLIGHT_I=Интенсивность
+option.BLOCKLIGHT_I=Яркость
+
+#----------------------------------------------------------------------------------#
 
 screen.WATER_COLOR=Цвет Воды
+
 option.WATER_R=Красный
 option.WATER_G=Зелёный
 option.WATER_B=Синий
-option.WATER_I=Интенсивность
+option.WATER_I=Яркость
 option.WATER_A=Непрозрачность
 
-screen.SKY_COLOR=Цвет Неба
-
-option.SKY_R=Красный
-option.SKY_G=Зелёный
-option.SKY_B=Синий
-option.SKY_I=Интенсивность
 
 
-#POST
-
-option.DOF=Глубина Резкости (ГР)
-option.DOF.comment=Размывает объекты вне точки фокуса игрока.
-option.DISTANT_BLUR=Размытие Вдали
-option.DISTANT_BLUR_RANGE=Дальность Размытия
-option.DISTANT_BLUR_STRENGTH=Сила Размытия
-
-option.DOF_STRENGTH=Сила ГР
-
-screen.DOF_CONFIG=Настройки ГР
+#=======================================================# POST #=======================================================#
 
 screen.POST=Постобработка
 
-option.SHARPENING=Заострение изображения
-option.CHROMATIC_ABERRATION=Хроматическая Аберрация (ХА) (чё смеёшься)
+option.SHARPENING=Заострение Изображения
+option.CHROMATIC_ABERRATION=Хроматическая Аберрация (ХА)
+option.CHROMATIC_ABERRATION.comment=Добавляет синие и красные края объектам (как в логотипе тиктока).
 option.CHROMATIC_ABERRATION_STRENGTH=Сила ХА
 
-option.EXPOSURE=Экспозиция
-option.EXPOSURE.comment=Регулирует яркость всех цветов.
+#----------------------------------------------------------------------------------#
 
-option.TONEMAP_WHITE_CURVE="Белая" Кривая Цветовой Палитры
-option.TONEMAP_WHITE_CURVE.comment=Определяет как быстро яркие цвета переходят в белый.
+screen.TONEMAP=Настройки Цветовой Палитры
 
-option.TONEMAP_LOWER_CURVE=Нижняя Кривая Цветовой Палитры
-option.TONEMAP_LOWER_CURVE.comment=Регулирует контраст тёмных цветов.
+option.LIGHTNESS_INTENSITY=Светлая кривая
+option.DARKNESS_INTENSITY=Тёмная кривая
+option.CONTRAST=Контраст
 
-option.TONEMAP_UPPER_CURVE=Верхняя Кривая Цветовой Палитры
-option.TONEMAP_UPPER_CURVE.comment=Регулирует контраст ярких цветов.
+#----------------------------------------------------------------------------------#
 
-option.SATURATION=Насыщенность
-option.SATURATION.comment=Регулирует насыщенность всех цветов.
+screen.DOF_CONFIG=DoF Config
 
-option.VIBRANCE=Насыщенность блёклых цветов.
+option.DOF=Глубина Резкости (ГР)
+option.DOF.comment=Размывает объекты вне точки фокуса игрока.
+option.DOF_STRENGTH=Сила ГР
+option.DISTANT_BLUR=Дальнее Размытие (ДР)
+option.DISTANT_BLUR.comment=Размывает всё вдали.
+option.DISTANT_BLUR_RANGE=Дистанция ДР
+option.DISTANT_BLUR_STRENGTH=Сила ДР
+
+#----------------------------------------------------------------------------------#
 
 screen.BLOOM_CONFIG=Настройки Свечения
 
 option.BLOOM=Свечение
 option.BLOOM_STRENGTH=Сила Свечения
-
-option.BLOOM_TILE_SIZE=Точность
-
+option.BLOOM_TILE_SIZE=Радиус
 option.BLOOM_CONTRAST=Контраст
 value.BLOOM_CONTRAST.-4=-1.00
 value.BLOOM_CONTRAST.-3=-0.75
@@ -293,12 +371,15 @@ value.BLOOM_CONTRAST.2=0.50
 value.BLOOM_CONTRAST.3=0.75
 value.BLOOM_CONTRAST.4=1.00
 
-#OTHER
+#=======================================================# OTHER #=======================================================#
 
 screen.OTHER=Прочее
 
-option.WAVING_BLOCKS=Развевающиеся Блоки
 option.WAVING_PLANTS=Развевающиеся Растения
 option.WAVING_LEAVES=Развевающиеся Листья
 option.WAVING_SPEED=Скорость
 option.WAVING_AMPLITUDE=Амплитуда
+
+option.FIREFLIES=Светлячки
+option.FIREFLIES.comment=Добавляет светлячков ночью. §c[-]§rРаботают только при включенном Световом Тумане.
+option.FIREFLIES_BRIGHTNESS=Яркость Светлячков
