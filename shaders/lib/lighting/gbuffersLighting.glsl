@@ -10,7 +10,7 @@ void getHandLightColor(inout vec3 blockLighting, float lViewPos) {
         else handLightColor = blocklightColorArray[heldItemId2 - 1];
     }
 
-    blockLighting += mix(handLightColor * handlight, vec3(0.0), 1.0 - handlight);
+    blockLighting += mix(handLightColor * handlight * DYNAMIC_HANDLIGHT_STRENGTH, vec3(0.0), vec3(1.0 - handlight));
 }
 #endif
 

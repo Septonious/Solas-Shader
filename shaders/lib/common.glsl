@@ -124,6 +124,7 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 #define EMISSIVE_ORES
 #define FLOODFILL_BRIGHTNESS 2.75 //[1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00]
 #define DYNAMIC_HANDLIGHT
+#define DYNAMIC_HANDLIGHT_STRENGTH 1.50 //[0.50 0.75 1.00 1.25 1.50 1.75 2.00]
 
 //Depth of Field & Distant Blur//
 //#define DOF

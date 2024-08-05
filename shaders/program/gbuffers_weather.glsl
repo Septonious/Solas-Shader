@@ -20,7 +20,7 @@ void main() {
 	if (albedo.a > 0.01) {
 		vec2 lightmap = clamp(lmCoord, vec2(0.0), vec2(1.0));
 
-		albedo.a *= 0.33 * length(albedo.rgb * 0.33);
+		albedo.a *= 0.25 * length(albedo.rgb * 0.25);
 		albedo.rgb = sqrt(albedo.rgb);
 		albedo.rgb *= vec3(1.0) + lmCoord.x * lmCoord.x * blockLightCol;
 	}
