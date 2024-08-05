@@ -56,7 +56,7 @@ option.VL_SAMPLES=Samples
 
 #----------------------------------------------------------------------------------#
 
-screen.VF_NETHER_CONFIG=Nether Fog Config
+screen.VF_NETHER_CONFIG=Nether Cloudy Fog Config
 
 option.NETHER_CLOUDY_FOG=Nether Cloudy Fog
 option.VF_NETHER_STRENGTH=Strength
@@ -65,7 +65,7 @@ option.VF_NETHER_FREQUENCY=Frequency
 
 #----------------------------------------------------------------------------------#
 
-screen.VF_END_CONFIG=End Fog Config
+screen.VF_END_CONFIG=End Cloudy Fog Config
 
 option.END_CLOUDY_FOG=End Cloudy Fog
 option.VF_END_HEIGHT=Height
@@ -169,14 +169,18 @@ option.VPS_BLUR_STRENGTH=VPS Strength
 option.SHADOW_SAMPLE_COUNT=Shadow Samples
 option.SHADOW_COLOR=Colored Shadows
 option.ENTITY_SHADOWS=Entity Shadows
-option.DYNAMIC_HANDLIGHT=Dynamic Hand Lighting
+option.DYNAMIC_HANDLIGHT=Dynamic Handheld Lighting
+option.DYNAMIC_HANDLIGHT.comment=Allows handheld light sources (such as torches) to emit light.
+option.DYNAMIC_HANDLIGHT_STRENGTH=Handheld Lighting Brightness
 option.FLOODFILL_BRIGHTNESS=Colored Lighting Brightness
 option.VOXEL_VOLUME_SIZE=Voxel Volume Size
 
 #----------------------------------------------------------------------------------#
 
-option.AO=Screen Space Occlusion
-option.VANILLA_AO=Vanilla Ambient Occlusion
+option.AO=Screen Space AO
+option.AO=Makes areas where blocks or entities touch darker.
+option.VANILLA_AO=Vanilla AO
+option.VANILLA_AO=Makes areas where blocks or entities touch darker. This one looks worse than the SSAO tho :P
 option.AO_STRENGTH=AO Strength
 option.AO_RADIUS=AO Radius
 
