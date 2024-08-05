@@ -146,7 +146,7 @@ void computeLPVFog(inout vec3 fog, inout float fireflies, in vec3 translucent, i
 
 				float wisps = fireflyNoise * wispDisplacementNoise * (1.0 - clamp(nposA.y * 0.01, 0.0, 1.0));
 
-				fireflies += wisps * 1024.0 * eBS * eBS * (1.0 - sunVisibility) * float(isEyeInWater == 0);
+				fireflies += wisps * 1024.0 * eBS * eBS * (1.0 - sunVisibility) * (1.0 - wetness) * float(isEyeInWater == 0);
 				#endif
 			}
 		}
