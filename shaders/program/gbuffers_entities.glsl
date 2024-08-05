@@ -39,7 +39,6 @@ uniform float wetness;
 #endif
 
 uniform ivec2 eyeBrightnessSmooth;
-
 uniform vec3 cameraPosition;
 uniform vec3 skyColor;
 uniform vec4 entityColor;
@@ -58,6 +57,7 @@ uniform mat4 shadowModelView;
 
 //Common Variables//
 #ifdef OVERWORLD
+float eBS = eyeBrightnessSmooth.y / 240.0;
 float sunVisibility = clamp(dot(sunVec, upVec) + 0.1, 0.0, 0.25) * 4.0;
 vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.0);
 #else

@@ -30,7 +30,7 @@ void getReflection(inout vec4 color, in vec3 viewPos, in vec3 normal, in float f
 	float dist = 0.1 * pow2(1.0 - smoothness) * reflectPos.a * fovScale;
 	float lod = log2(viewHeight * dist);
 	#else
-	float lod = 3.0 * (1.0 - smoothness);
+	float lod = 3.0 * (1.0 - smoothness) - 0.05;
 	#endif
 
 	vec4 reflection = texture2DLod(colortex0, reflectPos.xy + lod * refOffsets[0] / vec2(viewWidth, viewHeight), lod);

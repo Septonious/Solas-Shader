@@ -184,13 +184,13 @@ void drawAurora(inout vec3 color, in vec3 worldPos, in float VoU, in float caveF
 			if (noise > 0.0) {
 				float auroraDistanceFactor = max(1.0 - length(planeCoord.xz) * 0.25, 0.0);
 
-				noise *= texture2D(noisetex, coord * 0.125 + frameTimeCounter * 0.0008).b * (0.3 - pulse * 0.1) + (0.7 + pulse * 0.1);
-				noise *= texture2D(noisetex, coord * 0.250 - frameTimeCounter * 0.0010).b * (0.4 - pulse * 0.2) + (0.6 + pulse * 0.2);
+				noise *= texture2D(noisetex, coord * 0.125 + frameTimeCounter * 0.0008).b * (0.4 - pulse * 0.1) + (0.6 + pulse * 0.1);
+				noise *= texture2D(noisetex, coord * 0.250 - frameTimeCounter * 0.0010).b * (0.5 - pulse * 0.3) + (0.5 + pulse * 0.3);
 				noise *= noise * sampleStep * auroraDistanceFactor;
 				noiseBase *= sampleStep * auroraDistanceFactor;
 
 				float colorMixer = clamp(texture2D(noisetex, coord * 0.005).b * 1.75, 0.0, 1.0);
-				vec3 auroraColor1 = mix(vec3(0.2, 3.1, 1.7), vec3(3.4, 0.2, 1.4), pow(currentStep, 0.5));
+				vec3 auroraColor1 = mix(vec3(0.2, 3.1, 1.7), vec3(3.6, 0.2, 1.2), pow(currentStep, 0.5));
 				vec3 auroraColor2 = mix(vec3(0.6, 3.5, 0.9), vec3(1.4, 0.9, 3.7), pow(currentStep, 0.5));
 				vec3 auroraColor = normalize(mix(auroraColor1, auroraColor2, pow4(colorMixer))) * 4.0;
 					 auroraColor *= exp2(-6.0 * i * sampleStep);
@@ -198,7 +198,7 @@ void drawAurora(inout vec3 color, in vec3 worldPos, in float VoU, in float caveF
 					 auroraColor *= noise;
 					 auroraColor *= 1.0 + length(auroraColor);
 					 auroraColor *= 1.0 - clamp(VoU, 0.0, 1.0) * 0.75;
-				aurora += auroraBlurredColor * (0.3 - pulse * 0.1) + auroraColor * (0.7 + pulse * 0.3);
+				aurora += auroraBlurredColor * (0.3 - pulse * 0.15) + auroraColor * (0.7 + pulse * 0.3);
 			}
 
 			currentStep += sampleStep;

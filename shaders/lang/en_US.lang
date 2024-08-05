@@ -79,7 +79,6 @@ screen.LPV_FOG_CONFIG=Light Fog Config
 
 option.LPV_FOG=Light Fog
 option.LPV_FOG.comment=Allows light sources to contribute to fog illumination
-option.LPV_FOG_THRESHOLD=Light Intensity Threshold
 option.LPV_FOG_STRENGTH=Fog Strength
 option.LPV_FOG_SAMPLES=Fog Samples
 

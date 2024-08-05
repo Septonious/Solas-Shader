@@ -61,8 +61,7 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
              voxelSamplePos = clamp(voxelSamplePos, 0.0, 1.0);
 
         vec3 lighting = texture3D(floodfillSampler, voxelSamplePos).rgb;
-        float lLighting = length(lighting);
-        voxelLighting = lighting * FLOODFILL_BRIGHTNESS * (length(lighting) * 0.5 + 0.5);
+        voxelLighting = lighting * (0.66 + length(lighting) * 0.33);
 
         #ifdef GBUFFERS_ENTITIES
         voxelLighting += pow16(lightmap.x) * blockLightCol;
@@ -70,7 +69,7 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
 
         float mixFactor = 1.0 - pow2(floodfillFade);
 
-        blockLighting = mix(blockLighting, voxelLighting, mixFactor * 0.9);
+        blockLighting = mix(blockLighting, voxelLighting * FLOODFILL_BRIGHTNESS, mixFactor * 0.9);
     }
     #endif
 
@@ -158,7 +157,7 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
     //Scene Lighting
     #ifdef OVERWORLD
     float rainFactor = 1.0 - wetness * 0.75;
-
+    lightmap.y = pow(lightmap.y, 1.0 + eBS * 3.0);
     vec3 sceneLighting = mix(ambientCol * pow4(lightmap.y), lightCol, shadow * rainFactor * shadowFade);
          sceneLighting *= 1.0 + scattering * shadow;
     #elif defined END

@@ -94,8 +94,7 @@ void main() {
 		vec3 normal = decodeNormal(terrainData.rg);
 		vec3 viewPos = ToView(vec3(texCoord, z0));
 
-		float fresnel = clamp(1.0 + dot(normal, normalize(viewPos)), 0.0, 1.0);
-			  fresnel = pow2(fresnel * terrainData.a);
+		float fresnel = clamp(1.0 + dot(normal, normalize(viewPos)), 0.0, 1.0) * terrainData.a;
 
 		getReflection(color, viewPos, normal, fresnel, terrainData.a);
 	}
