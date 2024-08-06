@@ -61,7 +61,7 @@ void main() {
 	color += volume;
 
 	#ifdef FIREFLIES
-	color += getDiskBlur8(colortex1, texCoord, 4.0) * vec3(0.5, 1.0, 0.4) * FIREFLIES_BRIGHTNESS;
+	color += getDiskBlur8(colortex1, texCoord, 6.0) * vec3(1.0, 2.0, 0.8) * FIREFLIES_BRIGHTNESS;
 	#endif
 	#endif
 

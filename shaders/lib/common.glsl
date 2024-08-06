@@ -78,7 +78,7 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 
 //LPV Fog//
 #define LPV_FOG
-#define LPV_FOG_STRENGTH 0.7 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
+#define LPV_FOG_STRENGTH 0.5 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
 #define LPV_FOG_SAMPLES 6 //[4 5 6 7 8 9 10]
 
 //Nether Cloudy Fog//
@@ -115,7 +115,7 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 
 //Fireflies//
 //#define FIREFLIES
-#define FIREFLIES_BRIGHTNESS 2.2 //[1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2.0 2.1 2.2 2.3 2.4 2.5 2.6 2.7 2.8 2.9 3.0 3.1 3.2 3.4 3.5 3.6 3.7 3.8 3.9 4.0]
+#define FIREFLIES_BRIGHTNESS 5.00 //[1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00 4.25 4.50 4.75 5.00 5.25 5.50 5.75 6.00]
 
 //Floodfill//
 #define VOXEL_VOLUME_SIZE 128 //[64 128 256 512]

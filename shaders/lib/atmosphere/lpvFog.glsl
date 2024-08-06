@@ -33,6 +33,24 @@ float getFireflyNoise(vec3 pos){
          mix( dot( hash(floorPos + vec3(0.0,1.0,1.0)), fractPos - vec3(0.0,1.0,1.0)), 
               dot( hash(floorPos + vec3(1.0,1.0,1.0)), fractPos - vec3(1.0,1.0,1.0)), u.x), u.y), u.z );
 }
+
+vec3 calculateWaving(vec3 worldPos, float wind) {
+    float strength = sin(wind + worldPos.z + worldPos.y) * 0.25 + 0.05;
+
+    float d0 = sin(wind * 0.0125);
+    float d1 = sin(wind * 0.0090);
+    float d2 = sin(wind * 0.0105);
+
+    return vec3(sin(wind * 0.0065 + d0 + d1 - worldPos.x + worldPos.z + worldPos.y), 
+                sin(wind * 0.0225 + d1 + d2 + worldPos.x - worldPos.z + worldPos.y),
+                sin(wind * 0.0015 + d2 + d0 + worldPos.z + worldPos.y - worldPos.y)) * strength;
+}
+
+vec3 calculateMovement(vec3 worldPos, float density, float speed, vec2 mult) {
+    vec3 wave = calculateWaving(worldPos * density, frameTimeCounter * speed);
+
+    return wave * vec3(mult, mult.x);
+}
 #endif
 
 void computeLPVFog(inout vec3 fog, inout float fireflies, in vec3 translucent, in float dither) {
@@ -105,7 +123,7 @@ void computeLPVFog(inout vec3 fog, inout float fireflies, in vec3 translucent, i
                      voxelSamplePos = clamp(voxelSamplePos, 0.0, 1.0);
 
                 vec3 floodfillData = texture3D(floodfillSampler, voxelSamplePos).rgb;
-                vec3 lighting = pow(floodfillData.rgb, vec3(1.0 / FLOODFILL_RADIUS));
+                vec3 lighting = pow(floodfillData.rgb, vec3(1.0 / FLOODFILL_RADIUS)) * length(floodfillData );
 				vec3 lpvFog = mix(lighting * density * LPV_FOG_STRENGTH, vec3(0.0), pow3(floodfillFade));
 
 				#ifdef NETHER_CLOUDY_FOG
@@ -131,20 +149,17 @@ void computeLPVFog(inout vec3 fog, inout float fireflies, in vec3 translucent, i
 				finalFog += lpvFog * currentSampleIntensity;
 
 				#ifdef FIREFLIES
-				vec3 nposA = (worldPos + cameraPosition) + vec3(sin(frameTimeCounter) * 1.5, cos(frameTimeCounter), -frameTimeCounter);
-				float fireflyNoise = getFireflyNoise(nposA * 0.75);
-					  fireflyNoise = clamp(fireflyNoise - 0.6, 0.0, 1.0);
+				float ffVisiblity = eBS * eBS * (1.0 - sunVisibility) * (1.0 - wetness) * float(isEyeInWater == 0);
+				if (ffVisiblity > 0.0) {
+					vec3 nposA = worldPos + cameraPosition;
+						nposA += calculateMovement(nposA, 0.6, 3.0, vec2(2.4, 1.8));
+						nposA += vec3(sin(frameTimeCounter * 0.50), - sin(frameTimeCounter * 0.75), cos(frameTimeCounter * 1.25));
+					float fireflyNoise = getFireflyNoise(nposA);
+						fireflyNoise = clamp(fireflyNoise - 0.675, 0.0, 1.0);
 
-				float n3da2 = texture2D(noisetex, nposA.xz * 0.0002 + floor(nposA.y * 0.03) * 0.03).r;
-				float n3db2 = texture2D(noisetex, nposA.xz * 0.0002 + floor(nposA.y * 0.03 + 1.0) * 0.03).r;
-				float wispDisplacementNoise = mix(n3da2, n3db2, fract(nposA.y * 0.03));
-                      wispDisplacementNoise = max(wispDisplacementNoise - 0.45, 0.0);
-                      wispDisplacementNoise = clamp(wispDisplacementNoise * 4.0, 0.0, 1.0);
-                      wispDisplacementNoise *= wispDisplacementNoise * wispDisplacementNoise;
-
-				float wisps = fireflyNoise * wispDisplacementNoise * (1.0 - clamp(nposA.y * 0.01, 0.0, 1.0));
-
-				fireflies += wisps * 1024.0 * eBS * eBS * (1.0 - sunVisibility) * (1.0 - wetness) * float(isEyeInWater == 0);
+					fireflies += fireflyNoise * (1.0 - clamp(nposA.y * 0.01, 0.0, 1.0)) * ffVisiblity * 128.0;
+					fireflies *= length(fireflies);
+				}
 				#endif
 			}
 		}
