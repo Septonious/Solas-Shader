@@ -53,9 +53,60 @@ vec3 calculateMovement(vec3 worldPos, float density, float speed, vec2 mult) {
 }
 #endif
 
-void computeLPVFog(inout vec3 fog, inout float fireflies, in vec3 translucent, in float dither) {
+void computeFireflies(inout float fireflies, in vec3 translucent, in float dither) {
+	//Depths
+	float z0 = texture2D(depthtex0, texCoord).r;
+	float z1 = texture2D(depthtex1, texCoord).r;
+
+	//Positions
+	vec3 viewPos = ToView(vec3(texCoord.xy, z0));
+
+	//Total fireflies visibility
+	float visibility = eBS * eBS * (1.0 - sunVisibility) * (1.0 - wetness) * float(isEyeInWater == 0);
+
+	#if MC_VERSION >= 11900
+	visibility *= 1.0 - darknessFactor;
+	#endif
+
+	visibility *= 1.0 - blindFactor;
+
+	if (visibility > 0.0) {
+		//Linear Depths
+		float linearDepth0 = getLinearDepth(z0);
+		float linearDepth1 = getLinearDepth(z1);
+
+		//Variables
+        int sampleCount = 6;
+
+		float maxDist = 96.0;
+		float maxCurrentDist = min(linearDepth1, maxDist);
+
+		//Ray Marching
+		for (int i = 0; i < sampleCount; i++) {
+			float currentDist = (i + dither) * 4.0;
+
+			if (currentDist > maxCurrentDist || linearDepth1 < currentDist || (linearDepth0 < currentDist && translucent.rgb == vec3(0.0))) {
+				break;
+			}
+
+            vec3 worldPos = ToWorld(ToView(vec3(texCoord, getLogarithmicDepth(currentDist))));
+
+			if (length(worldPos.xz) < maxDist) {
+				vec3 nposA = worldPos + cameraPosition;
+					 nposA += calculateMovement(nposA, 0.6, 3.0, vec2(2.4, 1.8));
+					 nposA += vec3(sin(frameTimeCounter * 0.50), - sin(frameTimeCounter * 0.75), cos(frameTimeCounter * 1.25));
+
+				float fireflyNoise = getFireflyNoise(nposA);
+					  fireflyNoise = clamp(fireflyNoise - 0.675, 0.0, 1.0);
+
+				fireflies += fireflyNoise * (1.0 - clamp(nposA.y * 0.01, 0.0, 1.0)) * visibility * 64.0;
+			}
+		}
+	}
+}
+
+void computeLPVFog(inout vec3 fog, in vec3 translucent, in float dither) {
     vec3 finalFog = vec3(0.0);
-	vec3 wisps = vec3(0.0);
 
 	//Depths
 	float z0 = texture2D(depthtex0, texCoord).r;
@@ -65,18 +116,18 @@ void computeLPVFog(inout vec3 fog, inout float fireflies, in vec3 translucent, i
 	vec3 viewPos = ToView(vec3(texCoord.xy, z0));
 
 	//Total LPV Fog Visibility
-    float fogVisibility = int(z0 > 0.56);
+    float visibility = int(z0 > 0.56);
 
 	#ifdef OVERWORLD
-	fogVisibility *= 1.0 - timeBrightness * 0.5;
-	fogVisibility = mix(1.0, fogVisibility, caveFactor);
+	visibility *= 1.0 - timeBrightness * 0.5;
+	visibility = mix(1.0, visibility, caveFactor);
 	#endif
 
 	#if MC_VERSION >= 11900
-	fogVisibility *= 1.0 - darknessFactor;
+	visibility *= 1.0 - darknessFactor;
 	#endif
 
-	fogVisibility *= 1.0 - blindFactor;
+	visibility *= 1.0 - blindFactor;
 
 	float density = 14.0;
 	#ifdef OVERWORLD
@@ -85,10 +136,10 @@ void computeLPVFog(inout vec3 fog, inout float fireflies, in vec3 translucent, i
 	#endif
 	#ifdef NETHER
 		  density = 20.0;
-		  fogVisibility *= 0.5;
+		  visibility *= 0.5;
 	#endif
 
-	if (fogVisibility > 0.0) {
+	if (visibility > 0.0) {
 		//Linear Depths
 		float linearDepth0 = getLinearDepth(z0);
 		float linearDepth1 = getLinearDepth(z1);
@@ -96,7 +147,7 @@ void computeLPVFog(inout vec3 fog, inout float fireflies, in vec3 translucent, i
 		//Variables
         int sampleCount = LPV_FOG_SAMPLES;
 
-		float maxDist = 96.0;
+		float maxDist = VOXEL_VOLUME_SIZE;
 		float maxCurrentDist = min(linearDepth1, maxDist);
 
 		//Ray Marching
@@ -147,23 +198,9 @@ void computeLPVFog(inout vec3 fog, inout float fireflies, in vec3 translucent, i
                 float currentSampleIntensity = (currentDist / maxDist) / sampleCount;
 
 				finalFog += lpvFog * currentSampleIntensity;
-
-				#ifdef FIREFLIES
-				float ffVisiblity = eBS * eBS * (1.0 - sunVisibility) * (1.0 - wetness) * float(isEyeInWater == 0);
-				if (ffVisiblity > 0.0) {
-					vec3 nposA = worldPos + cameraPosition;
-						nposA += calculateMovement(nposA, 0.6, 3.0, vec2(2.4, 1.8));
-						nposA += vec3(sin(frameTimeCounter * 0.50), - sin(frameTimeCounter * 0.75), cos(frameTimeCounter * 1.25));
-					float fireflyNoise = getFireflyNoise(nposA);
-						fireflyNoise = clamp(fireflyNoise - 0.675, 0.0, 1.0);
-
-					fireflies += fireflyNoise * (1.0 - clamp(nposA.y * 0.01, 0.0, 1.0)) * ffVisiblity * 128.0;
-					fireflies *= length(fireflies);
-				}
-				#endif
 			}
 		}
-		finalFog *= fogVisibility;
+		finalFog *= visibility;
 	}
 
     fog += finalFog;
