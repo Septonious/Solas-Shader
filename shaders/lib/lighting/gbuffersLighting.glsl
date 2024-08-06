@@ -25,7 +25,7 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
 
     //Vanilla Directional Lighting
     float vanillaDiffuse = (0.25 * NoU + 0.75) + (0.667 - abs(NoE)) * (1.0 - abs(NoU)) * 0.15;
-          vanillaDiffuse *= vanillaDiffuse;
+          vanillaDiffuse *= vanillaDiffuse * vanillaDiffuse;
 
     #ifdef GBUFFERS_TERRAIN
     if (subsurface > 0.5) {
@@ -61,7 +61,7 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
              voxelSamplePos = clamp(voxelSamplePos, 0.0, 1.0);
 
         vec3 lighting = texture3D(floodfillSampler, voxelSamplePos).rgb;
-        voxelLighting = lighting * (0.66 + length(lighting) * 0.33);
+        voxelLighting = pow(lighting, vec3(1.0 / FLOODFILL_RADIUS));
 
         #ifdef GBUFFERS_ENTITIES
         voxelLighting += pow16(lightmap.x) * blockLightCol;
@@ -151,8 +151,7 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
     shadow *= parallaxShadow;
     #endif
 
-    NoL = clamp(NoL * 1.01 - 0.01, 0.0, 1.0);
-    shadow *= NoL;
+    shadow *= clamp(NoL * 1.01 - 0.01, 0.0, 1.0);
 
     //Scene Lighting
     #ifdef OVERWORLD

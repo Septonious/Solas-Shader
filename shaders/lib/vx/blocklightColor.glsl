@@ -8,7 +8,7 @@ const vec3[] blocklightColorArray = vec3[](
 	//Brewing Stand
 	vec3(1.00, 0.75, 0.10) * 1.5,
 	//Torch, Lantern, Campfire, Fire
-	vec3(1.00, 0.50, 0.15) * 3.5,
+	vec3(1.00, 0.55, 0.15) * 3.5,
 	//Soul Torch, Soul Lantern, Soul Campfire, Soul Fire
 	vec3(0.10, 0.60, 1.00) * 3.5,
 	//End Rod
@@ -16,7 +16,7 @@ const vec3[] blocklightColorArray = vec3[](
 	//Sea Lantern
 	vec3(0.70, 0.90, 1.00) * 6.5,
 	//Glowstone
-	vec3(1.00, 0.65, 0.25) * 5.5,
+	vec3(1.00, 0.60, 0.30) * 5.5,
 	//Shroomlight, Redstone Lamp
 	vec3(1.00, 0.30, 0.10) * 4.5,
 	//Respawn Anchor
@@ -24,7 +24,7 @@ const vec3[] blocklightColorArray = vec3[](
 	//Lava
 	vec3(1.00, 0.18, 0.02) * 5.0,
 	//Cave Berries
-	vec3(1.00, 0.35, 0.10) * 2.0,
+	vec3(1.00, 0.40, 0.10) * 2.5,
 	//Amethyst
 	vec3(0.80, 0.30, 1.00) * 2.0,
 	//Red Concrete

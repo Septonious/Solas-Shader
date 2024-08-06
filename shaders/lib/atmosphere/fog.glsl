@@ -12,11 +12,11 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 atmo
 	float fogDistance = min(192.0 / far, 1.0) * (100.0 / distanceFactor);
 	float fogDensity = FOG_DENSITY * mix(1.0, 0.5, mefade) * (2.0 - caveFactor) * (1.0 - fogAltitude * 0.9) * (1.0 - eBS * timeBrightness * 0.5) * (1.5 - eBS * sunVisibility * 0.5);
 
-    float fog = 1.0 - exp(-pow(lViewPos * (0.001 - 0.0005 * wetness2), 2.0 - wetness2) * lViewPos * fogDistance);
+    float fog = 1.0 - exp(-pow(lViewPos * (0.001 - 0.00075 * wetness2), 2.0 - wetness2) * lViewPos * fogDistance);
           fog *= fogDensity;
 		  fog = clamp(fog, 0.0, 1.0);
 
-    vec3 fogCol = pow(atmosphereColor, vec3(1.1 - wetness2 * 0.1));
+    vec3 fogCol = atmosphereColor;
 		 fogCol = mix(caveMinLightCol * fog, fogCol, caveFactor);
 
 	//Distant Fade

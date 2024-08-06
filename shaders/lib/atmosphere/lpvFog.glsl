@@ -105,8 +105,7 @@ void computeLPVFog(inout vec3 fog, inout float fireflies, in vec3 translucent, i
                      voxelSamplePos = clamp(voxelSamplePos, 0.0, 1.0);
 
                 vec3 floodfillData = texture3D(floodfillSampler, voxelSamplePos).rgb;
-                vec3 lighting = pow(floodfillData.rgb, vec3(0.75));
-        			 lighting *= 0.66 + length(lighting) * 0.33;
+                vec3 lighting = pow(floodfillData.rgb, vec3(1.0 / FLOODFILL_RADIUS));
 				vec3 lpvFog = mix(lighting * density * LPV_FOG_STRENGTH, vec3(0.0), pow3(floodfillFade));
 
 				#ifdef NETHER_CLOUDY_FOG

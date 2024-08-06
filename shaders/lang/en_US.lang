@@ -169,6 +169,8 @@ option.DYNAMIC_HANDLIGHT=Dynamic Handheld Lighting
 option.DYNAMIC_HANDLIGHT.comment=Allows handheld light sources (such as torches) to emit light.
 option.DYNAMIC_HANDLIGHT_STRENGTH=Handheld Lighting Brightness
 option.FLOODFILL_BRIGHTNESS=Colored Lighting Brightness
+option.FLOODFILL_RADIUS=Colored Lighting Radius
+option.FLOODFILL_RADIUS.comment=Controls how far the light can spread.
 option.VOXEL_VOLUME_SIZE=Voxel Volume Size
 
 #----------------------------------------------------------------------------------#

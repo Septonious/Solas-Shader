@@ -168,6 +168,8 @@ option.DYNAMIC_HANDLIGHT=Ручное Освещение
 option.DYNAMIC_HANDLIGHT.comment=Позволяет предметам в руке излучать свет.
 option.DYNAMIC_HANDLIGHT_STRENGTH=Яркость Ручного Освещения
 option.FLOODFILL_BRIGHTNESS=Яркость Цветного Освещения
+option.FLOODFILL_RADIUS=Радиус Цветного Освещения
+option.FLOODFILL_RADIUS.comment=Определяет дальность распространения света от источников.
 option.VOXEL_VOLUME_SIZE=Размер Массива Вокселей
 option.VOXEL_VOLUME_SIZE.comment=Определяет размер массива вокселей для цветного освещения. §c[-]§r Сильно влияет на производительность.
 
