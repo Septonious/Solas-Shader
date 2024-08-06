@@ -4,15 +4,16 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 atmo
 
 	//Overworld Fog
 	#ifdef OVERWORLD
-	float wetness2 = wetness * caveFactor;
+	float eBS01 = pow(eBS, 0.1);
+	float wetnessCave = wetness * caveFactor;
 	float distanceFactor = mix(65.0, FOG_DISTANCE * (0.5 + sunVisibility * 0.5), caveFactor);
 	float fogAltitude = clamp(pow16((worldPos.y + cameraPosition.y + 1000.0 - FOG_HEIGHT) * 0.001), 0.0, 1.0);
 		  fogAltitude = mix(0.0, fogAltitude, caveFactor);
 		  fogAltitude = mix(fogAltitude, 0.0, wetness * 0.25);
 	float fogDistance = min(192.0 / far, 1.0) * (100.0 / distanceFactor);
-	float fogDensity = FOG_DENSITY * mix(1.0, 0.5, mefade) * (2.0 - caveFactor) * (1.0 - fogAltitude * 0.9) * (1.0 - eBS * timeBrightness * 0.5) * (1.5 - eBS * sunVisibility * 0.5);
+	float fogDensity = FOG_DENSITY * mix(1.0, 0.5, mefade) * (2.0 - caveFactor) * (1.0 - fogAltitude * 0.9) * (1.0 - eBS01 * timeBrightness * 0.5) * (1.5 - eBS01 * sunVisibility * 0.5);
 
-    float fog = 1.0 - exp(-pow(lViewPos * (0.001 - 0.00075 * wetness2), 2.0 - wetness2) * lViewPos * fogDistance);
+    float fog = 1.0 - exp(-pow(lViewPos * (0.001 - 0.00075 * wetnessCave), 2.0 - wetnessCave) * lViewPos * fogDistance);
           fog *= fogDensity;
 		  fog = clamp(fog, 0.0, 1.0);
 
