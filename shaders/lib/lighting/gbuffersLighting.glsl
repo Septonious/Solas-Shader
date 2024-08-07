@@ -159,6 +159,7 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
     lightmap.y = pow(lightmap.y, 1.0 + eBS * 3.0);
     vec3 sceneLighting = mix(ambientCol * pow4(lightmap.y), lightCol, shadow * rainFactor * shadowFade);
          sceneLighting *= 1.0 + scattering * shadow;
+
     #elif defined END
     vec3 sceneLighting = mix(endAmbientCol, endLightCol, shadow) * 0.25;
     #elif defined NETHER
@@ -220,9 +221,17 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
     albedo.rgb = mix(albedo.rgb, albedo.rgb * ao * ao, aoMixer * AO_STRENGTH);
     #endif
 
+    //RSM GI//
+    vec3 gi = vec3(0.0);
+
+    #if defined GI && (defined GBUFFERS_TERRAIN || defined GBUFFERS_ENTITIES)
+    vec2 prevScreenPos = Reprojection(screenPos);
+    gi = texture2D(gaux1, prevScreenPos).rgb;
+    gi = pow4(gi) * 32.0 * lightCol;
+    #endif
+
     albedo.rgb = pow(albedo.rgb, vec3(2.2));
-    albedo.rgb *= sceneLighting + blockLighting + emission + auroraLighting;
-    albedo.rgb *= vanillaDiffuse;
+    albedo.rgb *= (sceneLighting + auroraLighting) * vanillaDiffuse + blockLighting + gi;
     albedo.rgb += specularHighlight;
     albedo.rgb = pow(albedo.rgb, vec3(1.0 / 2.2));
 }

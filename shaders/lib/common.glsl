@@ -72,7 +72,7 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 
 //VL//
 #define VL
-#define VL_STRENGTH 2.00 //[0.00 0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00]
+#define VL_STRENGTH 1.75 //[0.00 0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00]
 #define VL_SAMPLES 7 //[4 5 6 7 8 9 10]
 #define VL_CLOUDY_FOG
 
@@ -103,9 +103,9 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 
 //Bloom//
 #define BLOOM
-#define BLOOM_STRENGTH 1.25 //[1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00]
-#define BLOOM_CONTRAST 3 //[-4 -3 -2 -1 0 1 2 3 4]
-#define BLOOM_TILE_SIZE 0.0 //[0.0 0.5 1.0 1.5 2.0]
+#define BLOOM_STRENGTH 1.25 //[1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00]
+#define BLOOM_CONTRAST 2 //[-4 -3 -2 -1 0 1 2 3 4]
+#define BLOOM_TILE_SIZE 1.0 //[0.0 0.5 1.0 1.5 2.0]
 
 //Vanilla AO//
 #define VANILLA_AO
@@ -126,6 +126,12 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 #define FLOODFILL_RADIUS 1.5 //[0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7]
 #define DYNAMIC_HANDLIGHT
 #define DYNAMIC_HANDLIGHT_STRENGTH 1.50 //[0.50 0.75 1.00 1.25 1.50 1.75 2.00]
+
+//RSM GI//
+//#define GI
+#define GI_SAMPLES 6 //[4 5 6 7 8 9 10 11 12 13 14 15 16]
+#define GI_RADIUS 32.0 //[16.0 24.0 32.0 48.0 64.0 80.0 96.0 112.0 128.0]
+#define GI_BRIGHTNESS 1.0 //[1.0 2.0 3.0 4.0 5.0 6.0 7.0 8.0]
 
 //Depth of Field & Distant Blur//
 //#define DOF
@@ -170,7 +176,7 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 #define GENERATED_SPECULAR
 #define RAIN_PUDDLES
 #define RAIN_PUDDLES_STRENGTH 1.00 //[0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00]
-#define NORMAL_STRENGTH 4.0 //[1.0 2.0 3.0 4.0 5.0 6.0 7.0 8.0]
+#define NORMAL_STRENGTH 3.0 //[1.0 2.0 3.0 4.0 5.0 6.0 7.0 8.0]
 #define NORMAL_RESOLUTION 128.0 //[64.0 96.0 128.0 160.0 192.0]
 #define NORMAL_THRESHOLD 0.15 //[0.05 0.10 0.15 0.20 0.25]
 

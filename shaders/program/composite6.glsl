@@ -86,17 +86,17 @@ void main() {
 	vec4 color = texture2D(colortex0, texCoord);
 
 	#if defined PBR || defined GENERATED_SPECULAR
-	vec4 terrainData = texture2D(colortex3, texCoord);
+	vec4 gbuffersData = texture2D(colortex3, texCoord);
 	float z0 = texture2D(depthtex0, texCoord).r;
 	float z1 = texture2D(depthtex1, texCoord).r;
 
-	if (terrainData.a > 0.01 && terrainData.a <= 0.95 && z0 > 0.56 && z0 >= z1) {
-		vec3 normal = decodeNormal(terrainData.rg);
+	if (gbuffersData.a > 0.01 && gbuffersData.a <= 0.95 && z0 > 0.56 && z0 >= z1) {
+		vec3 normal = decodeNormal(gbuffersData.rg);
 		vec3 viewPos = ToView(vec3(texCoord, z0));
 
-		float fresnel = clamp(1.0 + dot(normal, normalize(viewPos)), 0.0, 1.0) * terrainData.a;
+		float fresnel = clamp(1.0 + dot(normal, normalize(viewPos)), 0.0, 1.0) * gbuffersData.a;
 
-		getReflection(color, viewPos, normal, fresnel, terrainData.a);
+		getReflection(color, viewPos, normal, fresnel, gbuffersData.a);
 	}
 	#endif
 

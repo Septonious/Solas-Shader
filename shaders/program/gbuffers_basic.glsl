@@ -30,7 +30,6 @@ uniform vec3 cameraPosition;
 uniform vec3 skyColor;
 
 uniform sampler2D noisetex;
-uniform sampler2D gaux1;
 
 uniform mat4 gbufferProjectionInverse;
 uniform mat4 gbufferModelViewInverse;

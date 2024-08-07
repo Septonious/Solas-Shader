@@ -124,5 +124,5 @@ void computeVL(inout vec3 vl, in vec3 translucent, in float dither) {
         finalVL *= vlVisibility * VL_STRENGTH;
 		if (isEyeInWater == 1.0) finalVL *= mix(waterColorSqrt, waterColorSqrt * weatherCol, wetness) * (4.0 + sunVisibility * 8.0);
 	}
-    vl += pow(finalVL, vec3(1.0 - pow(length(finalVL), 1.5) * 0.25));
+    vl += pow(finalVL, vec3(1.0 - pow(length(finalVL), 1.25) * 0.25));
 }

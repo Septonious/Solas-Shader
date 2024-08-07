@@ -45,7 +45,6 @@ uniform vec3 skyColor;
 
 uniform sampler2D texture;
 uniform sampler2D noisetex;
-uniform sampler2D gaux1;
 
 uniform sampler3D floodfillSampler;
 uniform usampler3D voxelSampler;

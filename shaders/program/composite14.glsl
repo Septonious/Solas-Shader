@@ -13,6 +13,10 @@ uniform int frameTimeCounter;
 #endif
 
 uniform float viewWidth, viewHeight;
+
+#ifdef OVERWORLD
+uniform float timeBrightness;
+#endif
 #endif
 
 uniform sampler2D colortex0;
@@ -32,6 +36,9 @@ uniform mat4 gbufferProjectionInverse;
 const bool colortex2Clear = false;
 const bool colortex2MipmapEnabled = true;
 #endif
+
+//Common Variables//
+float eBS = eyeBrightnessSmooth.y / 240.0;
 
 //Includes//
 #include "/lib/util/bayerDithering.glsl"

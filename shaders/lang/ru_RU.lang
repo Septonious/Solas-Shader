@@ -154,6 +154,25 @@ option.REFRACTION_STRENGTH=Сила Преломления
 
 screen.LIGHTING=Освещение
 
+option.DYNAMIC_HANDLIGHT=Ручное Освещение
+option.DYNAMIC_HANDLIGHT.comment=Позволяет предметам в руке излучать свет.
+option.DYNAMIC_HANDLIGHT_STRENGTH=Яркость Ручного Освещения
+option.FLOODFILL_BRIGHTNESS=Яркость Цветного Освещения
+option.FLOODFILL_RADIUS=Радиус Цветного Освещения
+option.FLOODFILL_RADIUS.comment=Определяет дальность распространения света от источников.
+option.VOXEL_VOLUME_SIZE=Размер Массива Вокселей
+option.VOXEL_VOLUME_SIZE.comment=Определяет размер массива вокселей для цветного освещения. §c[-]§r Сильно влияет на производительность.
+option.AO=Шейдерное AO
+option.AO.comment=Тени в точках соприкосновения блоков или существ.
+option.VANILLA_AO=Ванильное AO
+option.VANILLA_AO.comment=Тени в точках соприкосновения блоков или существ.
+option.AO_STRENGTH=Сила АО
+option.AO_RADIUS=Радиус АО
+
+#----------------------------------------------------------------------------------#
+
+screen.SHADOWS=Настройки Теней
+
 option.shadowMapResolution=Разрешение Теней
 option.shadowDistance=Дистанция Рендера Теней
 option.sunPathRotation=Угол Солнца/Луны
@@ -164,23 +183,15 @@ option.VPS_BLUR_STRENGTH=Сила Размытия РТ
 option.SHADOW_SAMPLE_COUNT=Качество Теней
 option.SHADOW_COLOR=Цветные Тени
 option.ENTITY_SHADOWS=Тени от Существ
-option.DYNAMIC_HANDLIGHT=Ручное Освещение
-option.DYNAMIC_HANDLIGHT.comment=Позволяет предметам в руке излучать свет.
-option.DYNAMIC_HANDLIGHT_STRENGTH=Яркость Ручного Освещения
-option.FLOODFILL_BRIGHTNESS=Яркость Цветного Освещения
-option.FLOODFILL_RADIUS=Радиус Цветного Освещения
-option.FLOODFILL_RADIUS.comment=Определяет дальность распространения света от источников.
-option.VOXEL_VOLUME_SIZE=Размер Массива Вокселей
-option.VOXEL_VOLUME_SIZE.comment=Определяет размер массива вокселей для цветного освещения. §c[-]§r Сильно влияет на производительность.
 
 #----------------------------------------------------------------------------------#
 
-option.AO=Шейдерное AO
-option.AO.comment=Тени в точках соприкосновения блоков или существ.
-option.VANILLA_AO=Ванильное AO
-option.VANILLA_AO.comment=Тени в точках соприкосновения блоков или существ.
-option.AO_STRENGTH=Сила АО
-option.AO_RADIUS=Радиус АО
+screen.GI=Настройки Глобального Освещения
+
+option.GI=Глобальное Освещение (ГО)
+option.GI_RADIUS=Радиус ГО
+option.GI_SAMPLES=Качество ГО
+option.GI_BRIGHTNESS=Яркость ГО
 
 #=======================================================# Generated PBR #=======================================================#
 

@@ -48,20 +48,32 @@ uniform float wetness;
 
 uniform ivec2 eyeBrightnessSmooth;
 uniform ivec2 atlasSize;
-uniform vec3 cameraPosition;
 uniform vec3 skyColor;
+uniform vec3 cameraPosition;
+
+#ifdef GI
+uniform vec3 previousCameraPosition;
+#endif
 
 #ifdef PBR
 uniform sampler2D specular;
 uniform sampler2D normals;
 #endif
 
+#ifdef GI
+uniform sampler2D gaux1;
+#endif
+
 uniform sampler2D texture;
 uniform sampler2D noisetex;
-uniform sampler2D gaux1;
 
 uniform sampler3D floodfillSampler;
 uniform usampler3D voxelSampler;
+
+#ifdef GI
+uniform mat4 gbufferPreviousModelView;
+uniform mat4 gbufferPreviousProjection;
+#endif
 
 uniform mat4 gbufferProjectionInverse;
 uniform mat4 gbufferModelViewInverse;
@@ -95,6 +107,11 @@ vec2 dcdy = dFdy(texCoord);
 #include "/lib/vx/voxelization.glsl"
 #include "/lib/pbr/ggx.glsl"
 #include "/lib/lighting/shadows.glsl"
+
+#ifdef GI
+#include "/lib/util/reprojection.glsl"
+#endif
+
 #include "/lib/lighting/gbuffersLighting.glsl"
 
 #ifdef TAA
@@ -212,7 +229,7 @@ void main() {
 
 	/* DRAWBUFFERS:03 */
 	gl_FragData[0] = albedo;
-	gl_FragData[1] = vec4(encodeNormal(newNormal), emission * 0.1 + lmCoord.y * 0.01, clamp(smoothness * metalness, 0.0, 0.95));
+	gl_FragData[1] = vec4(encodeNormal(newNormal), emission * 0.1, clamp(smoothness * metalness, 0.0, 0.95));
 }
 
 #endif

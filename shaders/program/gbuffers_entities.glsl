@@ -43,12 +43,22 @@ uniform vec3 cameraPosition;
 uniform vec3 skyColor;
 uniform vec4 entityColor;
 
+#ifdef GI
+uniform vec3 previousCameraPosition;
+
+uniform sampler2D gaux1;
+#endif
+
 uniform sampler2D texture;
 uniform sampler2D noisetex;
-uniform sampler2D gaux1;
 
 uniform sampler3D floodfillSampler;
 uniform usampler3D voxelSampler;
+
+#ifdef GI
+uniform mat4 gbufferPreviousModelView;
+uniform mat4 gbufferPreviousProjection;
+#endif
 
 uniform mat4 gbufferProjectionInverse;
 uniform mat4 gbufferModelViewInverse;
@@ -75,6 +85,11 @@ vec3 lightVec = sunVec;
 #include "/lib/vx/blocklightColor.glsl"
 #include "/lib/vx/voxelization.glsl"
 #include "/lib/lighting/shadows.glsl"
+
+#ifdef GI
+#include "/lib/util/reprojection.glsl"
+#endif
+
 #include "/lib/lighting/gbuffersLighting.glsl"
 
 #ifdef GENERATED_EMISSION
