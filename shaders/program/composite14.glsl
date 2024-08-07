@@ -19,12 +19,12 @@ uniform float timeBrightness;
 #endif
 #endif
 
+uniform ivec2 eyeBrightnessSmooth;
+
 uniform sampler2D colortex0;
 uniform sampler2D colortex2;
 
 #ifdef BLOOM
-uniform ivec2 eyeBrightnessSmooth;
-
 uniform sampler2D colortex1;
 uniform sampler2D depthtex0;
 
