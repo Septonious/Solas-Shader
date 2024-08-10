@@ -346,7 +346,6 @@ float linearStep(float edge0, float edge1, float x) {
 #undef RAINBOW
 #undef AURORA
 #undef VC
-#undef WATER_FOG
 #undef STARS
 #undef PLANAR_CLOUDS
 #undef RAIN_PUDDLES
@@ -367,6 +366,7 @@ float linearStep(float edge0, float edge1, float x) {
 
 #ifdef NETHER
 #undef VL
+#undef GI
 #endif
 
 #ifdef VC_SHADOWS
