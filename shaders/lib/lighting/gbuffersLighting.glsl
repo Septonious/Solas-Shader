@@ -1,17 +1,5 @@
 #ifdef DYNAMIC_HANDLIGHT
-void getHandLightColor(inout vec3 blockLighting, float lViewPos) {
-	float heldLightValue = max(float(heldBlockLightValue), float(heldBlockLightValue2));
-	float handlight = clamp((heldLightValue - 2.0 * lViewPos) * 0.025, 0.0, 1.0);
-
-    vec3 handLightColor = blockLightCol;
-
-    if (handlight > 0.0) {
-        if (heldItemId2 < 3) handLightColor = blocklightColorArray[heldItemId - 1];
-        else handLightColor = blocklightColorArray[heldItemId2 - 1];
-    }
-
-    blockLighting += mix(handLightColor * handlight * DYNAMIC_HANDLIGHT_STRENGTH, vec3(0.0), vec3(1.0 - handlight));
-}
+#include "/lib/lighting/handlight.glsl"
 #endif
 
 void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in vec3 worldPos, inout vec3 shadow, in vec2 lightmap, 

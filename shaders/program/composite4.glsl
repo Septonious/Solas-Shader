@@ -18,6 +18,12 @@ uniform int isEyeInWater;
 #endif
 
 #ifdef WATER_FOG
+#ifdef DYNAMIC_HANDLIGHT
+uniform int heldItemId, heldItemId2;
+uniform int heldBlockLightValue;
+uniform int heldBlockLightValue2;
+#endif
+
 #if MC_VERSION >= 11900
 uniform float darknessFactor;
 #endif
@@ -62,6 +68,11 @@ float sunVisibility = clamp(dot(sunVec, upVec) + 0.1, 0.0, 0.25) * 4.0;
 #endif
 
 #ifdef WATER_FOG
+#ifdef DYNAMIC_HANDLIGHT
+#include "/lib/vx/blocklightColor.glsl"
+#include "/lib/lighting/handlight.glsl"
+#endif
+
 #include "/lib/water/waterFog.glsl"
 #endif
 #endif

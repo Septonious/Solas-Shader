@@ -18,6 +18,11 @@ vec4 getWaterFog(vec3 viewPos, float densityMultiplier) {
 	vec3 waterFogColor = mix(waterColor, normalize(fogColor + 0.00001) * 0.5, 0.25);
 	#endif
 
+    //Dynamic Hand Lighting
+    #ifdef DYNAMIC_HANDLIGHT
+    getHandLightColor(waterFogColor, length(viewPos));
+    #endif
+
 	waterFogColor *= 1.0 - blindFactor;
 
 	#if MC_VERSION >= 11900
