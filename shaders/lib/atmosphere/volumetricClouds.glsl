@@ -119,14 +119,13 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z1, f
                 vec3 worldPos = rayPos - cameraPosition;
 
 				float shadowSample = 1.0;
-				float shadowLength = clamp(shadowDistance * 0.9166667 - length(worldPos.xz), 0.0, 1.0);
 
 				#ifdef VC_SHADOWS
 				shadowSample = texture2DShadow(shadowtex1, ToShadow(worldPos));
 				#endif
 
 				//Indoor leak prevention
-				if (eyeBrightnessSmooth.y < 200.0 && shadowLength > 0.0) {
+				if (eyeBrightnessSmooth.y < 200.0 && length(worldPos) < shadowDistance) {
 					#ifndef VC_SHADOWS
 					shadowSample = texture2DShadow(shadowtex1, ToShadow(worldPos));
 					#endif
@@ -267,7 +266,7 @@ void computeEndVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z1
 					  sampleLighting *= 1.0 - pow(noise, noiseLightFactor);
 
 				cloudLighting = mix(cloudLighting, sampleLighting, noise * (1.0 - cloud * cloud));
-				noise *= shadow1;
+				if (rayDistance < shadowDistance * 0.1) noise *= shadow1;
 				cloud = mix(cloud, 1.0, noise);
 				noise *= pow24(smoothstep(386.0, 8.0, rayDistance)); //Fog
 				cloudAlpha = mix(cloudAlpha, 1.0, noise);
