@@ -27,8 +27,8 @@ void computeVL(inout vec3 vl, in vec3 translucent, in float dither) {
 	#ifdef OVERWORLD
 	float waterFactor = 1.0 - float(isEyeInWater == 1) * 0.5;
 		  vlVisibility *= pow(VoU, 3.0 * waterFactor);
-		  vlVisibility *= mix(0.25 + VoL * 0.25, VoL * 0.4, timeBrightness);
-		  vlVisibility = mix(vlVisibility * (2.0 - sunVisibility), 0.5, indoorFactor) * waterFactor;
+		  vlVisibility *= mix(0.25 + VoL * 0.25, VoL * 0.45, timeBrightness);
+		  vlVisibility = mix(vlVisibility * (2.0 - sunVisibility), 0.65, indoorFactor) * waterFactor;
 	#else
 		  vlVisibility = exp(pow4(VoL)) * 0.075;
 	#endif
