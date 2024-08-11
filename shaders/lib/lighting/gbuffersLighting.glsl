@@ -25,7 +25,12 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
 
     //Vanilla Directional Lighting
     float vanillaDiffuse = (0.25 * NoU + 0.75) + (0.667 - abs(NoE)) * (1.0 - abs(NoU)) * 0.15;
-          vanillaDiffuse *= vanillaDiffuse * vanillaDiffuse;
+          vanillaDiffuse *= vanillaDiffuse;
+          vanillaDiffuse *= vanillaDiffuse;
+
+    #ifdef OVERWORLD
+    vanillaDiffuse = mix(1.0, vanillaDiffuse, eBS);
+    #endif
 
     #ifdef GBUFFERS_TERRAIN
     if (subsurface > 0.5) {
@@ -50,8 +55,8 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
     #endif
 
     float floodfillFade = maxOf(abs(worldPos));
-          floodfillFade /= voxelVolumeSize * 0.5;
-          floodfillFade = clamp(floodfillFade, 0.001, 1.0);
+            floodfillFade /= voxelVolumeSize * 0.5;
+            floodfillFade = clamp(floodfillFade, 0.0, 1.0);
 
     vec3 voxelLighting = vec3(0.0);
 
@@ -67,7 +72,7 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
         voxelLighting += pow16(lightmap.x) * blockLightCol;
         #endif
 
-        float mixFactor = 1.0 - pow2(floodfillFade);
+        float mixFactor = 1.0 - floodfillFade;
 
         blockLighting = mix(blockLighting, voxelLighting * FLOODFILL_BRIGHTNESS, mixFactor * 0.9);
     }
@@ -227,11 +232,17 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
     #if defined GI && (defined GBUFFERS_TERRAIN || defined GBUFFERS_ENTITIES)
     vec2 prevScreenPos = Reprojection(screenPos);
     gi = texture2D(gaux1, prevScreenPos).rgb;
-    gi = pow4(gi) * 32.0 * lightCol;
+    gi = pow4(gi) * 32.0;
+
+    #if defined OVERWORLD
+    gi *= lightCol;
+    #elif defined NETHER
+    gi *= endLightCol;
+    #endif
     #endif
 
     albedo.rgb = pow(albedo.rgb, vec3(2.2));
-    albedo.rgb *= (sceneLighting + auroraLighting) * vanillaDiffuse + blockLighting + gi;
+    albedo.rgb *= (sceneLighting + auroraLighting) * vanillaDiffuse + blockLighting + gi + emission;
     albedo.rgb += specularHighlight;
     albedo.rgb = pow(albedo.rgb, vec3(1.0 / 2.2));
 }

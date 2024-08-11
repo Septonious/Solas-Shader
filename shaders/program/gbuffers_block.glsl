@@ -42,6 +42,7 @@ uniform float wetness;
 uniform ivec2 eyeBrightnessSmooth;
 uniform vec3 cameraPosition;
 uniform vec3 skyColor;
+uniform vec3 fogColor;
 
 uniform sampler2D texture;
 uniform sampler2D noisetex;

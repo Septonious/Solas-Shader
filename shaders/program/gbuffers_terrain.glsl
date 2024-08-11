@@ -49,6 +49,7 @@ uniform float wetness;
 uniform ivec2 eyeBrightnessSmooth;
 uniform ivec2 atlasSize;
 uniform vec3 skyColor;
+uniform vec3 fogColor;
 uniform vec3 cameraPosition;
 
 #ifdef GI

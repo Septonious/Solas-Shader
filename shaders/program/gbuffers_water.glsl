@@ -49,9 +49,10 @@ uniform int moonPhase;
 uniform ivec2 eyeBrightnessSmooth;
 
 #ifdef OVERWORLD
-uniform vec3 skyColor, fogColor;
+uniform vec3 skyColor;
 #endif
 
+uniform vec3 fogColor;
 uniform vec3 cameraPosition;
 
 uniform sampler2D texture;
@@ -114,8 +115,9 @@ vec3 lightVec = sunVec;
 
 #ifdef OVERWORLD
 #include "/lib/pbr/ggx.glsl"
-#include "/lib/water/waterFog.glsl"
 #endif
+
+#include "/lib/water/waterFog.glsl"
 
 #if WATER_NORMALS > 0
 #include "/lib/water/waterNormals.glsl"
@@ -192,11 +194,20 @@ void main() {
 			vec3 oScreenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), oDepth);
 			vec3 oViewPos = ToNDC(oScreenPos);
 
+			#ifdef OVERWORLD
 			vec4 waterFog = getWaterFog(viewPos.xyz - oViewPos, 1.0 + sunVisibility);
+			#else
+			vec4 waterFog = getWaterFog(viewPos.xyz - oViewPos, 1.5);
+			#endif
 				 waterFog.a *= max(lightmap.y, 0.2);
 
 			albedo.rgb = mix(sqrt(albedo.rgb), sqrt(waterFog.rgb), waterFog.a);
-			albedo.rgb *= albedo.rgb * (1.0 - pow(waterFog.a, 1.5) * 0.65) * (0.5 + timeBrightness * 0.5);
+			albedo.rgb *= albedo.rgb * (1.0 - pow(waterFog.a, 1.5) * 0.65);
+
+			#ifdef OVERWORLD
+			albedo.rgb *= (0.5 + timeBrightness * 0.5);
+			#endif
+
 			albedo.a = clamp(albedo.a * mix(0.25, 1.5, waterFog.a), 0.05, 0.95);
 			#endif
 		}

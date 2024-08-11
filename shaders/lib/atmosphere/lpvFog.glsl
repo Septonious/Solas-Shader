@@ -174,8 +174,8 @@ void computeLPVFog(inout vec3 fog, in vec3 translucent, in float dither) {
                      voxelSamplePos = clamp(voxelSamplePos, 0.0, 1.0);
 
                 vec3 floodfillData = texture3D(floodfillSampler, voxelSamplePos).rgb;
-                vec3 lighting = pow(floodfillData.rgb, vec3(1.0 / FLOODFILL_RADIUS)) * length(floodfillData );
-				vec3 lpvFog = mix(lighting * density * LPV_FOG_STRENGTH, vec3(0.0), pow3(floodfillFade));
+                vec3 lighting = pow(floodfillData, vec3(1.0 / FLOODFILL_RADIUS));
+				vec3 lpvFog = mix(lighting * length(lighting * 0.75) * density * LPV_FOG_STRENGTH, vec3(0.0), floodfillFade);
 
 				#ifdef NETHER_CLOUDY_FOG
 				vec3 npos = (worldPos + cameraPosition) * VF_NETHER_FREQUENCY + vec3(frameTimeCounter * VF_NETHER_SPEED, 0.0, 0.0);
@@ -186,8 +186,7 @@ void computeLPVFog(inout vec3 fog, in vec3 translucent, in float dither) {
 				float cloudyNoise = mix(n3da, n3db, fract(npos.y * 0.1));
 					  cloudyNoise = max(cloudyNoise - 0.45, 0.0);
 					  cloudyNoise = min(cloudyNoise * 8.0, 1.0);
-					  cloudyNoise *= cloudyNoise;
-				lpvFog += cloudyNoise * netherColSqrt * VF_NETHER_STRENGTH;
+				lpvFog += cloudyNoise * (1.0 + cloudyNoise * cloudyNoise) * netherColSqrt * VF_NETHER_STRENGTH;
 				#endif
 
 				//Translucency Blending

@@ -36,6 +36,8 @@ uniform ivec2 eyeBrightnessSmooth;
 uniform vec3 cameraPosition;
 #endif
 
+uniform vec3 fogColor;
+
 uniform sampler2D colortex0;
 
 #if defined LPV_FOG || defined VL || defined FIREFLIES

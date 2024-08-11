@@ -45,8 +45,10 @@ uniform ivec2 atlasSize;
 uniform ivec2 eyeBrightnessSmooth;
 
 #ifdef OVERWORLD
-uniform vec3 skyColor, fogColor;
+uniform vec3 skyColor;
 #endif
+
+uniform vec3 fogColor;
 
 #ifdef AURORA
 uniform float isSnowy;

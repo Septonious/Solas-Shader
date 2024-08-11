@@ -36,9 +36,10 @@ uniform float shadowFade;
 #ifdef OVERWORLD
 uniform ivec2 eyeBrightnessSmooth;
 
-uniform vec3 skyColor, fogColor;
+uniform vec3 skyColor;
 #endif
 
+uniform vec3 fogColor;
 uniform vec3 cameraPosition;
 
 #ifdef MILKY_WAY

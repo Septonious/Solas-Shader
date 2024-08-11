@@ -7,7 +7,7 @@ vec3 getBloomTile(float lod, vec2 bloomCoord, vec2 offset) {
 	float resScale = 1.25 * min(360.0, viewHeight) / viewHeight;
 	vec3 bloom = texture2DLod(colortex1, (bloomCoord / scale + offset) * resScale, 0.0).rgb;
 
-	return pow4(bloom) * 128.0;
+	return pow8(bloom) * 256.0;
 }
 
 void getBloom(inout vec3 color, vec2 coord, float z1) {
