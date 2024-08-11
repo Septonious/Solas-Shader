@@ -135,6 +135,7 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z1, f
 				float noise = 0.0;
 				float rayDistance = length(worldPos.xz) * 0.085;
 				float attenuation = smoothstep(cloudHeight, cloudTop, rayPos.y);
+				float shadowLength = shadowDistance * 0.9166667 - length(worldPos.xz);
 
 				getCloudSample(rayPos.xz, wind, attenuation, noise);
 
