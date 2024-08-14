@@ -141,8 +141,7 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
     //Scene Lighting
     #ifdef OVERWORLD
     float rainFactor = 1.0 - wetness * 0.75;
-    lightmap.y = pow(lightmap.y, 1.0 + eBS * 3.0);
-    vec3 sceneLighting = mix(ambientCol * pow4(lightmap.y), lightCol, shadow * rainFactor * shadowFade);
+    vec3 sceneLighting = mix(ambientCol * lightmap.y * lightmap.y, lightCol, shadow * rainFactor * shadowFade);
          sceneLighting *= 1.0 + scattering * shadow;
 
     #elif defined END
