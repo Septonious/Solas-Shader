@@ -208,7 +208,7 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
     //RSM GI//
     vec3 gi = vec3(0.0);
 
-    #if defined GI && (defined GBUFFERS_TERRAIN || defined GBUFFERS_ENTITIES)
+    #if defined GI && defined GBUFFERS_TERRAIN
     vec2 prevScreenPos = Reprojection(screenPos);
     gi = texture2D(gaux1, prevScreenPos).rgb;
     gi = pow4(gi) * 32.0 * lightmap.y;
