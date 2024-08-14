@@ -22,7 +22,7 @@ void main() {
 		albedo *= 0.0;
 	}
 
-    /* DRAWBUFFERS:5 */
+    /* DRAWBUFFERS:7 */
 	gl_FragData[0] = albedo;
 }
 

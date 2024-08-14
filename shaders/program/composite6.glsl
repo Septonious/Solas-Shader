@@ -44,8 +44,12 @@ uniform vec3 cameraPosition;
 uniform sampler2D colortex0;
 
 #if defined PBR || defined GENERATED_SPECULAR
-uniform sampler2D noisetex, colortex3, colortex7;
+uniform sampler2D noisetex, colortex3;
 uniform sampler2D depthtex0, depthtex1;
+
+#ifdef SKYBOX
+uniform sampler2D colortex7;
+#endif
 
 uniform mat4 gbufferProjection;
 uniform mat4 gbufferProjectionInverse;
@@ -94,7 +98,7 @@ void main() {
 		vec3 normal = decodeNormal(gbuffersData.rg);
 		vec3 viewPos = ToView(vec3(texCoord, z0));
 
-		float fresnel = clamp(1.0 + dot(normal, normalize(viewPos)), 0.0, 1.0) * gbuffersData.a;
+		float fresnel = clamp(1.0 + dot(normal, normalize(viewPos)), 0.0, 1.0);
 
 		getReflection(color, viewPos, normal, fresnel, gbuffersData.a);
 	}

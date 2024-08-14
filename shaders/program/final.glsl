@@ -16,6 +16,7 @@ const int colortex3Format = RGBA16; //gbuffers data
 const int colortex4Format = RGBA16; //rsm gi
 const int colortex5Format = RGBA16; //accumulated rsm
 const int colortex6Format = RGBA16; //reflections
+const int colortex7Format = RGBA16; //skybox
 */
 
 const bool colortex0Clear = false;

@@ -1,7 +1,6 @@
-uniform sampler2D shadowtex0;
+uniform sampler2D shadowtex0, shadowtex1;
 
 #ifdef SHADOW_COLOR
-uniform sampler2D shadowtex1;
 uniform sampler2D shadowcolor0;
 #endif
 

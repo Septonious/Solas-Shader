@@ -9,102 +9,6 @@ float lightningFlashEffect(vec3 worldPos, vec3 lightningBoltPosition, float ligh
     return lightningLight;
 }
 
-#ifdef FIREFLIES
-vec3 hash(vec3 p3){
-    p3 = fract(p3 * vec3(0.1031, 0.1030, 0.0973));
-    p3 += dot(p3, p3.yxz + 33.33);
-    return 2.0 * fract((p3.xxy + p3.yxx) * p3.zyx) - 1.0;
-}
-
-float getFireflyNoise(vec3 pos){
-    pos += 1e-4 * frameTimeCounter;
-
-    vec3 floorPos = floor(pos);
-    vec3 fractPos = fract(pos);
-	
-	vec3 u = (fractPos * fractPos * fractPos) * (fractPos * (fractPos * 6.0 - 15.0) + 10.0);
-
-    return mix( mix( mix( dot( hash(floorPos + vec3(0.0,0.0,0.0)), fractPos - vec3(0.0,0.0,0.0)), 
-              dot( hash(floorPos + vec3(1.0,0.0,0.0)), fractPos - vec3(1.0,0.0,0.0)), u.x),
-         mix( dot( hash(floorPos + vec3(0.0,1.0,0.0)), fractPos - vec3(0.0,1.0,0.0)), 
-              dot( hash(floorPos + vec3(1.0,1.0,0.0)), fractPos - vec3(1.0,1.0,0.0)), u.x), u.y),
-    mix( mix( dot( hash(floorPos + vec3(0.0,0.0,1.0)), fractPos - vec3(0.0,0.0,1.0)), 
-              dot( hash(floorPos + vec3(1.0,0.0,1.0)), fractPos - vec3(1.0,0.0,1.0)), u.x),
-         mix( dot( hash(floorPos + vec3(0.0,1.0,1.0)), fractPos - vec3(0.0,1.0,1.0)), 
-              dot( hash(floorPos + vec3(1.0,1.0,1.0)), fractPos - vec3(1.0,1.0,1.0)), u.x), u.y), u.z );
-}
-
-vec3 calculateWaving(vec3 worldPos, float wind) {
-    float strength = sin(wind + worldPos.z + worldPos.y) * 0.25 + 0.05;
-
-    float d0 = sin(wind * 0.0125);
-    float d1 = sin(wind * 0.0090);
-    float d2 = sin(wind * 0.0105);
-
-    return vec3(sin(wind * 0.0065 + d0 + d1 - worldPos.x + worldPos.z + worldPos.y), 
-                sin(wind * 0.0225 + d1 + d2 + worldPos.x - worldPos.z + worldPos.y),
-                sin(wind * 0.0015 + d2 + d0 + worldPos.z + worldPos.y - worldPos.y)) * strength;
-}
-
-vec3 calculateMovement(vec3 worldPos, float density, float speed, vec2 mult) {
-    vec3 wave = calculateWaving(worldPos * density, frameTimeCounter * speed);
-
-    return wave * vec3(mult, mult.x);
-}
-#endif
-
-void computeFireflies(inout float fireflies, in vec3 translucent, in float dither) {
-	//Depths
-	float z0 = texture2D(depthtex0, texCoord).r;
-	float z1 = texture2D(depthtex1, texCoord).r;
-
-	//Positions
-	vec3 viewPos = ToView(vec3(texCoord.xy, z0));
-
-	//Total fireflies visibility
-	float visibility = eBS * eBS * (1.0 - sunVisibility) * (1.0 - wetness) * float(isEyeInWater == 0);
-
-	#if MC_VERSION >= 11900
-	visibility *= 1.0 - darknessFactor;
-	#endif
-
-	visibility *= 1.0 - blindFactor;
-
-	if (visibility > 0.0) {
-		//Linear Depths
-		float linearDepth0 = getLinearDepth(z0);
-		float linearDepth1 = getLinearDepth(z1);
-
-		//Variables
-        int sampleCount = 6;
-
-		float maxDist = 96.0;
-		float maxCurrentDist = min(linearDepth1, maxDist);
-
-		//Ray Marching
-		for (int i = 0; i < sampleCount; i++) {
-			float currentDist = (i + dither) * 4.0;
-
-			if (currentDist > maxCurrentDist || linearDepth1 < currentDist || (linearDepth0 < currentDist && translucent.rgb == vec3(0.0))) {
-				break;
-			}
-
-            vec3 worldPos = ToWorld(ToView(vec3(texCoord, getLogarithmicDepth(currentDist))));
-
-			if (length(worldPos.xz) < maxDist) {
-				vec3 nposA = worldPos + cameraPosition;
-					 nposA += calculateMovement(nposA, 0.6, 3.0, vec2(2.4, 1.8));
-					 nposA += vec3(sin(frameTimeCounter * 0.50), - sin(frameTimeCounter * 0.75), cos(frameTimeCounter * 1.25));
-
-				float fireflyNoise = getFireflyNoise(nposA);
-					  fireflyNoise = clamp(fireflyNoise - 0.675, 0.0, 1.0);
-
-				fireflies += fireflyNoise * (1.0 - clamp(nposA.y * 0.01, 0.0, 1.0)) * visibility * 64.0;
-			}
-		}
-	}
-}
-
 void computeLPVFog(inout vec3 fog, in vec3 translucent, in float dither) {
     vec3 finalFog = vec3(0.0);
 
@@ -204,3 +108,99 @@ void computeLPVFog(inout vec3 fog, in vec3 translucent, in float dither) {
 
     fog += finalFog;
 }
+
+#ifdef FIREFLIES
+vec3 hash(vec3 p3){
+    p3 = fract(p3 * vec3(0.1031, 0.1030, 0.0973));
+    p3 += dot(p3, p3.yxz + 33.33);
+    return 2.0 * fract((p3.xxy + p3.yxx) * p3.zyx) - 1.0;
+}
+
+float getFireflyNoise(vec3 pos){
+    pos += 1e-4 * frameTimeCounter;
+
+    vec3 floorPos = floor(pos);
+    vec3 fractPos = fract(pos);
+	
+	vec3 u = (fractPos * fractPos * fractPos) * (fractPos * (fractPos * 6.0 - 15.0) + 10.0);
+
+    return mix( mix( mix( dot( hash(floorPos + vec3(0.0,0.0,0.0)), fractPos - vec3(0.0,0.0,0.0)), 
+              dot( hash(floorPos + vec3(1.0,0.0,0.0)), fractPos - vec3(1.0,0.0,0.0)), u.x),
+         mix( dot( hash(floorPos + vec3(0.0,1.0,0.0)), fractPos - vec3(0.0,1.0,0.0)), 
+              dot( hash(floorPos + vec3(1.0,1.0,0.0)), fractPos - vec3(1.0,1.0,0.0)), u.x), u.y),
+    mix( mix( dot( hash(floorPos + vec3(0.0,0.0,1.0)), fractPos - vec3(0.0,0.0,1.0)), 
+              dot( hash(floorPos + vec3(1.0,0.0,1.0)), fractPos - vec3(1.0,0.0,1.0)), u.x),
+         mix( dot( hash(floorPos + vec3(0.0,1.0,1.0)), fractPos - vec3(0.0,1.0,1.0)), 
+              dot( hash(floorPos + vec3(1.0,1.0,1.0)), fractPos - vec3(1.0,1.0,1.0)), u.x), u.y), u.z );
+}
+
+vec3 calculateWaving(vec3 worldPos, float wind) {
+    float strength = sin(wind + worldPos.z + worldPos.y) * 0.25 + 0.05;
+
+    float d0 = sin(wind * 0.0125);
+    float d1 = sin(wind * 0.0090);
+    float d2 = sin(wind * 0.0105);
+
+    return vec3(sin(wind * 0.0065 + d0 + d1 - worldPos.x + worldPos.z + worldPos.y), 
+                sin(wind * 0.0225 + d1 + d2 + worldPos.x - worldPos.z + worldPos.y),
+                sin(wind * 0.0015 + d2 + d0 + worldPos.z + worldPos.y - worldPos.y)) * strength;
+}
+
+vec3 calculateMovement(vec3 worldPos, float density, float speed, vec2 mult) {
+    vec3 wave = calculateWaving(worldPos * density, frameTimeCounter * speed);
+
+    return wave * vec3(mult, mult.x);
+}
+
+void computeFireflies(inout float fireflies, in vec3 translucent, in float dither) {
+	//Depths
+	float z0 = texture2D(depthtex0, texCoord).r;
+	float z1 = texture2D(depthtex1, texCoord).r;
+
+	//Positions
+	vec3 viewPos = ToView(vec3(texCoord.xy, z0));
+
+	//Total fireflies visibility
+	float visibility = eBS * eBS * (1.0 - sunVisibility) * (1.0 - wetness) * float(isEyeInWater == 0);
+
+	#if MC_VERSION >= 11900
+	visibility *= 1.0 - darknessFactor;
+	#endif
+
+	visibility *= 1.0 - blindFactor;
+
+	if (visibility > 0.0) {
+		//Linear Depths
+		float linearDepth0 = getLinearDepth(z0);
+		float linearDepth1 = getLinearDepth(z1);
+
+		//Variables
+        int sampleCount = 6;
+
+		float maxDist = 96.0;
+		float maxCurrentDist = min(linearDepth1, maxDist);
+
+		//Ray Marching
+		for (int i = 0; i < sampleCount; i++) {
+			float currentDist = (i + dither) * 4.0;
+
+			if (currentDist > maxCurrentDist || linearDepth1 < currentDist || (linearDepth0 < currentDist && translucent.rgb == vec3(0.0))) {
+				break;
+			}
+
+            vec3 worldPos = ToWorld(ToView(vec3(texCoord, getLogarithmicDepth(currentDist))));
+
+			if (length(worldPos.xz) < maxDist) {
+				vec3 nposA = worldPos + cameraPosition;
+					 nposA += calculateMovement(nposA, 0.6, 3.0, vec2(2.4, 1.8));
+					 nposA += vec3(sin(frameTimeCounter * 0.50), - sin(frameTimeCounter * 0.75), cos(frameTimeCounter * 1.25));
+
+				float fireflyNoise = getFireflyNoise(nposA);
+					  fireflyNoise = clamp(fireflyNoise - 0.675, 0.0, 1.0);
+
+				fireflies += fireflyNoise * (1.0 - clamp(nposA.y * 0.01, 0.0, 1.0)) * visibility * 64.0;
+			}
+		}
+	}
+}
+#endif

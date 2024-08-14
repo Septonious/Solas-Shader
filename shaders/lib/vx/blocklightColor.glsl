@@ -8,7 +8,7 @@ const vec3[] blocklightColorArray = vec3[](
 	//Brewing Stand
 	vec3(1.00, 0.75, 0.10) * 1.5,
 	//Torch, Lantern, Campfire, Fire
-	vec3(1.00, 0.55, 0.15) * 3.5,
+	vec3(1.00, 0.5, 0.15) * 3.5,
 	//Soul Torch, Soul Lantern, Soul Campfire, Soul Fire
 	vec3(0.10, 0.60, 1.00) * 3.5,
 	//End Rod

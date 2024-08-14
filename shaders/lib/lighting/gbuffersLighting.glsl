@@ -14,16 +14,9 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
     //Vanilla Directional Lighting
     float vanillaDiffuse = (0.25 * NoU + 0.75) + (0.667 - abs(NoE)) * (1.0 - abs(NoU)) * 0.15;
           vanillaDiffuse *= vanillaDiffuse;
-          vanillaDiffuse *= vanillaDiffuse;
 
     #ifdef OVERWORLD
     vanillaDiffuse = mix(1.0, vanillaDiffuse, eBS);
-    #endif
-
-    #ifdef GBUFFERS_TERRAIN
-    if (subsurface > 0.5) {
-        NoL = pow(NoL, 1.5);
-    }
     #endif
 
     //Block Lighting
@@ -92,15 +85,14 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
         float distFactor = clamp(shadowLength, 0.0, 1.0);
         float VoL = clamp(dot(normalize(viewPos), lightVec), 0.0, 1.0);
         scattering = pow8(VoL) * shadowFade * (1.0 - wetness * 0.5);
-        if (subsurface > 0.49 && subsurface < 0.51) {
-            NoL += 0.3 * distFactor * (1.0 + scattering * 0.5);
+        if (subsurface > 0.49 && subsurface < 0.51) { //Leaves
+            NoL += 0.5 * distFactor * (0.75 + scattering * 0.75);
         } else if (subsurface > 0.39 && subsurface < 0.41) {
             NoL += 0.1;
         } else if (subsurface > 0.09 && subsurface < 0.11) {
             NoL += 0.25;
         } else {
-            NoL += 0.3 * distFactor;
-            NoL = mix(NoL, 1.0, 0.75 * min(scattering * 2.0, 1.0) * distFactor);
+            NoL += distFactor * (0.35 + scattering);
         }
     }
     #endif

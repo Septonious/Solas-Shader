@@ -47,7 +47,7 @@ uniform sampler2D depthtex2;
 #endif
 
 #ifdef SKYBOX
-uniform sampler2D colortex5;
+uniform sampler2D colortex7;
 #endif
 
 uniform sampler2D noisetex;
@@ -123,7 +123,7 @@ void main() {
     vec3 atmosphereColor = getAtmosphericScattering(normalize(worldPos) * PI, viewPos, normalize(sunCoord));
 
 	#ifdef SKYBOX
-	vec3 skybox = texture2D(colortex5, texCoord).rgb;
+	vec3 skybox = texture2D(colortex7, texCoord).rgb;
 	atmosphereColor = mix(atmosphereColor, skybox, SKYBOX_MIX_FACTOR);
 	#endif
 	#elif defined NETHER
