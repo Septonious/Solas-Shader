@@ -20,7 +20,7 @@ const vec3[] blocklightColorArray = vec3[](
 	//Shroomlight, Redstone Lamp
 	vec3(1.00, 0.30, 0.10) * 4.5,
 	//Respawn Anchor
-	vec3(0.60, 0.05, 1.00) * 2.5,
+	vec3(0.60, 0.05, 1.00),
 	//Lava
 	vec3(1.00, 0.18, 0.02) * 5.0,
 	//Cave Berries
