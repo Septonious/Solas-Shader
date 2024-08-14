@@ -118,30 +118,30 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z1, f
 
                 vec3 worldPos = rayPos - cameraPosition;
 
-				float shadowSample = 1.0;
-
 				#ifdef VC_SHADOWS
-				shadowSample = texture2DShadow(shadowtex1, ToShadow(worldPos));
-				#endif
-
+				float shadow1 = clamp(texture2DShadow(shadowtex1, ToShadow(worldPos)), 0.0, 1.0);
+				#else
+				float shadow1 = 1.0;
 				//Indoor leak prevention
 				if (eyeBrightnessSmooth.y < 200.0 && length(worldPos) < shadowDistance) {
 					#ifndef VC_SHADOWS
-					shadowSample = texture2DShadow(shadowtex1, ToShadow(worldPos));
+					shadow1 = clamp(texture2DShadow(shadowtex1, ToShadow(worldPos)), 0.0, 1.0);
 					#endif
-					if (shadowSample == 0.0) break;
+					if (shadow1 <= 0.0) break;
 				}
+				#endif
 
 				float noise = 0.0;
 				float rayDistance = length(worldPos.xz) * 0.085;
 				float attenuation = smoothstep(cloudHeight, cloudTop, rayPos.y);
-				float shadowLength = shadowDistance * 0.9166667 - length(worldPos.xz);
 
 				getCloudSample(rayPos.xz, wind, attenuation, noise);
 
 				float sampleLighting = pow(attenuation, 0.85 * halfVoLSqr + 0.85) * 0.75 + 0.25;
 					  sampleLighting *= 1.0 - pow(noise, noiseLightFactor);
-					  sampleLighting *= mix(1.0, 0.25 + shadowSample * 0.75, shadowLength);
+				#ifdef VC_SHADOWS
+					  sampleLighting *= mix(1.0, 0.25 + shadow1 * 0.75, float(length(worldPos) < shadowDistance));
+				#endif
 
 				cloudLighting = mix(cloudLighting, sampleLighting, noise * (1.0 - cloud * cloud));
 				cloud = mix(cloud, 1.0, noise);
