@@ -19,18 +19,17 @@ void getReflection(inout vec4 color, in vec3 viewPos, in vec3 normal, in float f
 	border = clamp(13.333 * (1.0 - border) * (0.9 * smoothness + 0.1), 0.0, 1.0);
 
 	#ifdef OVERWORLD
-	vec3 skyRefPos = reflect(viewPos, normal);
-	vec3 sunPos = reflect(vec3(gbufferModelViewInverse * vec4(sunVec * 128.0, 1.0)), normal);
+	vec3 skyRefPos = reflect(normalize(viewPos), normal);
+	vec3 sunPos = vec3(gbufferModelViewInverse * vec4(sunVec * 128.0, 1.0));
 	vec3 sunCoord = sunPos / (sunPos.y + length(sunPos.xz));
-    falloff = getAtmosphericScattering(normalize(ToWorld(skyRefPos)) * PI, skyRefPos, normalize(sunCoord));
+	falloff = getAtmosphericScattering(skyRefPos, normalize(sunCoord)) * eBS;
 	falloff *= falloff;
 
-	#ifdef SKYBOX
-	vec3 skybox = texture2D(colortex7, texCoord).rgb;
-	falloff = mix(falloff, skybox, SKYBOX_MIX_FACTOR);
+	#if MC_VERSION >= 11900
+	falloff *= 1.0 - darknessFactor;
 	#endif
 
-	falloff = mix(vec3(0.0), falloff, eBS * eBS);
+	falloff *= 1.0 - blindFactor;
 	#endif
 
 	#ifdef PBR

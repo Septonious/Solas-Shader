@@ -120,11 +120,11 @@ void main() {
 	#if defined OVERWORLD
 	vec3 sunPos = vec3(gbufferModelViewInverse * vec4(sunVec * 128.0, 1.0));
 	vec3 sunCoord = sunPos / (sunPos.y + length(sunPos.xz));
-    vec3 atmosphereColor = getAtmosphericScattering(normalize(worldPos) * PI, viewPos, normalize(sunCoord));
+    vec3 atmosphereColor = getAtmosphericScattering(viewPos, normalize(sunCoord));
 
 	#ifdef SKYBOX
 	vec3 skybox = texture2D(colortex7, texCoord).rgb;
-	atmosphereColor = mix(atmosphereColor, skybox, SKYBOX_MIX_FACTOR);
+	if (length(pow(skybox, vec3(0.1))) > 0.0) atmosphereColor = mix(atmosphereColor, skybox, SKYBOX_MIX_FACTOR);
 	#endif
 	#elif defined NETHER
 	vec3 atmosphereColor = netherColSqrt.rgb * 0.25;

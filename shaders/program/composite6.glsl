@@ -47,10 +47,6 @@ uniform sampler2D colortex0;
 uniform sampler2D noisetex, colortex3;
 uniform sampler2D depthtex0, depthtex1;
 
-#ifdef SKYBOX
-uniform sampler2D colortex7;
-#endif
-
 uniform mat4 gbufferProjection;
 uniform mat4 gbufferProjectionInverse;
 uniform mat4 gbufferModelViewInverse;
@@ -72,16 +68,17 @@ float sunVisibility = clamp(dot(sunVec, upVec) + 0.1, 0.0, 0.25) * 4.0;
 
 //Includes//
 #if defined PBR || defined GENERATED_SPECULAR
-#ifdef OVERWORLD
-#include "/lib/color/lightColor.glsl"
-#include "/lib/atmosphere/sky.glsl"
-#endif
-
 #include "/lib/util/ToScreen.glsl"
 #include "/lib/util/ToView.glsl"
 #include "/lib/util/ToWorld.glsl"
 #include "/lib/util/encode.glsl"
 #include "/lib/util/bayerDithering.glsl"
+
+#ifdef OVERWORLD
+#include "/lib/color/lightColor.glsl"
+#include "/lib/atmosphere/sky.glsl"
+#endif
+
 #include "/lib/pbr/raytracer.glsl"
 #include "/lib/pbr/simpleReflection.glsl"
 #endif

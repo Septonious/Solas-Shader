@@ -61,6 +61,10 @@ uniform sampler2D texture;
 uniform sampler2D noisetex;
 uniform sampler2D gaux1;
 
+#ifdef SKYBOX
+uniform sampler2D gaux4;
+#endif
+
 uniform sampler3D floodfillSampler;
 uniform usampler3D voxelSampler;
 
@@ -134,7 +138,12 @@ void main() {
 		#if defined OVERWORLD
         vec3 sunPos = vec3(gbufferModelViewInverse * vec4(sunVec * 128.0, 1.0));
         vec3 sunCoord = sunPos / (sunPos.y + length(sunPos.xz));
-        vec3 atmosphereColor = getAtmosphericScattering(normalize(worldPos) * PI, viewPos, normalize(sunCoord));
+        vec3 atmosphereColor = getAtmosphericScattering(viewPos, normalize(sunCoord));
+
+		#ifdef SKYBOX
+		vec3 skybox = texture2D(gaux4, texCoord.xy).rgb;
+		if (length(pow(skybox, vec3(0.1))) > 0.0) atmosphereColor = mix(atmosphereColor, skybox, SKYBOX_MIX_FACTOR);
+		#endif
 		#elif defined NETHER
 		vec3 atmosphereColor = netherColSqrt.rgb * 0.25;
 		#endif
