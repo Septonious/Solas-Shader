@@ -112,9 +112,17 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z1, f
 			auroraVisibility *= visibilityMultiplier;
 			#endif
 
+			#ifdef DISTANT_HORIZONS
+			float dhZ = texture2D(dhDepthTex0, texCoord).r;
+			#endif
+
 			//Ray marcher
 			for (int i = 0; i < sampleCount; i++, rayPos += sampleStep, sampleTotalLength += rayLength) {
 				if (cloudAlpha > 0.99 || (sampleTotalLength > length(viewPos) && z1 < 1.0)) break;
+
+				#ifdef DISTANT_HORIZONS
+				if ((sampleTotalLength > length(viewPos) && dhZ < 1.0)) break;
+				#endif
 
                 vec3 worldPos = rayPos - cameraPosition;
 
