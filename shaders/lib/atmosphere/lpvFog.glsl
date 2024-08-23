@@ -33,20 +33,20 @@ void computeLPVFog(inout vec3 fog, in vec3 translucent, in float dither) {
 
 	visibility *= 1.0 - blindFactor;
 
-	float density = 14.0;
+	float density = 25.0;
 	#ifdef OVERWORLD
-		  density = mix(density, 16.0, wetness * eBS);
-		  density = mix(22.0, density, caveFactor);
+		  density = mix(density, 35.0, wetness * eBS);
+		  density = mix(40.0, density, caveFactor);
 	#endif
 	#ifdef NETHER
-		  density = 20.0;
+		  density = 25.0;
 		  visibility *= 0.5;
 	#endif
 
 	if (visibility > 0.0) {
 		//Linear Depths
-		float linearDepth0 = getLinearDepth(z0);
-		float linearDepth1 = getLinearDepth(z1);
+		float linearDepth0 = getLinearDepth2(z0);
+		float linearDepth1 = getLinearDepth2(z1);
 
 		//Variables
         int sampleCount = LPV_FOG_SAMPLES;
@@ -78,8 +78,9 @@ void computeLPVFog(inout vec3 fog, in vec3 translucent, in float dither) {
                      voxelSamplePos = clamp(voxelSamplePos, 0.0, 1.0);
 
                 vec3 floodfillData = texture3D(floodfillSampler, voxelSamplePos).rgb;
-                vec3 lighting = pow(floodfillData, vec3(1.0 / FLOODFILL_RADIUS));
-				vec3 lpvFog = mix(lighting * length(lighting * 0.75) * density * LPV_FOG_STRENGTH, vec3(0.0), floodfillFade);
+                vec3 voxelLighting = pow(floodfillData, vec3(1.0 / FLOODFILL_RADIUS));
+					 voxelLighting *= 0.5 + 0.5 * length(voxelLighting);
+				vec3 lpvFog = mix(voxelLighting * density * LPV_FOG_STRENGTH, vec3(0.0), floodfillFade);
 
 				#ifdef NETHER_CLOUDY_FOG
 				vec3 npos = (worldPos + cameraPosition) * VF_NETHER_FREQUENCY + vec3(frameTimeCounter * VF_NETHER_SPEED, 0.0, 0.0);

@@ -22,8 +22,8 @@ const vec2 shadowOffsets8[8] = vec2[8](
    vec2(-0.40412395850181015, -0.8212788214021378)
 );
 
-float texture2DShadow(sampler2D shadowtex, vec3 shadowPos, float lod) {
-    float shadow = texture2DLod(shadowtex, shadowPos.xy, lod).r;
+float texture2DShadow(sampler2D shadowtex, vec3 shadowPos) {
+    float shadow = texture2D(shadowtex, shadowPos.xy).r;
 
     return clamp((shadow - shadowPos.z) * 65536.0, 0.0, 1.0);
 }
@@ -64,12 +64,12 @@ vec3 computeShadow(vec3 shadowPos, float offset, float skyLightMap, float subsur
 
     for (int i = 0; i < 8; i++) {
         vec2 pixelOffset = ditherMatrix * offset * shadowOffsets8[i];
-        shadow0 += texture2DShadow(shadowtex0, vec3(shadowPos.xy + pixelOffset, shadowPos.z), 2.0);
+        shadow0 += texture2DShadow(shadowtex0, vec3(shadowPos.xy + pixelOffset, shadowPos.z));
 
         #ifdef SHADOW_COLOR
         if (shadow0 < 0.999) {
             shadowCol += texture2D(shadowcolor0, shadowPos.xy + pixelOffset).rgb *
-                        texture2DShadow(shadowtex1, vec3(shadowPos.xy + pixelOffset, shadowPos.z), 2.0);
+                        texture2DShadow(shadowtex1, vec3(shadowPos.xy + pixelOffset, shadowPos.z));
         }
         #endif
     }

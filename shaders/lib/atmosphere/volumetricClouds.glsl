@@ -112,6 +112,7 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z1, f
 			auroraVisibility *= visibilityMultiplier;
 			#endif
 
+			//DH Depth rejection
 			#ifdef DISTANT_HORIZONS
 			float dhZ = texture2D(dhDepthTex0, texCoord).r;
 			#endif
