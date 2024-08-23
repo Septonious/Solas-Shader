@@ -274,6 +274,7 @@ uniform mat4 gbufferModelView, gbufferModelViewInverse;
 
 //Attributes//
 attribute vec4 at_tangent;
+attribute vec4 at_midBlock;
 attribute vec4 mc_Entity;
 attribute vec4 mc_midTexCoord;
 
@@ -326,6 +327,9 @@ void main() {
 
 	//Materials
 	mat = int(mc_Entity.x + 0.5);
+	#ifdef IS_IRIS
+	if (mat < 1 && at_midBlock.w > 0.1) mat = 10009; //Automatic emissive modded blocks detection
+	#endif
 
 	//Color & Position
 	vec4 position = gbufferModelViewInverse * gl_ModelViewMatrix * gl_Vertex;

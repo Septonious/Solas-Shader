@@ -1,4 +1,6 @@
 #ifdef DYNAMIC_HANDLIGHT
+uniform vec3 relativeEyePosition;
+
 #include "/lib/lighting/handlight.glsl"
 #endif
 
@@ -48,6 +50,7 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
 
         vec3 lighting = texture3D(floodfillSampler, voxelSamplePos).rgb;
         voxelLighting = pow(lighting, vec3(1.0 / FLOODFILL_RADIUS));
+        voxelLighting *= 0.5 + 0.5 * length(voxelLighting);
 
         #ifdef GBUFFERS_ENTITIES
         voxelLighting += pow16(lightmap.x) * blockLightCol;
@@ -61,7 +64,7 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
 
     //Dynamic Hand Lighting
     #ifdef DYNAMIC_HANDLIGHT
-    getHandLightColor(blockLighting, lViewPos);
+    getHandLightColor(blockLighting, length(viewPos + normalize(relativeEyePosition * 1000.0)));
     #endif
 
     #ifdef OVERWORLD

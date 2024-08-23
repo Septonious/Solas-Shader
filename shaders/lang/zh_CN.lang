@@ -175,7 +175,7 @@ option.AO_RADIUS=AO 半径
 screen.SHADOWS=阴影配置
 
 option.shadowMapResolution=阴影分辨率
-option.shadowDistance=阴影距离
+option.SHADOW_DISTANCE=阴影距离
 option.entityShadowDistanceMul=实体阴影距离
 option.sunPathRotation=日月斜角
 option.VPS=可变半阴影(VPS)

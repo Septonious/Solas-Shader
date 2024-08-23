@@ -95,7 +95,7 @@ option.WAVING_WATER=Eau Ondulante
 screen.LIGHTING=Éclairage
 
 option.shadowMapResolution=Résolution des Ombres
-option.shadowDistance=Distance des Ombres
+option.SHADOW_DISTANCE=Distance des Ombres
 option.sunPathRotation=Angle du Soleil
 option.VPS=Ombres de pénombre variable (VPS)
 option.VPS.comment=Permet d'obtenir des ombres qui deviennent plus ou moins nettes en fonction de la distance du bloqueur.
