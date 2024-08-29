@@ -12,7 +12,7 @@ const vec3[] blocklightColorArray = vec3[](
 	//Soul Torch, Soul Lantern, Soul Campfire, Soul Fire
 	vec3(0.10, 0.60, 1.00) * 3.5,
 	//End Rod
-	vec3(1.00, 0.50, 0.90) * 3.5,
+	vec3(1.00, 0.70, 0.90) * 3.5,
 	//Sea Lantern
 	vec3(0.70, 0.90, 1.00) * 6.5,
 	//Glowstone
