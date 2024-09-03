@@ -131,11 +131,11 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z1, f
 				float shadow1 = clamp(texture2DShadow(shadowtex1, ToShadow(worldPos)), 0.0, 1.0);
 				#else
 				float shadow1 = 1.0;
+
 				//Indoor leak prevention
 				if (eyeBrightnessSmooth.y < 200.0 && length(worldPos) < shadowDistance) {
-					#ifndef VC_SHADOWS
 					shadow1 = clamp(texture2DShadow(shadowtex1, ToShadow(worldPos)), 0.0, 1.0);
-					#endif
+
 					if (shadow1 <= 0.0) break;
 				}
 				#endif

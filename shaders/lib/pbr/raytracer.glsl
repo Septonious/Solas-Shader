@@ -8,7 +8,7 @@ float getCoordDistance(vec2 coord) {
 
 vec4 rayTrace(sampler2D depthtex, vec3 viewPos, vec3 normal, float dither, out float border, int refinementSteps, int sampleCount, float refinementMult, float refinementFactor) {
 	vec3 reflectionPos = vec3(0.0);
-	vec3 startPos = viewPos + normal * 0.25;
+	vec3 startPos = viewPos + normal * 0.1;
     vec3 rayDir = 0.5 * reflect(normalize(viewPos), normalize(normal));
 	vec3 rayIncrement = rayDir;
     viewPos += rayDir;
@@ -26,7 +26,7 @@ vec4 rayTrace(sampler2D depthtex, vec3 viewPos, vec3 normal, float dither, out f
         	 rayPos = ToVec3(gbufferProjectionInverse * vec4(rayPos * 2.0 - 1.0, 1.0));
 		distance = abs(dot(normalize(startPos - rayPos), normal));
         float err = length(viewPos - rayPos);
-		float rayLength = length(rayDir) * pow(length(rayIncrement), 0.125) * 2.2;
+		float rayLength = length(rayDir) * pow(length(rayIncrement), 0.1) * 3.3;
 
 		if (err < rayLength) {
 			refinementLoops++;

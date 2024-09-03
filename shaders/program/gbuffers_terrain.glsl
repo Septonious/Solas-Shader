@@ -327,9 +327,6 @@ void main() {
 
 	//Materials
 	mat = int(mc_Entity.x + 0.5);
-	#ifdef IS_IRIS
-	if (mat < 1 && at_midBlock.w > 0.1) mat = 10009; //Automatic emissive modded blocks detection
-	#endif
 
 	//Color & Position
 	vec4 position = gbufferModelViewInverse * gl_ModelViewMatrix * gl_Vertex;

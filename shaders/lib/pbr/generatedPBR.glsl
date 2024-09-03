@@ -8,6 +8,7 @@ void generateIPBR(inout vec4 albedo, in vec3 worldPos, in vec3 viewPos, inout ve
     #include "/lib/pbr/blocks/beacon.glsl"
     #include "/lib/pbr/blocks/black_materials.glsl"
     #include "/lib/pbr/blocks/brewing_stand.glsl"
+    #include "/lib/pbr/blocks/bricks.glsl"
     #include "/lib/pbr/blocks/candles_corals.glsl"
     #include "/lib/pbr/blocks/cave_berries.glsl"
     #include "/lib/pbr/blocks/concrete.glsl"
