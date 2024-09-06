@@ -16,38 +16,40 @@ void computeVL(inout vec3 vl, in vec3 translucent, in float dither) {
     vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.0);
 	vec3 nViewPos = normalize(viewPos);
 
-    //Total Visibility
+    //Total Visibility & Variables
     float indoorFactor = (1.0 - eBS * eBS) * float(isEyeInWater == 0 && cameraPosition.y < 1000.0);
+
 	float VoU = clamp(dot(nViewPos, upVec), 0.0, 1.0);
 		  VoU = 1.0 - pow(VoU, 1.5);
 		  VoU = mix(VoU, 1.0, min(indoorFactor + timeBrightness, 1.0) * 0.75);
-	float VoL = pow(clamp(dot(nViewPos, lightVec), 0.0, 1.0), 1.5);
+	float VoL = clamp(dot(nViewPos, lightVec), 0.0, 1.0);
+		  VoL = mix(VoL, 0.5, 0.25 * float(isEyeInWater == 1));
 
-	float vlVisibility = int(z0 > 0.56) * shadowFade;
 	#ifdef OVERWORLD
 	float waterFactor = 1.0 - float(isEyeInWater == 1) * 0.5;
-		  vlVisibility *= pow(VoU, 3.0 * waterFactor);
-		  vlVisibility *= mix(0.25 + VoL * 0.25, VoL * 0.4, timeBrightness);
-		  vlVisibility = mix(vlVisibility * (2.0 - sunVisibility), 0.5, indoorFactor) * waterFactor;
+	float visibility = int(z0 > 0.56) * shadowFade;
+		  visibility *= pow(VoU, 2.5 * waterFactor);
+		  visibility *= mix(0.25 + VoL * 0.25, VoL * 0.45, timeBrightness);
+		  visibility = mix(visibility * (2.0 - sunVisibility), 0.65, indoorFactor) * waterFactor;
 	#else
-		  vlVisibility = exp(pow4(VoL)) * 0.075;
+	float visibility = exp(pow4(VoL)) * 0.075;
 	#endif
 
 	#if MC_VERSION >= 11900
-	vlVisibility *= 1.0 - darknessFactor;
+	visibility *= 1.0 - darknessFactor;
 	#endif
 
-	vlVisibility *= 1.0 - blindFactor;
+	visibility *= 1.0 - blindFactor;
 
-	if (vlVisibility > 0.0) {
+	if (visibility > 0.0) {
 		//Linear Depths
-		float linearDepth0 = getLinearDepth(z0);
-		float linearDepth1 = getLinearDepth(z1);
+		float linearDepth0 = getLinearDepth2(z0);
+		float linearDepth1 = getLinearDepth2(z1);
 
 		//Variables
         int sampleCount = VL_SAMPLES;
 
-		float maxDist = 96.0;
+		float maxDist = 128.0;
 		float minDist = (maxDist / sampleCount * (1.0 - float(isEyeInWater == 1) * 0.5));
 		float maxCurrentDist = min(linearDepth1, maxDist);
 
@@ -121,8 +123,8 @@ void computeVL(inout vec3 vl, in vec3 translucent, in float dither) {
 			}
 		}
 
-        finalVL *= vlVisibility * VL_STRENGTH;
+        finalVL *= visibility * VL_STRENGTH;
 		if (isEyeInWater == 1.0) finalVL *= mix(waterColorSqrt, waterColorSqrt * weatherCol, wetness) * (4.0 + sunVisibility * 8.0);
 	}
-    vl += pow(finalVL, vec3(1.0 - pow(length(finalVL), 1.5) * 0.25));
+    vl += pow(finalVL, vec3(1.0 - pow(length(finalVL), 1.25) * 0.25));
 }

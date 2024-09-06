@@ -1,17 +1,7 @@
 #ifdef DYNAMIC_HANDLIGHT
-void getHandLightColor(inout vec3 blockLighting, float lViewPos) {
-	float heldLightValue = max(float(heldBlockLightValue), float(heldBlockLightValue2));
-	float handlight = clamp((heldLightValue - 2.0 * lViewPos) * 0.025, 0.0, 1.0);
+uniform vec3 relativeEyePosition;
 
-    vec3 handLightColor = blockLightCol;
-
-    if (handlight > 0.0) {
-        if (heldItemId2 < 3) handLightColor = blocklightColorArray[heldItemId - 1];
-        else handLightColor = blocklightColorArray[heldItemId2 - 1];
-    }
-
-    blockLighting += mix(handLightColor * handlight, vec3(0.0), 1.0 - handlight);
-}
+#include "/lib/lighting/handlight.glsl"
 #endif
 
 void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in vec3 worldPos, inout vec3 shadow, in vec2 lightmap, 
@@ -27,10 +17,8 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
     float vanillaDiffuse = (0.25 * NoU + 0.75) + (0.667 - abs(NoE)) * (1.0 - abs(NoU)) * 0.15;
           vanillaDiffuse *= vanillaDiffuse;
 
-    #ifdef GBUFFERS_TERRAIN
-    if (subsurface > 0.5) {
-        NoL = pow(NoL, 1.5);
-    }
+    #ifdef OVERWORLD
+    vanillaDiffuse = mix(1.0, vanillaDiffuse, eBS);
     #endif
 
     //Block Lighting
@@ -50,8 +38,8 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
     #endif
 
     float floodfillFade = maxOf(abs(worldPos));
-          floodfillFade /= voxelVolumeSize * 0.5;
-          floodfillFade = clamp(floodfillFade, 0.001, 1.0);
+            floodfillFade /= voxelVolumeSize * 0.5;
+            floodfillFade = clamp(floodfillFade, 0.0, 1.0);
 
     vec3 voxelLighting = vec3(0.0);
 
@@ -61,22 +49,22 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
              voxelSamplePos = clamp(voxelSamplePos, 0.0, 1.0);
 
         vec3 lighting = texture3D(floodfillSampler, voxelSamplePos).rgb;
-        float lLighting = length(lighting);
-        voxelLighting = lighting * FLOODFILL_BRIGHTNESS * (length(lighting) * 0.5 + 0.5);
+        voxelLighting = pow(lighting, vec3(1.0 / FLOODFILL_RADIUS));
+        voxelLighting *= 0.5 + 0.5 * length(voxelLighting);
 
         #ifdef GBUFFERS_ENTITIES
         voxelLighting += pow16(lightmap.x) * blockLightCol;
         #endif
 
-        float mixFactor = 1.0 - pow2(floodfillFade);
+        float mixFactor = 1.0 - floodfillFade;
 
-        blockLighting = mix(blockLighting, voxelLighting, mixFactor * 0.9);
+        blockLighting = mix(blockLighting, voxelLighting * FLOODFILL_BRIGHTNESS, mixFactor * 0.9);
     }
     #endif
 
     //Dynamic Hand Lighting
     #ifdef DYNAMIC_HANDLIGHT
-    getHandLightColor(blockLighting, lViewPos);
+    getHandLightColor(blockLighting, length(viewPos + normalize(relativeEyePosition * 1000.0)));
     #endif
 
     #ifdef OVERWORLD
@@ -100,15 +88,14 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
         float distFactor = clamp(shadowLength, 0.0, 1.0);
         float VoL = clamp(dot(normalize(viewPos), lightVec), 0.0, 1.0);
         scattering = pow8(VoL) * shadowFade * (1.0 - wetness * 0.5);
-        if (subsurface > 0.49 && subsurface < 0.51) {
-            NoL += 0.3 * distFactor * (1.0 + scattering * 0.5);
+        if (subsurface > 0.49 && subsurface < 0.51) { //Leaves
+            NoL += 0.5 * distFactor * (0.75 + scattering * 0.75);
         } else if (subsurface > 0.39 && subsurface < 0.41) {
             NoL += 0.1;
         } else if (subsurface > 0.09 && subsurface < 0.11) {
             NoL += 0.25;
         } else {
-            NoL += 0.3 * distFactor;
-            NoL = mix(NoL, 1.0, 0.75 * min(scattering * 2.0, 1.0) * distFactor);
+            NoL += distFactor * (0.35 + scattering);
         }
     }
     #endif
@@ -152,19 +139,18 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
     shadow *= parallaxShadow;
     #endif
 
-    NoL = clamp(NoL * 1.01 - 0.01, 0.0, 1.0);
-    shadow *= NoL;
+    shadow *= clamp(NoL * 1.01 - 0.01, 0.0, 1.0);
 
     //Scene Lighting
     #ifdef OVERWORLD
     float rainFactor = 1.0 - wetness * 0.75;
-
-    vec3 sceneLighting = mix(ambientCol * pow4(lightmap.y), lightCol, shadow * rainFactor * shadowFade);
+    vec3 sceneLighting = mix(ambientCol * lightmap.y * lightmap.y, lightCol, shadow * rainFactor * shadowFade);
          sceneLighting *= 1.0 + scattering * shadow;
+
     #elif defined END
     vec3 sceneLighting = mix(endAmbientCol, endLightCol, shadow) * 0.25;
     #elif defined NETHER
-    vec3 sceneLighting = pow(netherColSqrt, vec3(0.75)) * 0.035;
+    vec3 sceneLighting = pow(netherColSqrt, vec3(0.75)) * 0.03;
     #endif
 
     //Specular Highlight
@@ -222,9 +208,23 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
     albedo.rgb = mix(albedo.rgb, albedo.rgb * ao * ao, aoMixer * AO_STRENGTH);
     #endif
 
+    //RSM GI//
+    vec3 gi = vec3(0.0);
+
+    #if defined GI && defined GBUFFERS_TERRAIN
+    vec2 prevScreenPos = Reprojection(screenPos);
+    gi = texture2D(gaux1, prevScreenPos).rgb;
+    gi = pow4(gi) * 32.0 * lightmap.y;
+
+    #if defined OVERWORLD
+    gi *= lightCol;
+    #elif defined NETHER
+    gi *= endLightCol;
+    #endif
+    #endif
+
     albedo.rgb = pow(albedo.rgb, vec3(2.2));
-    albedo.rgb *= sceneLighting + blockLighting + emission + auroraLighting;
-    albedo.rgb *= vanillaDiffuse;
+    albedo.rgb *= (sceneLighting + auroraLighting) * vanillaDiffuse + blockLighting + gi + emission;
     albedo.rgb += specularHighlight;
     albedo.rgb = pow(albedo.rgb, vec3(1.0 / 2.2));
 }

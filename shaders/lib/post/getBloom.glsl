@@ -7,7 +7,7 @@ vec3 getBloomTile(float lod, vec2 bloomCoord, vec2 offset) {
 	float resScale = 1.25 * min(360.0, viewHeight) / viewHeight;
 	vec3 bloom = texture2DLod(colortex1, (bloomCoord / scale + offset) * resScale, 0.0).rgb;
 
-	return pow4(bloom) * 128.0;
+	return pow8(bloom) * 256.0;
 }
 
 void getBloom(inout vec3 color, vec2 coord, float z1) {
@@ -20,14 +20,20 @@ void getBloom(inout vec3 color, vec2 coord, float z1) {
 
 	vec3 blur = (blur1 * 2.46 + blur2 * 2.25 + blur3 * 1.71 + blur4) / 7.42;
 	
+	float bloomStrength = BLOOM_STRENGTH;
+
+	#ifdef OVERWORLD
+	bloomStrength *= 1.0 - timeBrightness * 0.33 * eBS;
+	#endif
+
 	#if BLOOM_CONTRAST == 0
-	color = mix(color, blur, 0.25 * BLOOM_STRENGTH);
+	color = mix(color, blur, 0.25 * bloomStrength);
 	#else
 	vec3 bloomContrast = vec3(exp2(BLOOM_CONTRAST * 0.25));
 	color = pow(color, bloomContrast);
 	blur = pow(blur, bloomContrast);
-	vec3 bloomStrength = pow(vec3(0.2 * BLOOM_STRENGTH), bloomContrast) * (2.0 - eBS);
-	color = mix(color, blur, bloomStrength);
+	vec3 strengthFactor = pow(vec3(0.2 * bloomStrength), bloomContrast) * (2.0 - eBS);
+	color = mix(color, blur, strengthFactor);
 	color = pow(color, 1.0 / bloomContrast);
 	#endif
 }

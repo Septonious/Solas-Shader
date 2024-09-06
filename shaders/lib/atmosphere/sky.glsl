@@ -8,10 +8,6 @@ vec3 getSkyAbsorption(vec3 x, float y){
     return exp2(-x * y) * 2.0;;
 }
 
-float getRayleigMultiplier(vec3 worldPos, vec3 lightPos){
-    return 1.0 + (1.0 - clamp(distance(worldPos, lightPos), 0.0, 1.0)) * PI;
-}
-
 vec3 jodieReinhardTonemap(vec3 c){
     float l = dot(c, vec3(0.2126, 0.7152, 0.0722));
     vec3 tc = c / (c + 1.0);
@@ -19,7 +15,7 @@ vec3 jodieReinhardTonemap(vec3 c){
     return mix(c / (l + 1.0), tc, tc);
 }
 
-vec3 getAtmosphericScattering(vec3 worldPos, vec3 viewPos, vec3 lightPos) {
+vec3 getAtmosphericScattering(vec3 viewPos, vec3 lightPos) {
     //Variables
     vec3 nViewPos = normalize(viewPos);
 
@@ -40,6 +36,8 @@ vec3 getAtmosphericScattering(vec3 worldPos, vec3 viewPos, vec3 lightPos) {
           rayleighScatteringMixer *= (1.0 - wetness * 0.75) * (1.0 - timeBrightness * timeBrightness * 0.5);
 
     //Realistic sky scattering
+    vec3 worldPos = normalize(ToWorld(viewPos)) * PI;
+
     float density = 1.25 - timeBrightness * 0.5;
     float zenith = getZenithDensity(density, worldPos.y);
     float sunPointDistMult = clamp(length(max(lightPos.y + multiScatterPhase, 0.0)), 0.0, 1.0);

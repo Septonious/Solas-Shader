@@ -22,7 +22,14 @@ void getReflection(inout vec4 color, in vec3 viewPos, in vec3 normal, in float f
 	vec3 skyRefPos = reflect(normalize(viewPos), normal);
 	vec3 sunPos = vec3(gbufferModelViewInverse * vec4(sunVec * 128.0, 1.0));
 	vec3 sunCoord = sunPos / (sunPos.y + length(sunPos.xz));
-    falloff = getAtmosphericScattering(normalize(ToWorld(skyRefPos)) * PI, skyRefPos, normalize(sunCoord)) * eBS * eBS;
+	falloff = getAtmosphericScattering(skyRefPos, normalize(sunCoord)) * eBS;
+	falloff *= falloff;
+
+	#if MC_VERSION >= 11900
+	falloff *= 1.0 - darknessFactor;
+	#endif
+
+	falloff *= 1.0 - blindFactor;
 	#endif
 
 	#ifdef PBR
@@ -30,7 +37,7 @@ void getReflection(inout vec4 color, in vec3 viewPos, in vec3 normal, in float f
 	float dist = 0.1 * pow2(1.0 - smoothness) * reflectPos.a * fovScale;
 	float lod = log2(viewHeight * dist);
 	#else
-	float lod = 3.0 * (1.0 - smoothness);
+	float lod = 3.0 * (1.0 - smoothness) - 0.05;
 	#endif
 
 	vec4 reflection = texture2DLod(colortex0, reflectPos.xy + lod * refOffsets[0] / vec2(viewWidth, viewHeight), lod);
@@ -40,7 +47,7 @@ void getReflection(inout vec4 color, in vec3 viewPos, in vec3 normal, in float f
 	reflection *= 0.25;
 	reflection.a *= border;
 
-	vec3 finalReflection = max(mix(falloff * falloff, reflection.rgb, reflection.a), vec3(0.0));
+	vec3 finalReflection = max(mix(falloff, reflection.rgb, reflection.a), vec3(0.0));
 
-	color.rgb = mix(color.rgb, finalReflection, fresnel);
+	color.rgb = mix(color.rgb, finalReflection, fresnel * smoothness);
 }

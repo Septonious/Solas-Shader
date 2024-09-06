@@ -11,6 +11,6 @@ float getLogarithmicDepth(float dist) {
 	return (far * (dist - near)) / (dist * (far - near));
 }
 
-float getLinearDepth(in float depth) {
+float getLinearDepth2(float depth) {
     return 2.0 * near * far / (far + near - (2.0 * depth - 1.0) * (far - near));
 }

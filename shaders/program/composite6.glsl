@@ -44,7 +44,7 @@ uniform vec3 cameraPosition;
 uniform sampler2D colortex0;
 
 #if defined PBR || defined GENERATED_SPECULAR
-uniform sampler2D noisetex, colortex3, colortex7;
+uniform sampler2D noisetex, colortex3;
 uniform sampler2D depthtex0, depthtex1;
 
 uniform mat4 gbufferProjection;
@@ -68,16 +68,17 @@ float sunVisibility = clamp(dot(sunVec, upVec) + 0.1, 0.0, 0.25) * 4.0;
 
 //Includes//
 #if defined PBR || defined GENERATED_SPECULAR
-#ifdef OVERWORLD
-#include "/lib/color/lightColor.glsl"
-#include "/lib/atmosphere/sky.glsl"
-#endif
-
 #include "/lib/util/ToScreen.glsl"
 #include "/lib/util/ToView.glsl"
 #include "/lib/util/ToWorld.glsl"
 #include "/lib/util/encode.glsl"
 #include "/lib/util/bayerDithering.glsl"
+
+#ifdef OVERWORLD
+#include "/lib/color/lightColor.glsl"
+#include "/lib/atmosphere/sky.glsl"
+#endif
+
 #include "/lib/pbr/raytracer.glsl"
 #include "/lib/pbr/simpleReflection.glsl"
 #endif
@@ -86,18 +87,17 @@ void main() {
 	vec4 color = texture2D(colortex0, texCoord);
 
 	#if defined PBR || defined GENERATED_SPECULAR
-	vec4 terrainData = texture2D(colortex3, texCoord);
+	vec4 gbuffersData = texture2D(colortex3, texCoord);
 	float z0 = texture2D(depthtex0, texCoord).r;
 	float z1 = texture2D(depthtex1, texCoord).r;
 
-	if (terrainData.a > 0.01 && terrainData.a <= 0.95 && z0 > 0.56 && z0 >= z1) {
-		vec3 normal = decodeNormal(terrainData.rg);
+	if (gbuffersData.a > 0.01 && gbuffersData.a <= 0.95 && z0 > 0.56 && z0 >= z1) {
+		vec3 normal = decodeNormal(gbuffersData.rg);
 		vec3 viewPos = ToView(vec3(texCoord, z0));
 
 		float fresnel = clamp(1.0 + dot(normal, normalize(viewPos)), 0.0, 1.0);
-			  fresnel = pow2(fresnel * terrainData.a);
 
-		getReflection(color, viewPos, normal, fresnel, terrainData.a);
+		getReflection(color, viewPos, normal, fresnel * fresnel, gbuffersData.a);
 	}
 	#endif
 

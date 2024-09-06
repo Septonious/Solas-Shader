@@ -49,15 +49,20 @@ uniform int moonPhase;
 uniform ivec2 eyeBrightnessSmooth;
 
 #ifdef OVERWORLD
-uniform vec3 skyColor, fogColor;
+uniform vec3 skyColor;
 #endif
 
+uniform vec3 fogColor;
 uniform vec3 cameraPosition;
 
 uniform sampler2D texture;
 uniform sampler2D noisetex;
 uniform sampler2D depthtex1;
 uniform sampler2D gaux1;
+
+#ifdef SKYBOX
+uniform sampler2D gaux4;
+#endif
 
 #ifdef WATER_REFLECTIONS
 uniform sampler2D gaux3;
@@ -114,8 +119,9 @@ vec3 lightVec = sunVec;
 
 #ifdef OVERWORLD
 #include "/lib/pbr/ggx.glsl"
-#include "/lib/water/waterFog.glsl"
 #endif
+
+#include "/lib/water/waterFog.glsl"
 
 #if WATER_NORMALS > 0
 #include "/lib/water/waterNormals.glsl"
@@ -173,11 +179,16 @@ void main() {
 	#if defined OVERWORLD
 	vec3 sunPos = vec3(gbufferModelViewInverse * vec4(sunVec * 128.0, 1.0));
 	vec3 sunCoord = sunPos / (sunPos.y + length(sunPos.xz));
-    vec3 atmosphereColor = getAtmosphericScattering(normalize(worldPos) * PI, viewPos, normalize(sunCoord));
+    vec3 atmosphereColor = getAtmosphericScattering(viewPos, normalize(sunCoord));
+
+	#ifdef SKYBOX
+	vec3 skybox = texture2D(gaux4, texCoord.xy).rgb;
+	if (length(pow(skybox, vec3(0.1))) > 0.0) atmosphereColor = mix(atmosphereColor, skybox, SKYBOX_MIX_FACTOR);
+	#endif
 	#elif defined NETHER
 	vec3 atmosphereColor = netherColSqrt.rgb * 0.25;
 	#elif defined END
-	vec3 atmosphereColor = endLightCol * 0.15;
+	vec3 atmosphereColor = endLightCol * 0.1;
 	#endif
 
     vec3 skyColor = atmosphereColor;
@@ -192,11 +203,20 @@ void main() {
 			vec3 oScreenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), oDepth);
 			vec3 oViewPos = ToNDC(oScreenPos);
 
+			#ifdef OVERWORLD
 			vec4 waterFog = getWaterFog(viewPos.xyz - oViewPos, 1.0 + sunVisibility);
+			#else
+			vec4 waterFog = getWaterFog(viewPos.xyz - oViewPos, 1.5);
+			#endif
 				 waterFog.a *= max(lightmap.y, 0.2);
 
 			albedo.rgb = mix(sqrt(albedo.rgb), sqrt(waterFog.rgb), waterFog.a);
-			albedo.rgb *= albedo.rgb * (1.0 - pow(waterFog.a, 1.5) * 0.65) * (0.5 + timeBrightness * 0.5);
+			albedo.rgb *= albedo.rgb * (1.0 - pow(waterFog.a, 1.5) * 0.65);
+
+			#ifdef OVERWORLD
+			albedo.rgb *= (0.5 + timeBrightness * 0.5);
+			#endif
+
 			albedo.a = clamp(albedo.a * mix(0.25, 1.5, waterFog.a), 0.05, 0.95);
 			#endif
 		}

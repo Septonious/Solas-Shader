@@ -39,17 +39,27 @@ uniform float wetness;
 #endif
 
 uniform ivec2 eyeBrightnessSmooth;
-
 uniform vec3 cameraPosition;
 uniform vec3 skyColor;
+uniform vec3 fogColor;
 uniform vec4 entityColor;
+
+#ifdef GI
+uniform vec3 previousCameraPosition;
+
+uniform sampler2D gaux1;
+#endif
 
 uniform sampler2D texture;
 uniform sampler2D noisetex;
-uniform sampler2D gaux1;
 
 uniform sampler3D floodfillSampler;
 uniform usampler3D voxelSampler;
+
+#ifdef GI
+uniform mat4 gbufferPreviousModelView;
+uniform mat4 gbufferPreviousProjection;
+#endif
 
 uniform mat4 gbufferProjectionInverse;
 uniform mat4 gbufferModelViewInverse;
@@ -58,6 +68,7 @@ uniform mat4 shadowModelView;
 
 //Common Variables//
 #ifdef OVERWORLD
+float eBS = eyeBrightnessSmooth.y / 240.0;
 float sunVisibility = clamp(dot(sunVec, upVec) + 0.1, 0.0, 0.25) * 4.0;
 vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.0);
 #else
@@ -75,6 +86,11 @@ vec3 lightVec = sunVec;
 #include "/lib/vx/blocklightColor.glsl"
 #include "/lib/vx/voxelization.glsl"
 #include "/lib/lighting/shadows.glsl"
+
+#ifdef GI
+#include "/lib/util/reprojection.glsl"
+#endif
+
 #include "/lib/lighting/gbuffersLighting.glsl"
 
 #ifdef GENERATED_EMISSION

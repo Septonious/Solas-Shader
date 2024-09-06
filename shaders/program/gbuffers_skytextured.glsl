@@ -1,7 +1,6 @@
 //Settings//
 #include "/lib/common.glsl"
 
-//Fragment Shader///////////////////////////////////////////////////////////////////////////////////
 #ifdef FSH
 
 //Varyings//
@@ -11,6 +10,10 @@ in vec2 texCoord;
 in vec4 color;
 
 uniform sampler2D texture;
+
+//Pipeline Constans//
+const bool colortex7Clear = false;
+const bool gaux4Clear = false;
 
 //Program//
 void main() {
@@ -22,13 +25,14 @@ void main() {
 		albedo *= 0.0;
 	}
 
-    /* DRAWBUFFERS:5 */
+    /* DRAWBUFFERS:7 */
 	gl_FragData[0] = albedo;
 }
 
 #endif
 
-//Vertex Shader/////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
+
 #ifdef VSH
 
 //Varyings//

@@ -13,7 +13,7 @@ const ivec3 workGroups = ivec3(16, 512, 512);
 #endif
 
 #ifdef OVERWORLD
-uniform float rainStrength;
+uniform float wetness;
 #endif
 
 writeonly uniform image3D floodfill_img;
@@ -52,22 +52,22 @@ void main() {
 
 		if (voxel >= 200 && voxel <= 216) {
 			vec3 tint = blocklightTintArray[min(voxel - 200u, blocklightTintArray.length() - 1u)];
-			light *= tint;
+			light *= pow(tint, vec3(FLOODFILL_RADIUS));
 		}
 	} else {
 		#ifdef EMISSIVE_CONCRETE
 		vec3 color = blocklightColorArray[min(voxel, blocklightColorArray.length() - 1u)];
-	    light = color;
+	    light = pow(color, vec3(FLOODFILL_RADIUS));
 		#else
 		if (voxel < 14 || voxel > 19) {
 			vec3 color = blocklightColorArray[min(voxel, blocklightColorArray.length() - 1u)];
-			light = color;
+			light = pow(color, vec3(FLOODFILL_RADIUS));
 		}
 		#endif
 
         #ifdef OVERWORLD
         if (voxel >= 34 && voxel <= 39) {
-            light *= 1.0 - rainStrength;
+            light *= 1.0 - wetness;
         }
         #endif
 	}

@@ -11,7 +11,7 @@ in vec3 sunVec, upVec;
 #endif
 
 //Uniforms//
-#if defined LPV_FOG || defined VL
+#if defined LPV_FOG || defined VL || defined FIREFLIES
 uniform int isEyeInWater;
 uniform int frameCounter;
 
@@ -36,9 +36,11 @@ uniform ivec2 eyeBrightnessSmooth;
 uniform vec3 cameraPosition;
 #endif
 
+uniform vec3 fogColor;
+
 uniform sampler2D colortex0;
 
-#if defined LPV_FOG || defined VL
+#if defined LPV_FOG || defined VL || defined FIREFLIES
 uniform sampler2D noisetex;
 uniform sampler2D colortex1;
 uniform sampler2D depthtex0, depthtex1;
@@ -63,7 +65,7 @@ uniform mat4 gbufferModelViewInverse;
 #endif
 
 //Common Variables//
-#if defined LPV_FOG || defined VL
+#if defined LPV_FOG || defined VL || defined FIREFLIES
 float eBS = eyeBrightnessSmooth.y / 240.0;
 float caveFactor = mix(clamp((cameraPosition.y - 56.0) / 16.0, float(sign(isEyeInWater)), 1.0), 1.0, eBS);
 
@@ -73,14 +75,13 @@ float sunVisibility = clamp(dot(sunVec, upVec) + 0.1, 0.0, 0.25) * 4.0;
 #endif
 
 //Includes//
-#if defined LPV_FOG || defined VL
+#if defined LPV_FOG || defined VL || defined FIREFLIES
 #include "/lib/atmosphere/spaceConversion.glsl"
 #include "/lib/util/ToView.glsl"
 #include "/lib/util/ToWorld.glsl"
-
-#ifdef LPV_FOG
 #include "/lib/util/bayerDithering.glsl"
 
+#if defined LPV_FOG || defined FIREFLIES
 #ifdef NETHER
 #include "/lib/color/netherColor.glsl"
 #endif
@@ -101,17 +102,21 @@ void main() {
 	vec4 vl = vec4(0.0);
 	float fireflies = 0.0;
 
-	#if defined LPV_FOG || defined VL
+	#if defined LPV_FOG || defined VL || defined FIREFLIES
 	vec3 translucent = texture2D(colortex1, texCoord).rgb;
 
-	#ifdef LPV_FOG
 	float bayerDither = Bayer8(gl_FragCoord.xy);
 
 	#ifdef TAA
 	bayerDither = fract(bayerDither + frameTimeCounter * 16.0);
 	#endif
 
-	computeLPVFog(vl.rgb, fireflies, translucent, bayerDither);
+	#ifdef FIREFLIES
+	computeFireflies(fireflies, translucent, bayerDither);
+	#endif
+
+	#ifdef LPV_FOG
+	computeLPVFog(vl.rgb, translucent, bayerDither);
 	#endif
 
 	#ifdef VL

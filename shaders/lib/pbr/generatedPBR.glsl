@@ -8,6 +8,7 @@ void generateIPBR(inout vec4 albedo, in vec3 worldPos, in vec3 viewPos, inout ve
     #include "/lib/pbr/blocks/beacon.glsl"
     #include "/lib/pbr/blocks/black_materials.glsl"
     #include "/lib/pbr/blocks/brewing_stand.glsl"
+    #include "/lib/pbr/blocks/bricks.glsl"
     #include "/lib/pbr/blocks/candles_corals.glsl"
     #include "/lib/pbr/blocks/cave_berries.glsl"
     #include "/lib/pbr/blocks/concrete.glsl"
@@ -22,6 +23,7 @@ void generateIPBR(inout vec4 albedo, in vec3 worldPos, in vec3 viewPos, inout ve
     #include "/lib/pbr/blocks/magma_block.glsl"
     #include "/lib/pbr/blocks/nether_logs.glsl"
     #include "/lib/pbr/blocks/nether_plants.glsl"
+    #include "/lib/pbr/blocks/planks.glsl"
     #include "/lib/pbr/blocks/polished_materials.glsl"
     #include "/lib/pbr/blocks/powered_rail.glsl"
     #include "/lib/pbr/blocks/prismarine.glsl"
@@ -34,6 +36,7 @@ void generateIPBR(inout vec4 albedo, in vec3 worldPos, in vec3 viewPos, inout ve
     #include "/lib/pbr/blocks/sculk.glsl"
     #include "/lib/pbr/blocks/soul_emitters.glsl"
     #include "/lib/pbr/blocks/spawner.glsl"
+    #include "/lib/pbr/blocks/terracotta.glsl"
     #include "/lib/pbr/blocks/torch_lantern.glsl"
     #include "/lib/pbr/blocks/water_cauldron.glsl"
     #include "/lib/pbr/blocks/wet_farmland.glsl"
@@ -64,8 +67,8 @@ void generateIPBR(inout vec4 albedo, in vec3 worldPos, in vec3 viewPos, inout ve
         float NoU = clamp(dot(normal, upVec), 0.0, 1.0);
         float noise = texture2D(noisetex, (worldPos.xz + cameraPosition.xz) * 0.001).b;
               noise*= texture2D(noisetex, (worldPos.xz + cameraPosition.xz) * 0.002).b;
-        float puddles = clamp(wetness * pow8(lightmap.y) * (0.1 + (noise - 0.05)) * NoU, 0.0, 1.0);
-        smoothness = mix(smoothness, RAIN_PUDDLES_STRENGTH, puddles);
+        float puddles = clamp(wetness * pow8(lightmap.y) * (0.15 + noise) * NoU, 0.0, 1.0);
+        smoothness = mix(smoothness, 0.5 * RAIN_PUDDLES_STRENGTH, puddles);
         metalness = mix(smoothness, 1.0, puddles);
     }
     #endif
