@@ -172,8 +172,8 @@ void computeFireflies(inout float fireflies, in vec3 translucent, in float dithe
 
 	if (visibility > 0.0) {
 		//Linear Depths
-		float linearDepth0 = getLinearDepth(z0);
-		float linearDepth1 = getLinearDepth(z1);
+		float linearDepth0 = getLinearDepth2(z0);
+		float linearDepth1 = getLinearDepth2(z1);
 
 		//Variables
         int sampleCount = 6;
