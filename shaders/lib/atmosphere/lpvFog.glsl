@@ -1,3 +1,4 @@
+#ifdef LPV_FOG
 uniform vec4 lightningBoltPosition;
 
 float lightningFlashEffect(vec3 worldPos, vec3 lightningBoltPosition, float lightDistance){ //Thanks to Xonk!
@@ -109,6 +110,7 @@ void computeLPVFog(inout vec3 fog, in vec3 translucent, in float dither) {
 
     fog += finalFog;
 }
+#endif
 
 #ifdef FIREFLIES
 vec3 hash(vec3 p3){
