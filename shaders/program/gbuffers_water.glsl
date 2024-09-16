@@ -214,7 +214,7 @@ void main() {
 			albedo.rgb *= albedo.rgb * (1.0 - pow(waterFog.a, 1.5) * 0.65);
 
 			#ifdef OVERWORLD
-			albedo.rgb *= (0.5 + timeBrightness * 0.5);
+			albedo.rgb *= 0.5 + timeBrightness * 0.5;
 			#endif
 
 			albedo.a = clamp(albedo.a * mix(0.25, 1.5, waterFog.a), 0.05, 0.95);

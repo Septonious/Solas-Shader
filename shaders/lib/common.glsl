@@ -5,12 +5,10 @@
 ////////////// S H A D E R S E T T I N G S //////////////
 
 const int shadowMapResolution = 1536; //[512 1024 1536 2048 3072]
-#define SHADOW_DISTANCE 192.0 //[128.0 192.0 256.0 320.0 384.0 448.0 512.0 1024.0]
-
 #ifndef DISTANT_HORIZONS
-const float shadowDistance = SHADOW_DISTANCE;
+const float shadowDistance = 192.0; //[128.0 192.0 256.0 320.0 384.0 448.0 512.0 1024.0]
 #else
-const float shadowDistance = 1024.0;
+const float shadowDistance = 1024.0; //[128.0 192.0 256.0 320.0 384.0 448.0 512.0 1024.0]
 #endif
 const float entityShadowDistanceMul = 0.05; // [0.05 0.10 1.50 0.20 0.25 0.30 0.35 0.40 0.45 0.50 0.55 0.60 0.65 0.70 0.75 0.80 0.85 0.90 0.95 1.0]
 #ifndef END
