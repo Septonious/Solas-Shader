@@ -32,7 +32,7 @@ void getBloom(inout vec3 color, vec2 coord, float z1) {
 	vec3 bloomContrast = vec3(exp2(BLOOM_CONTRAST * 0.25));
 	color = pow(color, bloomContrast);
 	blur = pow(blur, bloomContrast);
-	vec3 strengthFactor = pow(vec3(0.2 * bloomStrength), bloomContrast) * (2.0 - eBS);
+	vec3 strengthFactor = pow(vec3(0.2 * bloomStrength), bloomContrast) * (1.5 - eBS * 0.5);
 	color = mix(color, blur, strengthFactor);
 	color = pow(color, 1.0 / bloomContrast);
 	#endif
