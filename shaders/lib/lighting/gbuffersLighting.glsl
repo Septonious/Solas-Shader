@@ -119,7 +119,7 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
 
         float offset = 0.001;
         #if defined GBUFFERS_TERRAIN
-              offset *= 1.0 + viewDistance * (float(subsurface > 0.3) * 3.0 + float(subsurface == 0.4) * 3.0 + float(subsurface == 0.5) * 2.0);
+              offset *= 1.0 + viewDistance * (float(subsurface > 0.3) * 3.0 + float(subsurface == 0.5) * 2.0);
               offset *= 1.0 - viewDistance * float(subsurface == 0.3) * 0.4;
         #elif defined GBUFFERS_TEXTURED
               offset *= 0.25;

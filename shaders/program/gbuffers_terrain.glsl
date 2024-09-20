@@ -146,8 +146,7 @@ void main() {
 	float leaves = float(mat == 10314);
 	float foliage2 = float(mat == 10317);
 	float foliage = float(mat >= 10304 && mat <= 10319 || mat >= 35 && mat <= 40) * (1.0 - leaves) * (1.0 - foliage2);
-	float other = float(mat == 20312);
-	float subsurface = foliage + leaves * 0.5 + other * 0.4 + foliage2 * 0.3;
+	float subsurface = foliage + leaves * 0.5 + foliage2 * 0.3;
     float smoothness = 0.0, metalness = 0.0;
 	float emission = 0.0;
 
