@@ -148,6 +148,7 @@ void main() {
 	#endif
 
     vec3 skyColor = atmosphereColor;
+	vec3 skyColorO = atmosphereColor;
 
 	#if defined OVERWORLD || defined END
 	vec3 nViewPos = normalize(viewPos);
@@ -243,7 +244,7 @@ void main() {
 	skyColor *= 1.0 - blindFactor;
 
 	if (z1 < 1.0) {
-		Fog(color, viewPos, worldPos, skyColor);
+		Fog(color, viewPos, worldPos, skyColorO);
 
 	#ifdef DISTANT_HORIZONS
 	} else if (dhZ < 1.0) {
@@ -251,7 +252,7 @@ void main() {
 		vec4 dhViewPos = dhProjectionInverse * (dhScreenPos * 2.0 - 1.0);
 			 dhViewPos /= dhViewPos.w;
 		
-		Fog(color, dhViewPos.xyz, ToWorld(dhViewPos.xyz), skyColor);
+		Fog(color, dhViewPos.xyz, ToWorld(dhViewPos.xyz), skyColorO);
 	#endif
 
 	} else {
