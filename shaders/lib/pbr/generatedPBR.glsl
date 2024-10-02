@@ -58,8 +58,6 @@ void generateIPBR(inout vec4 albedo, in vec3 worldPos, in vec3 viewPos, inout ve
     #ifdef GENERATED_SPECULAR
     smoothness = clamp(smoothness, 0.0, 0.95);
     metalness = 1.0;
-    #else
-    smoothness = 0.0;
     #endif
 
     #if defined RAIN_PUDDLES && defined GBUFFERS_TERRAIN

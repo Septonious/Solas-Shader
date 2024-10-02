@@ -177,7 +177,7 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
     #endif
 
     //Night vision
-    sceneLighting += nightVision * vec3(0.2, 0.3, 0.2);
+    sceneLighting += nightVision * vec3(0.1, 0.15, 0.1);
 
     //Aurora Lighting
     vec3 auroraLighting = vec3(0.0);
