@@ -97,7 +97,7 @@ void main() {
 
 		float fresnel = clamp(1.0 + dot(normal, normalize(viewPos)), 0.0, 1.0);
 
-		getReflection(color, viewPos, normal, fresnel * fresnel, gbuffersData.a);
+		getReflection(color, viewPos, normal, fresnel, gbuffersData.a);
 	}
 	#endif
 

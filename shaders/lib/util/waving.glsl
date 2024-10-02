@@ -27,7 +27,7 @@ vec3 getWavingBlocks(vec3 worldPos, float istopv, float skyLightMap) {
         vec3 pos = worldPos + cameraPosition;
 
         #ifdef WAVING_PLANTS
-        if (mc_Entity.x == 10304 && istopv > 0.9) { // Grass
+        if (istopv > 0.9 && (mc_Entity.x == 10304 || (mc_Entity.x >= 10035 && mc_Entity.x <= 10040))) { // Grass
             wave += calculateMovement(pos, 1.5, 1.0, vec2(0.1, 0.04), viewLength) * (3.0 - pow(viewLength, 0.25) * 2.0);
         } else if ((mc_Entity.x == 10305 || mc_Entity.x == 10307 || mc_Entity.x == 10309 || mc_Entity.x == 10311 || mc_Entity.x == 10318) && (istopv > 0.9 || fract(pos.y + 0.005) > 0.01) || mc_Entity.x == 10306 || mc_Entity.x == 10308 || mc_Entity.x == 10310 || mc_Entity.x == 10312 || mc_Entity.x == 10319) { // Large Flowers (real big)
             wave += calculateMovement(pos, 0.85, 0.75, vec2(0.12, 0.06), viewLength);
