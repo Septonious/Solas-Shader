@@ -79,7 +79,7 @@ option.WATER_NORMAL_OFFSET=Offset de los Normales del Agua
 screen.LIGHTING=Iluminación
 
 option.shadowMapResolution=Resolución de las Sombras
-option.SHADOW_DISTANCE=Distancia de Renderizado de las Sombras
+option.shadowDistance=Distancia de Renderizado de las Sombras
 option.sunPathRotation=Sun Angle
 option.VPS=Sombras de Penumbra Variables
 option.VPS.comment=Permite que las sombras se vuelvan mas borrosas/nitidas dependiendo de la distancia de el objeto.

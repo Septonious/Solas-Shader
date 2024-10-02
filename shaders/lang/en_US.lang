@@ -175,7 +175,7 @@ option.AO_RADIUS=AO Radius
 screen.SHADOWS=Shadows Config
 
 option.shadowMapResolution=Shadow Resolution
-option.SHADOW_DISTANCE=Shadow Distance
+option.shadowDistance=Shadow Distance
 option.entityShadowDistanceMul=Entity Shadow Distance
 option.sunPathRotation=Sun Angle
 option.VPS=Variable Penumbra Shadows (VPS)

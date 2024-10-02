@@ -174,7 +174,7 @@ option.AO_RADIUS=Радиус АО
 screen.SHADOWS=Настройки Теней
 
 option.shadowMapResolution=Разрешение Теней
-option.SHADOW_DISTANCE=Дистанция Рендера Теней
+option.shadowDistance=Дистанция Рендера Теней
 option.sunPathRotation=Угол Солнца/Луны
 option.entityShadowDistanceMul=Прорисовка Теней от Существ
 option.VPS=Размывающиеся Тени (РТ)

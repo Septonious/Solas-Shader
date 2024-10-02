@@ -126,7 +126,7 @@ option.WAVING_WATER=Nước Lượn sóng
 screen.LIGHTING=Chiếu sáng
 
 option.shadowMapResolution=Độ phân giải Bóng đổ
-option.SHADOW_DISTANCE=Khoảng cách Bóng đổ
+option.shadowDistance=Khoảng cách Bóng đổ
 option.sunPathRotation=Góc Mặt trời
 option.VPS=Bóng mờ Biến đổi (VPS)
 option.VPS.comment=Bật bóng đổ trở nên mờ hơn/sắc nét hơn tùy thuộc vào khoảng cách của vật cản.
