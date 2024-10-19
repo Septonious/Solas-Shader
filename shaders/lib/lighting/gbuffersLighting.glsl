@@ -83,7 +83,7 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
     //Subsurface scattering
     float scattering = 0.0;
     
-    #if defined OVERWORLD && (defined GBUFFERS_TERRAIN || defined GBUFFERS_TEXTURED)
+    #if defined OVERWORLD && defined GBUFFERS_TERRAIN
     if (subsurface > 0.0) {
         float distFactor = clamp(shadowLength, 0.0, 1.0);
         float VoL = clamp(dot(normalize(viewPos), lightVec), 0.0, 1.0);
@@ -121,8 +121,6 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
         #if defined GBUFFERS_TERRAIN
               offset *= 1.0 + viewDistance * (float(subsurface > 0.3) * 3.0 + float(subsurface == 0.5) * 2.0);
               offset *= 1.0 - viewDistance * float(subsurface == 0.3) * 0.4;
-        #elif defined GBUFFERS_TEXTURED
-              offset *= 0.25;
         #endif
 
         #ifndef GBUFFERS_TERRAIN
