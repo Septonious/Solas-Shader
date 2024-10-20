@@ -98,7 +98,7 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 #define DISTANT_FADE
 #define DISTANT_FADE_STYLE 0 //[0 1]
 #define FOG_DISTANCE 90 //[10 15 20 25 30 35 40 45 50 55 60 65 70 75 80 85 90 95 100 110 120 130 140 150 160 170 180 190 200]
-#define FOG_DENSITY 1.2 //[0.0 0.2 0.4 0.6 0.8 1.0 1.2 1.4 1.6 1.8 2.0]
+#define FOG_DENSITY 1.3 //[0.0 0.2 0.4 0.6 0.8 1.0 1.2 1.4 1.6 1.8 2.0]
 #define FOG_HEIGHT 100.0 //[50 60 70 80 90 100 110 120 130 140 150 160 170 180 190 200 210 220 230 240 250]
 
 //Bloom//
@@ -128,7 +128,7 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 //#define GI
 #define GI_SAMPLES 6 //[4 5 6 7 8 9 10 11 12 13 14 15 16]
 #define GI_RADIUS 32.0 //[16.0 24.0 32.0 48.0 64.0 80.0 96.0 112.0 128.0]
-#define GI_BRIGHTNESS 1.0 //[1.0 2.0 3.0 4.0 5.0 6.0 7.0 8.0]
+#define GI_BRIGHTNESS 3.0 //[1.0 2.0 3.0 4.0 5.0 6.0 7.0 8.0]
 
 //Depth of Field & Distant Blur//
 //#define DOF

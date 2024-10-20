@@ -28,9 +28,9 @@ void computeVL(inout vec3 vl, in vec3 translucent, in float dither) {
 	#ifdef OVERWORLD
 	float waterFactor = 1.0 - float(isEyeInWater == 1) * 0.5;
 	float visibility = int(z0 > 0.56) * shadowFade;
-		  visibility *= pow(VoU, 2.5 * waterFactor);
-		  visibility *= mix(0.25 + VoL * 0.25, VoL * 0.45, timeBrightness);
-		  visibility = mix(visibility * (2.0 - sunVisibility), 0.65, indoorFactor) * waterFactor;
+		  visibility *= pow(VoU, 2.0 * waterFactor);
+		  visibility *= mix(0.25 + VoL * 0.25, VoL * 0.5, timeBrightness);
+		  visibility = mix(visibility * (2.0 - sunVisibility), 0.7, indoorFactor) * waterFactor;
 	#else
 	float visibility = exp(pow4(VoL)) * 0.075;
 	#endif
@@ -49,8 +49,8 @@ void computeVL(inout vec3 vl, in vec3 translucent, in float dither) {
 		//Variables
         int sampleCount = VL_SAMPLES;
 
-		float maxDist = 128.0;
-		float minDist = (maxDist / sampleCount * (1.0 - float(isEyeInWater == 1) * 0.5));
+		float maxDist = 160.0;
+		float minDist = (maxDist / sampleCount) * 0.6;
 		float maxCurrentDist = min(linearDepth1, maxDist);
 
 		vec3 shadowCol = vec3(0.0);
