@@ -128,7 +128,7 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 //#define GI
 #define GI_SAMPLES 6 //[4 5 6 7 8 9 10 11 12 13 14 15 16]
 #define GI_RADIUS 32.0 //[16.0 24.0 32.0 48.0 64.0 80.0 96.0 112.0 128.0]
-#define GI_BRIGHTNESS 3.0 //[1.0 2.0 3.0 4.0 5.0 6.0 7.0 8.0]
+#define GI_BRIGHTNESS 2.0 //[1.0 2.0 3.0 4.0 5.0 6.0 7.0 8.0]
 
 //Depth of Field & Distant Blur//
 //#define DOF
