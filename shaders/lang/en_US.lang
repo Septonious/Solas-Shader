@@ -357,14 +357,20 @@ option.CONTRAST=Contrast
 
 #----------------------------------------------------------------------------------#
 
-screen.DOF_CONFIG=Blur Effects Config
+screen.DOF_CONFIG=DoF Config
 
 option.DOF=Depth of Field (DOF)
 option.DOF.comment=Blurs the object outside your player's eye focal point.
-option.DOF_STRENGTH=DOF Strength
+option.DOF_STRENGTH=DoF Strength
 option.DISTANT_BLUR=Distant Blur
 option.DISTANT_BLUR_RANGE=Dist. Blur Range
 option.DISTANT_BLUR_STRENGTH=Dist. Blur Strength
+
+option.MANUAL_FOCUS=DoF Manual Focus
+option.MANUAL_FOCUS.comment=Sets a custom focus distance for Depth of Fielt.
+option.DOF_FOCUS=Focus Distance
+option.TILT=Tilt
+option.SHIFT=Shift
 
 #----------------------------------------------------------------------------------#
 

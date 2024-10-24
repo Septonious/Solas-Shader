@@ -366,6 +366,12 @@ option.DISTANT_BLUR.comment=Размывает всё вдали.
 option.DISTANT_BLUR_RANGE=Дистанция ДР
 option.DISTANT_BLUR_STRENGTH=Сила ДР
 
+option.MANUAL_FOCUS=Ручная Фокусировка
+option.MANUAL_FOCUS.comment=Позволяет вручную задать дистанцию фокуса камеры.
+option.DOF_FOCUS=Дистанция Фокуса
+option.TILT=Наклон
+option.SHIFT=Смещение
+
 #----------------------------------------------------------------------------------#
 
 screen.BLOOM_CONFIG=Настройки Свечения

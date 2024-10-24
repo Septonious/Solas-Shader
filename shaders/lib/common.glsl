@@ -133,6 +133,10 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 //Depth of Field & Distant Blur//
 //#define DOF
 #define DOF_STRENGTH 3.00 //[0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00]
+//#define MANUAL_FOCUS
+#define TILT 1.00 //[0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00]
+#define SHIFT 0.00 //[0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00]
+#define DOF_FOCUS 5.00 //[0.00 0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00 4.50 5.00 6.00 7.00 8.00 10.00 12.00 16.00 20.00]
 //#define DISTANT_BLUR
 #define DISTANT_BLUR_STRENGTH 2.0 //[1.0 1.5 2.0 2.5 3.0 3.5 4.0]
 #define DISTANT_BLUR_RANGE 4 //[1 2 3 4 5 6 7 8]

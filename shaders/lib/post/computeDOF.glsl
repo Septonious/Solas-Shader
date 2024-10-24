@@ -40,8 +40,14 @@ vec3 getDepthOfField(vec3 color, vec2 coord, float z1) {
 	float coc = 0.0;
 
 	#ifdef DOF
-	coc = max(abs(z1 - centerDepthSmooth) * DOF_STRENGTH - 0.01, 0.0);
+	#ifndef MANUAL_FOCUS
+	coc = max(abs(z1 - centerDepthSmooth) * DOF_STRENGTH - 0.001, 0.0);
 	coc /= sqrt(coc * coc + 0.1);
+	#else
+	vec2 offset = (texCoord * 2.0 - 1.0) * vec2(SHIFT, TILT) * 0.1;
+
+	coc = max(abs(z1 - centerDepthSmooth + offset.x + offset.y) * DOF_STRENGTH - 0.001, 0.0);
+	#endif
 	#endif
 
 	#ifdef DISTANT_BLUR

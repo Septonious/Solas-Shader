@@ -12,10 +12,18 @@ uniform int frameCounter;
 #if defined TAA || defined FXAA || defined DOF
 uniform float viewWidth, viewHeight;
 uniform float aspectRatio;
+
+#ifdef MANUAL_FOCUS
+uniform float far, near;
+#endif
 #endif
 
 #ifdef DOF
+#ifndef MANUAL_FOCUS
 uniform float centerDepthSmooth;
+#else
+float centerDepthSmooth = ((DOF_FOCUS - near) * far) / ((far - near) * DOF_FOCUS);
+#endif
 #endif
 
 #if defined TAA || defined MOTION_BLUR
