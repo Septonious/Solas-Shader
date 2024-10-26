@@ -37,7 +37,7 @@ vec4 rayTrace(sampler2D depthtex, vec3 viewPos, vec3 normal, float dither, out f
 			rayIncrement *= refinementMult;
 		}
         rayIncrement *= incrementMult;
-        rayDirection += rayIncrement;
+        rayDirection += rayIncrement * (0.15 * dither + 0.85);
 		viewPos = start + rayDirection;
     }
 
