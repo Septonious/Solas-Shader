@@ -58,7 +58,7 @@ uniform vec3 fogColor;
 uniform vec3 cameraPosition;
 
 uniform sampler2D noisetex;
-uniform sampler2D depthtex1;
+uniform sampler2D depthtex1, dhDepthTex1;
 uniform sampler2D gaux1;
 
 #ifdef SKYBOX
@@ -125,6 +125,10 @@ vec3 lightVec = sunVec;
 
 #include "/lib/water/waterFog.glsl"
 
+#if WATER_NORMALS > 0
+#include "/lib/water/waterNormals.glsl"
+#endif
+
 //Program//
 void main() {
 	vec3 screenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z);
@@ -175,6 +179,13 @@ void main() {
 	}
 	#endif
 
+	#if WATER_NORMALS > 0
+	if (mat == 10001) {
+		float fresnel = clamp(1.0 + dot(normalize(normal), nViewPos), 0.0, 1.0);
+		getWaterNormal(newNormal, worldPos, fresnel);
+	}
+	#endif
+
 	float NoU = clamp(dot(newNormal, upVec), -1.0, 1.0);
 	float NoL = clamp(dot(newNormal, lightVec), 0.0, 1.0);
 	float NoE = clamp(dot(newNormal, eastVec), -1.0, 1.0);
@@ -203,7 +214,7 @@ void main() {
 	if (mat != 10031) {
 		if (mat == 10001 && isEyeInWater == 0) {
 			#ifdef WATER_FOG
-			float oDepth = texture2D(depthtex1, screenPos.xy).r;
+			float oDepth = texture2D(dhDepthTex1, screenPos.xy).r;
 			vec3 oScreenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), oDepth);
 			vec3 oViewPos = ToNDC(oScreenPos);
 
@@ -229,15 +240,6 @@ void main() {
 		float fresnel = clamp(1.0 + dot(normalize(newNormal), nViewPos), 0.0, 1.0 - float(isEyeInWater == 1.0) * 0.5);
 		getReflection(albedo, viewPos, nViewPos, newNormal, fresnel, lightmap.y);
 		albedo.a = mix(albedo.a, 1.0, fresnel);
-		#endif
-
-		#ifdef OVERWORLD
-        float vanillaDiffuse = (0.25 * NoU + 0.75) + (0.667 - abs(NoE)) * (1.0 - abs(NoU)) * 0.15;
-		float smoothnessF = 0.6 + length(albedo.rgb) * 0.2 * float(mat == 10000 || mat == 10001);
-
-		vec3 baseReflectance = vec3(0.1);
-		vec3 specularHighlight = getSpecularHighlight(newNormal, viewPos, smoothnessF, baseReflectance, lightColSqrt, shadow * vanillaDiffuse, color.a);
-		albedo.rgb += specularHighlight;
 		#endif
 	}
 
@@ -300,9 +302,9 @@ void main() {
 	lmCoord = clamp((lmCoord - 0.03125) * 1.06667, vec2(0.0), vec2(0.9333, 1.0));
 
 	//Normal, Binormal and Tangent
-	normal = normalize(gl_NormalMatrix * gl_Normal);
-	binormal = normalize(gl_NormalMatrix * cross(at_tangent.xyz, gl_Normal.xyz) * at_tangent.w);
-	tangent = normalize(gl_NormalMatrix * at_tangent.xyz);
+	normal   = normalize(gl_NormalMatrix * gl_Normal);
+	binormal = normalize(gbufferModelView[2].xyz);
+	tangent  = normalize(gbufferModelView[0].xyz);
 
 	mat3 tbnMatrix = mat3(tangent.x, binormal.x, normal.x,
 						  tangent.y, binormal.y, normal.y,

@@ -41,6 +41,10 @@ uniform float shadowFade;
 uniform float wetness;
 #endif
 
+#ifdef DISTANT_HORIZONS
+uniform float dhFarPlane;
+#endif
+
 #ifdef AURORA
 uniform float isSnowy;
 uniform int moonPhase;
@@ -62,6 +66,12 @@ uniform sampler2D gaux1;
 
 #ifdef SKYBOX
 uniform sampler2D gaux4;
+#endif
+
+#ifdef DISTANT_HORIZONS
+uniform sampler2D dhDepthTex1;
+
+uniform mat4 dhProjectionInverse;
 #endif
 
 #ifdef WATER_REFLECTIONS
@@ -227,7 +237,7 @@ void main() {
 		albedo.a = mix(albedo.a, 1.0, fresnel);
 		#endif
 
-		#ifdef OVERWORLD
+		#if defined OVERWORLD && !defined DISTANT_HORIZONS
         float vanillaDiffuse = (0.25 * NoU + 0.75) + (0.667 - abs(NoE)) * (1.0 - abs(NoU)) * 0.15;
 		float smoothnessF = 0.6 + length(albedo.rgb) * 0.2 * float(mat == 10000 || mat == 10001);
 

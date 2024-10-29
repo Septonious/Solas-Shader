@@ -29,7 +29,7 @@ void getDenseFog(inout vec3 color, vec3 viewPos) {
 	color = mix(color, densefogCol[isEyeInWater - 2], fog);
 }
 
-#if defined DISTANT_HORIZONS && (defined DEFERRED || defined DH_WATER)
+#if defined DISTANT_HORIZONS && (defined DEFERRED || defined DH_WATER || defined GBUFFERS_WATER)
 void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 atmosphereColor) {
 	float lViewPos = length(viewPos);
 	float lWorldPos = length(worldPos.xz);
