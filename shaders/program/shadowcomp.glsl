@@ -43,12 +43,14 @@ void main() {
 	vec3 light = vec3(0.0);
 
 	if (voxel == 0 || (voxel >= 200 && voxel <= 216) || voxel == 1) {
-		int counter = 0;
-		for (int i = 0; i < 6; i++) {
-			light += texelFetch(floodfillSamplerCopy, clamp(previousPos + offsets[i], 0, voxelVolumeSize - 1), 0).rgb;
-			counter++;
-		}
-		light /= counter;
+		light  = texelFetch(floodfillSamplerCopy, previousPos, 0).rgb;
+		light += texelFetch(floodfillSamplerCopy, clamp(previousPos + offsets[0], 0, voxelVolumeSize - 1), 0).rgb;
+		light += texelFetch(floodfillSamplerCopy, clamp(previousPos + offsets[1], 0, voxelVolumeSize - 1), 0).rgb;
+		light += texelFetch(floodfillSamplerCopy, clamp(previousPos + offsets[2], 0, voxelVolumeSize - 1), 0).rgb;
+		light += texelFetch(floodfillSamplerCopy, clamp(previousPos + offsets[3], 0, voxelVolumeSize - 1), 0).rgb;
+		light += texelFetch(floodfillSamplerCopy, clamp(previousPos + offsets[4], 0, voxelVolumeSize - 1), 0).rgb;
+		light += texelFetch(floodfillSamplerCopy, clamp(previousPos + offsets[5], 0, voxelVolumeSize - 1), 0).rgb;
+		light /= 7.1;
 
 		if (voxel >= 200 && voxel <= 216) {
 			vec3 tint = blocklightTintArray[min(voxel - 200u, blocklightTintArray.length() - 1u)];

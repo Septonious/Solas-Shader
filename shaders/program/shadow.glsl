@@ -114,7 +114,7 @@ void main() {
 	
     //Voxel map
 	#ifdef VX_SUPPORT
-    updateVoxelMap(int(max(mc_Entity.x - 10000, 0)));
+    if (gl_VertexID % 4 == 0) updateVoxelMap(int(max(mc_Entity.x - 10000, 0)));
 	#endif
 
 	//Color & Position
