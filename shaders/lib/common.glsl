@@ -38,7 +38,7 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 #define MILKY_WAY_BRIGHTNESS 2.00 //[0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00]
 
 #define RAINBOW
-#define RAINBOW_BRIGHTNESS 2.00 //[0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00]
+#define RAINBOW_BRIGHTNESS 1.50 //[0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00]
 
 //#define SKYBOX
 #define SKYBOX_MIX_FACTOR 0.5 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
@@ -59,8 +59,8 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 //Volumetric Clouds
 #define VC
 #define VC_FREQUENCY 0.7 //[0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5]
-#define VC_DENSITY 8.0 //[4.0 6.0 8.0 10.0 12.0 14.0 16.0]
-#define VC_AMOUNT 13.0 //[14.0 13.5 13.0 12.5 12.0 11.5 11.0 10.5 10.0]
+#define VC_DENSITY 10.0 //[4.0 6.0 8.0 10.0 12.0 14.0 16.0]
+#define VC_AMOUNT 12.0 //[14.0 13.5 13.0 12.5 12.0 11.5 11.0]
 #define VC_HEIGHT 170.0 //[10.0 20.0 30.0 40.0 50.0 60.0 70.0 80.0 90.0 100.0 110.0 120.0 130.0 140.0 150.0 160.0 170.0 180.0 190.0 200.0 210.0 220.0 230.0 240.0 250.0]
 #define VC_THICKNESS 18.0 //[8.0 10.0 12.0 14.0 16.0 18.0 20.0]
 #define VC_DETAIL 1.5 //[1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2.0]

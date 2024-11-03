@@ -5,10 +5,7 @@ float texture2DShadow(sampler2D shadowtex, vec3 shadowPos) {
 }
 
 #ifdef VC
-float cloudHeight = mix(VC_HEIGHT, 100.0, wetness);
-float cloudDensity = VC_DENSITY;
-float cloudAmount = VC_AMOUNT * (1.1 - sunVisibility * 0.1) * (1.0 - wetness * 0.15);
-float cloudThickness = mix(VC_THICKNESS, 16.0, wetness);
+float cloudAmount = VC_AMOUNT * 1.3 * (1.0 - wetness * 0.2);
 
 uniform vec4 lightningBoltPosition;
 
@@ -25,19 +22,18 @@ void getCloudSample(vec2 rayPos, vec2 wind, float attenuation, inout float noise
 	rayPos *= 0.000125 * VC_FREQUENCY;
 
 	float noiseBase = texture2D(noisetex, rayPos + 0.5 + wind * 0.5).g;
-		  noiseBase = pow2(1.0 - noiseBase) * 0.5 + 0.3;
+		  noiseBase = pow2(1.0 - noiseBase) * 0.5 + 0.4 - wetness * 0.025;
 
-	float detailZ = floor(attenuation * cloudThickness) * 0.05;
+	float detailZ = floor(attenuation * VC_THICKNESS) * 0.05;
 	float noiseDetailA = texture2D(noisetex, rayPos * 1.5 - wind + detailZ).b;
 	float noiseDetailB = texture2D(noisetex, rayPos * 1.5 - wind + detailZ + 0.05).b;
-	float noiseDetail = mix(noiseDetailA, noiseDetailB, fract(attenuation * cloudThickness));
+	float noiseDetail = mix(noiseDetailA, noiseDetailB, fract(attenuation * VC_THICKNESS));
 
 	float noiseCoverage = abs(attenuation - 0.125) * (attenuation > 0.125 ? 1.14 : 8.0);
-		  noiseCoverage *= noiseCoverage * 6.0;
+		  noiseCoverage *= noiseCoverage * 5.7;
 	
 	noise = mix(noiseBase, noiseDetail, VC_DETAIL * mix(0.05, 0.025, min(wetness + cameraPosition.y * 0.0025, 1.0)) * int(noiseBase > 0.0)) * 22.0 - noiseCoverage;
-	noise = mix(noise, 20.0, wetness * 0.125);
-	noise = max(noise - cloudAmount, 0.0) * (cloudDensity * 0.2);
+	noise = max(noise - cloudAmount, 0.0) * (VC_DENSITY * 0.25);
 	noise /= sqrt(noise * noise + 0.25);
 }
 
@@ -59,14 +55,14 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z1, f
 		vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.0);
 
 		//Setting the ray marcher
-		float cloudTop = cloudHeight + cloudThickness * 10.0;
-		float lowerPlane = (cloudHeight - cameraPosition.y) / nWorldPos.y;
+		float cloudTop = VC_HEIGHT + VC_THICKNESS * 10.0;
+		float lowerPlane = (VC_HEIGHT - cameraPosition.y) / nWorldPos.y;
 		float upperPlane = (cloudTop - cameraPosition.y) / nWorldPos.y;
 		float minDist = max(min(lowerPlane, upperPlane), 0.0);
 		float maxDist = max(lowerPlane, upperPlane);
 
 		float planeDifference = maxDist - minDist;
-		float rayLength = cloudThickness * 5.0;
+		float rayLength = VC_THICKNESS * 5.0;
 			  rayLength /= nWorldPos.y * nWorldPos.y * 5.0 + 1.0;
 		vec3 startPos = cameraPosition + minDist * nWorldPos;
 		vec3 sampleStep = nWorldPos * rayLength;
@@ -83,7 +79,7 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z1, f
 			float halfVoL = mix(abs(VoL) * 0.8, VoL, shadowFade) * 0.5 + 0.5;
 			float halfVoLSqr = halfVoL * halfVoL;
 			float scattering = pow6(halfVoL);
-			float noiseLightFactor = (2.0 - VoL * shadowFade) * cloudDensity;
+			float noiseLightFactor = (2.0 - VoL * shadowFade) * VC_DENSITY;
 
 			vec3 rayPos = startPos + sampleStep * dither;
 			
@@ -91,7 +87,7 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z1, f
 			float minimalNoise = 0.25 + dither * 0.25;
 			float sampleTotalLength = minDist + rayLength * dither;
 
-			vec2 wind = vec2(frameTimeCounter * VC_SPEED * 0.0005, sin(frameTimeCounter * VC_SPEED * 0.001) * 0.005) * cloudHeight * 0.005;
+			vec2 wind = vec2(frameTimeCounter * VC_SPEED * 0.0005, sin(frameTimeCounter * VC_SPEED * 0.001) * 0.005) * VC_HEIGHT * 0.005;
 
 			#ifdef AURORA
 			float visibilityMultiplier = pow8(1.0 - sunVisibility) * (1.0 - wetness) * caveFactor * AURORA_BRIGHTNESS;
@@ -142,12 +138,12 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z1, f
 
 				float noise = 0.0;
 				float rayDistance = length(worldPos.xz) * 0.085;
-				float attenuation = smoothstep(cloudHeight, cloudTop, rayPos.y);
+				float attenuation = smoothstep(VC_HEIGHT, cloudTop, rayPos.y);
 
 				getCloudSample(rayPos.xz, wind, attenuation, noise);
 
 				float sampleLighting = pow(attenuation, 0.9 - halfVoLSqr * 0.2);
-					  sampleLighting *= 1.0 - pow(noise, noiseLightFactor);
+					  sampleLighting *= 1.0 - pow(noise, noiseLightFactor) * 0.9 + 0.1;
 				#ifdef VC_SHADOWS
 					  sampleLighting *= mix(1.0, 0.25 + shadow1 * 0.75, float(length(worldPos) < shadowDistance));
 				#endif
@@ -179,7 +175,7 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z1, f
 			cloudColor = mix(cloudColor, vec3(0.4, 2.5, 0.9) * auroraVisibility, pow2(cloudLighting) * auroraVisibility * 0.125);
 			#endif
 
-			float opacity = clamp(mix(0.99, VC_OPACITY, float(z1 == 1.0 && cameraPosition.y < cloudHeight)), 0.0, 1.0 - wetness * 0.5);
+			float opacity = clamp(mix(0.99, VC_OPACITY, float(z1 == 1.0 && cameraPosition.y < VC_HEIGHT)), 0.0, 1.0 - wetness * 0.5);
 
 			vc = vec4(cloudColor, cloudAlpha * opacity) * visibility;
 		}

@@ -280,7 +280,7 @@ void drawPlanarClouds(inout vec3 color, in vec3 atmosphereColor, in vec3 worldPo
 
 #ifdef RAINBOW
 void getRainbow(inout vec3 color, in vec3 worldPos, in float VoU, in float size, in float radius, in float caveFactor) {
-	float visibility = sunVisibility * (1.0 - rainStrength) * (1.0 - isSnowy) * wetness * max(VoU, 0.0) * caveFactor * RAINBOW_BRIGHTNESS;
+	float visibility = pow3(sunVisibility) * (1.0 - rainStrength) * (1.0 - isSnowy) * wetness * max(VoU, 0.0) * caveFactor * RAINBOW_BRIGHTNESS;
 
 	if (visibility > 0.0) {
 		vec2 planeCoord = worldPos.xy / (worldPos.y + length(worldPos.xz) * 0.65);
