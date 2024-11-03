@@ -66,8 +66,8 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z1, f
 		float maxDist = max(lowerPlane, upperPlane);
 
 		float planeDifference = maxDist - minDist;
-		float rayLength = cloudThickness * 2.5;
-			  rayLength /= nWorldPos.y * nWorldPos.y * 2.5 + 1.0;
+		float rayLength = cloudThickness * 3.5;
+			  rayLength /= nWorldPos.y * nWorldPos.y * 3.5 + 1.0;
 		vec3 startPos = cameraPosition + minDist * nWorldPos;
 		vec3 sampleStep = nWorldPos * rayLength;
 		int sampleCount = int(min(planeDifference / rayLength, 16) + dither);
@@ -146,7 +146,7 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z1, f
 
 				getCloudSample(rayPos.xz, wind, attenuation, noise);
 
-				float sampleLighting = pow(attenuation, 0.85 * halfVoLSqr + 0.85) * 0.75 + 0.25;
+				float sampleLighting = pow(attenuation, 0.8 - halfVoLSqr * 0.2);
 					  sampleLighting *= 1.0 - pow(noise, noiseLightFactor);
 				#ifdef VC_SHADOWS
 					  sampleLighting *= mix(1.0, 0.25 + shadow1 * 0.75, float(length(worldPos) < shadowDistance));
