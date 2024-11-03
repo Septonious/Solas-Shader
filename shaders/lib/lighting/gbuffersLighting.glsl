@@ -154,10 +154,10 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
     //Specular Highlight
     vec3 specularHighlight = vec3(0.0);
 
-    #if defined GBUFFERS_TERRAIN && !defined NETHER
+    #if (defined GBUFFERS_TERRAIN || defined GBUFFERS_ENTITIES || defined GBUFFERS_BLOCK) !defined NETHER
 	vec3 baseReflectance = vec3(0.1);
 
-    float smoothnessF = 0.15 + length(albedo.rgb) * 0.25 + NoL * 0.15 + float(subsurface > 0.0) * 0.05;
+    float smoothnessF = 0.1 + length(albedo.rgb) * 0.3 + originalNoL * 0.2 + float(subsurface > 0.0) * 0.15;
           smoothnessF = mix(smoothnessF, 0.95, smoothness);
 
     #ifdef OVERWORLD

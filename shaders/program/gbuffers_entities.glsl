@@ -85,6 +85,7 @@ vec3 lightVec = sunVec;
 #include "/lib/color/netherColor.glsl"
 #include "/lib/vx/blocklightColor.glsl"
 #include "/lib/vx/voxelization.glsl"
+#include "/lib/pbr/ggx.glsl"
 #include "/lib/lighting/shadows.glsl"
 
 #ifdef GI
