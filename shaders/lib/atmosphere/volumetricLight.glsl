@@ -30,7 +30,7 @@ void computeVL(inout vec3 vl, in vec3 translucent, in float dither) {
 	float visibility = int(z0 > 0.56) * shadowFade;
 		  visibility *= pow(VoU, 2.0 * waterFactor);
 		  visibility *= mix(0.25 + VoL * 0.25, VoL * 0.5, timeBrightness);
-		  visibility = mix(visibility * (2.0 - sunVisibility), 0.7, indoorFactor) * waterFactor;
+		  visibility = mix(visibility * (2.0 - sunVisibility), 0.5, indoorFactor) * waterFactor;
 	#else
 	float visibility = exp(pow4(VoL)) * 0.075;
 	#endif
@@ -49,7 +49,7 @@ void computeVL(inout vec3 vl, in vec3 translucent, in float dither) {
 		//Variables
         int sampleCount = VL_SAMPLES;
 
-		float maxDist = 160.0;
+		float maxDist = shadowDistance;
 		float minDist = (maxDist / sampleCount) * 0.6;
 		float maxCurrentDist = min(linearDepth1, maxDist);
 
@@ -70,7 +70,7 @@ void computeVL(inout vec3 vl, in vec3 translucent, in float dither) {
 
 			if (length(shadowPos.xy * 2.0 - 1.0) < 1.0) {
                 float currentSampleIntensity = (currentDist / maxDist) / sampleCount;
-                      currentSampleIntensity = pow(currentSampleIntensity, 1.0 - min(indoorFactor + timeBrightness, 1.0) * 0.5);
+                      currentSampleIntensity = pow(currentSampleIntensity, 0.8 - min(indoorFactor + timeBrightness, 1.0) * 0.3);
 
 				float shadow0 = texture2DShadow(shadowtex0, shadowPos);
 				float shadow1 = 0.0;
