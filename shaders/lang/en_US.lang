@@ -51,6 +51,8 @@ screen.VL_CONFIG=Volumetric Light Config
 option.VL=Volumetric Light
 option.VL_STRENGTH=Strength
 option.VL_SAMPLES=Samples
+option.VL_STRENGTH_RATIO=Strength Ratio
+option.VL_STRENGTH_RATIO.comment=Controls the strength of volumetric light rays depending on the distance to the sun. Lower values make VL stronger closer to the sun and weaker farther away.
 
 #----------------------------------------------------------------------------------#
 
@@ -346,6 +348,8 @@ screen.POST=Post Effects
 option.SHARPENING=Image Sharpening
 option.CHROMATIC_ABERRATION=Chromatic Aberration (CA)
 option.CHROMATIC_ABERRATION_STRENGTH=CA Strength
+option.LENS_FLARE=Lens Flare
+option.LENS_FLARE_STRENGTH=Lens Flare Strength
 
 #----------------------------------------------------------------------------------#
 

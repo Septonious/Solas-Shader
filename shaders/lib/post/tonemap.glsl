@@ -1,5 +1,5 @@
 vec3 Uncharted2Tonemap(vec3 color) {	
-    const float B = 0.290;		
+    const float B = 0.350;		
 	const float D = 0.150;
 	const float F = 0.350;
 

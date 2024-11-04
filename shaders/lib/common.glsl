@@ -22,7 +22,7 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 //Tonemap//
 #define LIGHTNESS_INTENSITY 0.28 //[0.10 0.12 0.14 0.16 0.18 0.20 0.22 0.24 0.26 0.28 0.30 0.32 0.34 0.36 0.38 0.40 0.42 0.44 0.46 0.48 0.50]
 #define DARKNESS_INTENSITY 0.10 //[0.04 0.06 0.08 0.10 0.12 0.14 0.16 0.18 0.20]
-#define CONTRAST 0.016 //[0.010 0.012 0.014 0.016 0.018 0.020 0.022 0.024 0.026 0.028 0.030]
+#define CONTRAST 0.014 //[0.010 0.012 0.014 0.016 0.018 0.020 0.022 0.024 0.026 0.028 0.030]
 
 //Atmosphere//
 #define STARS
@@ -74,6 +74,7 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 #define VL
 #define VL_STRENGTH 2.00 //[0.00 0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00]
 #define VL_SAMPLES 7 //[4 5 6 7 8 9 10]
+#define VL_STRENGTH_RATIO 0.40 //[0.05 0.10 0.15 0.20 0.25 0.30 0.35 0.40 0.45 0.50]
 #define VL_CLOUDY_FOG
 
 //LPV Fog//
@@ -140,6 +141,10 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 //#define DISTANT_BLUR
 #define DISTANT_BLUR_STRENGTH 2.0 //[1.0 1.5 2.0 2.5 3.0 3.5 4.0]
 #define DISTANT_BLUR_RANGE 4 //[1 2 3 4 5 6 7 8]
+
+//Lens Flare//
+//#define LENS_FLARE
+#define LENS_FLARE_STRENGTH 2.00 //[0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00]
 
 //Motion Blur//
 //#define MOTION_BLUR

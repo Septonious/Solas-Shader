@@ -235,7 +235,7 @@ void main() {
 	#endif
 	#endif
 
-	skyColor *= 1.0 + (Bayer8(gl_FragCoord.xy) - 0.5) / 32.0;
+	skyColor *= 1.0 + (Bayer8(gl_FragCoord.xy) - 0.5) / 64.0;
 
 	#if MC_VERSION >= 11900
 	skyColor *= 1.0 - darknessFactor;

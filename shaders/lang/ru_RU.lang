@@ -51,6 +51,8 @@ screen.VL_CONFIG=Настройки Солнечных Лучей
 option.VL=Солнечные Лучи
 option.VL_STRENGTH=Сила
 option.VL_SAMPLES=Качество
+option.VL_STRENGTH_RATIO=Отношение Яркости
+option.VL_STRENGTH_RATIO.comment=Определяет яркость лучей ближе к солнцу. Низкие значения делают лучи ярче у солнца и слабее позади.
 
 #----------------------------------------------------------------------------------#
 
@@ -345,6 +347,8 @@ option.SHARPENING=Заострение Изображения
 option.CHROMATIC_ABERRATION=Хроматическая Аберрация (ХА)
 option.CHROMATIC_ABERRATION.comment=Добавляет синие и красные края объектам (как в логотипе тиктока).
 option.CHROMATIC_ABERRATION_STRENGTH=Сила ХА
+option.LENS_FLARE=Блики
+option.LENS_FLARE_STRENGTH=Яркость бликов
 
 #----------------------------------------------------------------------------------#
 

@@ -1,6 +1,3 @@
-float pixelWidth = 1.0 / viewWidth;
-float pixelHeight = 1.0 / viewHeight;
-
 vec3 getBloomTile(float lod, vec2 bloomCoord, vec2 offset) {
 	float scale = exp2(lod);
 
