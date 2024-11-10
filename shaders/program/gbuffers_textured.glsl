@@ -159,6 +159,9 @@ void main() {
 
 			if (color.a < 0.99 && lAlbedo < 1.0) // Campfire Smoke, World Border
 				albedo.a *= 0.2;
+			else if (albedoTexture.r > 0.99) {
+				emission = max(pow4(albedo.r), 0.1);
+			}
 
 			else if (max(abs(albedoTexture.r - albedoTexture.b), abs(albedoTexture.b - albedoTexture.g)) < 0.001) { // Grayscale Particles
 				if (lAlbedo > 0.5 && color.g < 0.5 && color.b > color.r * 1.1 && color.r > 0.3) // Ender Particle, Crying Obsidian Drop
