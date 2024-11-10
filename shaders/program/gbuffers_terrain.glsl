@@ -43,7 +43,7 @@ uniform float nightVision;
 #ifdef OVERWORLD
 uniform float timeBrightness, timeAngle;
 uniform float shadowFade;
-uniform float wetness;
+uniform float wetness, rainStrength;
 #endif
 
 uniform ivec2 eyeBrightnessSmooth;
@@ -90,10 +90,8 @@ vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.
 vec3 lightVec = sunVec;
 #endif
 
-#ifdef PBR
 vec2 dcdx = dFdx(texCoord);
 vec2 dcdy = dFdy(texCoord);
-#endif
 
 //Includes//
 #include "/lib/util/bayerDithering.glsl"
@@ -127,6 +125,10 @@ vec2 dcdy = dFdy(texCoord);
 #include "/lib/pbr/materialGbuffers.glsl"
 #endif
 
+#ifdef RAIN_PUDDLES
+#include "/lib/pbr/rainPuddles.glsl"
+#endif
+
 #if defined GENERATED_EMISSION || defined GENERATED_SPECULAR
 #include "/lib/pbr/generatedPBR.glsl"
 #endif
@@ -148,10 +150,11 @@ void main() {
 	float foliage = float(mat >= 10304 && mat <= 10319 || mat >= 35 && mat <= 40) * (1.0 - leaves) * (1.0 - foliage2);
 	float subsurface = foliage + leaves * 0.5 + foliage2 * 0.3;
     float smoothness = 0.0, metalness = 0.0;
-	float emission = 0.0;
+	float emission = 0.0, porosity = 0.5;
+
+	vec2 newCoord = vTexCoord.st * vTexCoordAM.pq + vTexCoordAM.st;
 
 	#ifdef PBR
-	vec2 newCoord = vTexCoord.st * vTexCoordAM.pq + vTexCoordAM.st;
 	float surfaceDepth = 1.0;
 	float parallaxFade = clamp((dist - PARALLAX_DISTANCE) / 32.0, 0.0, 1.0);
 	
@@ -171,7 +174,7 @@ void main() {
 	vec2 lightmap = clamp(lmCoord, 0.0, 1.0);
 
 	#ifdef PBR
-	float f0 = 0.0, porosity = 0.5, ao = 1.0;
+	float f0 = 0.0, ao = 1.0;
 
 	mat3 tbnMatrix = mat3(tangent.x, binormal.x, normal.x,
 						tangent.y, binormal.y, normal.y,
@@ -196,6 +199,27 @@ void main() {
 
 	#if defined GENERATED_EMISSION || defined GENERATED_SPECULAR
 	generateIPBR(albedo, worldPos, viewPos, lightmap, emission, smoothness, metalness, subsurface);
+	#endif
+
+	#ifdef RAIN_PUDDLES
+	if (emission < 0.01 && foliage < 0.1) {
+		float puddlesNoU = dot(newNormal, upVec);
+
+		float puddles = GetPuddles(worldPos, newCoord, lmCoord.y, puddlesNoU, wetness);
+
+		ApplyPuddleToMaterial(puddles, albedo, smoothness, metalness, porosity);
+
+		if (puddles > 0.001 && rainStrength > 0.001) {
+			mat3 tbnMatrix = mat3(tangent.x, binormal.x, normal.x,
+								  tangent.y, binormal.y, normal.y,
+								  tangent.z, binormal.z, normal.z);
+
+			vec3 puddleNormal = GetPuddleNormal(worldPos, viewPos, tbnMatrix);
+			newNormal = normalize(
+				mix(newNormal, puddleNormal, puddles * sqrt(1.0 - porosity) * rainStrength)
+			);
+		}
+	}
 	#endif
 
 	float parallaxShadow = 1.0;
