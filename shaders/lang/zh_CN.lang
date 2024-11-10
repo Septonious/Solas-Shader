@@ -51,6 +51,8 @@ screen.VL_CONFIG=体积光配置
 option.VL=体积光
 option.VL_STRENGTH=强度
 option.VL_SAMPLES=采样值
+option.VL_STRENGTH_RATIO=比例强度
+option.VL_STRENGTH_RATIO.comment=根据和太阳的距离控制体积光的强度. 设置更低的值使体积光在距离太阳越近时越强, 距离太阳越远则越弱.
 
 #----------------------------------------------------------------------------------#
 
@@ -210,7 +212,7 @@ screen.ISPECULAR=集成高光配置
 option.RAIN_PUDDLES=雨坑
 option.RAIN_PUDDLES_STRENGTH=雨坑大小
 option.SPECULAR_STRENGTH=高光强度
-option.WATER_SPECULAR_STRENGTH=水面高光强度
+option.WATER_REFLECTIONS=水面反射
 
 option.GENERATED_EMISSION=自动生成自发光
 option.GENERATED_EMISSION.comment=自动判断应该发光的方块
@@ -346,6 +348,8 @@ screen.POST=后期效果
 option.SHARPENING=图像锐化
 option.CHROMATIC_ABERRATION=色调偏差 (CA)
 option.CHROMATIC_ABERRATION_STRENGTH=CA 强度
+option.LENS_FLARE=镜头眩光
+option.LENS_FLARE_STRENGTH=镜头眩光强度
 
 #----------------------------------------------------------------------------------#
 
@@ -357,14 +361,20 @@ option.CONTRAST=对比度
 
 #----------------------------------------------------------------------------------#
 
-screen.DOF_CONFIG=模糊效果配置
+screen.DOF_CONFIG=景深效果配置
 
-option.DOF=景深(DOF)
+option.DOF=景深(DoF)
 option.DOF.comment=模糊玩家眼睛焦点以外的物体.
-option.DOF_STRENGTH=DOF 强度
+option.DOF_STRENGTH=DoF 强度
 option.DISTANT_BLUR=距离模糊
 option.DISTANT_BLUR_RANGE=距离模糊范围
 option.DISTANT_BLUR_STRENGTH=距离模糊强度
+
+option.MANUAL_FOCUS=景深手动对焦
+option.MANUAL_FOCUS.comment=为景深设置自定义的对焦距离.
+option.DOF_FOCUS=对焦距离
+option.TILT=倾斜
+option.SHIFT=偏移
 
 #----------------------------------------------------------------------------------#
 
