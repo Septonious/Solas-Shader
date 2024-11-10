@@ -14,7 +14,7 @@ void getReflection(inout vec4 color, in vec3 viewPos, in vec3 normal, in float f
 	#endif
 
 	vec3 falloff = vec3(0.0);
-	vec4 reflectPos = rayTrace(depthtex0, viewPos, normal, blueNoiseDither, border, 3, 10, 0.2, 1.5);
+	vec4 reflectPos = rayTrace(depthtex0, viewPos, normal, blueNoiseDither, border, 3, 20, 0.2, 1.5);
 
 	border = clamp(13.333 * (1.0 - border) * (0.9 * smoothness + 0.1), 0.0, 1.0);
 
