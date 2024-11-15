@@ -18,8 +18,8 @@ void drawStars(inout vec3 color, in vec3 worldPos, inout vec3 stars, in float Vo
 			 planeCoord = floor(planeCoord * 1024.0 * STAR_AMOUNT) / (1024.0 * STAR_AMOUNT);
 
 		float star = getNoise(planeCoord);
-			  star*= getNoise(planeCoord + 0.10);
-			  star*= getNoise(planeCoord + 0.23);
+			  star*= getNoise(planeCoord + 0.25);
+			  star*= getNoise(planeCoord + 0.50);
 			  star = clamp(star - (0.75 - nebulaFactor * 0.1), 0.0, 1.0);
 
 		stars = vec3(star * visibility * STAR_BRIGHTNESS * 8.0);

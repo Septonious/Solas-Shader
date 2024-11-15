@@ -27,12 +27,13 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 //Atmosphere//
 #define STARS
 #define STAR_BRIGHTNESS 0.75 //[0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00]
-#define STAR_AMOUNT 1.2 //[0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5]
+#define STAR_AMOUNT 1.00 //[0.75 0.80 0.85 0.90 0.95 1.00 1.05 1.10 1.15 1.20 1.25]
 
 #define AURORA
 #define AURORA_BRIGHTNESS 0.7 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
 #define AURORA_COLD_BIOME_VISIBILITY
 #define AURORA_FULL_MOON_VISIBILITY
+#define AURORA_LIGHTING_INFLUENCE
 
 #define MILKY_WAY
 #define MILKY_WAY_BRIGHTNESS 2.00 //[0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00]
@@ -209,6 +210,7 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 #define WAVING_SPEED 1.2 //[0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5]
 
 //Colors//
+#define PURPLE_MORNINGS
 #define LIGHTTEMP_SS 2500 //[2500 2750 3000 3250 3500]
 #define LIGHTTEMP_ME 5000 //[4500 4750 5000 5250 5500]
 #define LIGHTTEMP_D 5750 //[5500 5750 6000 6250 6500]

@@ -160,7 +160,7 @@ void main() {
 			if (color.a < 0.99 && lAlbedo < 1.0) // Campfire Smoke, World Border
 				albedo.a *= 0.2;
 			else if (albedoTexture.r > 0.99) {
-				emission = max(pow4(albedo.r), 0.1);
+				emission = max(pow4(albedo.r), 0.1) * lmCoord.x;
 			}
 
 			else if (max(abs(albedoTexture.r - albedoTexture.b), abs(albedoTexture.b - albedoTexture.g)) < 0.001) { // Grayscale Particles

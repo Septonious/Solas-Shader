@@ -180,7 +180,7 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
     //Aurora Lighting
     vec3 auroraLighting = vec3(0.0);
 
-    #if defined AURORA && !defined GBUFFERS_TEXTURED && !defined GBUFFERS_WATER && !defined GBUFFERS_BASIC
+    #if defined AURORA && defined AURORA_LIGHTING_INFLUENCE && !defined GBUFFERS_TEXTURED && !defined GBUFFERS_WATER && !defined GBUFFERS_BASIC
 	float visibilityMultiplier = pow8(1.0 - sunVisibility) * (1.0 - wetness) * pow4(lightmap.y) * AURORA_BRIGHTNESS;
 	float auroraVisibility = 0.0;
 
@@ -197,7 +197,7 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
     #endif
 
 	auroraVisibility *= visibilityMultiplier;
-    auroraLighting = vec3(0.4, 2.5, 0.9) * 0.01 * auroraVisibility * (0.5 + NoU * 0.5);
+    auroraLighting = vec3(0.4, 2.5, 0.9) * 0.005 * auroraVisibility * (0.5 + NoU * 0.5);
     #endif
 
     //Vanilla AO

@@ -91,7 +91,7 @@ void main() {
 	float z0 = texture2D(depthtex0, texCoord).r;
 	float z1 = texture2D(depthtex1, texCoord).r;
 
-	if (gbuffersData.a > 0.01 && gbuffersData.a <= 0.95 && z0 > 0.56 && z0 >= z1) {
+	if (gbuffersData.a > 0.01 && gbuffersData.a <= 0.95 && z0 > 0.56 && z0 >= z1 && z1 < 1.0) {
 		vec3 normal = decodeNormal(gbuffersData.rg);
 		vec3 viewPos = ToView(vec3(texCoord, z0));
 
