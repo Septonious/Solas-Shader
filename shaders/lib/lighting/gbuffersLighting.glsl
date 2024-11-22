@@ -37,8 +37,7 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
     float floodfillDisable = 0.0;
     #endif
 
-    float floodfillFade = maxOf(abs(worldPos));
-          floodfillFade /= voxelVolumeSize * 0.65;
+    float floodfillFade = maxOf(abs(worldPos) / (voxelVolumeSize * 0.5));
           floodfillFade = clamp(floodfillFade, 0.0, 1.0);
 
     vec3 voxelLighting = vec3(0.0);
@@ -56,7 +55,7 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
         voxelLighting += pow16(lightmap.x) * blockLightCol;
         #endif
 
-        float mixFactor = 1.0 - pow(floodfillFade, 1.5);
+        float mixFactor = 1.0 - floodfillFade * floodfillFade;
 
         blockLighting = mix(blockLighting, voxelLighting * FLOODFILL_BRIGHTNESS, mixFactor * 0.95);
     }

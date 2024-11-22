@@ -1,4 +1,4 @@
-const int voxelVolumeSize = VOXEL_VOLUME_SIZE;
+const vec3 voxelVolumeSize = vec3(VOXEL_VOLUME_SIZE);
 
 vec3 ToVoxel(vec3 shadowPos) {
 	return shadowPos + fract(cameraPosition) + voxelVolumeSize * 0.5;

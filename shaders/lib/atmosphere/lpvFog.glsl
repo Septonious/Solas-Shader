@@ -65,11 +65,10 @@ void computeLPVFog(inout vec3 fog, in vec3 translucent, in float dither) {
 
             vec3 worldPos = ToWorld(ToView(vec3(texCoord, getLogarithmicDepth(currentDist))));
 
-			if (length(worldPos.xz) < voxelVolumeSize) {
+			if (length(worldPos.xz) < VOXEL_VOLUME_SIZE) {
                 float lightning = min(lightningFlashEffect(worldPos, lightningBoltPosition.xyz, 256.0) * lightningBoltPosition.w * 4.0, 1.0);
 
-				float floodfillFade = maxOf(abs(worldPos));
-					  floodfillFade /= voxelVolumeSize * 0.65;
+				float floodfillFade = maxOf(abs(worldPos) / (voxelVolumeSize * 0.5));
 					  floodfillFade = clamp(floodfillFade, 0.0, 1.0);
 
                 vec3 voxelPos = ToVoxel(worldPos);
@@ -81,7 +80,7 @@ void computeLPVFog(inout vec3 fog, in vec3 translucent, in float dither) {
                 vec3 floodfillData = texture3D(floodfillSampler, voxelSamplePos).rgb;
                 vec3 voxelLighting = pow(floodfillData, vec3(1.0 / FLOODFILL_RADIUS));
 					 voxelLighting *= 0.5 + 0.5 * length(voxelLighting);
-				vec3 lpvFog = mix(voxelLighting * density * LPV_FOG_STRENGTH, vec3(0.0), pow(floodfillFade, 1.5));
+				vec3 lpvFog = mix(voxelLighting * density * LPV_FOG_STRENGTH, vec3(0.0), floodfillFade);
 
 				#ifdef NETHER_CLOUDY_FOG
 				vec3 npos = (worldPos + cameraPosition) * VF_NETHER_FREQUENCY + vec3(frameTimeCounter * VF_NETHER_SPEED, 0.0, 0.0);
