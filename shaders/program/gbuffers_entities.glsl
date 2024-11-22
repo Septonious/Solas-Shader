@@ -128,7 +128,7 @@ void main() {
 		#endif
 
 		vec3 shadow = vec3(0.0);
-		gbuffersLighting(albedo, screenPos, viewPos, worldPos, shadow, lightmap, NoU, NoL, NoE, 0.0, 0.0, emission, 0.0);
+		gbuffersLighting(albedo, screenPos, viewPos, worldPos, newNormal, shadow, lightmap, NoU, NoL, NoE, 0.0, 0.0, emission, 0.0);
 	}
 
 	/* DRAWBUFFERS:03 */

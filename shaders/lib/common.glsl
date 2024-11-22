@@ -405,6 +405,10 @@ float linearStep(float edge0, float edge1, float x) {
 #define VX_SUPPORT
 #endif
 
+#ifndef IS_IRIS
+#undef DYNAMIC_HANDLIGHT
+#endif
+
 #ifndef VX_SUPPORT
 #undef LPV_FOG
 #endif

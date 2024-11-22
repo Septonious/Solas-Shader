@@ -26,8 +26,6 @@ uniform int frameCounter;
 
 #ifdef DYNAMIC_HANDLIGHT
 uniform int heldItemId, heldItemId2;
-uniform int heldBlockLightValue;
-uniform int heldBlockLightValue2;
 #endif
 
 #ifdef AURORA
@@ -249,7 +247,7 @@ void main() {
 	#endif
 
 	vec3 shadow = vec3(0.0);
-	gbuffersLighting(albedo, screenPos, viewPos, worldPos, shadow, lightmap, NoU, NoL, NoE, subsurface, smoothness, emission, parallaxShadow);
+	gbuffersLighting(albedo, screenPos, viewPos, worldPos, newNormal, shadow, lightmap, NoU, NoL, NoE, subsurface, smoothness, emission, parallaxShadow);
 
 	/* DRAWBUFFERS:03 */
 	gl_FragData[0] = albedo;

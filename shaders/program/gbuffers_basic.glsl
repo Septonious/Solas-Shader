@@ -75,7 +75,7 @@ void main() {
 	float NoE = clamp(dot(newNormal, eastVec), -1.0, 1.0);
 
 	vec3 shadow = vec3(0.0);
-	gbuffersLighting(albedo, screenPos, viewPos, worldPos, shadow, lightmap, NoU, NoL, NoE, 0.0, 0.0, 0.0, 0.0);
+	gbuffersLighting(albedo, screenPos, viewPos, worldPos, newNormal, shadow, lightmap, NoU, NoL, NoE, 0.0, 0.0, 0.0, 0.0);
 
 	/* DRAWBUFFERS:0 */
 	gl_FragData[0] = albedo;

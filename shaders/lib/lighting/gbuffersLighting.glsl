@@ -4,7 +4,7 @@ uniform vec3 relativeEyePosition;
 #include "/lib/lighting/handlight.glsl"
 #endif
 
-void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in vec3 worldPos, inout vec3 shadow, in vec2 lightmap, 
+void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in vec3 worldPos, in vec3 normal, inout vec3 shadow, in vec2 lightmap, 
                       in float NoU, in float NoL, in float NoE,
                       in float subsurface, in float smoothness, in float emission, in float parallaxShadow) {
     //Variables
@@ -38,8 +38,8 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
     #endif
 
     float floodfillFade = maxOf(abs(worldPos));
-            floodfillFade /= voxelVolumeSize * 0.5;
-            floodfillFade = clamp(floodfillFade, 0.0, 1.0);
+          floodfillFade /= voxelVolumeSize * 0.65;
+          floodfillFade = clamp(floodfillFade, 0.0, 1.0);
 
     vec3 voxelLighting = vec3(0.0);
 
@@ -56,15 +56,15 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
         voxelLighting += pow16(lightmap.x) * blockLightCol;
         #endif
 
-        float mixFactor = 1.0 - floodfillFade;
+        float mixFactor = 1.0 - pow(floodfillFade, 1.5);
 
-        blockLighting = mix(blockLighting, voxelLighting * FLOODFILL_BRIGHTNESS, mixFactor * 0.9);
+        blockLighting = mix(blockLighting, voxelLighting * FLOODFILL_BRIGHTNESS, mixFactor * 0.95);
     }
     #endif
 
     //Dynamic Hand Lighting
     #ifdef DYNAMIC_HANDLIGHT
-    getHandLightColor(blockLighting, length(worldPos + relativeEyePosition));
+    getHandLightColor(blockLighting, normal, worldPos + relativeEyePosition);
     #endif
 
     #ifdef OVERWORLD
