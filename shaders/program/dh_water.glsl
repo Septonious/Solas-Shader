@@ -209,7 +209,7 @@ void main() {
     vec3 skyColor = atmosphereColor;
 
 	vec3 shadow = vec3(0.0);
-	gbuffersLighting(albedo, screenPos, viewPos, worldPos, shadow, lightmap, NoU, NoL, NoE, 0.0, 0.0, emission, 0.0);
+	gbuffersLighting(albedo, screenPos, viewPos, worldPos, newNormal, shadow, lightmap, NoU, NoL, NoE, 0.0, 0.0, emission, 0.0);
 
 	if (mat != 10031) {
 		if (mat == 10001 && isEyeInWater == 0) {

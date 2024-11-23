@@ -180,7 +180,7 @@ void main() {
 	float parallaxShadow = 1.0;
 
 	vec3 shadow = vec3(0.0);
-	gbuffersLighting(albedo, screenPos, viewPos, worldPos, shadow, lightmap, NoU, NoL, NoE, subsurface, smoothness, emission, parallaxShadow);
+	gbuffersLighting(albedo, screenPos, viewPos, worldPos, newNormal, shadow, lightmap, NoU, NoL, NoE, subsurface, smoothness, emission, parallaxShadow);
 
 	/* DRAWBUFFERS:0 */
 	gl_FragData[0] = albedo;
