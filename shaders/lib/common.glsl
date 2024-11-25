@@ -26,7 +26,7 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 
 //Atmosphere//
 #define STARS
-#define STAR_BRIGHTNESS 0.75 //[0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00]
+#define STAR_BRIGHTNESS 1.00 //[0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00]
 #define STAR_AMOUNT 1.00 //[0.75 0.80 0.85 0.90 0.95 1.00 1.05 1.10 1.15 1.20 1.25]
 
 #define AURORA
