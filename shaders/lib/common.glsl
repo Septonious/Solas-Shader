@@ -6,7 +6,7 @@
 
 const int shadowMapResolution = 1536; //[512 1024 1536 2048 3072]
 const float shadowDistance = 192.0; //[128.0 192.0 256.0 320.0 384.0 448.0 512.0 1024.0]
-const float entityShadowDistanceMul = 0.05; // [0.05 0.10 1.50 0.20 0.25 0.30 0.35 0.40 0.45 0.50 0.55 0.60 0.65 0.70 0.75 0.80 0.85 0.90 0.95 1.0]
+const float entityShadowDistanceMul = 0.05; // [0.05 0.10 0.15 0.20 0.25 0.30 0.35 0.40 0.45 0.50 0.55 0.60 0.65 0.70 0.75 0.80 0.85 0.90 0.95 1.0]
 #ifndef END
 const float sunPathRotation = -40.0; //[-85.0 -80.0 -75.0 -70.0 -65.0 -60.0 -55.0 -50.0 -45.0 -40.0 -35.0 -30.0 -25.0 -20.0 -15.0 -10.0 -5.0 0.0 5.0 10.0 15.0 20.0 25.0 30.0 35.0 40.0 45.0 50.0 55.0 60.0 65.0 70.0 75.0 80.0 85.0]
 #else
@@ -128,9 +128,9 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 
 //RSM GI//
 //#define GI
-#define GI_SAMPLES 6 //[4 5 6 7 8 9 10 11 12 13 14 15 16]
-#define GI_RADIUS 32.0 //[16.0 24.0 32.0 48.0 64.0 80.0 96.0 112.0 128.0]
-#define GI_BRIGHTNESS 2.0 //[1.0 2.0 3.0 4.0 5.0 6.0 7.0 8.0]
+#define GI_SAMPLES 7 //[4 5 6 7 8 9 10 11 12 13 14 15 16]
+#define GI_RADIUS 48.0 //[16.0 24.0 32.0 48.0 64.0 80.0 96.0 112.0 128.0]
+#define GI_BRIGHTNESS 1.5 //[1.0 1.5 2.0 2.5 3.0 3.5 4.0]
 
 //Depth of Field & Distant Blur//
 //#define DOF
