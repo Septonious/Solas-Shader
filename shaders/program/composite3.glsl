@@ -23,6 +23,7 @@ uniform float blindFactor;
 
 #ifdef VL
 uniform float timeAngle, shadowFade;
+uniform float isJungle, isSwamp;
 
 uniform vec3 skyColor;
 #endif

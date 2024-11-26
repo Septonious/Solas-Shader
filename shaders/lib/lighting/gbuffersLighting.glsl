@@ -72,34 +72,32 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
 
     //Shadow Calculations
     //Some code made by Emin and gri573
-    float shadowLength = shadowDistance * 0.9166667 - length(worldPos.xz);
     float shadow0 = 0.0;
 
-    #ifdef GBUFFERS_WATER
-    shadowLength = 1.0;
-    #endif
+    float shadowLightingFade = maxOf(abs(worldPos) / (vec3(shadowDistance, shadowDistance + 64.0, shadowDistance)));
+          shadowLightingFade = clamp(shadowLightingFade, 0.0, 1.0);
+          shadowLightingFade = 1.0 - shadowLightingFade * shadowLightingFade;
 
     //Subsurface scattering
     float scattering = 0.0;
     
     #if defined OVERWORLD && defined GBUFFERS_TERRAIN
     if (subsurface > 0.0) {
-        float distFactor = clamp(shadowLength, 0.0, 1.0);
         float VoL = clamp(dot(normalize(viewPos), lightVec), 0.0, 1.0);
         scattering = pow8(VoL) * shadowFade * (1.0 - wetness * 0.5);
         if (subsurface > 0.49 && subsurface < 0.51) { //Leaves
-            NoL += 0.5 * distFactor * (0.75 + scattering * 0.75);
+            NoL += 0.5 * shadowLightingFade * (0.75 + scattering * 0.75);
         } else if (subsurface > 0.39 && subsurface < 0.41) {
             NoL += 0.1;
         } else if (subsurface > 0.09 && subsurface < 0.11) {
             NoL += 0.25;
         } else {
-            NoL += distFactor * (0.35 + scattering);
+            NoL += shadowLightingFade * (0.35 + scattering);
         }
     }
     #endif
 
-    if (NoL > 0.0001 && shadowLength > 0.0) {
+    if (NoL > 0.0001 && shadowLightingFade > 0.0) {
         vec3 worldPosM = worldPos;
 
         #ifndef GBUFFERS_TEXTURED
@@ -127,10 +125,12 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
         #endif
 
         shadow = computeShadow(shadowPos, offset, lightmap.y, subsurface, viewDistance, shadow0);
-    } else {
-        shadow = getFakeShadow(lightmap.y);
-        if (subsurface > 0.0) shadow *= originalNoL;
     }
+
+    vec3 fakeShadow = getFakeShadow(lightmap.y);
+    if (subsurface > 0.0) fakeShadow *= originalNoL;
+
+    shadow = mix(fakeShadow, shadow, vec3(shadowLightingFade));
 
     #if defined PBR && defined GBUFFERS_TERRAIN
     shadow *= parallaxShadow;
