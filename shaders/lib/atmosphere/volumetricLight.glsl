@@ -52,7 +52,7 @@ void computeVL(inout vec3 vl, in vec3 translucent, in float dither) {
 		//Variables
         int sampleCount = VL_SAMPLES;
 
-		float maxDist = shadowDistance;
+		float maxDist = min(shadowDistance, 256.0);
 		float minDist = (maxDist / sampleCount) * 0.6;
 		float maxCurrentDist = min(linearDepth1, maxDist);
 
