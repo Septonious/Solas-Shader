@@ -260,7 +260,7 @@ void main() {
 
 	/* DRAWBUFFERS:03 */
 	gl_FragData[0] = albedo;
-	gl_FragData[1] = vec4(refraction, emission * 0.1 + 0.00135, 1.0);
+	gl_FragData[1] = vec4(refraction, emission * 0.1 + 0.00135 * float(albedo.a < 0.95), 1.0);
 }
 
 #endif

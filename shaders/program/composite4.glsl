@@ -90,20 +90,24 @@ void main() {
 	#endif
 
 	#ifdef REFRACTION
-	if (z1 > z0 && z0 > 0.56) {
+	if (z1 > z0) {
 		float fovScale = gbufferProjection[1][1] / 1.37;
 		vec3 distort = texture2D(colortex3, texCoord).rgb;
 
-		if (distort.xy != vec2(0.0) && (distort.b > 0.00134 && distort.b < 0.00136)) {
-			 distort = decodeNormal(distort.xy) * REFRACTION_STRENGTH;
-			 distort.xy *= vec2(1.0 / aspectRatio, 1.0) * fovScale / max(length(viewPos.xyz), 8.0);
+		if (distort.xy != vec2(0.0)) {
+			distort = decodeNormal(distort.xy) * REFRACTION_STRENGTH;
+			distort.xy *= vec2(1.0 / aspectRatio, 1.0) * fovScale / max(length(viewPos.xyz), 8.0);
 
 			vec2 newCoord = clamp(texCoord + distort.xy, 0.0, 1.0);
 
-			z0 = texture2D(depthtex0, newCoord).r;
-			z1 = texture2D(depthtex1, newCoord).r;
+			float distortMask = texture2D(colortex3, newCoord).b;
+				  distortMask = float(distortMask > 0.00134 && distortMask < 0.00136);
 
-			color.rgb = texture2D(colortex0, newCoord).rgb;
+			if (distortMask == 1.0 && z0 > 0.56) {
+				z0 = texture2D(depthtex0, newCoord).r;
+				z1 = texture2D(depthtex1, newCoord).r;
+				color.rgb = texture2D(colortex0, newCoord).rgb;
+			}
 
 			screenPos = vec3(newCoord.xy, z0);
 			viewPos = ToView(screenPos);
