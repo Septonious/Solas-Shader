@@ -14,9 +14,9 @@ void getReflection(inout vec4 color, in vec3 viewPos, in vec3 normal, in float f
 	#endif
 
 	vec3 falloff = vec3(0.0);
-	vec4 reflectPos = rayTrace(depthtex0, viewPos, normal, blueNoiseDither, border, 3, 20, 0.2, 1.5);
+	vec4 reflectPos = rayTrace(depthtex0, viewPos, normal, blueNoiseDither, border, 6, 20, 0.1, 1.5);
 
-	border = clamp(13.333 * (1.0 - border) * (0.9 * smoothness + 0.1), 0.0, 1.0);
+	border = clamp(13.333 * (1.0 - border), 0.0, 1.0);
 
 	#ifdef OVERWORLD
 	vec3 skyRefPos = reflect(normalize(viewPos), normal);
@@ -32,18 +32,14 @@ void getReflection(inout vec4 color, in vec3 viewPos, in vec3 normal, in float f
 	falloff *= 1.0 - blindFactor;
 	#endif
 
-	#ifdef PBR
 	float fovScale = gbufferProjection[1][1] / 1.37;
-	float dist = 0.1 * pow2(1.0 - smoothness) * reflectPos.a * fovScale;
-	float lod = log2(viewHeight * dist);
-	#else
-	float lod = 2.0 * pow2(1.0 - smoothness);
-	#endif
+	float dist = 0.25 * reflectPos.a * fovScale;
+	float lod = log2(viewHeight * dist) * (1.0 - smoothness) * 2.0;
 
-	vec4 reflection = texture2DLod(colortex0, reflectPos.xy + 2.0 * lod * refOffsets[0] / vec2(viewWidth, viewHeight), lod);
-		 reflection+= texture2DLod(colortex0, reflectPos.xy + 2.0 * lod * refOffsets[1] / vec2(viewWidth, viewHeight), lod);
-		 reflection+= texture2DLod(colortex0, reflectPos.xy + 2.0 * lod * refOffsets[2] / vec2(viewWidth, viewHeight), lod);
-		 reflection+= texture2DLod(colortex0, reflectPos.xy + 2.0 * lod * refOffsets[3] / vec2(viewWidth, viewHeight), lod);
+	vec4 reflection = texture2D(colortex0, reflectPos.xy + lod * refOffsets[0] / vec2(viewWidth, viewHeight));
+		 reflection+= texture2D(colortex0, reflectPos.xy + lod * refOffsets[1] / vec2(viewWidth, viewHeight));
+		 reflection+= texture2D(colortex0, reflectPos.xy + lod * refOffsets[2] / vec2(viewWidth, viewHeight));
+		 reflection+= texture2D(colortex0, reflectPos.xy + lod * refOffsets[3] / vec2(viewWidth, viewHeight));
 	reflection *= 0.25;
 	reflection.a *= border;
 

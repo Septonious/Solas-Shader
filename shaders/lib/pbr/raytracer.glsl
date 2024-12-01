@@ -6,15 +6,15 @@ float cdist(vec2 coord) {
 	return max(abs(coord.x - 0.5), abs(coord.y - 0.5)) * 1.85;
 }
 
-const float errMult = 1.8;
+const float errMult = 2.4;
 
 vec4 rayTrace(sampler2D depthtex, vec3 viewPos, vec3 normal, float dither, out float border, int refSampleCount, int sampleCount, float refinementMult, float incrementMult) {
 	vec3 pos = vec3(0.0);
 	float dist = 0.0;
 
-	vec3 start = viewPos + normal * 0.075;
+	vec3 start = viewPos + normal * 0.25;
 
-    vec3 rayIncrement = 0.5 * reflect(normalize(viewPos), normalize(normal));
+    vec3 rayIncrement = 0.5 * reflect(normalize(viewPos * 100000.0), normalize(normal));
     viewPos += rayIncrement;
 	vec3 rayDirection = rayIncrement;
 
@@ -29,15 +29,15 @@ vec4 rayTrace(sampler2D depthtex, vec3 viewPos, vec3 normal, float dither, out f
 		dist = abs(dot(normalize(start - rfragpos), normal));
 
         float err = length(viewPos - rfragpos);
-		float lVector = length(rayIncrement) * pow(length(rayDirection), 0.1) * errMult;
+		float lVector = length(rayIncrement * rayDirection) * errMult;
 		if (err < lVector) {
 			refinementPasses++;
 			if (refinementPasses >= refSampleCount) break;
 			rayDirection -= rayIncrement;
 			rayIncrement *= refinementMult;
 		}
-        rayIncrement *= incrementMult;
-        rayDirection += rayIncrement * (0.15 * dither + 0.85);
+        rayIncrement *= incrementMult * (0.1 * dither + 0.9);
+        rayDirection += rayIncrement;
 		viewPos = start + rayDirection;
     }
 

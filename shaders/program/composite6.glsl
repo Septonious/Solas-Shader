@@ -95,9 +95,9 @@ void main() {
 		vec3 normal = decodeNormal(gbuffersData.rg);
 		vec3 viewPos = ToView(vec3(texCoord, z0));
 
-		float fresnel = clamp(1.0 + dot(normal, normalize(viewPos)), 0.0, 1.0);
+		float fresnel = clamp(1.0 + dot(normal, normalize(viewPos * 100000.0)), 0.0, 1.0);
 
-		getReflection(color, viewPos, normal, fresnel * fresnel, gbuffersData.a);
+		getReflection(color, viewPos, normal, pow(fresnel, 1.5), gbuffersData.a);
 	}
 	#endif
 
