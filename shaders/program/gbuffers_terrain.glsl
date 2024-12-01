@@ -138,6 +138,7 @@ vec2 dcdy = dFdy(texCoord);
 //Program//
 void main() {
 	vec4 albedo = texture2D(texture, texCoord);
+	if (albedo.a <= 0.00001) discard;
 	vec4 albedoP = albedo;
 	albedo *= color;
 

@@ -139,7 +139,9 @@ vec3 lightVec = sunVec;
 
 //Program//
 void main() {
-	vec4 albedo = texture2D(texture, texCoord) * color;
+	vec4 albedo = texture2D(texture, texCoord);
+	if (albedo.a <= 0.00001) discard;
+	albedo *= color;
 
 	if (mat == 10001) {
 		albedo.rgb = mix(color.rgb, waterColor.rgb, 0.5);

@@ -58,7 +58,7 @@ float getParallaxShadow(float surfaceDepth, float parallaxFade, vec2 coord, vec3
     vec3 parallaxDir = tbn * lightVec;
          parallaxDir.xy *= PARALLAX_DEPTH * SELF_SHADOW_ANGLE;
     vec2 newvTexCoord = (coord - vTexCoordAM.st) / vTexCoordAM.pq;
-    float sampleStep = (dither * 0.2 + 0.2) / SELF_SHADOW_QUALITY;
+    float sampleStep = (dither * 0.1 + 0.3) / SELF_SHADOW_QUALITY;
 
     vec2 ptexCoord = fract(newvTexCoord + parallaxDir.xy * sampleStep) * 
                      vTexCoordAM.pq + vTexCoordAM.st;

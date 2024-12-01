@@ -96,7 +96,9 @@ const vec3[8] endPortalColors = vec3[8](
 
 //Program//
 void main() {
-	vec4 albedo = texture2D(texture, texCoord) * color;
+	vec4 albedo = texture2D(texture, texCoord);
+	if (albedo.a < 0.00001) discard;
+	albedo *= color;
 
 	vec3 newNormal = normal;
 	float emission = 0.0;

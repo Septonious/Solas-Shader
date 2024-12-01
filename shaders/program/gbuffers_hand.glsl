@@ -80,26 +80,26 @@ vec3 lightVec = sunVec;
 
 //Program//
 void main() {
-	vec4 albedo = texture2D(texture, texCoord) * color;
+	vec4 albedo = texture2D(texture, texCoord);
+	if (albedo.a <= 0.00001) discard;
+	albedo *= color;
 	vec3 newNormal = normal;
 
-	if (albedo.a > 0.001) {
-		vec3 screenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z + 0.38);
-		#ifdef TAA
-		vec3 viewPos = ToNDC(vec3(TAAJitter(screenPos.xy, -0.5), screenPos.z));
-		#else
-		vec3 viewPos = ToNDC(screenPos);
-		#endif
-		vec3 worldPos = ToWorld(viewPos);
-		vec2 lightmap = clamp(lmCoord, 0.0, 1.0);
+	vec3 screenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z + 0.38);
+	#ifdef TAA
+	vec3 viewPos = ToNDC(vec3(TAAJitter(screenPos.xy, -0.5), screenPos.z));
+	#else
+	vec3 viewPos = ToNDC(screenPos);
+	#endif
+	vec3 worldPos = ToWorld(viewPos);
+	vec2 lightmap = clamp(lmCoord, 0.0, 1.0);
 
-		float NoU = clamp(dot(newNormal, upVec), -1.0, 1.0);
-		float NoL = clamp(dot(newNormal, lightVec), 0.0, 1.0);
-		float NoE = clamp(dot(newNormal, eastVec), -1.0, 1.0);
+	float NoU = clamp(dot(newNormal, upVec), -1.0, 1.0);
+	float NoL = clamp(dot(newNormal, lightVec), 0.0, 1.0);
+	float NoE = clamp(dot(newNormal, eastVec), -1.0, 1.0);
 
-		vec3 shadow = vec3(0.0);
-		gbuffersLighting(albedo, screenPos, viewPos, worldPos, newNormal, shadow, lightmap, NoU, NoL, NoE, 0.0, 0.0, 0.0, 0.0);
-	}
+	vec3 shadow = vec3(0.0);
+	gbuffersLighting(albedo, screenPos, viewPos, worldPos, newNormal, shadow, lightmap, NoU, NoL, NoE, 0.0, 0.0, 0.0, 0.0);
 
 	/* DRAWBUFFERS:0 */
 	gl_FragData[0] = albedo;

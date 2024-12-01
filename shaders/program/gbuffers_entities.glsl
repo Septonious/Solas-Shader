@@ -100,8 +100,10 @@ vec3 lightVec = sunVec;
 
 //Program//
 void main() {
-	vec4 albedo = texture2D(texture, texCoord) * color;
-		 albedo.rgb = mix(albedo.rgb, entityColor.rgb * entityColor.rgb * 2.0, entityColor.a);
+	vec4 albedo = texture2D(texture, texCoord);
+	if (albedo.a < 0.00001) discard;
+	albedo *= color;
+	albedo.rgb = mix(albedo.rgb, entityColor.rgb * entityColor.rgb * 2.0, entityColor.a);
 	vec3 newNormal = normal;
 
 	float emission = 0.0;
@@ -113,7 +115,7 @@ void main() {
 		albedo.a = 0.75;
 	}
 
-	if (albedo.a > 0.001 && lightningBolt < 0.5) {
+	if (lightningBolt < 0.5) {
 		vec3 screenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z);
 		vec3 viewPos = ToNDC(screenPos);
 		vec3 worldPos = ToWorld(viewPos);

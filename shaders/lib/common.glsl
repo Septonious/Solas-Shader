@@ -201,7 +201,7 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 #define SELF_SHADOW
 #define SELF_SHADOW_ANGLE 3.0 //[0.5 1.0 1.5 2.0 2.5 3.0 3.5 4.0 4.5 5.0 5.5 6.0 6.5 7.0 7.5 8.0]
 #define SELF_SHADOW_QUALITY 6 //[4 6 8 10 12 14 16]
-#define SELF_SHADOW_STRENGTH 48 //[4 8 16 32 48 64]
+#define SELF_SHADOW_STRENGTH 32 //[4 8 16 32 48 64]
 
 //Waving//
 #define WAVING_PLANTS
