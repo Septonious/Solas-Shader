@@ -78,6 +78,8 @@ void main() {
 
 #ifdef VSH
 
+#include "/lib/wmark/s0las_shader.glsl"
+
 //Varyings//
 out vec2 texCoord;
 

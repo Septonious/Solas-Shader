@@ -280,9 +280,6 @@ const vec3 waterColor = waterColorSqrt * waterColorSqrt;
 //Weather Color//
 const vec3 weatherCol = vec3(WEATHER_RR, WEATHER_RG, WEATHER_RB) / 255.0 * WEATHER_RI;
 
-//Stuff//
-#include "/lib/wmark/s0las_shader.glsl"
-
 ////////////// F U N C T I O N S //////////////
 float pow2(float x) {return x*x;}
 float pow3(float x) {return x*x*x;}
