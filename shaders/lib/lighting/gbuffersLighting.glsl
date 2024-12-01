@@ -74,7 +74,7 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
     //Some code made by Emin and gri573
     float shadow0 = 0.0;
 
-    float shadowLightingFade = maxOf(abs(worldPos) / (vec3(shadowDistance, shadowDistance + 64.0, shadowDistance)));
+    float shadowLightingFade = maxOf(abs(worldPos) / (vec3(shadowDistance, shadowDistance + 128.0, shadowDistance)));
           shadowLightingFade = clamp(shadowLightingFade, 0.0, 1.0);
           shadowLightingFade = 1.0 - shadowLightingFade * shadowLightingFade;
 
