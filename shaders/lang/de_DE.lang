@@ -6,9 +6,9 @@ profile.HIGH=Hoch
 profile.VERY_HIGH=Sehr Hoch (Standard)
 profile.ULTRA=Ultra Hoch
 
-option.SOLAS_BY_SEPTONIOUS=§6Solas V2
-value.SOLAS_BY_SEPTONIOUS.0=§bBy Septonious
-option.SOLAS_BY_SEPTONIOUS.comment=Discord: https://discord.gg/4uTAUQR2xu. GitHub: https://github.com/Septonious/Solas-Shader
+option.SOLAS_BY_SEPTONIOUS=§6Solas Shader
+value.SOLAS_BY_SEPTONIOUS.1=§bBy Septonious
+option.SOLAS_BY_SEPTONIOUS.comment=Discord: https://discord.gg/4uTAUQR2xu. GitHub: https://github.com/Septonious/Solas-Shader. §cDownload only from §6CurseForge §cor §aModrinth§c!!!
 
 #ATMOSPHERICS
 

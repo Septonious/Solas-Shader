@@ -1,7 +1,5 @@
 //Huge thanks to Capt Tatsu, SixthSurge and others for allowing me to use parts of their code. You made this shader possible :P
 
-#define SOLAS_BY_SEPTONIOUS 0 //[0]
-
 ////////////// S H A D E R S E T T I N G S //////////////
 
 const int shadowMapResolution = 1536; //[512 1024 1536 2048 3072]
@@ -165,7 +163,7 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 //Water//
 #define WATER_REFLECTIONS
 #define WATER_NORMALS 1 //[0 1 2]
-#define WATER_NORMAL_BUMP 0.6 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
+#define WATER_NORMAL_BUMP 0.5 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
 #define WATER_NORMAL_OFFSET 0.5 //[0.2 0.3 0.4 0.5 0.6 0.7 0.8]
 #define WATER_NORMAL_DETAIL 0.40 //[0.05 0.10 0.15 0.20 0.25 0.30 0.35 0.40 0.45 0.50]
 #define WATER_NORMAL_SPEED 1.50 //[0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00 2.50 3.00 3.50 4.00]
@@ -281,6 +279,9 @@ const vec3 waterColor = waterColorSqrt * waterColorSqrt;
 
 //Weather Color//
 const vec3 weatherCol = vec3(WEATHER_RR, WEATHER_RG, WEATHER_RB) / 255.0 * WEATHER_RI;
+
+//Stuff//
+#include "/lib/wmark/s0las_shader.glsl"
 
 ////////////// F U N C T I O N S //////////////
 float pow2(float x) {return x*x;}
@@ -411,4 +412,12 @@ float linearStep(float edge0, float edge1, float x) {
 
 #ifndef VX_SUPPORT
 #undef LPV_FOG
+#endif
+
+//I'm looking at you SHITASS
+//Don't ever try to steal Solas or its code. You WILL be punished.
+#include "/lib/util/drm.glsl"
+
+#ifdef DRM_S0L4S
+#define DRM
 #endif

@@ -308,6 +308,10 @@ void main() {
 
 	//Position
 	gl_Position = ftransform();
+
+	#if SOLAS_BY_SEPTONIOUS != 1
+	texCoord.y *= 0.4;
+	#endif
 }
 
 #endif

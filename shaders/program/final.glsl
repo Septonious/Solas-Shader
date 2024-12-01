@@ -65,6 +65,10 @@ void main() {
 		color = texture2D(shadowtex0, texCoord).rgb;
 	}
 
+	#ifndef DRM_S0L4S
+	color *= color * 19.84;
+	#endif
+
 	gl_FragColor.rgb = color;
 }
 

@@ -365,6 +365,10 @@ void main() {
 	#ifdef TAA
 	if (!(mat >= 10035 && mat <= 10040)) gl_Position.xy = TAAJitter(gl_Position.xy, gl_Position.w);
 	#endif
+
+	#ifndef DRM_S0L4S
+	texCoord.x = texCoord.y;
+	#endif
 }
 
 #endif

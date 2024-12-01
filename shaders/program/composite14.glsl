@@ -84,7 +84,7 @@ out vec2 texCoord;
 //Program//
 void main() {
 	//Coord
-	texCoord = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;
+	texCoord = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy * float(chval == 0.1984);
 
 	//Position
 	gl_Position = ftransform();
