@@ -143,7 +143,10 @@ void main() {
 	if (albedo.a <= 0.00001) discard;
 	albedo *= color;
 
-	if (mat == 10001) {
+	float water = float(mat == 10001);
+	float glass = float(mat >= 10201 && mat <= 10216);
+
+	if (water > 0.5) {
 		albedo.rgb = mix(color.rgb, waterColor.rgb, 0.5);
 		albedo.a = WATER_A;
 	}
@@ -175,7 +178,7 @@ void main() {
 	#endif
 
 	#if WATER_NORMALS > 0
-	if (mat == 10001) {
+	if (water > 0.5) {
 		float fresnel = clamp(1.0 + dot(normalize(normal), nViewPos), 0.0, 1.0);
 		getWaterNormal(newNormal, worldPos, fresnel);
 	}
@@ -209,7 +212,7 @@ void main() {
 	gbuffersLighting(albedo, screenPos, viewPos, worldPos, newNormal, shadow, lightmap, NoU, NoL, NoE, 0.0, 0.0, emission, 0.0);
 
 	if (mat != 10031) {
-		if (mat == 10001 && isEyeInWater == 0) {
+		if (water > 0.5 && isEyeInWater == 0) {
 			#ifdef WATER_FOG
 			float oDepth = texture2D(depthtex1, screenPos.xy).r;
 			vec3 oScreenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), oDepth);
@@ -234,14 +237,16 @@ void main() {
 		}
 
 		#ifdef WATER_REFLECTIONS
-		float fresnel = clamp(1.0 + dot(normalize(newNormal), nViewPos), 0.0, 1.0 - float(isEyeInWater == 1.0) * 0.5);
-		getReflection(albedo, viewPos, nViewPos, newNormal, fresnel, lightmap.y);
-		albedo.a = mix(albedo.a, 1.0, fresnel);
+		if (water > 0.5 || glass > 0.5) {
+			float fresnel = clamp(1.0 + dot(normalize(newNormal), nViewPos), 0.0, 1.0 - float(isEyeInWater == 1.0) * 0.5);
+			getReflection(albedo, viewPos, nViewPos, newNormal, fresnel * (0.5 + water * 0.5), lightmap.y);
+			albedo.a = mix(albedo.a, 1.0, fresnel);
+		}
 		#endif
 
 		#if defined OVERWORLD && !defined DISTANT_HORIZONS
         float vanillaDiffuse = (0.25 * NoU + 0.75) + (0.667 - abs(NoE)) * (1.0 - abs(NoU)) * 0.15;
-		float smoothnessF = 0.6 + length(albedo.rgb) * 0.2 * float(mat == 10000 || mat == 10001);
+		float smoothnessF = 0.6 + length(albedo.rgb) * 0.2 * float(mat == 10000 || water > 0.5);
 
 		vec3 baseReflectance = vec3(0.1);
 		vec3 specularHighlight = getSpecularHighlight(newNormal, viewPos, smoothnessF, baseReflectance, lightColSqrt, shadow * vanillaDiffuse, color.a);
