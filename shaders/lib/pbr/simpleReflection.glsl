@@ -14,7 +14,7 @@ void getReflection(inout vec4 color, in vec3 viewPos, in vec3 normal, in float f
 	#endif
 
 	vec3 falloff = vec3(0.0);
-	vec4 reflectPos = rayTrace(depthtex0, viewPos, normal, blueNoiseDither, border, 6, 20, 0.1, 1.4);
+	vec4 reflectPos = rayTrace(depthtex0, viewPos, normal, blueNoiseDither, fresnel, border, 6, 25, 0.1, 2.0);
 
 	border = clamp(13.333 * (1.0 - border), 0.0, 1.0);
 
@@ -33,14 +33,22 @@ void getReflection(inout vec4 color, in vec3 viewPos, in vec3 normal, in float f
 	#endif
 
 	float fovScale = gbufferProjection[1][1] / 1.37;
-	float dist = 0.25 * reflectPos.a * fovScale;
-	float lod = log2(viewHeight * dist) * sqrt(1.0 - smoothness) * 2.0;
+	float dist = 0.1 * pow2(1.0 - smoothness) * reflectPos.a * fovScale;
+	float lod = log2(viewHeight * dist);
 
-	vec4 reflection = texture2D(colortex0, reflectPos.xy + lod * refOffsets[0] / vec2(viewWidth, viewHeight));
-		 reflection+= texture2D(colortex0, reflectPos.xy + lod * refOffsets[1] / vec2(viewWidth, viewHeight));
-		 reflection+= texture2D(colortex0, reflectPos.xy + lod * refOffsets[2] / vec2(viewWidth, viewHeight));
-		 reflection+= texture2D(colortex0, reflectPos.xy + lod * refOffsets[3] / vec2(viewWidth, viewHeight));
-	reflection *= 0.25;
+	vec4 reflection = vec4(0.0);
+
+	if (lod < 1.0) {
+		reflection = texture2DLod(colortex0, reflectPos.xy, 1.0);
+	} else {
+		float lod2 = max(lod - 1.0, 0.0);
+		vec2 blurring = exp2(lod - 1.0) / vec2(viewWidth, viewHeight);
+		reflection = texture2DLod(colortex0, reflectPos.xy + refOffsets[0] * blurring, lod2);
+		reflection+= texture2DLod(colortex0, reflectPos.xy + refOffsets[1] * blurring, lod2);
+		reflection+= texture2DLod(colortex0, reflectPos.xy + refOffsets[2] * blurring, lod2);
+		reflection+= texture2DLod(colortex0, reflectPos.xy + refOffsets[3] * blurring, lod2);
+		reflection *= 0.25;
+	}
 	reflection.a *= border;
 
 	color.rgb = mix(color.rgb, mix(falloff, reflection.rgb, reflection.a), fresnel * smoothness);

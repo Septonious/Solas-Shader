@@ -32,6 +32,8 @@ uniform mat4 gbufferProjectionInverse;
 #endif
 
 //Optifine Constants//
+const bool colortex1MipmapEnabled = true;
+
 #ifdef TAA
 const bool colortex2Clear = false;
 const bool colortex2MipmapEnabled = true;

@@ -6,14 +6,14 @@ void getReflection(inout vec4 albedo, in vec3 viewPos, in vec3 nViewPos, in vec3
 	dither = fract(dither + frameTimeCounter * 16.0);
 	#endif
 
-	vec4 reflectPos = rayTrace(depthtex1, viewPos, normal, dither, border, 3, 16, 0.2, 1.5);
+	vec4 reflectPos = rayTrace(depthtex1, viewPos, normal, dither, fresnel, border, 6, 20, 0.1, 2.0);
 
 	border = clamp(13.333 * (1.0 - border), 0.0, 1.0);
 
 	vec4 reflection = texture2D(gaux3, reflectPos.xy);
 	     reflection.rgb = pow8(reflection.rgb * 2.0);
-	     reflection.a *= border;
          reflection.rgb *= float(reflection.a > 0.0);
+		 reflection.a *= border;
 
 	#ifdef OVERWORLD
 	vec3 falloff = albedo.rgb;

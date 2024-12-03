@@ -239,7 +239,7 @@ void main() {
 		#ifdef WATER_REFLECTIONS
 		if (water > 0.5 || glass > 0.5) {
 			float fresnel = clamp(1.0 + dot(normalize(newNormal), nViewPos), 0.0, 1.0 - float(isEyeInWater == 1.0) * 0.5);
-			getReflection(albedo, viewPos, nViewPos, newNormal, fresnel * (0.5 + water * 0.5), lightmap.y);
+			getReflection(albedo, viewPos, nViewPos, newNormal, fresnel * (0.5 + water * 0.35), lightmap.y);
 			albedo.a = mix(albedo.a, 1.0, fresnel);
 		}
 		#endif
