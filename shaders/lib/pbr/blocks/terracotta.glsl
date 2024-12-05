@@ -1,3 +1,3 @@
 if (material2 == 315 || material2 == 316) {// Terracotta
-    smoothness = clamp(lAlbedo * 0.175 + 0.1, 0.06, 0.275);
+    smoothness = clamp(lAlbedo * 0.2, 0.00, 0.2);
 }

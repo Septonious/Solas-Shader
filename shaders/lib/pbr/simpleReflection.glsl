@@ -42,7 +42,7 @@ void getReflection(inout vec4 color, in vec3 viewPos, in vec3 normal, in float f
 		reflection = texture2DLod(colortex0, reflectPos.xy, 1.0);
 	} else {
 		float lod2 = max(lod - 1.0, 0.0);
-		vec2 blurring = exp2(lod - 1.0) / vec2(viewWidth, viewHeight);
+		vec2 blurring = exp2(lod - 1.0) / vec2(viewWidth, viewHeight) * 1.5;
 		reflection = texture2DLod(colortex0, reflectPos.xy + refOffsets[0] * blurring, lod2);
 		reflection+= texture2DLod(colortex0, reflectPos.xy + refOffsets[1] * blurring, lod2);
 		reflection+= texture2DLod(colortex0, reflectPos.xy + refOffsets[2] * blurring, lod2);

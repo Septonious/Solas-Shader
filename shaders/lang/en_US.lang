@@ -313,7 +313,7 @@ option.AMBIENT_END_I=Intensity
 
 #----------------------------------------------------------------------------------#
 
-screen.MINLIGHT=Minimal Lighting
+screen.MINLIGHT=Cave Lighting
 
 option.MINLIGHT_R=Red
 option.MINLIGHT_G=Green

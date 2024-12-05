@@ -1,3 +1,3 @@
 if (material2 == 313) {
-    smoothness = lAlbedo * 0.65 + 0.25;
+    smoothness = lAlbedo * 0.35 + 0.1;
 }
