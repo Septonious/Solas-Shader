@@ -57,15 +57,8 @@ void main() {
 			light *= pow(tint, vec3(FLOODFILL_RADIUS));
 		}
 	} else {
-		#ifdef EMISSIVE_CONCRETE
 		vec3 color = blocklightColorArray[min(voxel, blocklightColorArray.length() - 1u)];
 	    light = pow(color, vec3(FLOODFILL_RADIUS));
-		#else
-		if (voxel < 14 || voxel > 19) {
-			vec3 color = blocklightColorArray[min(voxel, blocklightColorArray.length() - 1u)];
-			light = pow(color, vec3(FLOODFILL_RADIUS));
-		}
-		#endif
 
         #ifdef OVERWORLD
         if (voxel >= 34 && voxel <= 39) {

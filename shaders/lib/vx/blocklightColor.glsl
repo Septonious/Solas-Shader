@@ -27,6 +27,7 @@ const vec3[] blocklightColorArray = vec3[](
 	vec3(1.00, 0.40, 0.10) * 2.75,
 	//Amethyst
 	vec3(0.80, 0.30, 1.00) * 2.0,
+	#ifdef EMISSIVE_CONCRETE
 	//Red Concrete
 	vec3(1.00, 0.00, 0.00) * 3.0,
 	//Orange Concrete
@@ -39,6 +40,14 @@ const vec3[] blocklightColorArray = vec3[](
 	vec3(0.00, 0.40, 1.00) * 3.0,
 	//Magenta Concrete
 	vec3(1.00, 0.00, 1.00) * 3.5,
+	#else
+	vec3(0.0),
+	vec3(0.0),
+	vec3(0.0),
+	vec3(0.0),
+	vec3(0.0),
+	vec3(0.0),
+	#endif
 	//Magma Block
 	vec3(1.00, 0.20, 0.05) * 2.00,
 	#ifdef EMISSIVE_ORES
@@ -145,13 +154,24 @@ const vec3[] blocklightColorArray = vec3[](
 	//Calibrated Sculk Sensor
 	vec3(1.00, 0.25, 0.75) * 2.5,
 	//Fungi
-	vec3(0.0),
+	vec3(1.0, 0.2, 0.1) * 0.1,
 	//Crimson Stem & Hyphae
 	vec3(1.0, 0.2, 0.1) * 0.2,
 	//Warped Stem & Hyphae
 	vec3(0.1, 0.5, 0.7) * 0.2,
+	//Warts
+	vec3(0.0),
+	vec3(0.0),
 	//Spawner, refuses to work
 	vec3(0.1, 0.01, 0.15),
+	//Unlit Redstone Lamp
+	vec3(0.0),
+	//End Portal With Eye
+	vec3(0.1, 0.9, 0.3) * 0.5,
+	//Zinc Ore
+	vec3(0.4),
+	//Creaking Heart (Active)
+	vec3(1.0, 0.3, 0.1),
 	//Buffer
 	vec3(0.0)
 );

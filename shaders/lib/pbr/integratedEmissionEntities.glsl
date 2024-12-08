@@ -18,5 +18,7 @@ void getIntegratedEmission(in vec3 albedo, inout vec2 lightmap, inout float emis
     } else if (mat == 106) { // End Crystal
         emission = float(albedo.r > 0.5 && albedo.g < 0.55) * 1.25;
         lightmap.x *= emission;
+    } else if (mat == 107) { // Creaking
+        emission = float(albedo.r > albedo.g + albedo.b) * 0.5;
     }
 }

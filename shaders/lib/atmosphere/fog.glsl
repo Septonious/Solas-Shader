@@ -1,3 +1,8 @@
+//Pale Garden uniform for fog//
+#if MC_VERSION >= 12100
+uniform float isPaleGarden;
+#endif
+
 //Fog that appears when you have a darkness effect
 #if MC_VERSION >= 11900
 void getDarknessFog(inout vec3 color, vec3 viewPos) {
@@ -44,6 +49,11 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 atmo
 		  fogAltitude = mix(fogAltitude, 0.0, wetness * 0.25);
 	float fogDistance = min(192.0 / dhFarPlane, 1.0) * (100.0 / distanceFactor);
 	float fogDensity = FOG_DENSITY * mix(0.75 + sunVisibility * 1.25, 0.5, mefade) * (2.0 - caveFactor) * (1.0 - fogAltitude * 0.9) * (1.0 - eBS01 * timeBrightness * 0.5) * (1.5 - eBS01 * sunVisibility * 0.5);
+
+	#if MC_VERSION >= 12100
+	fogDensity = mix(fogDensity, 6.0, isPaleGarden);
+	fogDistance *= 1.0 - isPaleGarden * 0.75;
+	#endif
 
     float fog = 1.0 - exp(-pow(lViewPos * (0.001 - 0.00075 * wetnessCave), 2.0 - wetnessCave) * lViewPos * fogDistance);
           fog *= fogDensity;
@@ -101,6 +111,14 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 atmo
 	vec3 fogCol = atmosphereColor;
 	#endif
 
+	#ifdef DEFERRED
+	float zMixer = float(texture2D(dhDepthTex1, texCoord).r < 1.0);
+	#if MC_VERSION >= 12100
+		  zMixer = mix(zMixer, 1.0, isPaleGarden);
+	#endif
+	fog *= zMixer;
+	#endif
+
 	color = mix(color, fogCol, fog);
 }
 #else
@@ -118,6 +136,11 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 atmo
 		  fogAltitude = mix(fogAltitude, 0.0, wetness * 0.25);
 	float fogDistance = min(192.0 / far, 1.0) * (100.0 / distanceFactor);
 	float fogDensity = FOG_DENSITY * mix(0.75 + sunVisibility * 1.25, 0.5, mefade) * (2.0 - caveFactor) * (1.0 - fogAltitude * 0.9) * (1.0 - eBS01 * timeBrightness * 0.5) * (1.5 - eBS01 * sunVisibility * 0.5);
+
+	#if MC_VERSION >= 12100
+	fogDensity = mix(fogDensity, 6.0, isPaleGarden);
+	fogDistance *= 1.0 - isPaleGarden * 0.75;
+	#endif
 
     float fog = 1.0 - exp(-pow(lViewPos * (0.001 - 0.00075 * wetnessCave), 2.0 - wetnessCave) * lViewPos * fogDistance);
           fog *= fogDensity;
@@ -173,6 +196,14 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 atmo
 	fog = 1.0 - exp(-fog);
 
 	vec3 fogCol = atmosphereColor;
+	#endif
+
+	#ifdef DEFERRED
+	float zMixer = float(texture2D(depthtex1, texCoord).r < 1.0);
+	#if MC_VERSION >= 12100
+		  zMixer = mix(zMixer, 1.0, isPaleGarden);
+	#endif
+	fog *= zMixer;
 	#endif
 
 	color = mix(color, fogCol, fog);

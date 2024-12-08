@@ -57,7 +57,7 @@ uniform sampler2D depthtex1;
 #ifdef DISTANT_HORIZONS
 uniform float dhFarPlane, dhNearPlane;
 
-uniform sampler2D dhDepthTex0;
+uniform sampler2D dhDepthTex1;
 #endif
 
 #if defined VC || defined END_CLOUDY_FOG
@@ -125,7 +125,7 @@ void main() {
 	float z1 = texture2D(depthtex1, texCoord).r;
 
 	#ifdef DISTANT_HORIZONS
-	float dhZ = texture2D(dhDepthTex0, texCoord).r;
+	float dhZ = texture2D(dhDepthTex1, texCoord).r;
 	#endif
 
 	vec3 viewPos = ToView(vec3(texCoord, z1));
@@ -243,22 +243,11 @@ void main() {
 
 	skyColor *= 1.0 - blindFactor;
 
-	if (z1 < 1.0) {
-		Fog(color, viewPos, worldPos, skyColorO);
-
-	#ifdef DISTANT_HORIZONS
-	} else if (dhZ < 1.0) {
-		vec4 dhScreenPos = vec4(texCoord, dhZ, 1.0);
-		vec4 dhViewPos = dhProjectionInverse * (dhScreenPos * 2.0 - 1.0);
-			 dhViewPos /= dhViewPos.w;
-		
-		Fog(color, dhViewPos.xyz, ToWorld(dhViewPos.xyz), skyColorO);
+	#ifndef DISTANT_HORIZONS
+	if (z1 == 1.0) color = skyColor;
+	#else
+	if (dhZ == 1.0 && z1 == 1.0) color = skyColor;
 	#endif
-
-	} else {
-		color = skyColor;
-	}
-
 
 	#if defined VC || defined END_CLOUDY_FOG
 	#ifdef DISTANT_HORIZONS
@@ -268,6 +257,21 @@ void main() {
 	#endif
 
 	color = mix(color, vc.rgb, vc.a);
+	#endif
+
+	#ifdef DISTANT_HORIZONS
+	if (z1 < 1.0) {
+		Fog(color, viewPos, worldPos, skyColorO);
+
+	} else if (dhZ < 1.0) {
+		vec4 dhScreenPos = vec4(texCoord, dhZ, 1.0);
+		vec4 dhViewPos = dhProjectionInverse * (dhScreenPos * 2.0 - 1.0);
+			 dhViewPos /= dhViewPos.w;
+		
+		Fog(color, dhViewPos.xyz, ToWorld(dhViewPos.xyz), skyColorO);
+	}
+	#else
+	Fog(color, viewPos, worldPos, skyColorO);
 	#endif
 
 	/* DRAWBUFFERS:064 */
