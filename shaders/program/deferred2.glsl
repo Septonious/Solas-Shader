@@ -57,7 +57,7 @@ uniform sampler2D depthtex1;
 #ifdef DISTANT_HORIZONS
 uniform float dhFarPlane, dhNearPlane;
 
-uniform sampler2D dhDepthTex1;
+uniform sampler2D dhDepthTex0;
 #endif
 
 #if defined VC || defined END_CLOUDY_FOG
@@ -125,7 +125,7 @@ void main() {
 	float z1 = texture2D(depthtex1, texCoord).r;
 
 	#ifdef DISTANT_HORIZONS
-	float dhZ = texture2D(dhDepthTex1, texCoord).r;
+	float dhZ = texture2D(dhDepthTex0, texCoord).r;
 	#endif
 
 	vec3 viewPos = ToView(vec3(texCoord, z1));
@@ -193,7 +193,7 @@ void main() {
 	float nebulaFactor = 0.0;
 
 	#ifdef END_NEBULA
-	getEndNebula(skyColor, worldPos, VoU, nebulaFactor, 1.0);
+	getEndNebula(skyColor, skyColorO, worldPos, VoU, nebulaFactor, 1.0);
 	#endif
 
 	vec3 stars = vec3(0.0);

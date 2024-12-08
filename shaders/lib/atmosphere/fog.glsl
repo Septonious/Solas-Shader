@@ -111,12 +111,14 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 atmo
 	vec3 fogCol = atmosphereColor;
 	#endif
 
+	#ifndef NETHER
 	#ifdef DEFERRED
-	float zMixer = float(texture2D(dhDepthTex1, texCoord).r < 1.0);
+	float zMixer = float(texture2D(dhDepthTex0, texCoord).r < 1.0);
 	#if MC_VERSION >= 12100
 		  zMixer = mix(zMixer, 1.0, isPaleGarden);
 	#endif
 	fog *= zMixer;
+	#endif
 	#endif
 
 	color = mix(color, fogCol, fog);
@@ -198,12 +200,14 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 atmo
 	vec3 fogCol = atmosphereColor;
 	#endif
 
+	#ifndef NETHER
 	#ifdef DEFERRED
 	float zMixer = float(texture2D(depthtex1, texCoord).r < 1.0);
 	#if MC_VERSION >= 12100
 		  zMixer = mix(zMixer, 1.0, isPaleGarden);
 	#endif
 	fog *= zMixer;
+	#endif
 	#endif
 
 	color = mix(color, fogCol, fog);

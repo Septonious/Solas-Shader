@@ -92,7 +92,7 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 #define VF_END_HEIGHT -30.0 //[-20.0 -10.0 0.0 10.0 20.0 30.0 40.0]
 #define VF_END_AMOUNT 8.5 //[7.5 8.0 8.5 9.0 9.5 10.0]
 #define VF_END_THICKNESS 10.0 //[4.0 6.0 8.0 10.0 12.0 14.0 16.0 18.0 20.0 22.0 24.0]
-#define VF_END_OPACITY 0.7 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
+#define VF_END_OPACITY 0.9 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
 
 //Fog//
 #define DISTANT_FADE

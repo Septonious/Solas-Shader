@@ -110,7 +110,7 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z1, f
 
 			//DH Depth rejection
 			#ifdef DISTANT_HORIZONS
-			float dhZ = texture2D(dhDepthTex1, texCoord).r;
+			float dhZ = texture2D(dhDepthTex0, texCoord).r;
 			#endif
 
 			//Ray marcher

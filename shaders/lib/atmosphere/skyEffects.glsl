@@ -23,7 +23,15 @@ void drawStars(inout vec3 color, in vec3 worldPos, inout vec3 stars, in float Vo
 			  star = clamp(star - (0.75 - nebulaFactor * 0.1), 0.0, 1.0);
 
 		stars = vec3(star * visibility * STAR_BRIGHTNESS * 16.0);
-		color += stars * stars * lightNight;
+		stars *= stars;
+
+		#ifdef OVERWORLD
+		stars *= lightNight;
+		#else
+		stars *= 0.25;
+		#endif
+
+		color += stars;
 	}
 }
 #endif
@@ -57,7 +65,7 @@ float getSpiralWarping(vec2 coord){
     return clamp(spiral * 0.1, 0.0, 1.0);
 }
 
-void getEndNebula(inout vec3 color, in vec3 worldPos, in float VoU, inout float nebulaFactor, in float caveFactor) {
+void getEndNebula(inout vec3 color, inout vec3 color2, in vec3 worldPos, in float VoU, inout float nebulaFactor, in float caveFactor) {
 	float visibility = pow2(1.0 - abs(VoU)) * END_NEBULA_BRIGHTNESS;
 
 	if (visibility > 0.0) {
@@ -83,8 +91,10 @@ void getEndNebula(inout vec3 color, in vec3 worldPos, in float VoU, inout float 
 			  nebulaNoise2 += texture2D(noisetex, planeCoord2 * 0.08 - frameTimeCounter * 0.00060).r * 0.50;
 			  nebulaNoise2 = clamp(nebulaNoise2 - 0.8, 0.0, 1.0);
 
-		color += mix(mix(endAmbientCol, endLightCol, nebulaNoise1), mix(vec3(2.0, 0.8, 0.2), vec3(0.1, 2.1, 0.8), nebulaNoise1), texture2D(noisetex, planeCoord1 * 0.025).r * 0.4) * visibility * nebulaNoise1;
-		color += mix(vec3(2.3, 0.8, 0.5), vec3(1.2, 2.2, 0.9), nebulaNoise2 - 0.25) * visibility * pow2(nebulaNoise2) * 0.125;
+		vec3 result = mix(mix(endAmbientCol, endLightCol, nebulaNoise1), mix(vec3(2.0, 0.8, 0.2), vec3(0.1, 2.1, 0.8), nebulaNoise1), texture2D(noisetex, planeCoord1 * 0.025).r * 0.4) * visibility * nebulaNoise1;
+			 result += mix(vec3(2.3, 0.8, 0.5), vec3(1.2, 2.2, 0.9), nebulaNoise2 - 0.25) * visibility * pow2(nebulaNoise2) * 0.125;
+		color += result;
+		color2 += result;
 		nebulaFactor = (nebulaNoise1 + nebulaNoise2) * visibility;
 	}
 }
