@@ -1,3 +1,4 @@
+#ifdef GBUFFERS_TERRAIN
 void generateIPBR(inout vec4 albedo, in vec3 worldPos, in vec3 viewPos, inout vec2 lightmap, inout float emission, inout float smoothness2, inout float metalness, inout float subsurface) {
     int material = max(mat - 10000, 0);
     int material2 = max(mat - 20000, 0);
@@ -63,3 +64,19 @@ void generateIPBR(inout vec4 albedo, in vec3 worldPos, in vec3 viewPos, inout ve
     metalness = 1.0;
     #endif
 }
+#endif
+
+#ifdef GBUFFERS_ENTITIES
+void generateIPBR(inout vec4 albedo, in vec3 worldPos, in vec3 viewPos, inout vec2 lightmap, inout float emission, inout float smoothness2, inout float metalness, inout float subsurface) {
+    float lAlbedo = clamp(length(albedo.rgb), 0.0, 1.0);
+
+    #include "/lib/pbr/entities/creaking.glsl"
+    #include "/lib/pbr/entities/drowned.glsl"
+    #include "/lib/pbr/entities/end_crystal.glsl"
+    #include "/lib/pbr/entities/experience_bottle.glsl"
+    #include "/lib/pbr/entities/experience_orb.glsl"
+    #include "/lib/pbr/entities/glow_squid.glsl"
+    #include "/lib/pbr/entities/magma_cube.glsl"
+    #include "/lib/pbr/entities/witch.glsl"
+}
+#endif

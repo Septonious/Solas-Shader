@@ -95,7 +95,7 @@ vec3 lightVec = sunVec;
 #include "/lib/lighting/gbuffersLighting.glsl"
 
 #ifdef GENERATED_EMISSION
-#include "/lib/pbr/integratedEmissionEntities.glsl"
+#include "/lib/pbr/generatedPBR.glsl"
 #endif
 
 //Program//
@@ -107,6 +107,9 @@ void main() {
 	vec3 newNormal = normal;
 
 	float emission = 0.0;
+	float smoothness = 0.0;
+	float metalness = 0.0;
+	float subsurface = 0.0;
 
 	float lightningBolt = float(mat == 1);
 
@@ -126,11 +129,11 @@ void main() {
 		float NoE = clamp(dot(newNormal, eastVec), -1.0, 1.0);
 
 		#ifdef GENERATED_EMISSION
-		getIntegratedEmission(albedo.rgb, lightmap, emission);
+		generateIPBR(albedo, worldPos, viewPos, lightmap, emission, smoothness, metalness, subsurface);
 		#endif
 
 		vec3 shadow = vec3(0.0);
-		gbuffersLighting(albedo, screenPos, viewPos, worldPos, newNormal, shadow, lightmap, NoU, NoL, NoE, 0.0, 0.0, emission, 0.0);
+		gbuffersLighting(albedo, screenPos, viewPos, worldPos, newNormal, shadow, lightmap, NoU, NoL, NoE, subsurface, smoothness, emission, 0.0);
 	}
 
 	/* DRAWBUFFERS:03 */
