@@ -1,3 +1,3 @@
 if (material2 == 314) {// Planks
-    smoothness = pow6(lAlbedo) * 0.035;
+    smoothness = 0.055 * length(albedo.rgb);
 }

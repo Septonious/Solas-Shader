@@ -55,7 +55,6 @@ uniform mat4 gbufferModelViewInverse;
 //Common Variables//
 #if defined PBR || defined GENERATED_SPECULAR
 const bool colortex0MipmapEnabled = true;
-const bool colortex3MipmapEnabled = true;
 
 vec2 viewResolution = vec2(viewWidth, viewHeight);
 
