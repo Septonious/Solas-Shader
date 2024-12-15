@@ -1,3 +1,3 @@
 if (material2 == 317) { // Some bricks
-    smoothness = clamp(pow5(lAlbedo) * 0.2, 0.0, 0.3);
+    smoothness = clamp(pow3(lAlbedo) * 0.4, 0.0, 0.5);
 }

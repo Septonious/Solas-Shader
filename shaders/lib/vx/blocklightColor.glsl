@@ -172,6 +172,27 @@ const vec3[] blocklightColorArray = vec3[](
 	vec3(0.4),
 	//Creaking Heart (Active)
 	vec3(1.0, 0.3, 0.1),
+	#ifdef EMISSIVE_FLOWERS
+    //Red Potted flowers
+    normalize(vec3(1.00, 0.05, 0.05)) * 0.20,
+    //Pink Potted flowers
+    normalize(vec3(0.80, 0.20, 0.60)) * 0.20,
+    //Yellow Potted flowers
+    normalize(vec3(0.80, 0.50, 0.05)) * 0.20,
+    //Blue Potted flowers
+    normalize(vec3(0.00, 0.15, 1.00)) * 0.20,
+    //White Potted flowers
+    normalize(vec3(0.80, 0.80, 0.80)) * 0.20,
+    //Orange Potted flowers
+    normalize(vec3(1.00, 0.70, 0.05)) * 0.20,
+	#else
+	vec3(0.0),
+	vec3(0.0),
+	vec3(0.0),
+	vec3(0.0),
+	vec3(0.0),
+	vec3(0.0),
+	#endif
 	//Buffer
 	vec3(0.0)
 );

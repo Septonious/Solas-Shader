@@ -61,7 +61,7 @@ void generateIPBR(inout vec4 albedo, in vec3 worldPos, in vec3 viewPos, inout ve
 
     #ifdef GENERATED_SPECULAR
     smoothness2 = clamp(smoothness, 0.0, 0.95);
-    metalness = 1.0;
+    metalness = smoothness2;
     #endif
 }
 #endif
