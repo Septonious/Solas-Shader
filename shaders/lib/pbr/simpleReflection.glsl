@@ -26,12 +26,12 @@ void getReflection(inout vec4 color, in vec3 viewPos, in vec3 normal, in float f
 		falloff *= 1.0 - blindFactor;
 		#endif
 
-		float dist = 1.0 - exp(-0.2 * (1.0 - smoothness) * reflectPos.a);
-		float lod = log2(viewHeight / 8.0 * (1.0 - smoothness) * dist);
+		float dist = 1.0 - exp(-0.2 * (1.0 - smoothness * smoothness) * reflectPos.a);
+		float lod = log2(viewHeight / 8.0 * (1.0 - smoothness * smoothness) * dist);
 
 		vec4 reflection = texture2DLod(colortex0, reflectPos.xy, max(lod - 1.0, 0.0));
 		reflection.a *= border;
 
-		color.rgb = mix(color.rgb, mix(falloff, reflection.rgb, reflection.a), fresnel * smoothness);
+		color.rgb = mix(color.rgb, mix(falloff, reflection.rgb, reflection.a), fresnel);
 	}
 }
