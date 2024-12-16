@@ -180,6 +180,7 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 //#define EMISSIVE_CONCRETE
 #define EMISSIVE_FLOWERS
 #define EMISSIVE_ORES
+#define EMISSIVE_ARMOR_TRIMS
 #define GENERATED_NORMALS
 #define GENERATED_SPECULAR
 #define RAIN_PUDDLES

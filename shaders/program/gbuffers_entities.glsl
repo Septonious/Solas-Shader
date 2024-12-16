@@ -23,6 +23,10 @@ uniform int heldBlockLightValue;
 uniform int heldBlockLightValue2;
 #endif
 
+#ifdef GENERATED_SPECULAR
+uniform int currentRenderedItemId;
+#endif
+
 #ifdef AURORA
 uniform int moonPhase;
 uniform float isSnowy;
@@ -76,8 +80,8 @@ vec3 lightVec = sunVec;
 #endif
 
 //Includes//
-#include "/lib/util/transformMacros.glsl"
 #include "/lib/util/encode.glsl"
+#include "/lib/util/transformMacros.glsl"
 #include "/lib/util/ToNDC.glsl"
 #include "/lib/util/ToWorld.glsl"
 #include "/lib/util/ToShadow.glsl"
@@ -94,7 +98,7 @@ vec3 lightVec = sunVec;
 
 #include "/lib/lighting/gbuffersLighting.glsl"
 
-#ifdef GENERATED_EMISSION
+#if defined GENERATED_EMISSION || defined GENERATED_SPECULAR
 #include "/lib/pbr/generatedPBR.glsl"
 #endif
 
@@ -128,7 +132,7 @@ void main() {
 		float NoL = clamp(dot(newNormal, lightVec), 0.0, 1.0);
 		float NoE = clamp(dot(newNormal, eastVec), -1.0, 1.0);
 
-		#ifdef GENERATED_EMISSION
+		#if defined GENERATED_EMISSION || defined GENERATED_SPECULAR
 		generateIPBR(albedo, worldPos, viewPos, lightmap, emission, smoothness, metalness, subsurface);
 		#endif
 
