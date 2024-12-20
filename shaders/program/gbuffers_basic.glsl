@@ -47,7 +47,6 @@ vec3 lightVec = sunVec;
 #endif
 
 //Includes//
-#include "/lib/util/transformMacros.glsl"
 #include "/lib/util/ToNDC.glsl"
 #include "/lib/util/ToWorld.glsl"
 #include "/lib/util/ToShadow.glsl"

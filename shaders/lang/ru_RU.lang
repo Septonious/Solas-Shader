@@ -222,6 +222,7 @@ screen.IEMISSION=Настройки Свечения
 option.EMISSIVE_FLOWERS=Светящиеся Цветы
 option.EMISSIVE_ORES=Светящиеся Руды
 option.EMISSIVE_CONCRETE=Светящийся Бетон
+option.EMISSIVE_ARMOR_TRIMS=Светящиеся Вставки Брони
 option.EMISSION_STRENGTH=Яркость Свечения
 
 #----------------------------------------------------------------------------------#

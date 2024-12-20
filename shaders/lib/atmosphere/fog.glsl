@@ -28,7 +28,7 @@ vec3 densefogCol[2] = vec3[2](
 );
 
 void getDenseFog(inout vec3 color, vec3 viewPos) {
-	float fog = length(viewPos) * 0.1;
+	float fog = length(viewPos) * (0.15 + float(isEyeInWater == 3) * 0.5);
 		  fog = 1.0 - exp(-2.0 * pow2(fog));
 
 	color = mix(color, densefogCol[isEyeInWater - 2], fog);
@@ -43,12 +43,11 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 atmo
 	#ifdef OVERWORLD
 	float eBS01 = pow(eBS, 0.1);
 	float wetnessCave = wetness * caveFactor;
-	float distanceFactor = mix(65.0, FOG_DISTANCE * (0.5 + sunVisibility * 0.5), caveFactor);
-	float fogAltitude = clamp(pow4((worldPos.y + cameraPosition.y + 1000.0 - FOG_HEIGHT) * 0.001), 0.0, 1.0);
-		  fogAltitude = mix(0.0, fogAltitude, caveFactor);
-		  fogAltitude = mix(fogAltitude, 0.0, wetness * 0.25);
+	float distanceFactor = mix(65.0, FOG_DISTANCE * (0.6 + timeBrightness * 0.4), caveFactor);
+	float cameraAltitude = clamp(exp2(-max(cameraPosition.y - FOG_HEIGHT, 0.0) / exp2(FOG_HEIGHT_FALLOFF)), 0.0, 1.0);
+	float fogAltitude = clamp(exp2(-max(worldPos.y + cameraPosition.y - FOG_HEIGHT, 0.0) / exp2(FOG_HEIGHT_FALLOFF)), 0.0, 1.0);
 	float fogDistance = min(192.0 / dhFarPlane, 1.0) * (100.0 / distanceFactor);
-	float fogDensity = FOG_DENSITY * mix(0.75 + sunVisibility * 1.25, 0.5, mefade) * (2.0 - caveFactor) * (1.0 - fogAltitude * 0.9) * (1.0 - eBS01 * timeBrightness * 0.5) * (1.5 - eBS01 * sunVisibility * 0.5);
+	float fogDensity = FOG_DENSITY * (2.0 - caveFactor) * (1.0 - eBS01 * timeBrightness * 0.5);
 
 	#if MC_VERSION >= 12100
 	fogDensity = mix(fogDensity, 6.0, isPaleGarden);
@@ -56,7 +55,7 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 atmo
 	#endif
 
     float fog = 1.0 - exp(-pow(lViewPos * (0.001 - 0.00075 * wetnessCave), 2.0 - wetnessCave) * lViewPos * fogDistance);
-          fog *= fogDensity;
+          fog *= fogDensity * fogAltitude;
 		  fog = clamp(fog, 0.0, 1.0);
 
     vec3 fogCol = atmosphereColor;
@@ -117,6 +116,9 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 atmo
 	#if MC_VERSION >= 12100
 		  zMixer = mix(zMixer, 1.0, isPaleGarden);
 	#endif
+	#ifdef FOG_COVER_EVERYTHING
+	zMixer = mix(zMixer, 1.0, cameraAltitude * cameraAltitude * 0.5);
+	#endif
 	fog *= zMixer;
 	#endif
 	#endif
@@ -132,20 +134,19 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 atmo
 	#ifdef OVERWORLD
 	float eBS01 = pow(eBS, 0.1);
 	float wetnessCave = wetness * caveFactor;
-	float distanceFactor = mix(65.0, FOG_DISTANCE * (0.5 + sunVisibility * 0.5), caveFactor);
-	float fogAltitude = clamp(pow4((worldPos.y + cameraPosition.y + 1000.0 - FOG_HEIGHT) * 0.001), 0.0, 1.0);
-		  fogAltitude = mix(0.0, fogAltitude, caveFactor);
-		  fogAltitude = mix(fogAltitude, 0.0, wetness * 0.25);
+	float distanceFactor = mix(65.0, FOG_DISTANCE * (0.6 + timeBrightness * 0.4), caveFactor);
+	float cameraAltitude = clamp(exp2(-max(cameraPosition.y - FOG_HEIGHT, 0.0) / exp2(FOG_HEIGHT_FALLOFF)), 0.0, 1.0);
+	float fogAltitude = clamp(exp2(-max(worldPos.y + cameraPosition.y - FOG_HEIGHT, 0.0) / exp2(FOG_HEIGHT_FALLOFF)), 0.0, 1.0);
 	float fogDistance = min(192.0 / far, 1.0) * (100.0 / distanceFactor);
-	float fogDensity = FOG_DENSITY * mix(0.75 + sunVisibility * 1.25, 0.5, mefade) * (2.0 - caveFactor) * (1.0 - fogAltitude * 0.9) * (1.0 - eBS01 * timeBrightness * 0.5) * (1.5 - eBS01 * sunVisibility * 0.5);
+	float fogDensity = FOG_DENSITY * (2.0 - caveFactor) * (1.0 - eBS01 * timeBrightness * 0.5);
 
 	#if MC_VERSION >= 12100
 	fogDensity = mix(fogDensity, 6.0, isPaleGarden);
 	fogDistance *= 1.0 - isPaleGarden * 0.75;
 	#endif
 
-    float fog = 1.0 - exp(-pow(lViewPos * (0.001 - 0.00075 * wetnessCave), 2.0 - wetnessCave) * lViewPos * fogDistance);
-          fog *= fogDensity;
+    float fog = 1.0 - exp(-(0.0075 + wetnessCave * 0.0025) * lViewPos * fogDistance);
+          fog *= fogDensity * fogAltitude;
 		  fog = clamp(fog, 0.0, 1.0);
 
     vec3 fogCol = atmosphereColor;
@@ -206,6 +207,10 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 atmo
 	#if MC_VERSION >= 12100
 		  zMixer = mix(zMixer, 1.0, isPaleGarden);
 	#endif
+	#ifdef FOG_COVER_EVERYTHING
+	zMixer = mix(zMixer, 1.0, cameraAltitude * cameraAltitude * 0.5);
+	#endif
+	zMixer = clamp(zMixer, 0.0, 1.0);
 	fog *= zMixer;
 	#endif
 	#endif

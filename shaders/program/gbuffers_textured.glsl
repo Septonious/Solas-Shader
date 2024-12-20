@@ -84,7 +84,6 @@ vec3 lightVec = sunVec;
 #endif
 
 //Includes//
-#include "/lib/util/transformMacros.glsl"
 #include "/lib/util/ToNDC.glsl"
 #include "/lib/util/ToWorld.glsl"
 #include "/lib/util/ToShadow.glsl"
@@ -160,7 +159,7 @@ void main() {
 		if (color.a < 1.01 && lAlbedo < 1.0) // Campfire Smoke, World Border
 			albedo.a *= 0.4;
 		else if (albedoTexture.r > 0.99) {
-			emission = max(pow4(albedo.r), 0.1) * lmCoord.x;
+			emission = max(pow4(albedo.r), 0.1) * pow4(lightmap.x);
 		}
 
 		else if (max(abs(albedoTexture.r - albedoTexture.b), abs(albedoTexture.b - albedoTexture.g)) < 0.001) { // Grayscale Particles

@@ -44,9 +44,6 @@ uniform float far;
 uniform mat4 shadowProjection, shadowProjectionInverse;
 uniform mat4 shadowModelView, shadowModelViewInverse;
 
-//Includes//
-#include "/lib/util/transformMacros.glsl"
-
 //Program//
 void main() {
 	//Coord

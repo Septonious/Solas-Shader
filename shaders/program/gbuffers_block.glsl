@@ -76,7 +76,6 @@ const vec3[8] endPortalColors = vec3[8](
 );
 
 //Includes//
-#include "/lib/util/transformMacros.glsl"
 #include "/lib/util/encode.glsl"
 #include "/lib/util/ToNDC.glsl"
 #include "/lib/util/ToWorld.glsl"

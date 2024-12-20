@@ -26,7 +26,6 @@ uniform sampler2D colortex0;
 //Includes//
 #ifdef GI
 #include "/lib/util/encode.glsl"
-#include "/lib/util/transformMacros.glsl"
 #include "/lib/util/ToScreen.glsl"
 #include "/lib/util/ToView.glsl"
 #include "/lib/util/ToWorld.glsl"

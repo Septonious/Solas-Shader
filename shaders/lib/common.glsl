@@ -20,7 +20,7 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 //Tonemap//
 #define LIGHTNESS_INTENSITY 0.28 //[0.10 0.12 0.14 0.16 0.18 0.20 0.22 0.24 0.26 0.28 0.30 0.32 0.34 0.36 0.38 0.40 0.42 0.44 0.46 0.48 0.50]
 #define DARKNESS_INTENSITY 0.10 //[0.04 0.06 0.08 0.10 0.12 0.14 0.16 0.18 0.20]
-#define CONTRAST 0.014 //[0.010 0.012 0.014 0.016 0.018 0.020 0.022 0.024 0.026 0.028 0.030]
+#define CONTRAST 0.020 //[0.010 0.012 0.014 0.016 0.018 0.020 0.022 0.024 0.026 0.028 0.030]
 
 //Atmosphere//
 #define STARS
@@ -78,7 +78,7 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 
 //LPV Fog//
 #define LPV_FOG
-#define LPV_FOG_STRENGTH 0.6 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
+#define LPV_FOG_STRENGTH 0.7 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
 #define LPV_FOG_SAMPLES 6 //[4 5 6 7 8 9 10]
 
 //Nether Cloudy Fog//
@@ -97,9 +97,10 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 //Fog//
 #define DISTANT_FADE
 #define DISTANT_FADE_STYLE 0 //[0 1]
-#define FOG_DISTANCE 90 //[10 15 20 25 30 35 40 45 50 55 60 65 70 75 80 85 90 95 100 110 120 130 140 150 160 170 180 190 200]
-#define FOG_DENSITY 1.3 //[0.0 0.2 0.4 0.6 0.8 1.0 1.2 1.4 1.6 1.8 2.0]
-#define FOG_HEIGHT 100.0 //[50 60 70 80 90 100 110 120 130 140 150 160 170 180 190 200 210 220 230 240 250]
+#define FOG_DISTANCE 110 //[10 15 20 25 30 35 40 45 50 55 60 65 70 75 80 85 90 95 100 110 120 130 140 150 160 170 180 190 200]
+#define FOG_DENSITY 1.2 //[0.0 0.2 0.4 0.6 0.8 1.0 1.2 1.4 1.6 1.8 2.0]
+#define FOG_HEIGHT 80.0 //[10 15 20 25 30 35 40 45 50 55 60 65 70 75 80 85 90 95 100 105 110 115 120 125 130 135 140 145 150]
+#define FOG_HEIGHT_FALLOFF 6.00 //[4.00 4.50 5.00 5.50 6.00 6.50 7.00 7.50 8.00 8.50 9.00 9.50 10.00]
 
 //Bloom//
 #define BLOOM
@@ -212,12 +213,12 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 #define PURPLE_MORNINGS
 #define LIGHTTEMP_SS 2500 //[2500 2750 3000 3250 3500]
 #define LIGHTTEMP_ME 5000 //[4500 4750 5000 5250 5500]
-#define LIGHTTEMP_D 5750 //[5500 5750 6000 6250 6500]
+#define LIGHTTEMP_D 5500 //[5000 5250 5500 5750 6000]
 #define LIGHTTEMP_N 11750 //[11000 11250 11500 11750 12000]
 
 #define LIGHTINTENSITY_SS 1.3 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2.0]
 #define LIGHTINTENSITY_ME 1.4 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2.0]
-#define LIGHTINTENSITY_D 1.4 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2.0]
+#define LIGHTINTENSITY_D 1.5 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2.0]
 #define LIGHTINTENSITY_N 0.6 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
 
 #define AMBIENTINTENSITY_D 1.20 //[0.50 0.55 0.60 0.65 0.70 0.75 0.80 0.85 0.90 0.95 1.00 1.05 1.10 1.15 1.20 1.25]
@@ -336,6 +337,9 @@ vec3 getSunVector(mat4 gbufferModelView, float timeAngle) {
 
 float minOf(vec3 v) { return min(min(v.x, v.y), v.z); }
 float maxOf(vec3 v) { return max(max(v.x, v.y), v.z); }
+
+#define diagonal3(m) vec3((m)[0].x, (m)[1].y, m[2].z)
+#define projMAD(m, v) (diagonal3(m) * (v) + (m)[3].xyz)
 
 float linearStep(float edge0, float edge1, float x) {
 	return clamp((x - edge0) / (edge1 - edge0), 0.0, 1.0);

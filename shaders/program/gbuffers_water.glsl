@@ -97,7 +97,6 @@ vec3 lightVec = sunVec;
 
 //Includes//
 #include "/lib/util/bayerDithering.glsl"
-#include "/lib/util/transformMacros.glsl"
 #include "/lib/util/encode.glsl"
 #include "/lib/util/ToNDC.glsl"
 #include "/lib/util/ToWorld.glsl"

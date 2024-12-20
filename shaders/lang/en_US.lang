@@ -224,6 +224,7 @@ screen.IEMISSION=Emissives Config
 option.EMISSIVE_FLOWERS=Emissive Flowers
 option.EMISSIVE_ORES=Emissive Ores
 option.EMISSIVE_CONCRETE=Emissive Concrete
+option.EMISSIVE_ARMOR_TRIMS=Emissive Armor Trims
 option.EMISSION_STRENGTH=Emission Strength
 
 #----------------------------------------------------------------------------------#

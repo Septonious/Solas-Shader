@@ -24,7 +24,7 @@ void computeLPVFog(inout vec3 fog, in vec3 translucent, in float dither) {
     float visibility = int(z0 > 0.56);
 
 	#ifdef OVERWORLD
-	visibility *= 1.0 - timeBrightness * 0.5;
+	visibility *= 1.0 - timeBrightness * 0.65 * caveFactor;
 	visibility = mix(1.0, visibility, caveFactor);
 	#endif
 

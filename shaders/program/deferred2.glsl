@@ -249,16 +249,6 @@ void main() {
 	if (dhZ == 1.0 && z1 == 1.0) color = skyColor;
 	#endif
 
-	#if defined VC || defined END_CLOUDY_FOG
-	#ifdef DISTANT_HORIZONS
-	cloudDepth /= (2.0 * dhFarPlane);
-	#else
-	cloudDepth /= (2.0 * far);
-	#endif
-
-	color = mix(color, vc.rgb, vc.a);
-	#endif
-
 	#ifdef DISTANT_HORIZONS
 	if (z1 < 1.0) {
 		Fog(color, viewPos, worldPos, skyColorO);
@@ -272,6 +262,16 @@ void main() {
 	}
 	#else
 	Fog(color, viewPos, worldPos, skyColorO);
+	#endif
+
+	#if defined VC || defined END_CLOUDY_FOG
+	#ifdef DISTANT_HORIZONS
+	cloudDepth /= (2.0 * dhFarPlane);
+	#else
+	cloudDepth /= (2.0 * far);
+	#endif
+
+	color = mix(color, vc.rgb, vc.a);
 	#endif
 
 	/* DRAWBUFFERS:064 */
