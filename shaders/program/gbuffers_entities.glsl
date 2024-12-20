@@ -16,15 +16,12 @@ in vec4 color;
 //Uniforms//
 uniform int isEyeInWater;
 uniform int frameCounter;
+uniform int currentRenderedItemId;
 
 #ifdef DYNAMIC_HANDLIGHT
 uniform int heldItemId, heldItemId2;
 uniform int heldBlockLightValue;
 uniform int heldBlockLightValue2;
-#endif
-
-#ifdef GENERATED_SPECULAR
-uniform int currentRenderedItemId;
 #endif
 
 #ifdef AURORA
