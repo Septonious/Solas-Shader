@@ -278,7 +278,7 @@ void computeEndVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z1
 				cloudLighting = mix(cloudLighting, sampleLighting, noise * (1.0 - cloud * cloud));
 				if (rayDistance < shadowDistance * 0.1) noise *= shadow1;
 				cloud = mix(cloud, 1.0, noise);
-				noise *= pow24(smoothstep(512.0, 8.0, rayDistance)); //Fog
+				noise *= pow24(smoothstep(1024.0, 8.0, rayDistance)); //Fog
 				cloudAlpha = mix(cloudAlpha, 1.0, noise);
 
 				//gbuffers_water cloud discard check
