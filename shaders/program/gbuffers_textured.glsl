@@ -162,17 +162,17 @@ void main() {
 			emission = max(pow4(albedo.r), 0.1) * pow4(lightmap.x);
 		}
 
-		else if (max(abs(albedoTexture.r - albedoTexture.b), abs(albedoTexture.b - albedoTexture.g)) < 0.001) { // Grayscale Particles
-			if (lAlbedo > 0.5 && color.g < 0.5 && color.b > color.r * 1.1 && color.r > 0.3) // Ender Particle, Crying Obsidian Drop
-				emission = max(pow4(albedo.r), 0.1);
-			if (lAlbedo > 0.5 && color.g < 0.5 && color.r > (color.g + color.b) * 3.0) // Redstone Particle
+		if (max(abs(albedoTexture.r - albedoTexture.b), abs(albedoTexture.b - albedoTexture.g)) < 0.001) { // Grayscale Particles
+			if (lAlbedo > 0.3 && color.g < 0.5 && color.b > color.r * 1.1 && color.r > 0.3) // Ender Particle, Crying Obsidian Drop
+				emission = max(pow4(albedo.r), 0.1) * 4.0;
+			if (lAlbedo > 0.3 && color.g < 0.5 && color.r > (color.g + color.b) * 3.0) // Redstone Particle
 				lightmap = vec2(0.0), emission = max(pow4(albedo.r), 0.1);
 		}
 	}
 	#endif
 
 	vec3 shadow = vec3(0.0);
-	gbuffersLighting(albedo, screenPos, viewPos, worldPos, newNormal, shadow, lightmap, NoU, NoL, NoE, 0.1, 0.0, emission * 2.0, 0.0);
+	gbuffersLighting(albedo, screenPos, viewPos, worldPos, newNormal, shadow, lightmap, NoU, NoL, NoE, 0.1, 0.0, emission, 0.0);
 
 	#ifndef END
 	Fog(albedo.rgb, viewPos, worldPos, skyColor);

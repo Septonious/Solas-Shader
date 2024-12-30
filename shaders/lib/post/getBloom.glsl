@@ -19,8 +19,10 @@ void getBloom(inout vec3 color, vec2 coord, float z1) {
 	
 	float bloomStrength = BLOOM_STRENGTH;
 
-	#ifdef OVERWORLD
+	#if defined OVERWORLD
 	bloomStrength *= 1.0 - timeBrightness * 0.33 * eBS;
+	#else
+	bloomStrength *= 1.5;
 	#endif
 
 	#if BLOOM_CONTRAST == 0

@@ -256,7 +256,7 @@ void computeEndVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z1
 			float minimalNoise = 0.25 + dither * 0.25;
 			float sampleTotalLength = minDist + rayLength * dither;
 
-			vec2 wind = vec2(frameTimeCounter * VC_SPEED * 0.0005, sin(frameTimeCounter * VC_SPEED * 0.001) * 0.005) * VF_END_HEIGHT * 0.005;
+			vec2 wind = vec2(frameTimeCounter * VC_SPEED * 0.0005, sin(frameTimeCounter * VC_SPEED * 0.001) * 0.005) * VF_END_HEIGHT * 0.05;
 
 			//Ray marcher
 			for (int i = 0; i < sampleCount; i++, rayPos += sampleStep, sampleTotalLength += rayLength) {
@@ -270,7 +270,7 @@ void computeEndVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z1
 				float rayDistance = length(worldPos.xz) * 0.1;
 				float attenuation = smoothstep(VF_END_HEIGHT, cloudTop, rayPos.y);
 
-				getEndCloudSample(rayPos.xz, wind, attenuation, noise);
+				getEndCloudSample(rayPos.xz * 1.5, wind, attenuation, noise);
 
 				float sampleLighting = pow(attenuation, 0.9 + halfVoL * 1.1) * 1.25 + 0.25;
 					  sampleLighting *= 1.0 - pow(noise, noiseLightFactor);
@@ -278,7 +278,7 @@ void computeEndVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z1
 				cloudLighting = mix(cloudLighting, sampleLighting, noise * (1.0 - cloud * cloud));
 				if (rayDistance < shadowDistance * 0.1) noise *= shadow1;
 				cloud = mix(cloud, 1.0, noise);
-				noise *= pow24(smoothstep(386.0, 8.0, rayDistance)); //Fog
+				noise *= pow24(smoothstep(512.0, 8.0, rayDistance)); //Fog
 				cloudAlpha = mix(cloudAlpha, 1.0, noise);
 
 				//gbuffers_water cloud discard check
@@ -288,7 +288,7 @@ void computeEndVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z1
 			}
 
 			//Final color calculations
-			vec3 cloudColor = mix(endAmbientCol * 0.2, endLightCol * 0.4, cloudLighting) * (1.0 + scattering * 3.0);
+			vec3 cloudColor = mix(endAmbientCol * 0.1, endLightCol * 0.2, cloudLighting) * (1.0 + scattering);
 
 			vc = vec4(cloudColor, cloudAlpha * VF_END_OPACITY) * visibility;
 		}

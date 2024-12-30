@@ -214,7 +214,7 @@ void main() {
 		#endif
 
 		#ifdef STARS
-		drawStars(skyColor, worldPos, stars, VoU, caveFactor, nebulaFactor, min(vc.a * 2.0 + pow(pc, 0.25), 1.0), 0.4);
+		drawStars(skyColor, worldPos, sunVec, stars, VoU, caveFactor, nebulaFactor, min(vc.a * 2.0 + pow(pc, 0.25), 1.0), 0.4);
 		#endif
 
 		#ifdef RAINBOW
@@ -227,7 +227,7 @@ void main() {
 
 	#ifdef END
 	#ifdef END_STARS
-	drawStars(skyColor, worldPos, stars, VoU, 1.0, nebulaFactor, vc.a, 0.3);
+	drawStars(skyColor, worldPos, sunVec, stars, VoU, 1.0, nebulaFactor, vc.a, 0.3);
 	#endif
 
 	#ifdef END_VORTEX
