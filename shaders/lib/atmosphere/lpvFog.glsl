@@ -58,7 +58,11 @@ void computeLPVFog(inout vec3 fog, in vec3 translucent, in float dither) {
 
 		//Ray Marching
 		for (int i = 0; i < sampleCount; i++) {
+			#ifdef NETHER
 			float currentDist = (i + dither) * minDist;
+			#else
+			float currentDist = exp2(i + dither) - 0.95;
+			#endif
 
 			if (currentDist > maxCurrentDist || linearDepth1 < currentDist || (linearDepth0 < currentDist && translucent.rgb == vec3(0.0))) {
 				break;
