@@ -40,8 +40,8 @@ void computeLPVFog(inout vec3 fog, in vec3 translucent, in float dither) {
 		  density = mix(40.0, density, caveFactor);
 	#endif
 	#ifdef NETHER
-		  density = 25.0;
-		  visibility *= 0.5;
+		  density = 45.0;
+		  visibility *= 0.6;
 	#endif
 
 	if (visibility > 0.0) {
@@ -53,11 +53,12 @@ void computeLPVFog(inout vec3 fog, in vec3 translucent, in float dither) {
         int sampleCount = LPV_FOG_SAMPLES;
 
 		float maxDist = VOXEL_VOLUME_SIZE;
+		float minDist = (maxDist / sampleCount) * 0.5;
 		float maxCurrentDist = min(linearDepth1, maxDist);
 
 		//Ray Marching
 		for (int i = 0; i < sampleCount; i++) {
-			float currentDist = exp2(i + dither) - 0.95;
+			float currentDist = (i + dither) * minDist;
 
 			if (currentDist > maxCurrentDist || linearDepth1 < currentDist || (linearDepth0 < currentDist && translucent.rgb == vec3(0.0))) {
 				break;
