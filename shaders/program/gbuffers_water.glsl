@@ -32,6 +32,10 @@ uniform float viewWidth, viewHeight;
 uniform float darknessFactor;
 #endif
 
+#if MC_VERSION >= 12100
+uniform float isPaleGarden;
+#endif
+
 uniform float blindFactor;
 uniform float nightVision;
 

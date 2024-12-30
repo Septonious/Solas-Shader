@@ -27,6 +27,10 @@ uniform float isSnowy;
 uniform float darknessFactor;
 #endif
 
+#if MC_VERSION >= 12100
+uniform float isPaleGarden;
+#endif
+
 uniform float far, near;
 uniform float blindFactor;
 uniform float frameTimeCounter;

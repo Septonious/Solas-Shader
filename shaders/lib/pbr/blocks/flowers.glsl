@@ -1,4 +1,4 @@
-if (material >= 35 && material <= 40) {
+if (material >= 35 && material < 40) {
 	if (albedo.r + albedo.g + albedo.b < 2.9) {
 		if (albedo.b > albedo.g || albedo.r > albedo.g) {
 			emission = lAlbedo * 0.1;
@@ -12,6 +12,15 @@ if (material >= 35 && material <= 40) {
 		#ifdef OVERWORLD
 		emission *= mix(1.0, 0.0, wetness);
 		#endif
+	}
+} else if (material == 40) {
+	if (albedo.r + albedo.g + albedo.b < 2.9) {
+		if (albedo.b > albedo.g || albedo.r > albedo.g) {
+			emission = lAlbedo * 0.15 * float(albedo.r > 0.6 && albedo.b < 0.3);
+			#ifdef OVERWORLD
+			emission *= mix(1.0, 0.0, wetness);
+			#endif
+		}
 	}
 }
 

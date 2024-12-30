@@ -1,8 +1,3 @@
-//Pale Garden uniform for fog//
-#if MC_VERSION >= 12100
-uniform float isPaleGarden;
-#endif
-
 //Fog that appears when you have a darkness effect
 #if MC_VERSION >= 11900
 void getDarknessFog(inout vec3 color, vec3 viewPos) {

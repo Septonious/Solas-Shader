@@ -181,6 +181,10 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z1, f
 
 			float opacity = clamp(mix(0.99, VC_OPACITY, float(z1 == 1.0 && cameraPosition.y < VC_HEIGHT)), 0.0, 1.0 - wetness * 0.5);
 
+			#if MC_VERSION >= 12100
+			opacity = mix(opacity, opacity * 0.5, isPaleGarden);
+			#endif
+
 			vc = vec4(cloudColor, cloudAlpha * opacity) * visibility;
 		}
 	}
