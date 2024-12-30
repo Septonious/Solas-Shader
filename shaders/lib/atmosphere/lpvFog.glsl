@@ -34,13 +34,13 @@ void computeLPVFog(inout vec3 fog, in vec3 translucent, in float dither) {
 
 	visibility *= 1.0 - blindFactor;
 
-	float density = 25.0 * (0.6 + eBS * eBS * 0.4);
+	float density = 15.0 * (0.6 + eBS * eBS * 0.4);
 	#ifdef OVERWORLD
-		  density = mix(density, 35.0, wetness * eBS);
-		  density = mix(40.0, density, caveFactor);
+		  density = mix(density, 30.0, wetness * eBS);
+		  density = mix(35.0, density, caveFactor);
 	#endif
 	#ifdef NETHER
-		  density = 45.0;
+		  density = 40.0;
 		  visibility *= 0.6;
 	#endif
 
