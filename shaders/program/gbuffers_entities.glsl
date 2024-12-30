@@ -158,11 +158,20 @@ out vec4 color;
 //Uniforms//
 uniform int entityId;
 
+#ifdef TAA
+uniform float viewWidth, viewHeight;
+#endif
+
 #if defined OVERWORLD || defined END
 uniform float timeAngle;
 #endif
 
 uniform mat4 gbufferModelView, gbufferModelViewInverse;
+
+//Includes
+#ifdef TAA
+#include "/lib/util/jitter.glsl"
+#endif
 
 //Program//
 void main() {
@@ -192,6 +201,10 @@ void main() {
 	color = gl_Color;
 
 	gl_Position = ftransform();
+
+	#ifdef TAA
+	gl_Position.xy = TAAJitter(gl_Position.xy, gl_Position.w);
+	#endif
 }
 
 #endif
