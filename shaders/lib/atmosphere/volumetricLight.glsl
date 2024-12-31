@@ -18,7 +18,7 @@ void computeVL(inout vec3 vl, in vec3 translucent, in float dither) {
 
     //Total Visibility & Variables
     float indoorFactor = (1.0 - eBS * eBS) * float(isEyeInWater == 0 && cameraPosition.y < 1000.0);
-		#if MC_VERSION >= 12100
+		#if MC_VERSION >= 12104
 		indoorFactor = mix(indoorFactor, 1.0, isPaleGarden * 0.5);
 		#endif
 
@@ -58,7 +58,7 @@ void computeVL(inout vec3 vl, in vec3 translucent, in float dither) {
 		float maxDist = min(shadowDistance, 256.0);
 		float minDist = (maxDist / sampleCount) * 0.6;
 
-		#if MC_VERSION >= 12100
+		#if MC_VERSION >= 12104
 		minDist *= 1.0 - isPaleGarden * 0.5;
 		#endif
 
