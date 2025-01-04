@@ -31,18 +31,12 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
     #if !defined GBUFFERS_BASIC && !defined GBUFFERS_WATER && !defined GBUFFERS_TEXTURED && defined IS_IRIS
     vec3 voxelPos = ToVoxel(worldPos);
 
-    #ifdef GBUFFERS_TERRAIN
-    float floodfillDisable = float(mat == 10012);
-    #else
-    float floodfillDisable = 0.0;
-    #endif
-
     float floodfillFade = maxOf(abs(worldPos) / (voxelVolumeSize * 0.5));
           floodfillFade = clamp(floodfillFade, 0.0, 1.0);
 
     vec3 voxelLighting = vec3(0.0);
 
-    if (isInsideVoxelVolume(voxelPos) && floodfillDisable < 0.5) {
+    if (isInsideVoxelVolume(voxelPos)) {
         vec3 voxelSamplePos = voxelPos + worldNormal;
              voxelSamplePos /= voxelVolumeSize;
              voxelSamplePos = clamp(voxelSamplePos, 0.0, 1.0);
@@ -82,7 +76,7 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
     float scattering = 0.0;
     
     #if defined OVERWORLD && defined GBUFFERS_TERRAIN
-    if (subsurface > 0.0) {
+    if (subsurface > 0.0 && lightmap.y > 0.0) {
         float VoL = clamp(dot(normalize(viewPos), lightVec), 0.0, 1.0);
         scattering = pow8(VoL) * shadowFade * (1.0 - wetness * 0.5);
         if (subsurface > 0.49 && subsurface < 0.51) { //Leaves

@@ -72,7 +72,6 @@ void ApplyPuddleToMaterial(float puddles, inout vec4 albedo, inout float smoothn
     float puddleSmoothness = sqrt(1.0 - 0.75 * porosity);
     float puddleDarkening = (0.5 * porosity + 0.15);	
     
-    smoothness = mix(smoothness, 0.6, clamp(puddles * puddleSmoothness, 0.0, 1.0));
-    metalness = mix(metalness, 1.0, clamp(puddles * puddleSmoothness * 4.0, 0.0, 1.0));
+    smoothness = mix(smoothness, 1.0, clamp(puddles * puddleSmoothness * 4.0, 0.0, 1.0));
     albedo.rgb *= 1.0 - (puddles * puddleDarkening);
 }
