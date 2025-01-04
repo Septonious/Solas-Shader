@@ -27,7 +27,7 @@ uniform float isSnowy;
 uniform float darknessFactor;
 #endif
 
-#if MC_VERSION >= 12100
+#if MC_VERSION >= 12104
 uniform float isPaleGarden;
 #endif
 

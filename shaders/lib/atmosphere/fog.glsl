@@ -44,7 +44,7 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 atmo
 	float fogDistance = min(192.0 / dhFarPlane, 1.0) * (100.0 / distanceFactor);
 	float fogDensity = FOG_DENSITY * (2.0 - caveFactor) * (1.0 - eBS01 * timeBrightness * 0.5);
 
-	#if MC_VERSION >= 12100
+	#if MC_VERSION >= 12104
 	fogDensity = mix(fogDensity, 6.0, isPaleGarden);
 	fogDistance *= 1.0 - isPaleGarden * 0.75;
 	#endif
@@ -108,7 +108,7 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 atmo
 	#ifndef NETHER
 	#ifdef DEFERRED
 	float zMixer = float(texture2D(dhDepthTex0, texCoord).r < 1.0);
-	#if MC_VERSION >= 12100
+	#if MC_VERSION >= 12104
 		  zMixer = mix(zMixer, 1.0, isPaleGarden);
 	#endif
 	#ifdef FOG_COVER_EVERYTHING
@@ -135,7 +135,7 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 atmo
 	float fogDistance = min(192.0 / far, 1.0) * (100.0 / distanceFactor);
 	float fogDensity = FOG_DENSITY * (2.0 - caveFactor) * (1.0 - eBS01 * timeBrightness * 0.5);
 
-	#if MC_VERSION >= 12100
+	#if MC_VERSION >= 12104
 	fogDensity = mix(fogDensity, 6.0, isPaleGarden);
 	fogDistance *= 1.0 - isPaleGarden * 0.75;
 	#endif
@@ -199,7 +199,7 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 atmo
 	#ifndef NETHER
 	#ifdef DEFERRED
 	float zMixer = float(texture2D(depthtex1, texCoord).r < 1.0);
-	#if MC_VERSION >= 12100
+	#if MC_VERSION >= 12104
 		  zMixer = mix(zMixer, 1.0, isPaleGarden);
 	#endif
 	#ifdef FOG_COVER_EVERYTHING
