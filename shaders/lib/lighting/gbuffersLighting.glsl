@@ -147,20 +147,22 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
     //Specular Highlight
     vec3 specularHighlight = vec3(0.0);
 
-    #if (defined GBUFFERS_TERRAIN || defined GBUFFERS_ENTITIES || defined GBUFFERS_BLOCK) && !defined NETHER
-	vec3 baseReflectance = vec3(0.1);
+    if (emission < 0.01) {
+        #if (defined GBUFFERS_TERRAIN || defined GBUFFERS_ENTITIES || defined GBUFFERS_BLOCK) && !defined NETHER
+        vec3 baseReflectance = vec3(0.1);
 
-    float smoothnessF = 0.1 + length(albedo.rgb) * 0.3 + originalNoL * 0.2;
-          smoothnessF = mix(smoothnessF, 0.95, smoothness);
+        float smoothnessF = 0.1 + length(albedo.rgb) * 0.3 + originalNoL * 0.2;
+            smoothnessF = mix(smoothnessF, 0.95, smoothness);
 
-    #ifdef OVERWORLD
-	specularHighlight = getSpecularHighlight(normal, viewPos, smoothnessF, baseReflectance, lightCol, shadow * vanillaDiffuse, color.a);
-    #else
-    specularHighlight = getSpecularHighlight(normal, viewPos, smoothnessF, baseReflectance, endLightCol, shadow * vanillaDiffuse, color.a);
-    #endif
+        #ifdef OVERWORLD
+        specularHighlight = getSpecularHighlight(normal, viewPos, smoothnessF, baseReflectance, lightCol, shadow * vanillaDiffuse, color.a);
+        #else
+        specularHighlight = getSpecularHighlight(normal, viewPos, smoothnessF, baseReflectance, endLightCol, shadow * vanillaDiffuse, color.a);
+        #endif
 
-    specularHighlight = clamp(specularHighlight, vec3(0.0), vec3(3.0));
-    #endif
+        specularHighlight = clamp(specularHighlight, vec3(0.0), vec3(3.0));
+        #endif
+    }
 
     //Minimal Lighting
     #if defined OVERWORLD || defined END

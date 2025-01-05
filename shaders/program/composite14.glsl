@@ -63,7 +63,9 @@ void main() {
 	getBloom(color, texCoord, z0);
 	#endif
 
-	color = pow(Uncharted2Tonemap(color * 4.7) / Uncharted2Tonemap(vec3(15.2)), vec3(1.0 / 2.2));
+	vec3 curr = Uncharted2Tonemap(color * TONEMAP_BRIGHTNESS);
+
+	color = pow(curr / Uncharted2Tonemap(vec3(TONEMAP_WHITE_THRESHOLD)), vec3(1.0 / 2.2));
 
 	/* DRAWBUFFERS:1 */
 	gl_FragData[0].rgb = color;
