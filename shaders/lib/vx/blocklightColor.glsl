@@ -4,29 +4,29 @@ const vec3[] blocklightColorArray = vec3[](
 	//Non-emissive blocks
 	vec3(0.0),
 	//Glow Lichen, Sea Pickle
-	vec3(0.50, 0.80, 0.70) * 0.1,
+	vec3(GLSP_R, GLSP_G, GLSP_B) * GLSP_I,
 	//Brewing Stand
-	vec3(1.00, 0.75, 0.10),
+	vec3(BS_R, BS_G, BS_B) * BS_I,
 	//Torch, Lantern, Campfire, Fire
-	vec3(1.05, 0.40, 0.15) * 4.0,
+	vec3(TLCF_R, TLCF_G, TLCF_B) * TLCF_I,
 	//Soul Torch, Soul Lantern, Soul Campfire, Soul Fire
-	vec3(0.10, 0.60, 1.00) * 3.5,
+	vec3(SOUL_R, SOUL_G, SOUL_B) * SOUL_I,
 	//End Rod
-	vec3(1.00, 0.60, 0.90) * 3.0,
+	vec3(ER_R, ER_G, ER_B) * ER_I,
 	//Sea Lantern
-	vec3(0.70, 0.90, 1.00) * 6.5,
+	vec3(SL_R, SL_G, SL_B) * SL_I,
 	//Glowstone
-	vec3(1.00, 0.60, 0.30) * 5.5,
+	vec3(GS_R, GS_G, GS_B) * GS_I,
 	//Shroomlight, Redstone Lamp
-	vec3(1.00, 0.30, 0.10) * 4.5,
-	//Respawn Anchor
-	vec3(0.60, 0.05, 1.00) * 0.5,
+	vec3(SLRL_R, SLRL_G, SLRL_B) * SLRL_I,
+	//Respawn Anchor, Crying Obsidian
+	vec3(RACO_R, RACO_G, RACO_B) * RACO_I,
 	//Lava
-	vec3(1.00, 0.18, 0.02) * 5.0,
+	vec3(LAVA_R, LAVA_G, LAVA_B + 0.02) * LAVA_I,
 	//Cave Berries
-	vec3(1.00, 0.40, 0.10) * 2.75,
+	vec3(CB_R, CB_G, CB_B) * CB_I,
 	//Amethyst
-	vec3(0.80, 0.30, 1.00) * 2.0,
+	vec3(METH_lmao_R, METH_lmao_G, METH_lmao_B) * METH_lmao_I,
 	#ifdef EMISSIVE_CONCRETE
 	//Red Concrete
 	vec3(1.00, 0.00, 0.00) * 3.0,
@@ -49,7 +49,7 @@ const vec3[] blocklightColorArray = vec3[](
 	vec3(0.0),
 	#endif
 	//Magma Block
-	vec3(1.00, 0.20, 0.05) * 2.00,
+	vec3(MB_R, MB_G, MB_B) * MB_I,
 	#ifdef EMISSIVE_ORES
     //Emerald Ore
     normalize(vec3(0.05, 1.00, 0.15)) * 0.35,
@@ -79,7 +79,7 @@ const vec3[] blocklightColorArray = vec3[](
     //Powered Rails
     vec3(1.00, 0.05, 0.00),
     //Nether Portal
-    vec3(0.60, 0.05, 1.00) * 5.0,
+    vec3(NP_R, NP_G, NP_B) * NP_I,
     //Orchre Froglight
     normalize(vec3(1.00, 0.55, 0.25)) * 5.5,
     //Verdant Froglight
@@ -162,7 +162,7 @@ const vec3[] blocklightColorArray = vec3[](
 	//Warts
 	vec3(0.0),
 	vec3(0.0),
-	//Spawner, refuses to work
+	//Mob Spawner
 	vec3(0.1, 0.01, 0.15),
 	//Unlit Redstone Lamp
 	vec3(0.0),
