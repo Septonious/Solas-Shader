@@ -108,9 +108,9 @@ const vec3[] blocklightColorArray = vec3[](
 	vec3(0.0),
 	#endif
 	//Jack-O-Lantern
-	vec3(1.00, 0.55, 0.20) * 3.5,
+	vec3(JL_R, JL_G, JL_B) * JL_I,
     //Enchanting table
-    vec3(0.15, 0.50, 1.00) * 2.5,
+    vec3(ET_R, ET_G, ET_B) * ET_I,
 	//Red Candle
 	normalize(vec3(1.0, 0.1, 0.1)),
 	//Orange Candle
