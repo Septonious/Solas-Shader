@@ -248,7 +248,8 @@ void main() {
 	#ifdef END_NEBULA
 	float nebulaFactor = 0.0;
 	float VoU = dot(nViewPos, upVec);
-	getEndNebula(skyColor, worldPos, VoU, nebulaFactor, 1.0);
+	vec3 skyColorO = skyColor;
+	getEndNebula(skyColor, skyColorO, worldPos, VoU, nebulaFactor, 1.0);
 	#endif
 
 	Fog(albedo.rgb, viewPos, worldPos, skyColor);
