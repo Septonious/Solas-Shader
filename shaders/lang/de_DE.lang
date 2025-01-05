@@ -315,9 +315,9 @@ option.WATER_A=Alpha
 screen.POST=Post-Effekte
 
 screen.TONEMAP=Tonemap Einstellungen
-option.LIGHTNESS_INTENSITY=Helligkeit
-option.DARKNESS_INTENSITY=Dunkelheit
-option.CONTRAST=Kontrast
+option.TONEMAP_HIGHLIGHTS=Helligkeit
+option.TONEMAP_SHADOWS=Dunkelheit
+option.TONEMAP_CONTRAST=Kontrast
 
 screen.DOF_CONFIG=DoF Config
 

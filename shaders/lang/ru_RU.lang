@@ -355,9 +355,11 @@ option.LENS_FLARE_STRENGTH=Яркость бликов
 
 screen.TONEMAP=Настройки Цветовой Палитры
 
-option.LIGHTNESS_INTENSITY=Светлая кривая
-option.DARKNESS_INTENSITY=Тёмная кривая
-option.CONTRAST=Контраст
+option.TONEMAP_BRIGHTNESS=Яркость
+option.TONEMAP_CONTRAST=Контрастность
+option.TONEMAP_HIGHLIGHTS=Яркость Света
+option.TONEMAP_SHADOWS=Яркость Теней
+option.TONEMAP_WHITE_THRESHOLD=Порог Белизны
 
 #----------------------------------------------------------------------------------#
 

@@ -356,9 +356,11 @@ option.LENS_FLARE_STRENGTH=Lens Flare Strength
 
 screen.TONEMAP=Tonemap Config
 
-option.LIGHTNESS_INTENSITY=Lightness
-option.DARKNESS_INTENSITY=Darkness
-option.CONTRAST=Contrast
+option.TONEMAP_BRIGHTNESS=Brightness
+option.TONEMAP_CONTRAST=Contrast
+option.TONEMAP_HIGHLIGHTS=Highlights Intensity
+option.TONEMAP_SHADOWS=Shadows Intensity
+option.TONEMAP_WHITE_THRESHOLD=White Threshold
 
 #----------------------------------------------------------------------------------#
 
