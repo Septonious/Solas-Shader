@@ -16,6 +16,10 @@ in vec3 sunVec, upVec;
 uniform int isEyeInWater;
 uniform int frameCounter;
 
+#ifdef VC
+uniform int worldDay;
+#endif
+
 #ifdef OVERWORLD
 uniform int moonPhase;
 
