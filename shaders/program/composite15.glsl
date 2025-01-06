@@ -32,7 +32,7 @@ uniform vec3 cameraPosition, previousCameraPosition;
 uniform mat4 gbufferPreviousProjection;
 uniform mat4 gbufferPreviousModelView, gbufferModelViewInverse;
 
-uniform sampler2D colortex2;
+uniform sampler2D colortex2, colortex3;
 #endif
 
 uniform sampler2D depthtex1;
@@ -49,6 +49,7 @@ uniform mat4 gbufferProjection;
 //Optifine Constants//
 const bool colortex1MipmapEnabled = true;
 const bool colortex2MipmapEnabled = true;
+const bool colortex3MipmapEnabled = true;
 
 //Includes//
 #ifdef DOF

@@ -299,7 +299,7 @@ attribute vec4 at_midBlock;
 attribute vec4 mc_Entity;
 attribute vec4 mc_midTexCoord;
 
-//Includes
+//Includes//
 #ifdef TAA
 #include "/lib/util/jitter.glsl"
 #endif
