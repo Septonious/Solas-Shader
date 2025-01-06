@@ -107,11 +107,17 @@ option.MILKY_WAY_BRIGHTNESS=Яркость Млечного Пути
 option.END_NEBULA=Туманность в Краю
 option.END_NEBULA_BRIGHTNESS=Яркость Туманности
 option.RAINBOW=Радуга
-option.AURORA=Полярное Сияние (ПС)
-option.AURORA_COLD_BIOME_VISIBILITY=ПС в холодных биомах
+
+#----------------------------------------------------------------------------------#
+
+screen.AURORA_CONFIG=Настройки Полярного Сияния
+
+option.AURORA=Полярное Сияние
+option.AURORA_COLD_BIOME_VISIBILITY=Сияние в холодных биомах
 option.AURORA_COLD_BIOME_VISIBILITY.comment=Переключает видимость Полярного Сияния только в снежных биомах
-option.AURORA_FULL_MOON_VISIBILITY=ПС при полной луне
+option.AURORA_FULL_MOON_VISIBILITY=Сияние при полной луне
 option.AURORA_FULL_MOON_VISIBILITY.comment=Переключает видимость Полярного Сияния только при полной луне
+option.AURORA_BRIGHTNESS=Яркость Сияния
 
 #----------------------------------------------------------------------------------#
 
