@@ -56,7 +56,7 @@ void main() {
 		 volume+= texture2D(colortex1, texCoord + vlOffsets[2] / vec2(viewWidth, viewHeight)).rgb;
 		 volume+= texture2D(colortex1, texCoord + vlOffsets[3] / vec2(viewWidth, viewHeight)).rgb;
 	volume *= 0.25;
-	volume = pow4(volume) * 128.0;
+	volume = pow8(volume) * 256.0;
 
 	color += volume;
 

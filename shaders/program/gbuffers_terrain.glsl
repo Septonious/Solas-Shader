@@ -24,6 +24,10 @@ in vec4 vTexCoord, vTexCoordAM;
 uniform int isEyeInWater;
 uniform int frameCounter;
 
+#ifdef VC
+uniform int worldDay;
+#endif
+
 #ifdef DYNAMIC_HANDLIGHT
 uniform int heldItemId, heldItemId2;
 #endif

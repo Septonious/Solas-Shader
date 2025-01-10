@@ -15,6 +15,10 @@ in vec3 sunVec, upVec;
 uniform int isEyeInWater;
 uniform int frameCounter;
 
+#ifdef VC
+uniform int worldDay;
+#endif
+
 uniform float viewWidth, viewHeight;
 uniform float far, near;
 uniform float frameTimeCounter;
@@ -134,7 +138,7 @@ void main() {
 	computeVL(vl.rgb, translucent, blueNoiseDither);
 	#endif
 
-	vl.rgb = pow(vl.rgb / 128.0, vec3(0.25));
+	vl.rgb = pow(vl.rgb / 256.0, vec3(0.125));
 	#endif
 
 	/* DRAWBUFFERS:01 */
