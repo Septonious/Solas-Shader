@@ -4,7 +4,7 @@ float texture2DShadow(sampler2D shadowtex, vec3 shadowPos) {
     return clamp((shadow - shadowPos.z) * 65536.0, 0.0, 1.0);
 }
 
-#ifdef VC
+#ifdef VC_SHADOWS
 void getDynamicWeather(inout float speed, inout float amount, inout float frequency, inout float thickness, inout float density, inout float detail, inout float height) {
 	float dayAmountFactor = abs(worldDay % 7 / 2 - 0.5) * 0.5;
 	float dayDensityFactor = abs(worldDay % 9 / 4 - worldDay % 2);
@@ -77,14 +77,8 @@ void computeVL(inout vec3 vl, in vec3 translucent, in float dither) {
 	vec3 sampleStepS = shadowPos - startPos;
 	vec3 sampleStepW = worldPos - gbufferModelViewInverse[3].xyz;
 
-	float distanceFactor = 32.0;
-	float farPlane = far;
-
-	#ifdef DISTANT_HORIZONS
-	farPlane = max(far, dhRenderDistance);
-	#endif
-
-	float maxDist = min(length(sampleStepW), farPlane) / length(sampleStepW);
+	float distanceFactor = 16.0;
+	float maxDist = min(length(sampleStepW), 512.0) / length(sampleStepW);
 	
 	sampleStepS *= maxDist;
 	sampleStepW *= maxDist;
@@ -108,10 +102,11 @@ void computeVL(inout vec3 vl, in vec3 translucent, in float dither) {
 	float waterFactor = 1.0 - float(isEyeInWater == 1) * 0.5;
 	float denseForestFactor = min(isSwamp + isJungle, 1.0);
 	float meVisRatio = VL_STRENGTH_RATIO + pow(VoL, 1.5) * (1.0 - VL_STRENGTH_RATIO);
-	float visibility = int(z0 > 0.56) * shadowFade;
-		  visibility *= pow(VoU, 2.0 * waterFactor);
+	float visibility = int(z0 > 0.56) * shadowFade * VL_STRENGTH;
 		  visibility *= mix(meVisRatio, mix(0.0, 0.75, pow(VoL, 1.5)) * (2.0 - sunVisibility), clamp(timeBrightness + (1.0 - sunVisibility), 0.0, 1.0)) * 0.5;
+		  visibility *= pow(VoU, 2.0 * waterFactor);
 		  visibility = mix(visibility, 0.5, indoorFactor) * waterFactor;
+		  visibility *= clamp(length(viewPos * 0.025), 0.0, 1.0);
 	#else
 	float visibility = exp(pow4(VoL)) * 0.075;
 	#endif
@@ -132,8 +127,7 @@ void computeVL(inout vec3 vl, in vec3 translucent, in float dither) {
 	vec3 shadowCol = vec3(0.0);
 
 	for (int i = 0; i < sampleCount; i++) {
-		float currentDist = pow(distanceFactor, (i + dither) / sampleCount) / distanceFactor - 1.0 / distanceFactor;
-			  currentDist /= 1.0 - 1.0 / distanceFactor;
+		float currentDist = (pow(distanceFactor, float(i + dither) / float(sampleCount)) / distanceFactor - 1.0 / distanceFactor) / (1.0 - 1.0 / distanceFactor);
 
 		rayShadowPos = startPos.xyz + currentDist * sampleStepS;
 		rayWorldPos = gbufferModelViewInverse[3].xyz + cameraPosition + currentDist * sampleStepW;
@@ -158,8 +152,8 @@ void computeVL(inout vec3 vl, in vec3 translucent, in float dither) {
 		vec3 shadow = clamp(shadow1 * pow2(shadowCol) + shadow0 * vlColor * float(isEyeInWater == 0), 0.0, 8.0);
 
 		//Crepuscular rays
-		#ifdef VC
-		if (rayWorldPos.y < VC_HEIGHT + VC_THICKNESS + 30.0) {
+		#ifdef VC_SHADOWS
+		if (rayWorldPos.y < VC_HEIGHT + VC_THICKNESS + 25.0) {
 			float speed = VC_SPEED;
 			float amount = VC_AMOUNT;
 			float frequency = VC_FREQUENCY;
@@ -171,7 +165,7 @@ void computeVL(inout vec3 vl, in vec3 translucent, in float dither) {
 			getDynamicWeather(speed, amount, frequency, thickness, density, detail, height);
 
 			vec2 wind = vec2(frameTimeCounter * speed * 0.005, sin(frameTimeCounter * speed * 0.1) * 0.01) * speed * 0.1;
-			vec3 cloudShadowPos = rayWorldPos + (worldSunVec / max(abs(worldSunVec.y), 0.0)) * max((VC_HEIGHT + VC_THICKNESS + 30.0) - rayWorldPos.y, 0.0);
+			vec3 cloudShadowPos = rayWorldPos + (worldSunVec / max(abs(worldSunVec.y), 0.0)) * max((VC_HEIGHT + VC_THICKNESS + 25.0) - rayWorldPos.y, 0.0);
 
 			float noise = 0.0;
 			getCloudSample(cloudShadowPos.xz, wind, amount, frequency, thickness, density, detail, noise);
@@ -182,7 +176,7 @@ void computeVL(inout vec3 vl, in vec3 translucent, in float dither) {
 		finalVL += shadow;
 	}
 	finalVL /= sampleCount;
-    finalVL *= visibility * VL_STRENGTH;
+    finalVL *= visibility;
 
 	if (isEyeInWater == 1.0) finalVL *= mix(waterColorSqrt, waterColorSqrt * weatherCol, wetness) * (4.0 + sunVisibility * 8.0);
 

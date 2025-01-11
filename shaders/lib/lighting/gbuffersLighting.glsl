@@ -162,7 +162,7 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
 
     shadow *= clamp(NoL * 1.01 - 0.01, 0.0, 1.0);
 
-    #if defined VC && defined GBUFFERS_TERRAIN
+    #if defined VC_SHADOWS && defined GBUFFERS_TERRAIN
     //Cloud parameters
     float speed = VC_SPEED;
     float amount = VC_AMOUNT;
@@ -175,7 +175,7 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
     getDynamicWeather(speed, amount, frequency, thickness, density, detail, height);
 
     vec2 wind = vec2(frameTimeCounter * speed * 0.005, sin(frameTimeCounter * speed * 0.1) * 0.01) * speed * 0.1;
-    vec3 worldSunVec = ToWorld(sunVec);
+    vec3 worldSunVec = mat3(gbufferModelViewInverse) * lightVec;
     vec3 cloudShadowPos = worldPos + worldSunVec * 100.0 + cameraPosition;
 
     float noise = 0.0;
