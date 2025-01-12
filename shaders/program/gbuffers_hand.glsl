@@ -68,6 +68,7 @@ vec3 lightVec = sunVec;
 #include "/lib/util/ToShadow.glsl"
 #include "/lib/color/lightColor.glsl"
 #include "/lib/color/netherColor.glsl"
+#include "/lib/color/deeperdownColor.glsl"
 #include "/lib/vx/blocklightColor.glsl"
 #include "/lib/vx/voxelization.glsl"
 #include "/lib/lighting/shadows.glsl"
@@ -128,7 +129,7 @@ uniform float timeAngle;
 
 uniform mat4 gbufferModelView, gbufferModelViewInverse;
 
-//Includes//
+//Includes
 #ifdef TAA
 #include "/lib/util/jitter.glsl"
 #endif

@@ -1,4 +1,4 @@
-#ifndef NETHER
+#if !defined(NETHER) && !defined(DEEPERDOWN)
 //GGX area light approximation from Horizon Zero Dawn
 float getNoHSquared(float radiusTan, float NoL, float NoV, float VoL) {
     float radiusCos = 1.0 / sqrt(1.0 + radiusTan * radiusTan);

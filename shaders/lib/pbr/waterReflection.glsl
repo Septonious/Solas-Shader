@@ -19,6 +19,8 @@ void getReflection(inout vec4 albedo, in vec3 viewPos, in vec3 nViewPos, in vec3
 	vec3 falloff = albedo.rgb;
 	#elif defined NETHER
 	vec3 falloff = netherColSqrt.rgb * 0.25;
+	#elif defined DEEPERDOWN
+	vec3 falloff = deeperdownColSqrt.rgb * 0.25;
 	#elif defined END
 	vec3 falloff = endLightCol * 0.15;
 	#endif

@@ -4,7 +4,7 @@ void getDarknessFog(inout vec3 color, vec3 viewPos) {
 	float fog = length(viewPos) * (darknessFactor * 0.01);
 		  fog = (1.0 - exp(-fog)) * darknessFactor;
 
-	color = mix(color, vec3(0.0), fog);
+	color = mix(color, vec3(0.5), fog);
 }
 #endif
 
@@ -44,7 +44,7 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 atmo
 	float fogDistance = min(192.0 / dhFarPlane, 1.0) * (100.0 / distanceFactor);
 	float fogDensity = FOG_DENSITY * (2.0 - caveFactor) * (1.0 - eBS01 * timeBrightness * 0.5);
 
-	#if MC_VERSION >= 12104
+	#if MC_VERSION >= 12100
 	fogDensity = mix(fogDensity, 6.0, isPaleGarden);
 	fogDistance *= 1.0 - isPaleGarden * 0.75;
 	#endif
@@ -84,6 +84,27 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 atmo
 	#endif
 	#endif
 
+	//Deeperdown Fog
+	#ifdef DEEPERDOWN 
+	// Dense short-range fog using spherical distance
+	float fog = length(worldPos) * 0.045;
+
+	fog = mix(fog, max(fog - 0.8, 0.1), isHowlingCold);
+
+	#ifdef DISTANT_FADE
+	fog += 140.0 * pow5(length(worldPos) / far); // Reduced distant fade influence
+	#endif
+
+	fog = 1.0 - exp(-fog);
+	vec3 fogCol = deeperdownColSqrt.rgb * 0.15;
+
+	//Howling Spires
+	fogCol = mix(fogCol, vec3(1, 1, 1), isHowlingCold);
+	//Dragonrot
+	fogCol = mix(fogCol, vec3(0.045, 0, 0), isDragonTemp);
+
+	#endif
+
 	//Nether Fog
 	#ifdef NETHER
 	float fog = lViewPos * 0.004;
@@ -105,10 +126,10 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 atmo
 	vec3 fogCol = atmosphereColor;
 	#endif
 
-	#ifndef NETHER
+	#if !defined(NETHER) && !defined(DEEPERDOWN)
 	#ifdef DEFERRED
 	float zMixer = float(texture2D(dhDepthTex0, texCoord).r < 1.0);
-	#if MC_VERSION >= 12104
+	#if MC_VERSION >= 12100
 		  zMixer = mix(zMixer, 1.0, isPaleGarden);
 	#endif
 	#ifdef FOG_COVER_EVERYTHING
@@ -135,10 +156,13 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 atmo
 	float fogDistance = min(192.0 / far, 1.0) * (100.0 / distanceFactor);
 	float fogDensity = FOG_DENSITY * (2.0 - caveFactor) * (1.0 - eBS01 * timeBrightness * 0.5);
 
-	#if MC_VERSION >= 12104
+	#if MC_VERSION >= 12100
 	fogDensity = mix(fogDensity, 6.0, isPaleGarden);
 	fogDistance *= 1.0 - isPaleGarden * 0.75;
 	#endif
+
+                  // Modify fog for Primordial Cave
+       	fogDensity -= isPrimordialCave * 1.7; // Reduce fog density more
 
     float fog = 1.0 - exp(-(0.0075 + wetnessCave * 0.0025) * lViewPos * fogDistance);
           fog *= fogDensity * fogAltitude;
@@ -146,6 +170,7 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 atmo
 
     vec3 fogCol = atmosphereColor;
 		 fogCol = mix(caveMinLightCol * fog, fogCol, caveFactor);
+		 fogCol = mix(fogCol, primordialMinLightCol, isPrimordialCave);
 
 	//Distant Fade
 	#ifdef DISTANT_FADE
@@ -175,6 +200,29 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 atmo
 	#endif
 	#endif
 
+
+	//Deeperdown Fog
+	#ifdef DEEPERDOWN 
+	// Dense short-range fog using spherical distance
+	float fog = length(worldPos) * 0.045;
+
+	fog = mix(fog, max(fog - 0.8, 0.1), isHowlingCold);
+
+	#ifdef DISTANT_FADE
+	fog += 140.0 * pow5(length(worldPos) / far); // Reduced distant fade influence
+	#endif
+
+	fog = 1.0 - exp(-fog);
+	vec3 fogCol = deeperdownColSqrt.rgb * 0.15;
+
+	//Howling Spires
+	fogCol = mix(fogCol, vec3(1, 1, 1), isHowlingCold);
+	//Dragonrot
+	fogCol = mix(fogCol, vec3(0.045, 0, 0), isDragonTemp);
+
+	#endif
+
+
 	//Nether Fog
 	#ifdef NETHER
 	float fog = lViewPos * 0.004;
@@ -196,10 +244,10 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 atmo
 	vec3 fogCol = atmosphereColor;
 	#endif
 
-	#ifndef NETHER
+	#if !defined(NETHER) && !defined(DEEPERDOWN)
 	#ifdef DEFERRED
 	float zMixer = float(texture2D(depthtex1, texCoord).r < 1.0);
-	#if MC_VERSION >= 12104
+	#if MC_VERSION >= 12100
 		  zMixer = mix(zMixer, 1.0, isPaleGarden);
 	#endif
 	#ifdef FOG_COVER_EVERYTHING

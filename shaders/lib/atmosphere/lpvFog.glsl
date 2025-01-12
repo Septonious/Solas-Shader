@@ -43,6 +43,10 @@ void computeLPVFog(inout vec3 fog, in vec3 translucent, in float dither) {
 		  density = 40.0;
 		  visibility *= 0.6;
 	#endif
+	#ifdef DEEPERDOWN
+		  density = 50.0;
+		  visibility *= 1.0;
+	#endif
 
 	if (visibility > 0.0) {
 		//Linear Depths
@@ -60,6 +64,8 @@ void computeLPVFog(inout vec3 fog, in vec3 translucent, in float dither) {
 		for (int i = 0; i < sampleCount; i++) {
 			#ifdef NETHER
 			float currentDist = (i + dither) * minDist;
+			#elif defined(DEEPERDOWN)
+			float currentDist = exp2(i + dither) - 0.95;
 			#else
 			float currentDist = exp2(i + dither) - 0.95;
 			#endif

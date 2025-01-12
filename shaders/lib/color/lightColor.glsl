@@ -26,7 +26,7 @@ vec3 lightColRaw = mix(lightNight, mix(lightSun, normalize(skyColor + 0.0001), 0
 vec3 lightColSqrt = mix(lightColRaw, dot(lightColRaw, vec3(0.299, 0.587, 0.114)) * weatherCol, wetness * 0.5);
 vec3 lightCol = lightColSqrt * lightColSqrt;
 
-float ambientIntensity = mix(AMBIENTINTENSITY_N, mix(AMBIENTINTENSITY_D * 0.65, AMBIENTINTENSITY_D, timeBrightness), sunVisibility * sunVisibility);
+float ambientIntensity = mix(AMBIENTINTENSITY_N, mix(AMBIENTINTENSITY_D * 0.75, AMBIENTINTENSITY_D, timeBrightness), sunVisibility * sunVisibility);
 vec3 ambientColor = mix(lightNight, mix(lightColRaw, normalize(skyColor + 0.0001), AMBIENTCOL_SKY_INFLUENCE) * normalize(mix(vec3(1.0), skyColor, AMBIENTCOL_SKY_INFLUENCE) + 0.0001), sunVisibility * sunVisibility);
 vec3 ambientColRaw = pow(ambientColor, vec3(0.75)) * 0.5 * ambientIntensity;
 vec3 ambientColSqrt = mix(ambientColRaw, dot(ambientColRaw, vec3(0.299, 0.587, 0.114)) * weatherCol, wetness * 0.5);

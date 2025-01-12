@@ -1,4 +1,4 @@
-else if (material >= 15 && material <= 20) {
+if (material >= 15 && material <= 20) {
     #ifdef EMISSIVE_CONCRETE    
     emission = lAlbedo;
     #endif

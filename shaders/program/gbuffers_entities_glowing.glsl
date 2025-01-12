@@ -38,7 +38,6 @@ void main() {
 	color = gl_Color;
 
 	gl_Position = ftransform();
-	gl_Position.z *= 0.01;
 }
 
 #endif

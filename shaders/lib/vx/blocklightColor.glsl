@@ -4,29 +4,29 @@ const vec3[] blocklightColorArray = vec3[](
 	//Non-emissive blocks
 	vec3(0.0),
 	//Glow Lichen, Sea Pickle
-	vec3(GLSP_R, GLSP_G, GLSP_B) * GLSP_I,
+	vec3(0.50, 0.80, 0.70) * 0.1,
 	//Brewing Stand
-	vec3(BS_R, BS_G, BS_B) * BS_I,
+	vec3(1.00, 0.75, 0.10),
 	//Torch, Lantern, Campfire, Fire
-	vec3(TLCF_R, TLCF_G, TLCF_B) * TLCF_I,
+	vec3(1.05, 0.40, 0.15) * 4.0,
 	//Soul Torch, Soul Lantern, Soul Campfire, Soul Fire
-	vec3(SOUL_R, SOUL_G, SOUL_B) * SOUL_I,
+	vec3(0.10, 0.60, 1.00) * 3.5,
 	//End Rod
-	vec3(ER_R, ER_G, ER_B) * ER_I,
+	vec3(1.00, 0.60, 0.90) * 3.0,
 	//Sea Lantern
-	vec3(SL_R, SL_G, SL_B) * SL_I,
+	vec3(0.70, 0.90, 1.00) * 6.5,
 	//Glowstone
-	vec3(GS_R, GS_G, GS_B) * GS_I,
+	vec3(1.00, 0.60, 0.30) * 5.5,
 	//Shroomlight, Redstone Lamp
-	vec3(SLRL_R, SLRL_G, SLRL_B) * SLRL_I,
-	//Respawn Anchor, Crying Obsidian
-	vec3(RACO_R, RACO_G, RACO_B) * RACO_I,
+	vec3(1.00, 0.30, 0.10) * 4.5,
+	//Respawn Anchor
+	vec3(0.60, 0.05, 1.00) * 0.5,
 	//Lava
-	vec3(LAVA_R, LAVA_G, LAVA_B + 0.02) * LAVA_I,
+	vec3(1.00, 0.18, 0.02) * 5.0,
 	//Cave Berries
-	vec3(CB_R, CB_G, CB_B) * CB_I,
+	vec3(1.00, 0.40, 0.10) * 2.75,
 	//Amethyst
-	vec3(METH_lmao_R, METH_lmao_G, METH_lmao_B) * METH_lmao_I,
+	vec3(0.80, 0.30, 1.00) * 2.0,
 	#ifdef EMISSIVE_CONCRETE
 	//Red Concrete
 	vec3(1.00, 0.00, 0.00) * 3.0,
@@ -49,7 +49,7 @@ const vec3[] blocklightColorArray = vec3[](
 	vec3(0.0),
 	#endif
 	//Magma Block
-	vec3(MB_R, MB_G, MB_B) * MB_I,
+	vec3(1.00, 0.20, 0.05) * 2.00,
 	#ifdef EMISSIVE_ORES
     //Emerald Ore
     normalize(vec3(0.05, 1.00, 0.15)) * 0.35,
@@ -79,7 +79,7 @@ const vec3[] blocklightColorArray = vec3[](
     //Powered Rails
     vec3(1.00, 0.05, 0.00),
     //Nether Portal
-    vec3(NP_R, NP_G, NP_B) * NP_I,
+    vec3(0.60, 0.05, 1.00) * 5.0,
     //Orchre Froglight
     normalize(vec3(1.00, 0.55, 0.25)) * 5.5,
     //Verdant Froglight
@@ -108,9 +108,9 @@ const vec3[] blocklightColorArray = vec3[](
 	vec3(0.0),
 	#endif
 	//Jack-O-Lantern
-	vec3(JL_R, JL_G, JL_B) * JL_I,
+	vec3(1.00, 0.55, 0.20) * 3.5,
     //Enchanting table
-    vec3(ET_R, ET_G, ET_B) * ET_I,
+    vec3(0.15, 0.50, 1.00) * 2.5,
 	//Red Candle
 	normalize(vec3(1.0, 0.1, 0.1)),
 	//Orange Candle
@@ -156,13 +156,13 @@ const vec3[] blocklightColorArray = vec3[](
 	//Fungi
 	vec3(1.0, 0.2, 0.1) * 0.1,
 	//Crimson Stem & Hyphae
-	vec3(1.0, 0.2, 0.1) * 0.2,
+	vec3(1, 0.3, 0.2) * 0.2,
 	//Warped Stem & Hyphae
 	vec3(0.1, 0.5, 0.7) * 0.2,
 	//Warts
 	vec3(0.0),
 	vec3(0.0),
-	//Mob Spawner
+	//Spawner, refuses to work
 	vec3(0.1, 0.01, 0.15),
 	//Unlit Redstone Lamp
 	vec3(0.0),
@@ -185,6 +185,30 @@ const vec3[] blocklightColorArray = vec3[](
     normalize(vec3(0.80, 0.80, 0.80)) * 0.20,
     //Orange Potted flowers
     normalize(vec3(1.00, 0.70, 0.05)) * 0.20,
+    //Ultra Red
+    normalize(vec3(1.00, 0.0, 0.0)) * 5.5,
+    //Soft Red
+    normalize(vec3(1.00, 0.0, 0.0)) * 2.0,
+    //Soft Green
+    normalize(vec3(0.0, 1.0, 0.0)) * 2.0,
+    //Soft Blue
+    normalize(vec3(0.0, 0.21, 1.0)) * 3.0,
+    //AmberSol
+    normalize(vec3(1.2, 0.7, 0.2)) * 6.5,
+    //Prismarite
+    normalize(vec3(0.6, 0.4, 0.6)) * 0.1,
+    //Liquid Crystal
+    normalize(vec3(1.0, 0.1, 0.5)) * 1,
+    //Topaz
+    normalize(vec3(0.1, 0.45, 1)) * 2.0,
+    //Citrine
+    normalize(vec3(1, 0.8, 0)) * 2.0,
+    //Soft White
+    normalize(vec3(1, 1, 1)) * 2.0,
+    //RGB Glow
+    vec3(1, 0.1, 1.2) * 0.2,
+    //Dragonrot
+    vec3(2, 0.3, 0.2) * 0.7,
 	#else
 	vec3(0.0),
 	vec3(0.0),

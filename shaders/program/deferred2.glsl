@@ -16,22 +16,18 @@ in vec3 sunVec, upVec;
 uniform int isEyeInWater;
 uniform int frameCounter;
 
-#ifdef VC
-uniform int worldDay;
-#endif
-
 #ifdef OVERWORLD
 uniform int moonPhase;
-
 uniform float timeBrightness, timeAngle, rainStrength, wetness;
 uniform float isSnowy;
+uniform int biome;
 #endif
 
 #if MC_VERSION >= 11900
 uniform float darknessFactor;
 #endif
 
-#if MC_VERSION >= 12104
+#if MC_VERSION >= 12100
 uniform float isPaleGarden;
 #endif
 
@@ -43,7 +39,6 @@ uniform float shadowFade;
 
 #ifdef OVERWORLD
 uniform ivec2 eyeBrightnessSmooth;
-
 uniform vec3 skyColor;
 #endif
 
@@ -91,7 +86,9 @@ uniform mat4 gbufferModelView;
 //Common Variables//
 #ifdef OVERWORLD
 float eBS = eyeBrightnessSmooth.y / 240.0;
-float caveFactor = mix(clamp((cameraPosition.y - 56.0) / 16.0, float(sign(isEyeInWater)), 1.0), 1.0, eBS);
+
+float caveFactor = mix(clamp((cameraPosition.y - 56) / 16.0, float(sign(isEyeInWater)), 1.0), 1.0, eBS);
+
 float sunVisibility = clamp(dot(sunVec, upVec) + 0.1, 0.0, 0.25) * 4.0;
 #endif
 
@@ -101,6 +98,7 @@ float sunVisibility = clamp(dot(sunVec, upVec) + 0.1, 0.0, 0.25) * 4.0;
 #include "/lib/util/ToWorld.glsl"
 #include "/lib/color/lightColor.glsl"
 #include "/lib/color/netherColor.glsl"
+#include "/lib/color/deeperdownColor.glsl"
 
 #ifdef OVERWORLD
 #include "/lib/atmosphere/sky.glsl"
@@ -143,7 +141,7 @@ void main() {
 	#if defined OVERWORLD
 	vec3 sunPos = vec3(gbufferModelViewInverse * vec4(sunVec * 128.0, 1.0));
 	vec3 sunCoord = sunPos / (sunPos.y + length(sunPos.xz));
-    vec3 atmosphereColor = getAtmosphericScattering(viewPos, normalize(sunCoord));
+    	vec3 atmosphereColor = getAtmosphericScattering(viewPos, normalize(sunCoord));
 
 	#ifdef SKYBOX
 	vec3 skybox = texture2D(colortex7, texCoord).rgb;
@@ -151,11 +149,13 @@ void main() {
 	#endif
 	#elif defined NETHER
 	vec3 atmosphereColor = netherColSqrt.rgb * 0.25;
+	#elif defined DEEPERDOWN
+	vec3 atmosphereColor = deeperdownColSqrt.rgb * 0.25;
 	#elif defined END
 	vec3 atmosphereColor = endLightCol * 0.1;
 	#endif
 
-    vec3 skyColor = atmosphereColor;
+   	 vec3 skyColor = atmosphereColor;
 	vec3 skyColorO = atmosphereColor;
 
 	#if defined OVERWORLD || defined END

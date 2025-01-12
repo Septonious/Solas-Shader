@@ -1,4 +1,4 @@
-else if (material >= 35 && material < 40) {
+if (material >= 35 && material < 40) {
 	if (albedo.r + albedo.g + albedo.b < 2.9) {
 		if (albedo.b > albedo.g || albedo.r > albedo.g) {
 			emission = lAlbedo * 0.1;
@@ -22,7 +22,9 @@ else if (material >= 35 && material < 40) {
 			#endif
 		}
 	}
-} else if (material >= 74 && material <= 79) {
+}
+
+if (material >= 74 && material <= 79) {
 	if (albedo.r + albedo.g + albedo.b < 2.9) {
 		if (albedo.b > albedo.g || albedo.r > albedo.g) {
 			emission = lAlbedo * 0.1 * (float(lAlbedo > 0.63) * (float(albedo.r + albedo.g * 0.5 + albedo.b * 0.5 > 0.9) + float(albedo.r - albedo.g - albedo.b > 0.3)));

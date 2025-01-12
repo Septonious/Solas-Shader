@@ -1,4 +1,4 @@
-else if (material == 64) {
+if (material == 64) {
     emission = int(lAlbedo > 0.9) * 0.25;
 } else if (material == 67) {
     emission = pow16(lAlbedo) * 0.25;

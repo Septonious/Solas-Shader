@@ -45,6 +45,7 @@ void generateIPBR(inout vec4 albedo, in vec3 worldPos, in vec3 viewPos, inout ve
     #include "/lib/pbr/blocks/torch_lantern.glsl"
     #include "/lib/pbr/blocks/water_cauldron.glsl"
     #include "/lib/pbr/blocks/wet_farmland.glsl"
+    #include "/lib/pbr/blocks/cora_additions.glsl"
 
     #ifdef EMISSIVE_FLOWERS
     #include "/lib/pbr/blocks/flowers.glsl"
