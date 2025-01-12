@@ -13,7 +13,10 @@ vec2 jitterOffsets8[8] = vec2[8](
 
 vec2 TAAJitter(vec2 coord, float w) {
 	vec2 offset = jitterOffsets8[int(framemod8)] * (w / vec2(viewWidth, viewHeight));
-		 offset *= 0.75;
+
+	#ifdef DH_TERRAIN
+	offset *= 0.5;
+	#endif
 
 	return coord + offset;
 }

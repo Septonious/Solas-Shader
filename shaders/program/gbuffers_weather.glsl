@@ -15,6 +15,7 @@ uniform sampler2D texture;
 
 //Program//
 void main() {
+
 	vec4 albedo = texture2D(texture, texCoord) * rainStrength;
 
 	if (albedo.a > 0.01) {

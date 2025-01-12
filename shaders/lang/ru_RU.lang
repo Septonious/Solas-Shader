@@ -107,17 +107,11 @@ option.MILKY_WAY_BRIGHTNESS=Яркость Млечного Пути
 option.END_NEBULA=Туманность в Краю
 option.END_NEBULA_BRIGHTNESS=Яркость Туманности
 option.RAINBOW=Радуга
-
-#----------------------------------------------------------------------------------#
-
-screen.AURORA_CONFIG=Настройки Полярного Сияния
-
-option.AURORA=Полярное Сияние
-option.AURORA_COLD_BIOME_VISIBILITY=Сияние в холодных биомах
+option.AURORA=Полярное Сияние (ПС)
+option.AURORA_COLD_BIOME_VISIBILITY=ПС в холодных биомах
 option.AURORA_COLD_BIOME_VISIBILITY.comment=Переключает видимость Полярного Сияния только в снежных биомах
-option.AURORA_FULL_MOON_VISIBILITY=Сияние при полной луне
+option.AURORA_FULL_MOON_VISIBILITY=ПС при полной луне
 option.AURORA_FULL_MOON_VISIBILITY.comment=Переключает видимость Полярного Сияния только при полной луне
-option.AURORA_BRIGHTNESS=Яркость Сияния
 
 #----------------------------------------------------------------------------------#
 
@@ -279,7 +273,7 @@ option.PARALLAX_DISTANCE.comment=Adjusts how far parallax occlusion mapping and 
 
 screen.SELF_SHADOW_CONFIG=Настройки Шейдинга
 
-option.SELF_SHADOW=Тени от Нормалей*
+option.SELF_SHADOW=Шейдинг Нормалей*
 option.SELF_SHADOW.comment=Allows a surface to cast shadow to itself using heightmap.
 option.SELF_SHADOW_ANGLE=Угол Теней*
 option.SELF_SHADOW_ANGLE.comment=Adjusts the self shadowing angle, higher value allows the shadow to travel further.
@@ -327,7 +321,7 @@ option.MINLIGHT_I=Яркость
 
 #----------------------------------------------------------------------------------#
 
-screen.BLOCKLIGHT_COLOR=Цвет Ванильного Освещения от Блоков
+screen.BLOCKLIGHT_COLOR=Цвет Освещения от Блоков
 
 option.BLOCKLIGHT_R=Красный
 option.BLOCKLIGHT_G=Зелёный
@@ -344,105 +338,6 @@ option.WATER_B=Синий
 option.WATER_I=Яркость
 option.WATER_A=Непрозрачность
 
-#----------------------------------------------------------------------------------#
-
-screen.LPV_COLOR=Цвета Освещения от Блоков
-screen.GLSP=Светящийся Лишайник
-screen.BS=Варочная Стойка (уолтер убери свой ч..)
-screen.TLCF=Факел, Фонарь и т.д.
-screen.SOUL=Факел Душ, Фонарь Душ и т.д.
-screen.ER=Стержень Энда
-screen.SL=Морской Фонарь
-screen.GS=Светокамень
-screen.SLRL=Грибосвет, Редстоун Фонарь
-screen.RACO=Якорь Возрождения, Плачущий Обсидан
-screen.LAVA=Лава
-screen.CB=Светящиеся Ягоды
-screen.METH=Аметист
-screen.MB=Блок Магмы
-screen.NP=Адский Портал
-screen.JL=Светильник Джека
-screen.ET=Стол Зачарований
-
-option.GLSP_R=Красный
-option.GLSP_G=Зелёный
-option.GLSP_B=Синий
-option.GLSP_I=Яркость
-
-option.BS_R=Красный
-option.BS_G=Зелёный
-option.BS_B=Синий
-option.BS_I=Яркость
-
-option.TLCF_R=Красный
-option.TLCF_G=Зелёный
-option.TLCF_B=Синий
-option.TLCF_I=Яркость
-
-option.SOUL_R=Красный
-option.SOUL_G=Зелёный
-option.SOUL_B=Синий
-option.SOUL_I=Яркость
-
-option.ER_R=Красный
-option.ER_G=Зелёный
-option.ER_B=Синий
-option.ER_I=Яркость
-
-option.SL_R=Красный
-option.SL_G=Зелёный
-option.SL_B=Синий
-option.SL_I=Яркость
-
-option.GS_R=Красный
-option.GS_G=Зелёный
-option.GS_B=Синий
-option.GS_I=Яркость
-
-option.SLRL_R=Красный
-option.SLRL_G=Зелёный
-option.SLRL_B=Синий
-option.SLRL_I=Яркость
-
-option.RACO_R=Красный
-option.RACO_G=Зелёный
-option.RACO_B=Синий
-option.RACO_I=Яркость
-
-option.LAVA_R=Красный
-option.LAVA_G=Зелёный
-option.LAVA_B=Синий
-option.LAVA_I=Яркость
-
-option.CB_R=Красный
-option.CB_G=Зелёный
-option.CB_B=Синий
-option.CB_I=Яркость
-
-option.METH_lmao_R=Красный
-option.METH_lmao_G=Зелёный
-option.METH_lmao_B=Синий
-option.METH_lmao_I=Яркость
-
-option.MB_R=Красный
-option.MB_G=Зелёный
-option.MB_B=Синий
-option.MB_I=Яркость
-
-option.NP_R=Красный
-option.NP_G=Зелёный
-option.NP_B=Синий
-option.NP_I=Яркость
-
-option.JL_R=Красный
-option.JL_G=Зелёный
-option.JL_B=Синий
-option.JL_I=Яркость
-
-option.ET_R=Красный
-option.ET_G=Зелёный
-option.ET_B=Синий
-option.ET_I=Яркость
 
 
 #=======================================================# POST #=======================================================#
@@ -460,11 +355,9 @@ option.LENS_FLARE_STRENGTH=Яркость бликов
 
 screen.TONEMAP=Настройки Цветовой Палитры
 
-option.TONEMAP_BRIGHTNESS=Яркость
-option.TONEMAP_CONTRAST=Контрастность
-option.TONEMAP_HIGHLIGHTS=Яркость Света
-option.TONEMAP_SHADOWS=Яркость Теней
-option.TONEMAP_WHITE_THRESHOLD=Порог Белизны
+option.LIGHTNESS_INTENSITY=Светлая кривая
+option.DARKNESS_INTENSITY=Тёмная кривая
+option.CONTRAST=Контраст
 
 #----------------------------------------------------------------------------------#
 

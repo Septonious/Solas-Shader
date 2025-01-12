@@ -85,6 +85,7 @@ vec3 getAtmosphericScattering(vec3 viewPos, vec3 lightPos) {
 
     //Fade atmosphere to dark gray
     atmosphere = mix(caveMinLightCol, atmosphere, caveFactor);
+    atmosphere = mix(atmosphere, primordialMinLightCol, isPrimordialCave);
 
     #if MC_VERSION >= 11900
     atmosphere *= 1.0 - darknessFactor;

@@ -52,6 +52,7 @@ vec3 lightVec = sunVec;
 #include "/lib/util/ToShadow.glsl"
 #include "/lib/color/lightColor.glsl"
 #include "/lib/color/netherColor.glsl"
+#include "/lib/color/deeperdownColor.glsl"
 #include "/lib/lighting/shadows.glsl"
 #include "/lib/lighting/gbuffersLighting.glsl"
 

@@ -30,7 +30,6 @@ uniform float darknessFactor;
 
 uniform float blindFactor;
 uniform float timeBrightness, timeAngle, wetness, shadowFade;
-
 uniform ivec2 eyeBrightnessSmooth;
 
 uniform vec3 fogColor;

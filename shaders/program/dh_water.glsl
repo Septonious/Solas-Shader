@@ -19,10 +19,6 @@ in vec4 color;
 uniform int isEyeInWater;
 uniform int frameCounter;
 
-#ifdef VC
-uniform int worldDay;
-#endif
-
 #ifdef DYNAMIC_HANDLIGHT
 uniform int heldItemId, heldItemId2;
 uniform int heldBlockLightValue;
@@ -99,6 +95,7 @@ vec3 lightVec = sunVec;
 #include "/lib/util/ToShadow.glsl"
 #include "/lib/color/lightColor.glsl"
 #include "/lib/color/netherColor.glsl"
+#include "/lib/color/deeperdownColor.glsl"
 #include "/lib/vx/blocklightColor.glsl"
 #include "/lib/lighting/shadows.glsl"
 #include "/lib/lighting/gbuffersLighting.glsl"
@@ -207,6 +204,8 @@ void main() {
 	#endif
 	#elif defined NETHER
 	vec3 atmosphereColor = netherColSqrt.rgb * 0.25;
+	#elif defined DEEPERDOWN
+	vec3 atmosphereColor = deeperdownColSqrt.rgb * 0.25;
 	#elif defined END
 	vec3 atmosphereColor = endLightCol * 0.1;
 	#endif
@@ -252,8 +251,7 @@ void main() {
 	#ifdef END_NEBULA
 	float nebulaFactor = 0.0;
 	float VoU = dot(nViewPos, upVec);
-	vec3 skyColorO = skyColor;
-	getEndNebula(skyColor, skyColorO, worldPos, VoU, nebulaFactor, 1.0);
+	getEndNebula(skyColor, worldPos, VoU, nebulaFactor, 1.0);
 	#endif
 
 	Fog(albedo.rgb, viewPos, worldPos, skyColor);

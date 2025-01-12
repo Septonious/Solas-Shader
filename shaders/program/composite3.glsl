@@ -15,14 +15,6 @@ in vec3 sunVec, upVec;
 uniform int isEyeInWater;
 uniform int frameCounter;
 
-#ifdef DISTANT_HORIZONS
-uniform int dhRenderDistance;
-#endif
-
-#ifdef VC
-uniform int worldDay;
-#endif
-
 uniform float viewWidth, viewHeight;
 uniform float far, near;
 uniform float frameTimeCounter;
@@ -33,7 +25,7 @@ uniform float blindFactor;
 uniform float timeAngle, shadowFade;
 uniform float isJungle, isSwamp;
 
-#if MC_VERSION >= 12104
+#if MC_VERSION >= 12100
 uniform float isPaleGarden;
 #endif
 
@@ -98,6 +90,9 @@ float sunVisibility = clamp(dot(sunVec, upVec) + 0.1, 0.0, 0.25) * 4.0;
 #ifdef NETHER
 #include "/lib/color/netherColor.glsl"
 #endif
+#ifdef DEEPERDOWN
+#include "/lib/color/deeperdownColor.glsl"
+#endif
 
 #include "/lib/atmosphere/lpvFog.glsl"
 #endif
@@ -142,7 +137,7 @@ void main() {
 	computeVL(vl.rgb, translucent, blueNoiseDither);
 	#endif
 
-	vl.rgb = pow(vl.rgb / 256.0, vec3(0.125));
+	vl.rgb = pow(vl.rgb / 128.0, vec3(0.25));
 	#endif
 
 	/* DRAWBUFFERS:01 */

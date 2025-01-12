@@ -32,7 +32,7 @@ uniform float viewWidth, viewHeight;
 uniform float darknessFactor;
 #endif
 
-#if MC_VERSION >= 12104
+#if MC_VERSION >= 12100
 uniform float isPaleGarden;
 #endif
 
@@ -107,6 +107,7 @@ vec3 lightVec = sunVec;
 #include "/lib/util/ToShadow.glsl"
 #include "/lib/color/lightColor.glsl"
 #include "/lib/color/netherColor.glsl"
+#include "/lib/color/deeperdownColor.glsl"
 #include "/lib/vx/blocklightColor.glsl"
 #include "/lib/lighting/shadows.glsl"
 #include "/lib/lighting/gbuffersLighting.glsl"
@@ -205,6 +206,8 @@ void main() {
 	#endif
 	#elif defined NETHER
 	vec3 atmosphereColor = netherColSqrt.rgb * 0.25;
+	#elif defined DEEPERDOWN
+	vec3 atmosphereColor = deeperdownColSqrt.rgb * 0.25;
 	#elif defined END
 	vec3 atmosphereColor = endLightCol * 0.1;
 	#endif

@@ -25,7 +25,7 @@ void drawStars(inout vec3 color, in vec3 worldPos, in vec3 sunVec, inout vec3 st
 		vec2 planeCoord = worldPos.xz / (length(worldPos.y) + length(worldPos.xz));
 			 planeCoord *= size;
 			 planeCoord += cameraPosition.xz * 0.00001;
-			 planeCoord += frameTimeCounter * 0.0001;
+			 planeCoord += frameTimeCounter * 0.001;
 			 planeCoord = floor(planeCoord * 1024.0 * STAR_AMOUNT) / (1024.0 * STAR_AMOUNT);
 			 #ifdef END
 			 vec3 sunVec = mat3(gbufferModelViewInverse) * sunVec;
@@ -60,7 +60,7 @@ void drawMilkyWay(inout vec3 color, in vec3 worldPos, in float VoU, in float cav
 
 	if (visibility > 0.0) {
 		vec2 planeCoord = worldPos.zx / (worldPos.y + length(worldPos.zyx));
-			 planeCoord += frameTimeCounter * 0.0001;
+			 planeCoord += frameTimeCounter * 0.001;
 			 planeCoord *= 0.8;
 			 planeCoord.x *= 1.9;
 		

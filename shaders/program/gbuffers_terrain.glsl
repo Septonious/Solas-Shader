@@ -24,10 +24,6 @@ in vec4 vTexCoord, vTexCoordAM;
 uniform int isEyeInWater;
 uniform int frameCounter;
 
-#ifdef VC
-uniform int worldDay;
-#endif
-
 #ifdef DYNAMIC_HANDLIGHT
 uniform int heldItemId, heldItemId2;
 #endif
@@ -103,6 +99,7 @@ vec2 dcdy = dFdy(texCoord);
 #include "/lib/util/ToShadow.glsl"
 #include "/lib/color/lightColor.glsl"
 #include "/lib/color/netherColor.glsl"
+#include "/lib/color/deeperdownColor.glsl"
 #include "/lib/vx/blocklightColor.glsl"
 #include "/lib/vx/voxelization.glsl"
 #include "/lib/pbr/ggx.glsl"
@@ -303,7 +300,7 @@ attribute vec4 at_midBlock;
 attribute vec4 mc_Entity;
 attribute vec4 mc_midTexCoord;
 
-//Includes//
+//Includes
 #ifdef TAA
 #include "/lib/util/jitter.glsl"
 #endif
@@ -362,7 +359,6 @@ void main() {
 	#endif
 
 	color = gl_Color;
-
 	gl_Position = gl_ProjectionMatrix * gbufferModelView * position;
 
 	#ifdef TAA

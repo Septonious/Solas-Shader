@@ -4,36 +4,6 @@ uniform vec3 relativeEyePosition;
 #include "/lib/lighting/handlight.glsl"
 #endif
 
-#ifdef GBUFFERS_TERRAIN
-void getDynamicWeather(inout float speed, inout float amount, inout float frequency, inout float thickness, inout float density, inout float detail, inout float height) {
-	float dayAmountFactor = abs(worldDay % 7 / 2 - 0.5) * 0.5;
-	float dayDensityFactor = abs(worldDay % 9 / 4 - worldDay % 2);
-	float dayFrequencyFactor = 1.0 + abs(worldDay % 6 / 4 - worldDay % 2) * 0.65;
-
-	speed += wetness;
-	amount = mix(amount, 11.5, wetness) - dayAmountFactor;
-	thickness += dayFrequencyFactor - 0.75;
-	density += dayDensityFactor;
-	frequency *= dayFrequencyFactor;
-}
-
-void getCloudSample(vec2 rayPos, vec2 wind, float amount, float frequency, float thickness, float density, float detail, inout float noise) {
-	rayPos *= 0.000125 * frequency;
-
-	float noiseBase = texture2D(noisetex, rayPos + 0.5 + wind * 0.5).g;
-		  noiseBase = pow2(1.0 - noiseBase) * 0.5 + 0.4 - wetness * 0.025;
-
-	float detailZ = floor(thickness) * 0.05;
-	float noiseDetailA = texture2D(noisetex, rayPos * 1.5 - wind + detailZ).b;
-	float noiseDetailB = texture2D(noisetex, rayPos * 1.5 - wind + detailZ + 0.05).b;
-	float noiseDetail = mix(noiseDetailA, noiseDetailB, fract(thickness));
-	
-	noise = mix(noiseBase, noiseDetail, detail * mix(0.05, 0.025, min(wetness + cameraPosition.y * 0.0025, 1.0)) * int(noiseBase > 0.0)) * 22.0;
-	noise = max(noise - amount, 0.0) * (density * 0.25);
-	noise /= sqrt(noise * noise + 0.25);
-}
-#endif
-
 void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in vec3 worldPos, in vec3 normal, inout vec3 shadow, in vec2 lightmap, 
                       in float NoU, in float NoL, in float NoE,
                       in float subsurface, in float smoothness, in float emission, in float parallaxShadow) {
@@ -49,6 +19,11 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
 
     #ifdef OVERWORLD
     vanillaDiffuse = mix(1.0, vanillaDiffuse, eBS);
+
+    //Primordial Caves lighting
+        lightmap.y = mix(lightmap.y, 1.0, isPrimordialCave * 0.3); // Increase sky light
+        emission += 0.03 * isPrimordialCave; // Add slight emission to everything
+    
     #endif
 
     //Block Lighting
@@ -61,12 +36,18 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
     #if !defined GBUFFERS_BASIC && !defined GBUFFERS_WATER && !defined GBUFFERS_TEXTURED && defined IS_IRIS
     vec3 voxelPos = ToVoxel(worldPos);
 
+    #ifdef GBUFFERS_TERRAIN
+    float floodfillDisable = float(mat == 10012);
+    #else
+    float floodfillDisable = 0.0;
+    #endif
+
     float floodfillFade = maxOf(abs(worldPos) / (voxelVolumeSize * 0.5));
           floodfillFade = clamp(floodfillFade, 0.0, 1.0);
 
     vec3 voxelLighting = vec3(0.0);
 
-    if (isInsideVoxelVolume(voxelPos)) {
+    if (isInsideVoxelVolume(voxelPos) && floodfillDisable < 0.5) {
         vec3 voxelSamplePos = voxelPos + worldNormal;
              voxelSamplePos /= voxelVolumeSize;
              voxelSamplePos = clamp(voxelSamplePos, 0.0, 1.0);
@@ -106,7 +87,7 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
     float scattering = 0.0;
     
     #if defined OVERWORLD && defined GBUFFERS_TERRAIN
-    if (subsurface > 0.0 && lightmap.y > 0.0) {
+    if (subsurface > 0.0) {
         float VoL = clamp(dot(normalize(viewPos), lightVec), 0.0, 1.0);
         scattering = pow8(VoL) * shadowFade * (1.0 - wetness * 0.5);
         if (subsurface > 0.49 && subsurface < 0.51) { //Leaves
@@ -162,28 +143,6 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
 
     shadow *= clamp(NoL * 1.01 - 0.01, 0.0, 1.0);
 
-    #if defined VC_SHADOWS && defined GBUFFERS_TERRAIN
-    //Cloud parameters
-    float speed = VC_SPEED;
-    float amount = VC_AMOUNT;
-    float frequency = VC_FREQUENCY;
-    float thickness = VC_THICKNESS;
-    float density = VC_DENSITY;
-    float detail = VC_DETAIL;
-    float height = VC_HEIGHT;
-
-    getDynamicWeather(speed, amount, frequency, thickness, density, detail, height);
-
-    vec2 wind = vec2(frameTimeCounter * speed * 0.005, sin(frameTimeCounter * speed * 0.1) * 0.01) * speed * 0.1;
-    vec3 worldSunVec = mat3(gbufferModelViewInverse) * lightVec;
-    vec3 cloudShadowPos = worldPos + worldSunVec * 100.0 + cameraPosition;
-
-    float noise = 0.0;
-    getCloudSample(cloudShadowPos.xz, wind, amount, frequency, thickness, density, detail, noise);
-
-    shadow = mix(shadow, vec3(0.0), vec3(noise));
-    #endif
-
     //Scene Lighting
     #ifdef OVERWORLD
     float rainFactor = 1.0 - wetness * 0.75;
@@ -194,27 +153,30 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
     vec3 sceneLighting = mix(endAmbientCol, endLightCol, shadow) * 0.25;
     #elif defined NETHER
     vec3 sceneLighting = pow(netherColSqrt, vec3(0.75)) * 0.03;
+    #elif defined DEEPERDOWN
+    //vec3 sceneLighting = pow(deeperdownColSqrt, vec3(0.75)) * 0.03;
+	vec3 sceneLighting = vec3(0,0,0);
+	sceneLighting = mix(sceneLighting, vec3(0, 0.005, 0.007), isHowlingCold);
+	sceneLighting = mix(sceneLighting, vec3(0.03, 0.005, 0), isDragonTemp);
     #endif
 
     //Specular Highlight
     vec3 specularHighlight = vec3(0.0);
 
-    if (emission < 0.01) {
-        #if (defined GBUFFERS_TERRAIN || defined GBUFFERS_ENTITIES || defined GBUFFERS_BLOCK) && !defined NETHER
-        vec3 baseReflectance = vec3(0.1);
+    #if (defined GBUFFERS_TERRAIN || defined GBUFFERS_ENTITIES || defined GBUFFERS_BLOCK) && !defined NETHER && !defined DEEPERDOWN
+	vec3 baseReflectance = vec3(0.1);
 
-        float smoothnessF = 0.1 + length(albedo.rgb) * 0.3 + originalNoL * 0.2;
-            smoothnessF = mix(smoothnessF, 0.95, smoothness);
+    float smoothnessF = 0.1 + length(albedo.rgb) * 0.3 + originalNoL * 0.2;
+          smoothnessF = mix(smoothnessF, 0.95, smoothness);
 
-        #ifdef OVERWORLD
-        specularHighlight = getSpecularHighlight(normal, viewPos, smoothnessF, baseReflectance, lightCol, shadow * vanillaDiffuse, color.a);
-        #else
-        specularHighlight = getSpecularHighlight(normal, viewPos, smoothnessF, baseReflectance, endLightCol, shadow * vanillaDiffuse, color.a);
-        #endif
+    #ifdef OVERWORLD
+	specularHighlight = getSpecularHighlight(normal, viewPos, smoothnessF, baseReflectance, lightCol, shadow * vanillaDiffuse, color.a);
+    #else
+    specularHighlight = getSpecularHighlight(normal, viewPos, smoothnessF, baseReflectance, endLightCol, shadow * vanillaDiffuse, color.a);
+    #endif
 
-        specularHighlight = clamp(specularHighlight, vec3(0.0), vec3(3.0));
-        #endif
-    }
+    specularHighlight = clamp(specularHighlight, vec3(0.0), vec3(3.0));
+    #endif
 
     //Minimal Lighting
     #if defined OVERWORLD || defined END
@@ -265,6 +227,8 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
     gi *= lightCol;
     #elif defined NETHER
     gi *= endLightCol;
+    #elif defined DEEPERDOWN
+    gi += endLightCol;
     #endif
     #endif
 

@@ -83,6 +83,7 @@ const vec3[8] endPortalColors = vec3[8](
 #include "/lib/util/bayerDithering.glsl"
 #include "/lib/color/lightColor.glsl"
 #include "/lib/color/netherColor.glsl"
+#include "/lib/color/deeperdownColor.glsl"
 #include "/lib/vx/blocklightColor.glsl"
 #include "/lib/vx/voxelization.glsl"
 #include "/lib/pbr/ggx.glsl"

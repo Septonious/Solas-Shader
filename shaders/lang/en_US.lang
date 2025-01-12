@@ -107,17 +107,11 @@ option.MILKY_WAY_BRIGHTNESS=Milky Way Brightness
 option.END_NEBULA=Ender Nebula
 option.END_NEBULA_BRIGHTNESS=Ender Nebula Brightness
 option.RAINBOW=Rainbow
-
-#----------------------------------------------------------------------------------#
-
-screen.AURORA_CONFIG=Aurora Config
-
 option.AURORA=Aurora Borealis
 option.AURORA_COLD_BIOME_VISIBILITY=Aurora Cold Biome Visibility
 option.AURORA_COLD_BIOME_VISIBILITY.comment=Enables aurora only when player is in a cold biome
 option.AURORA_FULL_MOON_VISIBILITY=Aurora Full Moon Visibility
 option.AURORA_FULL_MOON_VISIBILITY.comment=Enables aurora only when the Moon if full
-option.AURORA_BRIGHTNESS=Aurora Brightness
 
 #----------------------------------------------------------------------------------#
 
@@ -346,105 +340,7 @@ option.WATER_B=Blue
 option.WATER_I=Intensity
 option.WATER_A=Alpha
 
-#----------------------------------------------------------------------------------#
 
-screen.LPV_COLOR=Multicolored Blocklight Color
-screen.GLSP=Glow Lichen, Sea Pickle
-screen.BS=Brewing Stand
-screen.TLCF=Torch, Lantern, etc
-screen.SOUL=Soul Torch, Lantern, etc
-screen.ER=End Rod
-screen.SL=Sea Lantern
-screen.GS=Glowstone
-screen.SLRL=Shroomlight, Redstone Lamp
-screen.RACO=Respawn Anchor, Crying Obsidian
-screen.LAVA=Lava
-screen.CB=Cave Berries
-screen.METH=Amethyst
-screen.MB=Magma Block
-screen.NP=Nether Portal
-screen.JL=Jack'o'Lantern
-screen.ET=Enchanting Table
-
-option.GLSP_R=Red
-option.GLSP_G=Green
-option.GLSP_B=Blue
-option.GLSP_I=Intensity
-
-option.BS_R=Red
-option.BS_G=Green
-option.BS_B=Blue
-option.BS_I=Intensity
-
-option.TLCF_R=Red
-option.TLCF_G=Green
-option.TLCF_B=Blue
-option.TLCF_I=Intensity
-
-option.SOUL_R=Red
-option.SOUL_G=Green
-option.SOUL_B=Blue
-option.SOUL_I=Intensity
-
-option.ER_R=Red
-option.ER_G=Green
-option.ER_B=Blue
-option.ER_I=Intensity
-
-option.SL_R=Red
-option.SL_G=Green
-option.SL_B=Blue
-option.SL_I=Intensity
-
-option.GS_R=Red
-option.GS_G=Green
-option.GS_B=Blue
-option.GS_I=Intensity
-
-option.SLRL_R=Red
-option.SLRL_G=Green
-option.SLRL_B=Blue
-option.SLRL_I=Intensity
-
-option.RACO_R=Red
-option.RACO_G=Green
-option.RACO_B=Blue
-option.RACO_I=Intensity
-
-option.LAVA_R=Red
-option.LAVA_G=Green
-option.LAVA_B=Blue
-option.LAVA_I=Intensity
-
-option.CB_R=Red
-option.CB_G=Green
-option.CB_B=Blue
-option.CB_I=Intensity
-
-option.METH_lmao_R=Red
-option.METH_lmao_G=Green
-option.METH_lmao_B=Blue
-option.METH_lmao_I=Intensity
-
-option.MB_R=Red
-option.MB_G=Green
-option.MB_B=Blue
-option.MB_I=Intensity
-
-option.NP_R=Red
-option.NP_G=Green
-option.NP_B=Blue
-option.NP_I=Intensity
-
-option.JL_R=Red
-option.JL_G=Green
-option.JL_B=Blue
-option.JL_I=intensity
-
-option.ET_R=Red
-option.ET_G=Green
-option.ET_B=Blue
-option.ET_I=Intensity
 
 #=======================================================# POST #=======================================================#
 
@@ -460,11 +356,9 @@ option.LENS_FLARE_STRENGTH=Lens Flare Strength
 
 screen.TONEMAP=Tonemap Config
 
-option.TONEMAP_BRIGHTNESS=Brightness
-option.TONEMAP_CONTRAST=Contrast
-option.TONEMAP_HIGHLIGHTS=Highlights Intensity
-option.TONEMAP_SHADOWS=Shadows Intensity
-option.TONEMAP_WHITE_THRESHOLD=White Threshold
+option.LIGHTNESS_INTENSITY=Lightness
+option.DARKNESS_INTENSITY=Darkness
+option.CONTRAST=Contrast
 
 #----------------------------------------------------------------------------------#
 

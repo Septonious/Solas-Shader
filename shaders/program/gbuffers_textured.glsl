@@ -29,7 +29,7 @@ uniform float viewWidth, viewHeight;
 uniform float darknessFactor;
 #endif
 
-#if MC_VERSION >= 12104
+#if MC_VERSION >= 12100
 uniform float isPaleGarden;
 #endif
 
@@ -37,6 +37,7 @@ uniform float blindFactor;
 uniform float nightVision;
 
 #ifdef OVERWORLD
+uniform int biome;
 uniform float timeBrightness, timeAngle;
 uniform float shadowFade;
 uniform float wetness;
@@ -93,6 +94,7 @@ vec3 lightVec = sunVec;
 #include "/lib/util/ToShadow.glsl"
 #include "/lib/color/lightColor.glsl"
 #include "/lib/color/netherColor.glsl"
+#include "/lib/color/deeperdownColor.glsl"
 #include "/lib/vx/blocklightColor.glsl"
 #include "/lib/vx/voxelization.glsl"
 #include "/lib/lighting/shadows.glsl"
@@ -149,6 +151,8 @@ void main() {
 	#endif
 	#elif defined NETHER
 	vec3 atmosphereColor = netherColSqrt.rgb * 0.25;
+	#elif defined DEEPERDOWN
+	vec3 atmosphereColor = deeperdownColSqrt.rgb * 0.25;
 	#endif
 
 	#ifndef END
@@ -212,7 +216,7 @@ uniform float timeAngle;
 
 uniform mat4 gbufferModelView, gbufferModelViewInverse;
 
-//Includes//
+//Includes
 #ifdef TAA
 #include "/lib/util/jitter.glsl"
 #endif

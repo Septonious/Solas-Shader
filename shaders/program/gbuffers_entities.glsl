@@ -83,6 +83,7 @@ vec3 lightVec = sunVec;
 #include "/lib/util/ToShadow.glsl"
 #include "/lib/color/lightColor.glsl"
 #include "/lib/color/netherColor.glsl"
+#include "/lib/color/deeperdownColor.glsl"
 #include "/lib/vx/blocklightColor.glsl"
 #include "/lib/vx/voxelization.glsl"
 #include "/lib/pbr/ggx.glsl"
@@ -138,7 +139,7 @@ void main() {
 
 	/* DRAWBUFFERS:03 */
 	gl_FragData[0] = albedo;
-	gl_FragData[1] = vec4(encodeNormal(newNormal), emission * 0.1, 0.975);
+	gl_FragData[1] = vec4(encodeNormal(newNormal), emission * 0.1, 1.0);
 }
 
 #endif
@@ -158,11 +159,20 @@ out vec4 color;
 //Uniforms//
 uniform int entityId;
 
+#ifdef TAA
+uniform float viewWidth, viewHeight;
+#endif
+
 #if defined OVERWORLD || defined END
 uniform float timeAngle;
 #endif
 
 uniform mat4 gbufferModelView, gbufferModelViewInverse;
+
+//Includes
+#ifdef TAA
+#include "/lib/util/jitter.glsl"
+#endif
 
 //Program//
 void main() {
@@ -192,6 +202,10 @@ void main() {
 	color = gl_Color;
 
 	gl_Position = ftransform();
+
+	#ifdef TAA
+	gl_Position.xy = TAAJitter(gl_Position.xy, gl_Position.w);
+	#endif
 }
 
 #endif
