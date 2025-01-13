@@ -18,6 +18,11 @@ uniform int isEyeInWater;
 uniform int frameCounter;
 uniform int currentRenderedItemId;
 
+#ifdef VC_SHADOWS
+uniform int worldDay;
+uniform float frameTimeCounter;
+#endif
+
 #ifdef DYNAMIC_HANDLIGHT
 uniform int heldItemId, heldItemId2;
 uniform int heldBlockLightValue;

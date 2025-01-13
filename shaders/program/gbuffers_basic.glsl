@@ -15,6 +15,11 @@ in vec4 color;
 uniform int isEyeInWater;
 uniform int frameCounter;
 
+#ifdef VC_SHADOWS
+uniform int worldDay;
+uniform float frameTimeCounter;
+#endif
+
 uniform float viewWidth, viewHeight;
 uniform float blindFactor;
 uniform float nightVision;

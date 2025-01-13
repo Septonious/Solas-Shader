@@ -4,33 +4,29 @@ uniform vec3 relativeEyePosition;
 #include "/lib/lighting/handlight.glsl"
 #endif
 
-#ifdef GBUFFERS_TERRAIN
-void getDynamicWeather(inout float speed, inout float amount, inout float frequency, inout float thickness, inout float density, inout float detail, inout float height) {
+#ifdef VC_SHADOWS
+void getDynamicWeather(inout float speed, inout float amount, inout float frequency, inout float density, inout float height) {
 	float dayAmountFactor = abs(worldDay % 7 / 2 - 0.5) * 0.5;
 	float dayDensityFactor = abs(worldDay % 9 / 4 - worldDay % 2);
 	float dayFrequencyFactor = 1.0 + abs(worldDay % 6 / 4 - worldDay % 2) * 0.65;
 
 	speed += wetness;
 	amount = mix(amount, 11.5, wetness) - dayAmountFactor;
-	thickness += dayFrequencyFactor - 0.75;
 	density += dayDensityFactor;
 	frequency *= dayFrequencyFactor;
 }
 
-void getCloudSample(vec2 rayPos, vec2 wind, float amount, float frequency, float thickness, float density, float detail, inout float noise) {
+void getCloudShadow(vec2 rayPos, vec2 wind, float amount, float frequency, float density, inout float noise) {
 	rayPos *= 0.000125 * frequency;
 
 	float noiseBase = texture2D(noisetex, rayPos + 0.5 + wind * 0.5).g;
 		  noiseBase = pow2(1.0 - noiseBase) * 0.5 + 0.4 - wetness * 0.025;
-
-	float detailZ = floor(thickness) * 0.05;
-	float noiseDetailA = texture2D(noisetex, rayPos * 1.5 - wind + detailZ).b;
-	float noiseDetailB = texture2D(noisetex, rayPos * 1.5 - wind + detailZ + 0.05).b;
-	float noiseDetail = mix(noiseDetailA, noiseDetailB, fract(thickness));
 	
-	noise = mix(noiseBase, noiseDetail, detail * mix(0.05, 0.025, min(wetness + cameraPosition.y * 0.0025, 1.0)) * int(noiseBase > 0.0)) * 22.0;
+	noise = noiseBase * 22.0;
 	noise = max(noise - amount, 0.0) * (density * 0.25);
 	noise /= sqrt(noise * noise + 0.25);
+	noise = clamp(noise, 0.0, 1.0);
+	noise = exp(noise * -10.0);
 }
 #endif
 
@@ -151,6 +147,26 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
         shadow = computeShadow(shadowPos, offset, lightmap.y, subsurface, viewDistance, shadow0);
     }
 
+    #ifdef VC_SHADOWS
+    //Cloud parameters
+    float speed = VC_SPEED;
+    float amount = VC_AMOUNT;
+    float frequency = VC_FREQUENCY;
+    float density = VC_DENSITY;
+    float height = VC_HEIGHT;
+
+    getDynamicWeather(speed, amount, frequency, density, height);
+
+    vec2 wind = vec2(frameTimeCounter * speed * 0.005, sin(frameTimeCounter * speed * 0.1) * 0.01) * speed * 0.1;
+    vec3 worldSunVec = mat3(gbufferModelViewInverse) * lightVec;
+    vec3 cloudShadowPos = worldPos + cameraPosition + (worldSunVec / max(abs(worldSunVec.y), 0.0)) * max((VC_HEIGHT + VC_THICKNESS + 25.0) - worldPos.y - cameraPosition.y, 0.0);
+
+    float noise = 0.0;
+    getCloudShadow(cloudShadowPos.xz, wind, amount, frequency, density, noise);
+
+    shadow = mix(vec3(0.0), shadow, vec3(noise) * VC_OPACITY);
+    #endif
+
     vec3 fakeShadow = getFakeShadow(lightmap.y);
     if (subsurface > 0.0) fakeShadow *= originalNoL;
 
@@ -162,32 +178,10 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
 
     shadow *= clamp(NoL * 1.01 - 0.01, 0.0, 1.0);
 
-    #if defined VC_SHADOWS && defined GBUFFERS_TERRAIN
-    //Cloud parameters
-    float speed = VC_SPEED;
-    float amount = VC_AMOUNT;
-    float frequency = VC_FREQUENCY;
-    float thickness = VC_THICKNESS;
-    float density = VC_DENSITY;
-    float detail = VC_DETAIL;
-    float height = VC_HEIGHT;
-
-    getDynamicWeather(speed, amount, frequency, thickness, density, detail, height);
-
-    vec2 wind = vec2(frameTimeCounter * speed * 0.005, sin(frameTimeCounter * speed * 0.1) * 0.01) * speed * 0.1;
-    vec3 worldSunVec = mat3(gbufferModelViewInverse) * lightVec;
-    vec3 cloudShadowPos = worldPos + worldSunVec * 100.0 + cameraPosition;
-
-    float noise = 0.0;
-    getCloudSample(cloudShadowPos.xz, wind, amount, frequency, thickness, density, detail, noise);
-
-    shadow = mix(shadow, vec3(0.0), vec3(noise));
-    #endif
-
     //Scene Lighting
     #ifdef OVERWORLD
     float rainFactor = 1.0 - wetness * 0.75;
-    vec3 sceneLighting = mix(ambientCol * lightmap.y * lightmap.y, lightCol, shadow * rainFactor * shadowFade);
+    vec3 sceneLighting = mix(ambientCol * pow4(lightmap.y), lightCol, shadow * rainFactor * shadowFade);
          sceneLighting *= 1.0 + scattering * shadow;
 
     #elif defined END
@@ -203,7 +197,7 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
         #if (defined GBUFFERS_TERRAIN || defined GBUFFERS_ENTITIES || defined GBUFFERS_BLOCK) && !defined NETHER
         vec3 baseReflectance = vec3(0.1);
 
-        float smoothnessF = 0.1 + length(albedo.rgb) * 0.3 + originalNoL * 0.2;
+        float smoothnessF = 0.1 + length(albedo.rgb) * 0.2 + originalNoL * 0.1;
             smoothnessF = mix(smoothnessF, 0.95, smoothness);
 
         #ifdef OVERWORLD
