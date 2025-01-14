@@ -61,7 +61,7 @@ void computeLPVFog(inout vec3 fog, in vec3 translucent, in float dither) {
 			#ifdef NETHER
 			float currentDist = (i + dither) * minDist;
 			#else
-			float currentDist = exp2(i + dither) - 0.95;
+			float currentDist = mix(exp2(i + dither) - 0.95, (i + dither) * minDist, eBS * eBS);
 			#endif
 
 			if (currentDist > maxCurrentDist || linearDepth1 < currentDist || (linearDepth0 < currentDist && translucent.rgb == vec3(0.0))) {
