@@ -24,10 +24,16 @@ uniform int worldDay;
 #endif
 
 uniform float viewWidth, viewHeight;
+#ifndef DISTANT_HORIZONS
 uniform float far, near;
+#endif
 uniform float frameTimeCounter;
 uniform float timeBrightness, wetness;
 uniform float blindFactor;
+
+#ifdef DISTANT_HORIZONS
+uniform float dhNearPlane, dhFarPlane;
+#endif
 
 #ifdef VL
 uniform float timeAngle, shadowFade;
@@ -73,8 +79,16 @@ uniform sampler2D shadowtex0;
 uniform mat4 shadowModelView, shadowProjection;
 #endif
 
-uniform mat4 gbufferProjection, gbufferProjectionInverse;
+uniform mat4 gbufferProjection;
 uniform mat4 gbufferModelViewInverse;
+
+#ifndef DISTANT_HORIZONS
+uniform mat4 gbufferProjectionInverse;
+#endif
+#endif
+
+#ifdef DISTANT_HORIZONS
+uniform mat4 dhProjectionInverse;
 #endif
 
 //Common Variables//
@@ -85,6 +99,13 @@ float caveFactor = mix(clamp((cameraPosition.y - 56.0) / 16.0, float(sign(isEyeI
 #ifdef VL
 float sunVisibility = clamp(dot(sunVec, upVec) + 0.1, 0.0, 0.25) * 4.0;
 #endif
+#endif
+
+#ifdef DISTANT_HORIZONS
+mat4 gbufferProjectionInverse = dhProjectionInverse;
+
+float far = dhFarPlane;
+float near = dhNearPlane;
 #endif
 
 //Includes//
