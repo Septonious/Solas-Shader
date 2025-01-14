@@ -183,7 +183,7 @@ void drawAurora(inout vec3 color, in vec3 worldPos, in float VoU, in float caveF
         dither = fract(frameTimeCounter * 16.0 + dither);
         #endif
 
-		int samples = 16;
+		int samples = 8;
 		float sampleStep = 1.0 / samples;
 		float currentStep = dither * sampleStep;
 

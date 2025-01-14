@@ -38,7 +38,7 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 atmo
 	#ifdef OVERWORLD
 	float eBS01 = pow(eBS, 0.1);
 	float wetnessCave = wetness * caveFactor;
-	float distanceFactor = mix(65.0, FOG_DISTANCE * (0.6 + timeBrightness * 0.4), caveFactor);
+	float distanceFactor = mix(65.0, FOG_DISTANCE * (0.75 + timeBrightness * 0.25), caveFactor);
 	float cameraAltitude = clamp(exp2(-max(cameraPosition.y - FOG_HEIGHT, 0.0) / exp2(FOG_HEIGHT_FALLOFF)), 0.0, 1.0);
 	float fogAltitude = clamp(exp2(-max(worldPos.y + cameraPosition.y - FOG_HEIGHT, 0.0) / exp2(FOG_HEIGHT_FALLOFF)), 0.0, 1.0);
 	float fogDistance = min(192.0 / dhFarPlane, 1.0) * (100.0 / distanceFactor);
@@ -129,7 +129,7 @@ void getNormalFog(inout vec3 color, vec3 viewPos, in vec3 worldPos, in vec3 atmo
 	#ifdef OVERWORLD
 	float eBS01 = pow(eBS, 0.1);
 	float wetnessCave = wetness * caveFactor;
-	float distanceFactor = mix(65.0, FOG_DISTANCE * (0.6 + timeBrightness * 0.4), caveFactor);
+	float distanceFactor = mix(65.0, FOG_DISTANCE * (0.75 + timeBrightness * 0.25), caveFactor);
 	float cameraAltitude = clamp(exp2(-max(cameraPosition.y - FOG_HEIGHT, 0.0) / exp2(FOG_HEIGHT_FALLOFF)), 0.0, 1.0);
 	float fogAltitude = clamp(exp2(-max(worldPos.y + cameraPosition.y - FOG_HEIGHT, 0.0) / exp2(FOG_HEIGHT_FALLOFF)), 0.0, 1.0);
 	float fogDistance = min(192.0 / far, 1.0) * (100.0 / distanceFactor);

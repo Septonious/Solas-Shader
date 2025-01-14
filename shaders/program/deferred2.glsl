@@ -18,6 +18,7 @@ uniform int frameCounter;
 
 #ifdef VC
 uniform int worldDay;
+uniform int worldTime;
 #endif
 
 #ifdef OVERWORLD
@@ -258,10 +259,10 @@ void main() {
 	#endif
 
 	#ifdef DISTANT_HORIZONS
-	if (z1 < 1.0) {
+	if (z1 != 1.0) {
 		Fog(color, viewPos, worldPos, skyColorO);
 
-	} else if (dhZ < 1.0) {
+	} else if (dhZ != 1.0) {
 		vec4 dhScreenPos = vec4(texCoord, dhZ, 1.0);
 		vec4 dhViewPos = dhProjectionInverse * (dhScreenPos * 2.0 - 1.0);
 			 dhViewPos /= dhViewPos.w;

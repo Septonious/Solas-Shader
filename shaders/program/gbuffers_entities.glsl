@@ -20,6 +20,7 @@ uniform int currentRenderedItemId;
 
 #ifdef VC_SHADOWS
 uniform int worldDay;
+uniform int worldTime;
 uniform float frameTimeCounter;
 #endif
 

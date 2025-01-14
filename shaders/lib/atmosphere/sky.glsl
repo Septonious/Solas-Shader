@@ -29,11 +29,11 @@ vec3 getAtmosphericScattering(vec3 viewPos, vec3 lightPos) {
     float skyDensity = exp(-0.75 * pow(VoUClamped, 2.0 - timeBrightness));
     float scatteringWidth = pow(1.0 - VoUClamped, 2.0 - VoSClamped) * pow3(min(1.0 + VoURaw, 1.0));
 
-    float sunScatteringMixer = (1.0 - timeBrightness * 0.5) * (1.0 - wetness * 0.5) * VoSClamped;
+    float sunScatteringMixer = (1.0 - timeBrightness * 0.5) * (1.0 - wetness * 0.45) * VoSClamped;
           sunScatteringMixer = sunScatteringMixer * scatteringWidth * 0.25;
 
-    float rayleighScatteringMixer = 0.25 + sunVisibility * 0.25;
-          rayleighScatteringMixer *= (1.0 - wetness * 0.75) * (1.0 - timeBrightness * timeBrightness * 0.5);
+    float rayleighScatteringMixer = 0.3 + sunVisibility * 0.3;
+          rayleighScatteringMixer *= (1.0 - wetness * 0.45) * (1.0 - timeBrightness * timeBrightness * 0.5);
 
     //Realistic sky scattering
     vec3 worldPos = normalize(ToWorld(viewPos)) * PI;
@@ -52,7 +52,7 @@ vec3 getAtmosphericScattering(vec3 viewPos, vec3 lightPos) {
 
     //Final calculations
     vec3 daySky = mix(normalize(skyColor + 0.00001) * 1.5, vec3(0.62, 0.69, 1.00), 0.5 - timeBrightness * 0.25);
-         daySky = mix(daySky, lightColSqrt, pow2(1.0 - VoUClamped) * (1.0 - wetness) * (1.0 - timeBrightness) * 0.2);
+         daySky = mix(daySky, lightColSqrt, pow2(1.0 - VoUClamped) * (1.0 - wetness * 0.5) * (1.0 - timeBrightness) * 0.35);
          daySky = mix(daySky * skyDensity, totalSky, rayleighScatteringMixer);
          daySky = jodieReinhardTonemap(daySky * PI);
          daySky = pow(daySky, vec3(2.2));

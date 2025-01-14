@@ -39,7 +39,7 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 #define MILKY_WAY_BRIGHTNESS 2.00 //[0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00]
 
 #define RAINBOW
-#define RAINBOW_BRIGHTNESS 1.50 //[0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00]
+#define RAINBOW_BRIGHTNESS 1.00 //[0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00]
 
 //#define SKYBOX
 #define SKYBOX_MIX_FACTOR 0.5 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
@@ -53,7 +53,7 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 #define END_STARS
 
 //Planar Clouds
-#define PLANAR_CLOUDS
+//#define PLANAR_CLOUDS
 #define PLANAR_CLOUDS_BRIGHTNESS 1.1 //[0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5]
 #define PLANAR_CLOUDS_OPACITY 0.8 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
 
@@ -66,21 +66,21 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 #define VC_THICKNESS 18.0 //[8.0 10.0 12.0 14.0 16.0 18.0 20.0]
 #define VC_DETAIL 1.5 //[1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2.0]
 #define VC_SPEED 1.00 //[0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00 2.50 3.00 3.50 4.00]
-#define VC_OPACITY 0.8 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
+#define VC_OPACITY 0.7 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
 #define VC_DISTANCE 1000.0 //[500.0 600.0 700.0 800.0 900.0 1000.0 1100.0 1200.0 1300.0 1400.0 1500.0]
 #define VC_SHADOWS
 //#define BLOCKY_CLOUDS
 
 //VL//
 #define VL
-#define VL_STRENGTH 1.50 //[0.00 0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00]
-#define VL_SAMPLES 12 //[5 6 7 8 9 10 11 12 13 14 15 16]
+#define VL_STRENGTH 0.60 //[0.00 0.05 0.10 0.15 0.20 0.25 0.30 0.35 0.40 0.45 0.50 0.55 0.60 0.65 0.70 0.75 0.80 0.85 0.90 0.95 1.00]
+#define VL_SAMPLES 10 //[5 6 7 8 9 10 11 12 13 14 15 16]
 #define VL_STRENGTH_RATIO 0.40 //[0.05 0.10 0.15 0.20 0.25 0.30 0.35 0.40 0.45 0.50]
 
 //LPV Fog//
 #define LPV_FOG
 #define LPV_FOG_STRENGTH 0.7 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
-#define LPV_FOG_SAMPLES 6 //[4 5 6 7 8 9 10]
+#define LPV_FOG_SAMPLES 5 //[4 5 6 7 8 9 10]
 
 //Nether Cloudy Fog//
 #define NETHER_CLOUDY_FOG

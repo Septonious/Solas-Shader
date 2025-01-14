@@ -20,6 +20,7 @@ uniform int frameCounter;
 
 #ifdef VC_SHADOWS
 uniform int worldDay;
+uniform int worldTime;
 #endif
 
 #ifdef DYNAMIC_HANDLIGHT

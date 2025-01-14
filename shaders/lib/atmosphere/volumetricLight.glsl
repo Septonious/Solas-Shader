@@ -62,8 +62,9 @@ void computeVL(inout vec3 vl, in vec3 translucent, in float dither) {
 	vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.0);
 	vec3 worldSunVec = mat3(gbufferModelViewInverse) * lightVec;
 	vec3 viewPos = ToView(vec3(texCoord.xy, z0));
+	float lViewPos = length(viewPos);
 	vec3 nViewPos = normalize(viewPos);
-	vec3 worldPos = mat3(gbufferModelViewInverse) * viewPos;
+	vec3 worldPos = ToWorld(viewPos);
 	vec3 shadowPos = mat3(shadowModelView) * worldPos + shadowModelView[3].xyz;
 		 shadowPos = diagonal3(shadowProjection) * shadowPos + shadowProjection[3].xyz;
 	vec3 startPos = ToShadowProjected(vec3(0.0));
@@ -71,7 +72,7 @@ void computeVL(inout vec3 vl, in vec3 translucent, in float dither) {
 	vec3 sampleStepW = worldPos - gbufferModelViewInverse[3].xyz;
 
 	float minDistFactor = 2.0;
-	float maxDistFactor = 384.0 + far;
+	float maxDistFactor = 384.0;
 	#ifdef DISTANT_HORIZONS
 		  maxDistFactor += dhRenderDistance;
 	#endif
@@ -90,19 +91,21 @@ void computeVL(inout vec3 vl, in vec3 translucent, in float dither) {
 		  indoorFactor = mix(indoorFactor, 1.0, isPaleGarden * 0.5);
 	#endif
 
-	float VoL = clamp(dot(nViewPos, lightVec), 0.0, 1.0);
-		  VoL = mix(VoL, 0.5, 0.25 * float(isEyeInWater == 1));
+	float VoL = dot(nViewPos, lightVec);
+	float VoLC = clamp(VoL, 0.0, 1.0);
+		  VoLC = mix(VoLC, 0.5, 0.25 * float(isEyeInWater == 1));
+	float VoLP = 2.0 + VoL;
 
 	#ifdef OVERWORLD
 	float waterFactor = 1.0 - float(isEyeInWater == 1) * 0.5;
 	float denseForestFactor = min(isSwamp + isJungle, 1.0);
-	float meVisRatio = VL_STRENGTH_RATIO + pow(VoL, 1.5) * (1.0 - VL_STRENGTH_RATIO);
-	float visibility = shadowFade * VL_STRENGTH;
-		  visibility *= mix(meVisRatio, mix(0.0, 0.75, pow(VoL, 1.5)) * (2.0 - sunVisibility), clamp(timeBrightness + (1.0 - sunVisibility), 0.0, 1.0)) * 0.5;
+	float meVisRatio = (1.0 - VL_STRENGTH_RATIO) + clamp(exp(VoLC * VoLC * 0.25) * pow(VoLC, 1.3), 0.0, 1.0) * VL_STRENGTH_RATIO;
+	float visibility = float(z0 > 0.56) * shadowFade * VoLP * VL_STRENGTH;
+		  visibility *= mix(meVisRatio, 1.0, timeBrightness);
 		  visibility = mix(visibility, 0.5, indoorFactor) * waterFactor;
-		  visibility *= clamp(length(viewPos * 0.02), 0.0, 1.0);
+		  visibility *= clamp(lViewPos * 0.05 - 0.5, 0.0, 1.0);
 	#else
-	float visibility = exp(pow4(VoL)) * 0.075;
+	float visibility = exp(pow4(VoLC)) * 0.075;
 	#endif
 
 	#if MC_VERSION >= 11900
@@ -167,13 +170,13 @@ void computeVL(inout vec3 vl, in vec3 translucent, in float dither) {
 			getCloudShadow(cloudShadowPos.xz, wind, amount, frequency, density, noise);
 			shadow *= noise;
 		}
-		shadow *= sqrt(1.0 - min((rayWorldPos.y - VC_THICKNESS) * (1.0 / (VC_HEIGHT + VC_THICKNESS)), 1.0)) ;
+		shadow *= (1.0 - min((rayWorldPos.y - VC_THICKNESS) * (1.0 / (VC_HEIGHT + VC_THICKNESS + 25.0)), 1.0));
 		#endif
 
 		finalVL += shadow;
 	}
-	finalVL /= sampleCount;
     finalVL *= visibility;
+	finalVL /= sampleCount;
 
 	if (isEyeInWater == 1.0) finalVL *= mix(waterColorSqrt, waterColorSqrt * weatherCol, wetness) * (4.0 + sunVisibility * 8.0);
 

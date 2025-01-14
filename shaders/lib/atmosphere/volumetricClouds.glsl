@@ -17,11 +17,11 @@ float lightningFlashEffect(vec3 worldPos, vec3 lightningBoltPosition, float ligh
 }
 
 void getDynamicWeather(inout float speed, inout float amount, inout float frequency, inout float thickness, inout float density, inout float detail, inout float height) {
-	float dayAmountFactor = abs(worldDay % 7 / 2 - 0.5) * 0.5;
-	float dayDensityFactor = abs(worldDay % 9 / 4 - worldDay % 2);
-	float dayFrequencyFactor = 1.0 + abs(worldDay % 6 / 4 - worldDay % 2) * 0.65;
+	int worldDayInterpolated = int((worldDay * 24000 + worldTime) / 24000);
+	float dayAmountFactor = abs(worldDayInterpolated % 7 / 2 - 0.5) * 0.5;
+	float dayDensityFactor = abs(worldDayInterpolated % 9 / 4 - worldDayInterpolated % 2);
+	float dayFrequencyFactor = 1.0 + abs(worldDayInterpolated % 6 / 4 - worldDayInterpolated % 2) * 0.65;
 
-	speed += wetness;
 	amount = mix(amount, 11.5, wetness) - dayAmountFactor;
 	thickness += dayFrequencyFactor - 0.75;
 	density += dayDensityFactor;

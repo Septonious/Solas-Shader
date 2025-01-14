@@ -11,6 +11,10 @@ in vec2 texCoord, lmCoord;
 //Uniforms//
 uniform float rainStrength;
 
+#if defined OVERWORLD && defined VC
+uniform float eyeAltitude;
+#endif
+
 uniform sampler2D texture;
 
 //Program//
@@ -23,6 +27,10 @@ void main() {
 		albedo.a *= 0.25 * length(albedo.rgb * 0.25);
 		albedo.rgb = sqrt(albedo.rgb);
 		albedo.rgb *= vec3(1.0) + lmCoord.x * lmCoord.x * blockLightCol;
+
+		#if defined OVERWORLD && defined VC
+		albedo.a *= 1.0 - clamp(eyeAltitude * (1.0 / (VC_HEIGHT + VC_THICKNESS)), 0.0, 1.0);
+		#endif
 	}
 
 	/* DRAWBUFFERS:0 */

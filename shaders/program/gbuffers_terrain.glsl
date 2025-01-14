@@ -26,6 +26,7 @@ uniform int frameCounter;
 
 #ifdef VC
 uniform int worldDay;
+uniform int worldTime;
 #endif
 
 #ifdef DYNAMIC_HANDLIGHT
