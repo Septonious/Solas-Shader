@@ -70,7 +70,7 @@ void computeVL(inout vec3 vl, in vec3 translucent, in float dither) {
 	vec3 sampleStepS = shadowPos - startPos;
 	vec3 sampleStepW = worldPos - gbufferModelViewInverse[3].xyz;
 
-	float minDistFactor = 24.0;
+	float minDistFactor = 2.0;
 	float maxDistFactor = 384.0 + far;
 	#ifdef DISTANT_HORIZONS
 		  maxDistFactor += dhRenderDistance;
