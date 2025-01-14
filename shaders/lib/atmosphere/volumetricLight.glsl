@@ -63,7 +63,7 @@ void computeVL(inout vec3 vl, in vec3 translucent, in float dither) {
 	vec3 worldSunVec = mat3(gbufferModelViewInverse) * lightVec;
 	vec3 viewPos = ToView(vec3(texCoord.xy, z0));
 	vec3 nViewPos = normalize(viewPos);
-	vec3 worldPos = ToWorld(viewPos);
+	vec3 worldPos = mat3(gbufferModelViewInverse) * viewPos;
 	vec3 shadowPos = mat3(shadowModelView) * worldPos + shadowModelView[3].xyz;
 		 shadowPos = diagonal3(shadowProjection) * shadowPos + shadowProjection[3].xyz;
 	vec3 startPos = ToShadowProjected(vec3(0.0));
@@ -97,7 +97,7 @@ void computeVL(inout vec3 vl, in vec3 translucent, in float dither) {
 	float waterFactor = 1.0 - float(isEyeInWater == 1) * 0.5;
 	float denseForestFactor = min(isSwamp + isJungle, 1.0);
 	float meVisRatio = VL_STRENGTH_RATIO + pow(VoL, 1.5) * (1.0 - VL_STRENGTH_RATIO);
-	float visibility = int(z0 > 0.56) * shadowFade * VL_STRENGTH;
+	float visibility = shadowFade * VL_STRENGTH;
 		  visibility *= mix(meVisRatio, mix(0.0, 0.75, pow(VoL, 1.5)) * (2.0 - sunVisibility), clamp(timeBrightness + (1.0 - sunVisibility), 0.0, 1.0)) * 0.5;
 		  visibility = mix(visibility, 0.5, indoorFactor) * waterFactor;
 		  visibility *= clamp(length(viewPos * 0.02), 0.0, 1.0);
