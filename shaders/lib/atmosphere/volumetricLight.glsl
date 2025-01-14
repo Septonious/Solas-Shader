@@ -140,6 +140,11 @@ void computeVL(inout vec3 vl, in vec3 translucent, in float dither) {
 		float currentDist = (pow(minDistFactor, float(i + dither) / float(sampleCount)) / minDistFactor - 1.0 / minDistFactor) / (1.0 - 1.0 / minDistFactor);
 
 		rayWorldPos = gbufferModelViewInverse[3].xyz + cameraPosition + currentDist * sampleStepW;
+
+		float vcAltitudeFactor = 1.0 - min((rayWorldPos.y - VC_THICKNESS) * (1.0 / (VC_HEIGHT + VC_THICKNESS + 25.0)), 1.0);
+
+		if (vcAltitudeFactor < 0.001) break;
+
 		rayShadowPos = startPos.xyz + currentDist * sampleStepS;
 		rayShadowPos = distortShadow(rayShadowPos);
 
@@ -170,7 +175,7 @@ void computeVL(inout vec3 vl, in vec3 translucent, in float dither) {
 			getCloudShadow(cloudShadowPos.xz, wind, amount, frequency, density, noise);
 			shadow *= noise;
 		}
-		shadow *= (1.0 - min((rayWorldPos.y - VC_THICKNESS) * (1.0 / (VC_HEIGHT + VC_THICKNESS + 25.0)), 1.0));
+		shadow *= vcAltitudeFactor;
 		#endif
 
 		finalVL += shadow;
