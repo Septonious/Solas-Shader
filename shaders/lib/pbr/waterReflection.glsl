@@ -6,7 +6,7 @@ void getReflection(inout vec4 albedo, in vec3 viewPos, in vec3 nViewPos, in vec3
 	dither = fract(dither + frameTimeCounter * 16.0);
 	#endif
 
-	vec4 reflectPos = rayTrace(depthtex1, viewPos, normal, dither, fresnel, border, 6, 20, 0.1, 2.0);
+	vec4 reflectPos = rayTrace(depthtex1, viewPos, normal, dither, fresnel, border, 6, 10, 0.1, 2.0);
 
 	border = clamp(13.333 * (1.0 - border), 0.0, 1.0);
 

@@ -53,7 +53,7 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 #define END_STARS
 
 //Planar Clouds
-//#define PLANAR_CLOUDS
+#define PLANAR_CLOUDS
 #define PLANAR_CLOUDS_BRIGHTNESS 1.1 //[0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5]
 #define PLANAR_CLOUDS_OPACITY 0.8 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
 
