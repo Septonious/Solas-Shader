@@ -103,7 +103,7 @@ void computeVL(inout vec3 vl, in vec3 translucent, in float dither) {
 	float visibility = float(z0 > 0.56) * shadowFade * VoLP * VL_STRENGTH;
 		  visibility *= mix(meVisRatio, 1.0, timeBrightness);
 		  visibility = mix(visibility, 0.5, indoorFactor) * waterFactor;
-		  visibility *= clamp(lViewPos * 0.05 - 0.5, 0.0, 1.0);
+		  visibility *= clamp(1.0 - exp(-lViewPos * 0.0075), 0.0, 1.0);
 	#else
 	float visibility = exp(pow4(VoLC)) * 0.075;
 	#endif
