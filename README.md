@@ -1,9 +1,3 @@
-**Showcase**
-
-<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/eSJruy5FLFI" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-
-------------------------------------
-
 **About**
 
 + Solas is a modern fantasy stylized Minecraft: Java Edition shaderpack aiming to provide stunning visuals at a moderate performance cost.
