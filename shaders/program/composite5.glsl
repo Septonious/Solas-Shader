@@ -7,7 +7,7 @@
 in vec2 texCoord;
 
 //Uniforms//
-#if defined LPV_FOG || defined VL
+#if defined LPV_FOG || defined VL || defined FIREFLIES
 uniform float viewHeight, viewWidth;
 
 uniform sampler2D colortex1;
@@ -47,6 +47,7 @@ float getDiskBlur8(sampler2D colortex, vec2 coord, float strength) {
 }
 #endif
 
+//Program//
 void main() {
 	vec3 color = texture2D(colortex0, texCoord).rgb;
 
@@ -78,6 +79,7 @@ void main() {
 //Varyings//
 out vec2 texCoord;
 
+//Program//
 void main() {
 	//Coords
 	texCoord = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;

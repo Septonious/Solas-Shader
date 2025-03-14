@@ -80,7 +80,6 @@ screen.LPV_FOG_CONFIG=光雾配置
 option.LPV_FOG=光雾
 option.LPV_FOG.comment=允许光源影响雾气照明.
 option.LPV_FOG_STRENGTH=雾气强度
-option.LPV_FOG_SAMPLES=雾气采样值
 
 #----------------------------------------------------------------------------------#
 

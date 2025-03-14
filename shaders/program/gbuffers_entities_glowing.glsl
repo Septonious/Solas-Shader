@@ -6,8 +6,8 @@
 #ifdef FSH
 
 //Varyings//
-in vec2 texCoord;
 in vec4 color;
+in vec2 texCoord;
 
 //Uniforms//
 uniform sampler2D texture;
@@ -27,8 +27,8 @@ void main() {
 #ifdef VSH
 
 //Varyings//
-out vec2 texCoord;
 out vec4 color;
+out vec2 texCoord;
 
 void main() {
 	//Coords

@@ -11,8 +11,8 @@ vec4 getWaterFog(vec3 viewPos, float densityMultiplier) {
 
 		float VoL = dot(normalize(viewPos), lightVec) * shadowFade;
 		float glare = clamp(VoL * 0.5 + 0.5, 0.0, 1.0);
-				glare = 0.01 / (1.0 - 0.99 * glare) - 0.01;
-		waterFogColor *= (0.5 + 0.5 * eBS) + glare * 16.0 * timeBrightness * eBS;
+			  glare = 0.01 / (1.0 - 0.99 * glare) - 0.01;
+		waterFogColor *= (0.5 + 0.5 * eBS) + glare * 64.0 * timeBrightness * eBS;
 	}
 	#else
 	vec3 waterFogColor = mix(waterColor, normalize(fogColor + 0.00001) * 0.5, 0.25);

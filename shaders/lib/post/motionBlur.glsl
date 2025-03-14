@@ -31,8 +31,8 @@ vec3 getMotionBlur(vec3 color, float z) {
 
 		for(int i = 0; i < 5; i++, coord += velocity) {
 			vec2 sampleCoord = clamp(coord, doublePixel, 1.0 - doublePixel);
-			float mask = float(texture2D(depthtex1, sampleCoord).r > 0.56);
-			blur += texture2D(colortex1, sampleCoord).rgb * mask;
+			float mask = float(texture2D(depthtex0, sampleCoord).r > 0.56);
+			blur += texture2D(colortex0, sampleCoord).rgb * mask;
 			weight += mask;
 		}
 		blur /= max(weight, 1.0);

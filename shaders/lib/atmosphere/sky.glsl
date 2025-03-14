@@ -26,11 +26,11 @@ vec3 getAtmosphericScattering(vec3 viewPos, vec3 lightPos) {
           VoSClamped = pow(VoSClamped, 1.25);
 
     //Prepare scattering properties
-    float skyDensity = exp(-0.75 * pow(VoUClamped, 2.0 - timeBrightness));
+    float skyDensity = exp(-0.75 * pow(VoUClamped, 1.5 - timeBrightness * 0.75));
     float scatteringWidth = pow(1.0 - VoUClamped, 2.0 - VoSClamped) * pow3(min(1.0 + VoURaw, 1.0));
 
     float sunScatteringMixer = (1.0 - timeBrightness * 0.5) * (1.0 - wetness * 0.45) * VoSClamped;
-          sunScatteringMixer = sunScatteringMixer * scatteringWidth * 0.25;
+          sunScatteringMixer = sunScatteringMixer * scatteringWidth * 0.5;
 
     float rayleighScatteringMixer = 0.3 + sunVisibility * 0.2;
           rayleighScatteringMixer *= (1.0 - wetness * 0.45) * (1.0 - timeBrightness * timeBrightness * 0.5);
@@ -57,7 +57,7 @@ vec3 getAtmosphericScattering(vec3 viewPos, vec3 lightPos) {
          daySky = jodieReinhardTonemap(daySky * PI);
          daySky = pow(daySky, vec3(2.2));
          daySky = mix(daySky, lightColSqrt, sunScatteringMixer);
-    vec3 nightSky = lightNight * 0.65;
+    vec3 nightSky = lightNight * 0.6;
          //Tint the atmosphere with slight green when aurora is visible
          #ifdef AURORA
          float visibilityMultiplier = pow8(1.0 - sunVisibility) * (1.0 - wetness) * AURORA_BRIGHTNESS;

@@ -4,7 +4,7 @@ float getNoHSquared(float radiusTan, float NoL, float NoV, float VoL) {
     float radiusCos = 1.0 / sqrt(1.0 + radiusTan * radiusTan);
     
     float RoL = 2.0 * NoL * NoV - VoL;
-    if (RoL >= radiusCos) return 1.0;
+    if (radiusCos <= RoL) return 1.0;
 
     float rOverLengthT = radiusCos * radiusTan / sqrt(1.0 - RoL * RoL);
     float NoTr = rOverLengthT * (NoV - RoL * NoL);
@@ -91,11 +91,11 @@ vec3 getSpecularHighlight(vec3 normal, vec3 viewPos, float smoothness, vec3 base
     smoothLighting *= smoothLighting;
     
     #ifdef OVERWORLD
-    vec3 specular = GGX(normal, normalize(viewPos), smoothness, baseReflectance, 0.025 * sunVisibility + 0.05);
+    vec3 specular = GGX(normal, normalize(viewPos), smoothness, baseReflectance, 0.075);
          specular *= shadow * shadowFade * smoothLighting;
          specular *= pow2(1.0 - wetness);
     #else
-    vec3 specular = GGX(normal, normalize(viewPos), smoothness, baseReflectance, 0.05);
+    vec3 specular = GGX(normal, normalize(viewPos), smoothness, baseReflectance, 0.150);
          specular *= shadow * smoothLighting;
     #endif
     

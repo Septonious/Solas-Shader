@@ -25,6 +25,7 @@ const bool colortex0MipmapEnabled = true;
 #include "/lib/post/computeBloom.glsl"
 #endif
 
+//Program//
 void main() {
 	vec3 blur = vec3(0.0);
 
@@ -45,6 +46,7 @@ void main() {
 //Varyings//
 out vec2 texCoord;
 
+//Program//
 void main() {
 	//Coord
 	texCoord = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;

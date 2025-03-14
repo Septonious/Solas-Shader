@@ -52,19 +52,19 @@ const vec3[] blocklightColorArray = vec3[](
 	vec3(MB_R, MB_G, MB_B) * MB_I,
 	#ifdef EMISSIVE_ORES
     //Emerald Ore
-    normalize(vec3(0.05, 1.00, 0.15)) * 0.35,
+    normalize(vec3(0.05, 1.00, 0.15)) * 0.15,
     //Diamond Ore
-    normalize(vec3(0.10, 0.40, 1.00)) * 0.35,
+    normalize(vec3(0.10, 0.40, 1.00)) * 0.15,
     //Copper Ore
-    normalize(vec3(0.60, 0.70, 0.30)) * 0.35,
+    normalize(vec3(0.60, 0.70, 0.30)) * 0.15,
     //Lapis Ore
-    normalize(vec3(0.00, 0.10, 1.20)) * 0.35,
+    normalize(vec3(0.00, 0.10, 1.20)) * 0.15,
     //Gold Ore
-    normalize(vec3(1.00, 0.75, 0.10)) * 0.35,
+    normalize(vec3(1.00, 0.75, 0.10)) * 0.15,
     //Iron Ore
-    normalize(vec3(0.70, 0.40, 0.30)) * 0.35,
+    normalize(vec3(0.70, 0.40, 0.30)) * 0.15,
     //Redstone Ore
-    normalize(vec3(1.00, 0.05, 0.00)) * 0.35,
+    normalize(vec3(1.00, 0.05, 0.00)) * 0.15,
 	#else
 	vec3(0.0),
 	vec3(0.0),
@@ -81,11 +81,11 @@ const vec3[] blocklightColorArray = vec3[](
     //Nether Portal
     vec3(NP_R, NP_G, NP_B) * NP_I,
     //Orchre Froglight
-    normalize(vec3(1.00, 0.55, 0.25)) * 5.5,
+    normalize(vec3(1.00, 0.55, 0.25)) * 4.0,
     //Verdant Froglight
-    normalize(vec3(0.0, 1.00, 0.05)) * 5.5,
+    normalize(vec3(0.0, 1.00, 0.05)) * 4.0,
     //Pearlescent Froglight
-    normalize(vec3(1.00, 0.20, 0.90)) * 5.5,
+    normalize(vec3(1.00, 0.20, 0.90)) * 4.0,
 	#ifdef EMISSIVE_FLOWERS
     //Red flowers
     normalize(vec3(1.00, 0.05, 0.05)) * 0.20,

@@ -18,6 +18,12 @@ uniform sampler2D colortex0;
 uniform sampler2D colortex1, depthtex0;
 #endif
 
+#ifdef DISTANT_HORIZONS
+uniform sampler2D dhDepthTex0;
+
+uniform mat4 dhProjectionInverse;
+#endif
+
 //Optifine Constants//
 #ifdef AO
 const bool colortex1MipmapEnabled = true;
@@ -35,7 +41,27 @@ void main() {
 	#ifdef AO
 	float z0 = texture2D(depthtex0, texCoord).r;
 
-	if (z0 != 1.0) color *= getAmbientOcclusion(z0);
+	#ifndef DISTANT_HORIZONS
+	if (z0 < 1.0 && z0 > 0.56) {
+		color *= getAmbientOcclusion(z0);
+	}
+	#else
+	float dhZ = texture2D(dhDepthTex0, texCoord).r;
+
+	if (z0 < 1.0) {
+		color *= getAmbientOcclusion(z0);
+	} else if (dhZ < 1.0) {
+		z = 1.0 - 1e-5;
+		
+		vec4 dhScreenPos = vec4(texCoord, dhZ, 1.0);
+		viewPos = dhProjectionInverse * (dhScreenPos * 2.0 - 1.0);
+		viewPos /= viewPos.w;
+
+		#ifdef AO
+		color.rgb *= getAmbientOcclusionDH(dhZ);
+		#endif
+	}
+	#endif
 	#endif
 
 	/* DRAWBUFFERS:0 */
@@ -59,6 +85,5 @@ void main() {
 	//Position
 	gl_Position = ftransform();
 }
-
 
 #endif

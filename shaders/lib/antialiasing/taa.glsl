@@ -81,9 +81,9 @@ vec3 NeighbourhoodClipping(vec3 color, vec3 tempColor, vec2 view) {
 	return YCoCgToRGB(tempColor);
 }
 
-vec4 TemporalAA(inout vec3 color, float tempData, float z1) {
+vec4 TemporalAA(inout vec3 color, float tempData, float z0) {
 	vec2 view = vec2(viewWidth, viewHeight);
-	vec3 coord = vec3(texCoord, z1);
+	vec3 coord = vec3(texCoord, z0);
 	vec2 prvCoord = Reprojection(coord);
 	
 	vec3 tempColor = textureCatmullRom(colortex2, prvCoord, view);
@@ -100,7 +100,7 @@ vec4 TemporalAA(inout vec3 color, float tempData, float z1) {
 		prvCoord.x > 0.0 && prvCoord.x < 1.0 &&
 		prvCoord.y > 0.0 && prvCoord.y < 1.0
 	);
-	blendFactor *= exp(-length(velocity)) * 0.3 + 0.55;
+	blendFactor *= exp(-length(velocity)) * 0.3 + 0.6;
 	
 	color = mix(color, tempColor, blendFactor);
 

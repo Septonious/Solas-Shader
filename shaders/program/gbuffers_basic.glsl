@@ -6,32 +6,28 @@
 #ifdef FSH
 
 //Varyings//
-in vec2 lmCoord;
+in vec4 color;
 in vec3 normal;
 in vec3 eastVec, sunVec, upVec;
-in vec4 color;
+in vec2 lmCoord;
 
 //Uniforms//
 uniform int isEyeInWater;
 uniform int frameCounter;
 
-#ifdef VC_SHADOWS
-uniform int worldDay;
-uniform int worldTime;
-uniform float frameTimeCounter;
-#endif
-
 uniform float viewWidth, viewHeight;
 uniform float blindFactor;
 uniform float nightVision;
+uniform float frameTimeCounter;
 
 #ifdef OVERWORLD
 uniform float timeBrightness, timeAngle;
 uniform float shadowFade;
 uniform float wetness;
-#endif
 
 uniform ivec2 eyeBrightnessSmooth;
+#endif
+
 uniform vec3 cameraPosition;
 uniform vec3 skyColor;
 uniform vec3 fogColor;
@@ -66,10 +62,6 @@ void main() {
 	vec4 albedo = color;
 	vec3 newNormal = normal;
 
-	if (albedo.rgb == vec3(0.0)) {
-		albedo.a = 1.0;
-	}
-
 	vec3 screenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z);
 	vec3 viewPos = ToNDC(screenPos);
 	vec3 worldPos = ToWorld(viewPos);
@@ -83,7 +75,7 @@ void main() {
 	gbuffersLighting(albedo, screenPos, viewPos, worldPos, newNormal, shadow, lightmap, NoU, NoL, NoE, 0.0, 0.0, 0.0, 0.0);
 
 	/* DRAWBUFFERS:0 */
-	gl_FragData[0] = albedo;
+	gl_FragData[0] = vec4(albedo.rgb, 1.0);
 }
 
 #endif
@@ -93,16 +85,12 @@ void main() {
 #ifdef VSH
 
 //Varyings//
-out vec2 lmCoord;
+out vec4 color;
 out vec3 normal;
 out vec3 eastVec, sunVec, upVec;
-out vec4 color;
+out vec2 lmCoord;
 
 //Uniforms//
-#ifdef TAA
-uniform float viewWidth, viewHeight;
-#endif
-
 #if defined OVERWORLD || defined END
 uniform float timeAngle;
 #endif

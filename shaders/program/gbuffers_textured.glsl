@@ -6,26 +6,17 @@
 #ifdef FSH
 
 //Varyings//
-in vec2 texCoord;
-in vec2 lmCoord;
-in vec3 normal;
-in vec3 eastVec, northVec, sunVec, upVec;
 in vec4 color;
+in vec3 normal;
+in vec3 eastVec, sunVec, upVec;
+in vec2 texCoord, lmCoord;
 
 //Uniforms//
 uniform int isEyeInWater;
 uniform int frameCounter;
 
-#ifdef VC_SHADOWS
-uniform int worldDay;
-uniform int worldTime;
-uniform float frameTimeCounter;
-#endif
-
 #ifdef DYNAMIC_HANDLIGHT
 uniform int heldItemId, heldItemId2;
-uniform int heldBlockLightValue;
-uniform int heldBlockLightValue2;
 #endif
 
 uniform float far, near;
@@ -46,36 +37,31 @@ uniform float nightVision;
 uniform float timeBrightness, timeAngle;
 uniform float shadowFade;
 uniform float wetness;
+
+#ifdef AURORA
+uniform int moonPhase;
+uniform float isSnowy;
+#endif
+
+uniform ivec2 eyeBrightnessSmooth;
 #endif
 
 #ifdef GENERATED_EMISSION
 uniform ivec2 atlasSize;
 #endif
 
-uniform ivec2 eyeBrightnessSmooth;
-
-#ifdef OVERWORLD
 uniform vec3 skyColor;
-#endif
-
 uniform vec3 fogColor;
-
-#ifdef AURORA
-uniform float isSnowy;
-uniform int moonPhase;
-#endif
-
 uniform vec3 cameraPosition;
 
 uniform sampler2D texture;
 uniform sampler2D noisetex;
-uniform sampler2D gaux1;
 
-#ifdef SKYBOX
-uniform sampler2D gaux4;
+#ifdef VC
+uniform sampler2D gaux1;
 #endif
 
-uniform sampler3D floodfillSampler;
+uniform sampler3D floodfillSampler, floodfillSamplerCopy;
 uniform usampler3D voxelSampler;
 
 uniform mat4 gbufferProjectionInverse;
@@ -101,16 +87,19 @@ vec3 lightVec = sunVec;
 #include "/lib/color/netherColor.glsl"
 #include "/lib/vx/blocklightColor.glsl"
 #include "/lib/vx/voxelization.glsl"
+
+#ifdef DYNAMIC_HANDLIGHT
+#include "/lib/lighting/handlight.glsl"
+#endif
+
 #include "/lib/lighting/shadows.glsl"
 #include "/lib/lighting/gbuffersLighting.glsl"
 
-#ifndef END
 #ifdef OVERWORLD
 #include "/lib/atmosphere/sky.glsl"
 #endif
 
 #include "/lib/atmosphere/fog.glsl"
-#endif
 
 //Program//
 void main() {
@@ -129,11 +118,10 @@ void main() {
 	vec3 worldPos = ToWorld(viewPos);
 	vec2 lightmap = clamp(lmCoord, 0.0, 1.0);
 
+	//Volumetric Clouds Blending
 	#ifdef VC
 	float cloudDepth = texture2D(gaux1, screenPos.xy).g * (far * 2.0);
-
-	float viewLength = length(viewPos);
-	cloudBlendOpacity = step(viewLength, cloudDepth);
+	cloudBlendOpacity = step(length(viewPos), cloudDepth);
 
 	if (cloudBlendOpacity == 0) {
 		discard;
@@ -144,23 +132,7 @@ void main() {
 	float NoL = clamp(dot(newNormal, lightVec), 0.0, 1.0);
 	float NoE = clamp(dot(newNormal, eastVec), -1.0, 1.0);
 
-	#if defined OVERWORLD
-	vec3 sunPos = vec3(gbufferModelViewInverse * vec4(sunVec * 128.0, 1.0));
-	vec3 sunCoord = sunPos / (sunPos.y + length(sunPos.xz));
-	vec3 atmosphereColor = getAtmosphericScattering(viewPos, normalize(sunCoord));
-
-	#ifdef SKYBOX
-	vec3 skybox = texture2D(gaux4, texCoord.xy).rgb;
-	if (length(pow(skybox, vec3(0.1))) > 0.0) atmosphereColor = mix(atmosphereColor, skybox, SKYBOX_MIX_FACTOR);
-	#endif
-	#elif defined NETHER
-	vec3 atmosphereColor = netherColSqrt.rgb * 0.25;
-	#endif
-
-	#ifndef END
-	vec3 skyColor = atmosphereColor;
-	#endif
-
+	//iPBR Generated Emission
 	#ifdef GENERATED_EMISSION
 	if (atlasSize.x < 900.0) { // We don't want to detect particles from the block atlas
 		float lAlbedo = length(albedo.rgb);
@@ -184,10 +156,18 @@ void main() {
 	vec3 shadow = vec3(0.0);
 	gbuffersLighting(albedo, screenPos, viewPos, worldPos, newNormal, shadow, lightmap, NoU, NoL, NoE, 0.1, 0.0, emission, 0.0);
 
-	#ifndef END
-	Fog(albedo.rgb, viewPos, worldPos, skyColor);
+	//Fog & Atmosphere Calculations
+	#if defined OVERWORLD
+	vec3 sunPos = vec3(gbufferModelViewInverse * vec4(sunVec * 128.0, 1.0));
+	vec3 sunCoord = sunPos / (sunPos.y + length(sunPos.xz));
+    vec3 atmosphereColor = getAtmosphericScattering(viewPos, normalize(sunCoord));
+	#elif defined NETHER
+	vec3 atmosphereColor = netherColSqrt.rgb * 0.25;
+	#elif defined END
+	vec3 atmosphereColor = endLightCol * 0.1;
 	#endif
 
+	Fog(albedo.rgb, viewPos, worldPos, atmosphereColor);
 	albedo.a *= cloudBlendOpacity;
 
 	/* DRAWBUFFERS:0 */
@@ -201,11 +181,10 @@ void main() {
 #ifdef VSH
 
 //Varyings//
-out vec2 texCoord;
-out vec2 lmCoord;
-out vec3 normal;
-out vec3 eastVec, northVec, sunVec, upVec;
 out vec4 color;
+out vec3 normal;
+out vec3 eastVec, sunVec, upVec;
+out vec2 texCoord, lmCoord;
 
 //Uniforms//
 #ifdef TAA
@@ -220,7 +199,7 @@ uniform mat4 gbufferModelView, gbufferModelViewInverse;
 
 //Includes//
 #ifdef TAA
-#include "/lib/util/jitter.glsl"
+#include "/lib/antialiasing/jitter.glsl"
 #endif
 
 //Program//
@@ -241,7 +220,6 @@ void main() {
 	#endif
 	
 	upVec = normalize(gbufferModelView[1].xyz);
-	northVec = normalize(gbufferModelView[2].xyz);
 	eastVec = normalize(gbufferModelView[0].xyz);
 
 	//Color & Position

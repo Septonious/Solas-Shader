@@ -1,22 +1,21 @@
+#define SHADOW
+
 //Settings//
 #include "/lib/common.glsl"
-
-#define SHADOW
 
 #ifdef FSH
 
 //Varyings//
-flat in int mat;
-in vec2 texCoord, lmCoord;
-in vec3 worldPos, normal;
 in vec4 color;
+in vec3 worldPos, normal;
+in vec2 texCoord, lmCoord;
+flat in int mat;
 
 //Uniforms//
 #ifdef WATER_CAUSTICS
 uniform float frameTimeCounter;
 
 uniform ivec2 eyeBrightnessSmooth;
-
 uniform vec3 cameraPosition;
 
 uniform sampler2D noisetex;
@@ -55,8 +54,6 @@ void main() {
 	}
 	#endif
 
-    albedo.rgb *= 1.0 - pow32(albedo.a);
-
 	if (glass > 0.5 && albedo.a < 0.35) discard;
 	#endif
 	
@@ -77,20 +74,25 @@ out vec3 worldPos, normal;
 out vec4 color;
 
 //Uniforms//
+#ifdef VX_SUPPORT
 uniform int renderStage;
 
-uniform vec3 cameraPosition;
-
-#ifdef VX_SUPPORT
 #extension GL_ARB_shader_image_load_store : enable
 writeonly uniform uimage3D voxel_img;
 #endif
+
+#if defined WAVING_LEAVES || defined WAVING_PLANTS
+uniform float frameTimeCounter;
+#endif
+
+uniform vec3 cameraPosition;
 
 uniform mat4 shadowProjection, shadowProjectionInverse;
 uniform mat4 shadowModelView, shadowModelViewInverse;
 
 //Attributes//
 attribute vec3 at_midBlock;
+attribute vec4 mc_midTexCoord;
 attribute vec4 mc_Entity;
 
 //Includes//
@@ -98,20 +100,25 @@ attribute vec4 mc_Entity;
 #include "/lib/vx/voxelization.glsl"
 #endif
 
+#if defined WAVING_LEAVES || defined WAVING_PLANTS
+#include "/lib/util/waving.glsl"
+#endif
+
 //Program//
 void main() {
 	//Coord
-	texCoord = gl_MultiTexCoord0.xy;
+	texCoord = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;
 
+	//Lightmap Coord
 	lmCoord = (gl_TextureMatrix[1] * gl_MultiTexCoord1).xy;
-	lmCoord = clamp(lmCoord, vec2(0.0), vec2(0.9333, 1.0));
+	lmCoord = clamp((lmCoord - 0.03125) * 1.06667, vec2(0.0), vec2(0.9333, 1.0));
 
     //Normal
     normal = normalize(gl_NormalMatrix * gl_Normal);
 
 	//Materials
 	mat = int(mc_Entity.x);
-	
+
     //Voxel map
 	#ifdef VX_SUPPORT
     if (gl_VertexID % 4 == 0) updateVoxelMap(int(max(mc_Entity.x - 10000, 0)));
@@ -121,6 +128,12 @@ void main() {
 	color = gl_Color;
 
 	vec4 position = shadowModelViewInverse * shadowProjectionInverse * ftransform();
+
+	#if defined WAVING_PLANTS || defined WAVING_LEAVES
+	float istopv = gl_MultiTexCoord0.t < mc_midTexCoord.t ? 1.0 : 0.0;
+	position.xyz = getWavingBlocks(position.xyz, istopv, lmCoord.y);
+	#endif
+
 	worldPos = position.xyz;
 
 	gl_Position = shadowProjection * shadowModelView * position;

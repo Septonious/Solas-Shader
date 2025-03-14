@@ -33,8 +33,9 @@ option.VC_THICKNESS=Размер
 option.VC_SPEED=Скорость
 option.VC_DISTANCE=Дистанция Рендера
 option.VC_OPACITY=Непрозрачность
-option.VC_SHADOWS=Лучи Света в Облаках
-option.VC_SHADOWS.comment=Добавляет облакам объёмное освещение (солнечные лучи).
+option.VC_SHADOWS=Тени от Облаков
+option.VC_LIGHTRAYS=Лучи Света в Облаках
+option.VC_LIGHTRAYS.comment=Добавляет облакам объёмное освещение (солнечные лучи).
 
 #----------------------------------------------------------------------------------#
 
@@ -59,6 +60,7 @@ option.VL_STRENGTH_RATIO.comment=Определяет яркость лучей 
 screen.VF_NETHER_CONFIG=Настройки 3D Тумана в Аду
 
 option.NETHER_CLOUDY_FOG=3D Туман в Аду
+option.NETHER_CLOUDY_FOG.comment=Работает только при включённом световом тумане.
 option.VF_NETHER_STRENGTH=Сила
 option.VF_NETHER_SPEED=Скорость
 option.VF_NETHER_FREQUENCY=Частота
@@ -78,9 +80,8 @@ option.VF_END_THICKNESS=Размер
 screen.LPV_FOG_CONFIG=Настройки Светового Тумана
 
 option.LPV_FOG=Световой Туман
-option.LPV_FOG.comment=Позволяет источникам света подсвечивать туман вокруг.
+option.LPV_FOG.comment=Позволяет источникам света освещать туман вокруг.
 option.LPV_FOG_STRENGTH=Сила
-option.LPV_FOG_SAMPLES=Качество
 
 #----------------------------------------------------------------------------------#
 
@@ -132,6 +133,7 @@ option.END_VORTEX_ARMS=Количество Спиральных Ветвей
 
 screen.WATER=Вода
 
+option.VANILLA_WATER=Ванильная Текстура Воды
 option.WATER_FOG=Водный Туман
 option.WATER_FOG_EXPONENT=Плотность Водного Тумана
 option.WATER_CAUSTICS=Каустики
@@ -191,6 +193,7 @@ option.VPS_BLUR_STRENGTH=Сила Размытия РТ
 option.SHADOW_SAMPLE_COUNT=Качество Теней
 option.SHADOW_COLOR=Цветные Тени
 option.ENTITY_SHADOWS=Тени от Существ
+option.REALTIME_SHADOWS=Реалистичные Тени
 
 #----------------------------------------------------------------------------------#
 
@@ -246,7 +249,7 @@ option.NORMAL_THRESHOLD=Порог Генерации
 screen.PBR=Сторонний PBR
 
 option.PBR=Сторонний PBR
-option.PBR.comment=Enables the use of specular and normal mapping which allows for more detail on various things.  §e[*]§rThis option requires a resource pack which contains specular and/or normal maps, disable if none is currently used. §e[*]§rOptions which requires advanced materials are indicated by *, changing these options won't affect the visuals or performance while advanced materials is disabled.
+option.PBR.comment=Enables the use of specular and normal mapping which allows for more detail on various things. §e[*]§rThis option requires a resource pack which contains specular and/or normal maps, disable if none is currently used. §e[*]§rOptions which requires advanced materials are indicated by *, changing these options won't affect the visuals or performance while advanced materials is disabled.
 option.MATERIAL_FORMAT=Формат Ресурспака*
 option.MATERIAL_FORMAT.comment=Determines the specular and normal map format used by the resource pack. §e[*]§rTexture artists usually tell which format is used in their resource pack, using the wrong format may give weird results.
 value.MATERIAL_FORMAT.0=SEUS/Old PBR
@@ -455,6 +458,8 @@ option.CHROMATIC_ABERRATION.comment=Добавляет синие и красн�
 option.CHROMATIC_ABERRATION_STRENGTH=Сила ХА
 option.LENS_FLARE=Блики
 option.LENS_FLARE_STRENGTH=Яркость бликов
+option.MOTION_BLUR=Размытие в Движении
+option.MOTION_BLUR_STRENGTH=Сила Размытия в Движении
 
 #----------------------------------------------------------------------------------#
 

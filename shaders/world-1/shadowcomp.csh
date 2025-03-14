@@ -1,5 +1,5 @@
 #version 430 compatibility
 
-#define NETHER
+#define OVERWORLD
 
 #include "/program/shadowcomp.glsl"

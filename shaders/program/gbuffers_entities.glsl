@@ -6,12 +6,11 @@
 #ifdef FSH
 
 //Varyings//
-flat in int mat;
-in vec2 texCoord;
-in vec2 lmCoord;
-in vec3 normal;
-in vec3 eastVec, northVec, sunVec, upVec;
 in vec4 color;
+in vec3 normal;
+in vec3 eastVec, sunVec, upVec;
+in vec2 texCoord, lmCoord;
+flat in int mat;
 
 //Uniforms//
 uniform int isEyeInWater;
@@ -19,33 +18,31 @@ uniform int frameCounter;
 uniform int currentRenderedItemId;
 
 #ifdef VC_SHADOWS
-uniform int worldDay;
-uniform int worldTime;
-uniform float frameTimeCounter;
+uniform int worldDay, worldTime;
 #endif
 
 #ifdef DYNAMIC_HANDLIGHT
 uniform int heldItemId, heldItemId2;
-uniform int heldBlockLightValue;
-uniform int heldBlockLightValue2;
 #endif
+
+uniform float viewWidth, viewHeight;
+uniform float blindFactor;
+uniform float nightVision;
+uniform float frameTimeCounter;
+
+#ifdef OVERWORLD
+uniform float timeBrightness, timeAngle;
+uniform float shadowFade;
+uniform float wetness;
 
 #ifdef AURORA
 uniform int moonPhase;
 uniform float isSnowy;
 #endif
 
-uniform float viewWidth, viewHeight;
-uniform float blindFactor;
-uniform float nightVision;
-
-#ifdef OVERWORLD
-uniform float timeBrightness, timeAngle;
-uniform float shadowFade;
-uniform float wetness;
+uniform ivec2 eyeBrightnessSmooth;
 #endif
 
-uniform ivec2 eyeBrightnessSmooth;
 uniform vec3 cameraPosition;
 uniform vec3 skyColor;
 uniform vec3 fogColor;
@@ -53,14 +50,16 @@ uniform vec4 entityColor;
 
 #ifdef GI
 uniform vec3 previousCameraPosition;
-
-uniform sampler2D gaux1;
 #endif
 
 uniform sampler2D texture;
 uniform sampler2D noisetex;
 
-uniform sampler3D floodfillSampler;
+#ifdef GI
+uniform sampler2D gaux1;
+#endif
+
+uniform sampler3D floodfillSampler, floodfillSamplerCopy;
 uniform usampler3D voxelSampler;
 
 #ifdef GI
@@ -91,13 +90,20 @@ vec3 lightVec = sunVec;
 #include "/lib/color/netherColor.glsl"
 #include "/lib/vx/blocklightColor.glsl"
 #include "/lib/vx/voxelization.glsl"
+
+#ifndef NETHER
 #include "/lib/pbr/ggx.glsl"
-#include "/lib/lighting/shadows.glsl"
+#endif
+
+#ifdef DYNAMIC_HANDLIGHT
+#include "/lib/lighting/handlight.glsl"
+#endif
 
 #ifdef GI
 #include "/lib/util/reprojection.glsl"
 #endif
 
+#include "/lib/lighting/shadows.glsl"
 #include "/lib/lighting/gbuffersLighting.glsl"
 
 #if defined GENERATED_EMISSION || defined GENERATED_SPECULAR
@@ -154,12 +160,11 @@ void main() {
 #ifdef VSH
 
 //Varyings//
-flat out int mat;
-out vec2 texCoord;
-out vec2 lmCoord;
-out vec3 normal;
-out vec3 eastVec, northVec, sunVec, upVec;
 out vec4 color;
+out vec3 normal;
+out vec3 eastVec, sunVec, upVec;
+out vec2 texCoord, lmCoord;
+flat out int mat;
 
 //Uniforms//
 uniform int entityId;
@@ -188,7 +193,6 @@ void main() {
 	#endif
 	
 	upVec = normalize(gbufferModelView[1].xyz);
-	northVec = normalize(gbufferModelView[2].xyz);
 	eastVec = normalize(gbufferModelView[0].xyz);
 
 	//Materials

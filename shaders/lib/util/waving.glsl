@@ -31,7 +31,6 @@ vec3 getWavingBlocks(vec3 worldPos, float istopv, float skyLightMap) {
     vec3 wave = vec3(0.0);
 
     if (skyLightMap > 0.0) {
-        float viewLength = clamp(length(worldPos) * 0.5, 0.0, 1.0);
         vec3 pos = worldPos + cameraPosition;
 
         #ifdef WAVING_PLANTS

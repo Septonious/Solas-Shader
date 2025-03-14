@@ -11,27 +11,18 @@ in vec2 texCoord, lmCoord;
 //Uniforms//
 uniform float rainStrength;
 
-#if defined OVERWORLD && defined VC
-uniform float eyeAltitude;
-#endif
-
 uniform sampler2D texture;
 
 //Program//
 void main() {
 	vec4 albedo = texture2D(texture, texCoord) * rainStrength;
+	if (albedo.a < 0.01) discard;
 
-	if (albedo.a > 0.01) {
-		vec2 lightmap = clamp(lmCoord, vec2(0.0), vec2(1.0));
+	vec2 lightmap = clamp(lmCoord, 0.0, 1.0);
 
-		albedo.a *= 0.25 * length(albedo.rgb * 0.25);
-		albedo.rgb = sqrt(albedo.rgb);
-		albedo.rgb *= vec3(1.0) + lmCoord.x * lmCoord.x * blockLightCol;
-
-		#if defined OVERWORLD && defined VC
-		albedo.a *= 1.0 - clamp(eyeAltitude * (1.0 / (VC_HEIGHT + VC_THICKNESS)), 0.0, 1.0);
-		#endif
-	}
+	albedo.a *= 0.25 * length(albedo.rgb * 0.25);
+	albedo.rgb = sqrt(albedo.rgb);
+	albedo.rgb *= vec3(1.0) + lmCoord.x * lmCoord.x * blockLightCol;
 
 	/* DRAWBUFFERS:0 */
 	gl_FragData[0] = albedo;
@@ -48,9 +39,10 @@ out vec2 texCoord, lmCoord;
 
 //Program//
 void main() {
-	//Coords
+	//Coord
 	texCoord = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;
-	
+
+	//Lightmap Coord
 	lmCoord = (gl_TextureMatrix[1] * gl_MultiTexCoord1).xy;
 	lmCoord = clamp((lmCoord - 0.03125) * 1.06667, vec2(0.0), vec2(0.9333, 1.0));
 

@@ -56,8 +56,6 @@ uniform mat4 gbufferModelViewInverse;
 #if defined PBR || defined GENERATED_SPECULAR
 const bool colortex0MipmapEnabled = true;
 
-vec2 viewResolution = vec2(viewWidth, viewHeight);
-
 #ifdef OVERWORLD
 float eBS = eyeBrightnessSmooth.y / 240.0;
 float caveFactor = mix(clamp((cameraPosition.y - 56.0) / 16.0, float(sign(isEyeInWater)), 1.0), 1.0, eBS);
@@ -71,7 +69,6 @@ float sunVisibility = clamp(dot(sunVec, upVec) + 0.1, 0.0, 0.25) * 4.0;
 #include "/lib/util/ToView.glsl"
 #include "/lib/util/ToWorld.glsl"
 #include "/lib/util/encode.glsl"
-#include "/lib/util/bayerDithering.glsl"
 
 #ifdef OVERWORLD
 #include "/lib/color/lightColor.glsl"
@@ -97,7 +94,7 @@ void main() {
 
 		float fresnel = clamp(1.0 + dot(normal, normalize(viewPos)), 0.0, 1.0);
 
-		getReflection(color, viewPos, normal, pow(fresnel, 1.6) * pow4(gbuffersData.a), gbuffersData.a);
+		getReflection(color, viewPos, normal, fresnel * fresnel, gbuffersData.a);
 	}
 	#endif
 

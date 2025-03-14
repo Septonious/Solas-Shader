@@ -19,21 +19,15 @@ uniform int frameCounter;
 uniform int dhRenderDistance;
 #endif
 
-#ifdef VC
-uniform int worldDay;
+#ifdef VC_SHADOWS
+uniform int worldDay, worldTime;
 #endif
 
 uniform float viewWidth, viewHeight;
-#ifndef DISTANT_HORIZONS
 uniform float far, near;
-#endif
 uniform float frameTimeCounter;
 uniform float timeBrightness, wetness;
 uniform float blindFactor;
-
-#ifdef DISTANT_HORIZONS
-uniform float dhNearPlane, dhFarPlane;
-#endif
 
 #ifdef VL
 uniform float timeAngle, shadowFade;
@@ -64,8 +58,12 @@ uniform sampler2D noisetex;
 uniform sampler2D colortex1;
 uniform sampler2D depthtex0, depthtex1;
 
+#ifdef DISTANT_HORIZONS
+uniform sampler2D dhDepthTex;
+#endif
+
 #ifdef LPV_FOG
-uniform sampler3D floodfillSampler;
+uniform sampler3D floodfillSampler, floodfillSamplerCopy;
 #endif
 
 #ifdef VL
@@ -81,10 +79,7 @@ uniform mat4 shadowModelView, shadowProjection;
 
 uniform mat4 gbufferProjection;
 uniform mat4 gbufferModelViewInverse;
-
-#ifndef DISTANT_HORIZONS
 uniform mat4 gbufferProjectionInverse;
-#endif
 #endif
 
 #ifdef DISTANT_HORIZONS
@@ -101,17 +96,11 @@ float sunVisibility = clamp(dot(sunVec, upVec) + 0.1, 0.0, 0.25) * 4.0;
 #endif
 #endif
 
-#ifdef DISTANT_HORIZONS
-mat4 gbufferProjectionInverse = dhProjectionInverse;
-
-float far = dhFarPlane;
-float near = dhNearPlane;
-#endif
-
 //Includes//
 #if defined LPV_FOG || defined VL || defined FIREFLIES
 #include "/lib/atmosphere/spaceConversion.glsl"
 #include "/lib/util/ToView.glsl"
+#include "/lib/util/ToViewDH.glsl"
 #include "/lib/util/ToWorld.glsl"
 #include "/lib/util/bayerDithering.glsl"
 
@@ -120,7 +109,7 @@ float near = dhNearPlane;
 #include "/lib/color/netherColor.glsl"
 #endif
 
-#include "/lib/atmosphere/lpvFog.glsl"
+#include "/lib/atmosphere/volumetricEffects.glsl"
 #endif
 
 #ifdef VL

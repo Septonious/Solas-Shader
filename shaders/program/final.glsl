@@ -1,29 +1,27 @@
 //Settings//
 #include "/lib/common.glsl"
 
+#define FINAL
+
 #ifdef FSH
 
 const int noiseTextureResolution = 512;
 const float shadowDistanceRenderMul = 1.0;
+const float entityShadowDistanceMul = 0.05; //[0.05 0.10 0.15 0.20 0.25 0.30 0.35 0.40 0.45 0.50 0.55 0.60 0.65 0.70 0.75 0.80 0.85 0.90 0.95 1.0]
 const float wetnessHalflife = 128.0;
 
 //Buffer Options//
 /*
-const int colortex0Format = R11F_G11F_B10F; //Main Scene
-const int colortex1Format = RGBA16; //Main Scene, Translucent
-const int colortex2Format = RGBA16; //Temporal data
+const int colortex0Format = R11F_G11F_B10F; //Main scene
+const int colortex1Format = RGBA16; //raw translucent, vl, bloom, final scene
+const int colortex2Format = RGBA16; //temporal data
 const int colortex3Format = RGBA16; //gbuffers data
 const int colortex4Format = RGB8; //rsm gi
-const int colortex5Format = RGBA16; //accumulated rsm
-const int colortex6Format = RGBA16; //reflections
-const int colortex7Format = RGBA16; //skybox
+const int colortex6Format = RGB8; //reflections
 */
 
-const bool colortex0Clear = false;
-const bool colortex1Clear = false;
 const bool colortex3Clear = false;
 const bool colortex4Clear = false;
-const bool gaux1Clear = false;
 
 //Varyings//
 in vec2 texCoord;
@@ -89,6 +87,5 @@ void main() {
 	//Position
 	gl_Position = ftransform();
 }
-
 
 #endif

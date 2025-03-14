@@ -30,7 +30,7 @@ float texture2DShadow(sampler2D shadowtex, vec3 shadowPos) {
 
 #ifdef VPS
 //Variable Penumbra Shadows based on Tech's Lux Shader (https://github.com/TechDevOnGitHub)
-void findBlockerDistance(vec3 shadowPos, mat2 ditherMatrix, inout float offset, float skyLightMap, float viewLengthFactor) {
+void findBlockerDistance(vec3 shadowPos, mat2 ditherMatrix, inout float offset, float skyLightMap, float viewDistance) {
     float blockerDistance = 0.0;
         
     for (int i = 0; i < 4; i++){
@@ -39,12 +39,13 @@ void findBlockerDistance(vec3 shadowPos, mat2 ditherMatrix, inout float offset, 
     }
     blockerDistance *= 0.25;
     
-    offset = mix(offset, clamp(blockerDistance * VPS_BLUR_STRENGTH, offset, offset * 8.0), skyLightMap * viewLengthFactor);
+    offset = mix(offset, clamp(blockerDistance * VPS_BLUR_STRENGTH, offset, offset * 8.0), skyLightMap * viewDistance);
 }
 #endif
 
-vec3 computeShadow(vec3 shadowPos, float offset, float skyLightMap, float subsurface, float viewLengthFactor, inout float shadow0) {
+vec3 computeShadow(vec3 shadowPos, float offset, float skyLightMap, float subsurface, float viewDistance) {
     vec3 shadowCol = vec3(0.0);
+    float shadow0 = 0.0;
 
 	float blueNoiseDither = texture2D(noisetex, gl_FragCoord.xy / 512.0).b;
 
@@ -59,7 +60,7 @@ vec3 computeShadow(vec3 shadowPos, float offset, float skyLightMap, float subsur
 	mat2 ditherMatrix = mat2(cosTheta, -sinTheta, sinTheta, cosTheta);
 
     #ifdef VPS
-    if (subsurface < 0.1) findBlockerDistance(shadowPos, ditherMatrix, offset, skyLightMap, viewLengthFactor);
+    if (subsurface < 0.1) findBlockerDistance(shadowPos, ditherMatrix, offset, skyLightMap, viewDistance);
     #endif
 
     for (int i = 0; i < 8; i++) {

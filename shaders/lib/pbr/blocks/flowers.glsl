@@ -1,7 +1,7 @@
 else if (material >= 35 && material < 40) {
 	if (albedo.r + albedo.g + albedo.b < 2.9) {
 		if (albedo.b > albedo.g || albedo.r > albedo.g) {
-			emission = lAlbedo * 0.1;
+			emission = lAlbedo * 0.05;
 			#ifdef OVERWORLD
 			emission *= mix(1.0, 0.0, wetness);
 			#endif

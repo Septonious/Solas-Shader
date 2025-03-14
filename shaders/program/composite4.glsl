@@ -77,6 +77,7 @@ float sunVisibility = clamp(dot(sunVec, upVec) + 0.1, 0.0, 0.25) * 4.0;
 #endif
 #endif
 
+//Program//
 void main() {
 	vec2 newTexCoord = texCoord;
 	vec3 color = texture2D(colortex0, newTexCoord).rgb;
@@ -145,6 +146,7 @@ uniform float timeAngle;
 uniform mat4 gbufferModelView;
 #endif
 
+//Program//
 void main() {
 	//Coords
 	texCoord = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;

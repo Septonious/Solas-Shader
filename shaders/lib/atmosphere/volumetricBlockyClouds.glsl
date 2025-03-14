@@ -1,11 +1,11 @@
-float getCloudNoise(vec2 pos) {
+float getCloudNoise(vec2 rayPos) {
 	const float roundness = 0.2;
-	pos = pos * 0.05 + 0.5;
-	vec2 a, b = modf(1.0 + abs(pos), a);
+	rayPos = rayPos * 0.05 + 0.5;
+	vec2 a, b = modf(1.0 + abs(rayPos), a);
 	b = smoothstep(0.5 - roundness, roundness + 0.5, b);
-	vec2 noiseCoord = sign(pos) * (a + b - 0.5) / 256.0;
+	vec2 noiseCoord = sign(rayPos) * (a + b - 0.5) / 256.0;
 	
-	return float(texture2D(shadowcolor1, noiseCoord).r > 0.0);
+	return float(0 < texture2D(shadowcolor1, noiseCoord).r);
 }
 
 float texture2DShadow(sampler2D shadowtex, vec3 shadowPos) {
@@ -16,7 +16,7 @@ float texture2DShadow(sampler2D shadowtex, vec3 shadowPos) {
 
 void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, in float z1, in float dither, inout float cloudDepth) {
 	//Total visibility of clouds
-	float visibility = caveFactor * int(z1 > 0.56);
+	float visibility = caveFactor * int(0.56 < z1);
 
 	#if MC_VERSION >= 11900
 	visibility *= 1.0 - darknessFactor;
@@ -24,7 +24,7 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, in float z1
 
 	visibility *= 1.0 - blindFactor;
 
-	if (visibility > 0.0) {
+	if (0 < visibility) {
 		//Positions & Variables
 		vec3 viewPos = ToView(vec3(texCoord, z1));
 		vec3 nWorldPos = normalize(ToWorld(viewPos));
@@ -42,7 +42,7 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, in float z1
 
 		int sampleCount = clamp(int(rayLength), 0, 16);
 
-		if (sampleCount > 0) {
+		if (0 < sampleCount) {
 			//Other variables
 			vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.0);
 			float VoL = clamp(dot(normalize(viewPos), lightVec), 0.0, 1.0) * shadowFade;
@@ -82,6 +82,7 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, in float z1
 			float cloudAlpha = 0.0;
 			float maxDepth = cloudDepth;
 			float minimalNoise = 0.25 + dither * 0.25;
+			float cloudLighting = 0.0;
 
 			//Ray marching
 			for (int i = 0; i < sampleCount; i++, sampleTotalLength += rayLength) {
@@ -91,44 +92,44 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, in float z1
 				float lWorldPos = length(worldPos);
 				float lWorldPosXZ = length(worldPos.xz);
 
-				if (cloudAlpha > 0.99 || lWorldPos > lViewPosFar || lWorldPosXZ > distanceFactor) break;
+				if (0.99 < cloudAlpha || lViewPosFar < lWorldPos || distanceFactor < lWorldPosXZ) break;
 
 				float shadowSample = 1.0;
 				float shadowLength = clamp(shadowDistance * 0.9166667 - length(worldPos.xz), 0.0, 1.0);
 
-				#ifdef VC_SHADOWS
+				#ifdef VC_LIGHTRAYS
 				shadowSample = texture2DShadow(shadowtex1, ToShadow(worldPos));
 				#endif
 
 				//Indoor leak prevention
-				if (eyeBrightnessSmooth.y < 200.0 && shadowLength > 0.0) {
-					#ifndef VC_SHADOWS
+				if (eyeBrightnessSmooth.y < 220.0 && 0 < shadowLength) {
+					#ifndef VC_LIGHTRAYS
 					shadowSample = texture2DShadow(shadowtex1, ToShadow(worldPos));
 					#endif
 					if (shadowSample == 0.0) break;
 				}
 
 				//Shaping
-				float cloudFog = 1.0 - clamp(lWorldPos * 0.00075, 0.0, 1.0);
 				float noise = getCloudNoise(rayPos.xz);
-				cloudAlpha = noise;
+				float noiseL = getCloudNoise(rayPos.xz + normalize(ToWorld(lightVec * 1000000.0)).xz * 2.0);
+
+				cloudAlpha = mix(cloudAlpha, 1.0, noise);
 
 				//gbuffers_water cloud discard check
-				if (noise > minimalNoise && cloudDepth == maxDepth) {
+				if (minimalNoise < noise && cloudDepth == maxDepth) {
 					cloudDepth = pow(sampleTotalLength, 0.5);
 				}
 
-				//Color calculations
-				float cloudLighting = clamp(smoothstep(VC_HEIGHT + stretching * noise, VC_HEIGHT - stretching * noise, rayPos.y), 0.0, 1.0);
-
-				vec4 cloudColor = vec4(mix(mix(cloudAmbientCol, cloudLightCol, shadowSample), cloudAmbientCol, cloudLighting), noise);
-					 #ifdef AURORA
-					 cloudColor.rgb = mix(cloudColor.rgb, vec3(0.4, 2.5, 0.9) * auroraVisibility, 0.02 - cloudLighting * auroraVisibility * 0.02);
-					 #endif
-					 cloudColor.rgb *= cloudColor.a;
-
-				vc += cloudColor * (1.0 - vc.a) * cloudFog;
+				//Lighting calculations
+				cloudLighting = clamp(smoothstep(VC_HEIGHT + stretching * noise, VC_HEIGHT - stretching * noise, rayPos.y), 0.0, 1.0);
+				cloudLighting = mix(cloudLighting, 1.0, (noiseL - noise * 0.5) * shadowFade);
 			}
+			vec3 cloudColor = mix(cloudLightCol, cloudAmbientCol, cloudLighting);
+				 #ifdef AURORA
+				 cloudColor = mix(cloudColor.rgb, vec3(0.4, 2.5, 0.9) * auroraVisibility, 0.02 - cloudLighting * auroraVisibility * 0.02);
+				 #endif
+
+			vc = vec4(cloudColor, cloudAlpha * VC_OPACITY) * visibility;
 		}
 	}
 	vc *= visibility;

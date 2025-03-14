@@ -33,8 +33,9 @@ option.VC_THICKNESS=Thickness
 option.VC_SPEED=Speed
 option.VC_DISTANCE=Render Distance
 option.VC_OPACITY=Opacity
-option.VC_SHADOWS=Cloud light rays
-option.VC_SHADOWS.comment=Allows clouds to behave like VL when sunlight is obstructed by blocks.
+option.VC_SHADOWS=Cloud Shadows
+option.VC_LIGHTRAYS=Cloud Light Rays
+option.VC_LIGHTRAYS.comment=Allows clouds to behave like VL when sunlight is obstructed by blocks.
 
 #----------------------------------------------------------------------------------#
 
@@ -80,7 +81,6 @@ screen.LPV_FOG_CONFIG=Light Fog Config
 option.LPV_FOG=Light Fog
 option.LPV_FOG.comment=Allows light sources to contribute to fog illumination
 option.LPV_FOG_STRENGTH=Strength
-option.LPV_FOG_SAMPLES=Samples
 
 #----------------------------------------------------------------------------------#
 
@@ -133,6 +133,7 @@ option.END_VORTEX_ARMS=Vortex Arms Count
 
 screen.WATER=Water
 
+option.VANILLA_WATER=Vanilla Water Texture
 option.WATER_FOG=Water Fog
 option.WATER_FOG_EXPONENT=Water Fog Exponent
 option.WATER_CAUSTICS=Water Caustics
@@ -192,12 +193,14 @@ option.VPS_BLUR_STRENGTH=VPS Strength
 option.SHADOW_SAMPLE_COUNT=Shadow Samples
 option.SHADOW_COLOR=Colored Shadows
 option.ENTITY_SHADOWS=Entity Shadows
+option.REALTIME_SHADOWS=Realtime Shadows
 
 #----------------------------------------------------------------------------------#
 
 screen.GI=Global Illumination Config
 
 option.GI=Global Illumination
+option.GI.comment=§e[*]§r Requires realtime shadows to be enabled. §c[-]§r Incompatible with cloud shadows.
 option.GI_RADIUS=GI Radius
 option.GI_SAMPLES=GI Quality
 option.GI_BRIGHTNESS=GI Brightness
@@ -248,7 +251,7 @@ option.NORMAL_THRESHOLD=Generation Threshold
 screen.PBR=Resourcepack PBR
 
 option.PBR=Resourcepack PBR
-option.PBR.comment=Enables the use of specular and normal mapping which allows for more detail on various things.  §e[*]§rThis option requires a resource pack which contains specular and/or normal maps, disable if none is currently used. §e[*]§rOptions which requires advanced materials are indicated by *, changing these options won't affect the visuals or performance while advanced materials is disabled.
+option.PBR.comment=Enables the use of specular and normal mapping which allows for more detail on various things. §e[*]§rThis option requires a resource pack which contains specular and/or normal maps, disable if none is currently used. §e[*]§rOptions which requires advanced materials are indicated by *, changing these options won't affect the visuals or performance while advanced materials is disabled.
 option.MATERIAL_FORMAT=Material Format*
 option.MATERIAL_FORMAT.comment=Determines the specular and normal map format used by the resource pack. §e[*]§rTexture artists usually tell which format is used in their resource pack, using the wrong format may give weird results.
 value.MATERIAL_FORMAT.0=SEUS/Old PBR
@@ -448,13 +451,15 @@ option.ET_I=Intensity
 
 #=======================================================# POST #=======================================================#
 
-screen.POST=Post Effects
+screen.POST=Cinematic Effects & Post Processing
 
 option.SHARPENING=Image Sharpening
 option.CHROMATIC_ABERRATION=Chromatic Aberration (CA)
 option.CHROMATIC_ABERRATION_STRENGTH=CA Strength
 option.LENS_FLARE=Lens Flare
 option.LENS_FLARE_STRENGTH=Lens Flare Strength
+option.MOTION_BLUR=Motion Blur
+option.MOTION_BLUR_STRENGTH=Motion Blur Strength
 
 #----------------------------------------------------------------------------------#
 

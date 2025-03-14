@@ -23,10 +23,9 @@ uniform int worldTime;
 
 #ifdef OVERWORLD
 uniform int moonPhase;
-
-uniform float timeBrightness, timeAngle, rainStrength, wetness;
-uniform float isSnowy;
 #endif
+
+uniform float viewWidth, viewHeight;
 
 #if MC_VERSION >= 11900
 uniform float darknessFactor;
@@ -38,36 +37,33 @@ uniform float isPaleGarden;
 
 uniform float far, near;
 uniform float blindFactor;
+uniform float nightVision;
 uniform float frameTimeCounter;
-uniform float viewWidth, viewHeight;
-uniform float shadowFade;
 
 #ifdef OVERWORLD
-uniform ivec2 eyeBrightnessSmooth;
+uniform float timeBrightness, timeAngle, rainStrength;
+uniform float shadowFade;
+uniform float wetness;
+uniform float isSnowy;
 
-uniform vec3 skyColor;
+uniform ivec2 eyeBrightnessSmooth;
 #endif
 
+uniform vec3 skyColor;
 uniform vec3 fogColor;
 uniform vec3 cameraPosition;
 
+#ifdef VC
+uniform vec4 lightningBoltPosition;
+#endif
+
 #ifdef MILKY_WAY
-uniform sampler2D depthtex2;
+uniform sampler2D gaux4;
 #endif
 
-#ifdef SKYBOX
-uniform sampler2D colortex7;
-#endif
-
-uniform sampler2D noisetex;
 uniform sampler2D colortex0;
+uniform sampler2D noisetex;
 uniform sampler2D depthtex1;
-
-#ifdef DISTANT_HORIZONS
-uniform float dhFarPlane, dhNearPlane;
-
-uniform sampler2D dhDepthTex0;
-#endif
 
 #if defined VC || defined END_CLOUDY_FOG
 uniform sampler2D shadowtex1;
@@ -79,15 +75,16 @@ uniform sampler2D shadowcolor1;
 uniform mat4 shadowModelView, shadowProjection;
 #endif
 
-uniform mat4 gbufferProjectionInverse, gbufferModelViewInverse;
-
 #ifdef DISTANT_HORIZONS
+uniform float dhFarPlane, dhNearPlane;
+
+uniform sampler2D dhDepthTex0;
 uniform mat4 dhProjectionInverse;
 #endif
 
-#ifdef OVERWORLD
+uniform mat4 gbufferProjectionInverse;
 uniform mat4 gbufferModelView;
-#endif
+uniform mat4 gbufferModelViewInverse;
 
 //Common Variables//
 #ifdef OVERWORLD
@@ -102,11 +99,6 @@ float sunVisibility = clamp(dot(sunVec, upVec) + 0.1, 0.0, 0.25) * 4.0;
 #include "/lib/util/ToWorld.glsl"
 #include "/lib/color/lightColor.glsl"
 #include "/lib/color/netherColor.glsl"
-
-#ifdef OVERWORLD
-#include "/lib/atmosphere/sky.glsl"
-#include "/lib/atmosphere/sunMoon.glsl"
-#endif
 
 #if defined VC || defined END_CLOUDY_FOG
 #include "/lib/atmosphere/spaceConversion.glsl"
@@ -126,8 +118,15 @@ float sunVisibility = clamp(dot(sunVec, upVec) + 0.1, 0.0, 0.25) * 4.0;
 #endif
 
 #include "/lib/atmosphere/skyEffects.glsl"
+
+#ifdef OVERWORLD
+#include "/lib/atmosphere/sky.glsl"
+#include "/lib/atmosphere/sunMoon.glsl"
+#endif
+
 #include "/lib/atmosphere/fog.glsl"
 
+//Program//
 void main() {
 	vec3 color = texture2D(colortex0, texCoord).rgb;
 
@@ -140,16 +139,11 @@ void main() {
 	vec3 viewPos = ToView(vec3(texCoord, z1));
 	vec3 worldPos = ToWorld(viewPos);
 
-    //Atmosphere
+    //Atmosphere Variables
 	#if defined OVERWORLD
 	vec3 sunPos = vec3(gbufferModelViewInverse * vec4(sunVec * 128.0, 1.0));
 	vec3 sunCoord = sunPos / (sunPos.y + length(sunPos.xz));
     vec3 atmosphereColor = getAtmosphericScattering(viewPos, normalize(sunCoord));
-
-	#ifdef SKYBOX
-	vec3 skybox = texture2D(colortex7, texCoord).rgb;
-	if (length(pow(skybox, vec3(0.1))) > 0.0) atmosphereColor = mix(atmosphereColor, skybox, SKYBOX_MIX_FACTOR);
-	#endif
 	#elif defined NETHER
 	vec3 atmosphereColor = netherColSqrt.rgb * 0.25;
 	#elif defined END
@@ -157,7 +151,6 @@ void main() {
 	#endif
 
     vec3 skyColor = atmosphereColor;
-	vec3 skyColorO = atmosphereColor;
 
 	#if defined OVERWORLD || defined END
 	vec3 nViewPos = normalize(viewPos);
@@ -167,7 +160,7 @@ void main() {
 	float VoM = clamp(dot(nViewPos, -sunVec), 0.0, 1.0);
 	#endif
 
-    //Volumetric clouds
+    //Volumetric Clouds
 	vec4 vc = vec4(0.0);
 
 	#ifdef DISTANT_HORIZONS
@@ -175,34 +168,28 @@ void main() {
 	#else
 	float cloudDepth = 2.0 * far;
 	#endif
-	
-	#ifdef VC
+
+	#if defined VC || defined END_CLOUDY_FOG
 	float blueNoiseDither = texture2D(noisetex, gl_FragCoord.xy / 512.0).b;
 
 	#ifdef TAA
 	blueNoiseDither = fract(blueNoiseDither + 1.61803398875 * mod(float(frameCounter), 3600.0));
 	#endif
-
-	computeVolumetricClouds(vc, atmosphereColor, z1, blueNoiseDither, cloudDepth);
-	vc.rgb = pow(vc.rgb, vec3(1.0 / 2.2));
+	#endif
+	
+	#ifdef VC
+	computeVolumetricClouds(vc, skyColor, z1, blueNoiseDither, cloudDepth);
 	#endif
 
 	#ifdef END_CLOUDY_FOG
-	float blueNoiseDither = texture2D(noisetex, gl_FragCoord.xy / 512.0).b;
-
-	#ifdef TAA
-	blueNoiseDither = fract(blueNoiseDither + 1.61803398875 * mod(float(frameCounter), 3600.0));
+	computeEndVolumetricClouds(vc, skyColor, z1, blueNoiseDither, cloudDepth);
 	#endif
 
-	computeEndVolumetricClouds(vc, atmosphereColor, z1, blueNoiseDither, cloudDepth);
-	vc.rgb = pow(vc.rgb, vec3(1.0 / 2.2));
-	#endif
-
-	//Atmosphere & Fog
+	//Atmosphere Calculations
 	float nebulaFactor = 0.0;
 
 	#ifdef END_NEBULA
-	getEndNebula(skyColor, skyColorO, worldPos, VoU, nebulaFactor, 1.0);
+	getEndNebula(skyColor, atmosphereColor, worldPos, VoU, nebulaFactor, 1.0);
 	#endif
 
 	vec3 stars = vec3(0.0);
@@ -210,20 +197,22 @@ void main() {
 
 	#ifdef OVERWORLD
 	if (VoU > 0.0) {
-		#ifdef MILKY_WAY
-		drawMilkyWay(skyColor, worldPos, VoU, caveFactor, nebulaFactor, vc.a * 2.0);
-		#endif
-
-		#ifdef AURORA
-		drawAurora(skyColor, worldPos, VoU, caveFactor, vc.a);
-		#endif
-
 		#ifdef PLANAR_CLOUDS
 		drawPlanarClouds(skyColor, atmosphereColor, worldPos, viewPos, VoU, caveFactor, vc.a, pc);
 		#endif
 
+		float cloudBlockFactor = min(vc.a + pow(pc, 0.33), 1.0);
+
+		#ifdef MILKY_WAY
+		drawMilkyWay(skyColor, worldPos, VoU, caveFactor, nebulaFactor, cloudBlockFactor);
+		#endif
+
+		#ifdef AURORA
+		drawAurora(skyColor, worldPos, VoU, caveFactor, cloudBlockFactor);
+		#endif
+
 		#ifdef STARS
-		drawStars(skyColor, worldPos, sunVec, stars, VoU, caveFactor, nebulaFactor, min(vc.a * 2.0 + pow(pc, 0.25), 1.0), 0.4);
+		drawStars(skyColor, worldPos, sunVec, stars, VoU, VoS, caveFactor, nebulaFactor, cloudBlockFactor, 0.5);
 		#endif
 
 		#ifdef RAINBOW
@@ -231,12 +220,12 @@ void main() {
 		#endif
 	}
 
-	getSunMoon(skyColor, nViewPos, worldPos, lightSun, lightNight, VoS, VoM, VoU, caveFactor * (1.0 - pow(vc.a, 0.25)) * (1.0 - pc));
+	getSunMoon(skyColor, nViewPos, worldPos, lightSun, lightNight, VoS, VoM, VoU, caveFactor, (1.0 - pow(vc.a, 0.25)) * (1.0 - pow(pc, 0.125)));
 	#endif
 
 	#ifdef END
 	#ifdef END_STARS
-	drawStars(skyColor, worldPos, sunVec, stars, VoU, 1.0, nebulaFactor, vc.a, 0.3);
+	drawStars(skyColor, worldPos, sunVec, stars, VoU, VoS, 1.0, nebulaFactor, vc.a, 0.6);
 	#endif
 
 	#ifdef END_VORTEX
@@ -258,22 +247,25 @@ void main() {
 	if (dhZ == 1.0 && z1 == 1.0) color = skyColor;
 	#endif
 
+	//Fog Calculations
 	#ifdef DISTANT_HORIZONS
 	if (z1 != 1.0) {
-		Fog(color, viewPos, worldPos, skyColorO);
-
+		Fog(color, viewPos, worldPos, atmosphereColor);
 	} else if (dhZ != 1.0) {
 		vec4 dhScreenPos = vec4(texCoord, dhZ, 1.0);
 		vec4 dhViewPos = dhProjectionInverse * (dhScreenPos * 2.0 - 1.0);
 			 dhViewPos /= dhViewPos.w;
 		
-		Fog(color, dhViewPos.xyz, ToWorld(dhViewPos.xyz), skyColorO);
+		Fog(color, dhViewPos.xyz, ToWorld(dhViewPos.xyz), atmosphereColor);
 	}
 	#else
-	Fog(color, viewPos, worldPos, skyColorO);
+	Fog(color, viewPos, worldPos, atmosphereColor);
 	#endif
 
+	//Volumetric Clouds
 	#if defined VC || defined END_CLOUDY_FOG
+	vc.rgb = pow(vc.rgb, vec3(1.0 / 2.2));
+
 	#ifdef DISTANT_HORIZONS
 	cloudDepth /= (2.0 * dhFarPlane);
 	#else
@@ -285,7 +277,7 @@ void main() {
 
 	/* DRAWBUFFERS:064 */
 	gl_FragData[0].rgb = color;
-    gl_FragData[1] = vec4(pow(color.rgb, vec3(0.125)) * 0.5, 1.0);
+    gl_FragData[1].rgb = pow(color / 256.0, vec3(0.125));
 	gl_FragData[2].g = cloudDepth;
 }
 
@@ -309,6 +301,7 @@ uniform float timeAngle;
 uniform mat4 gbufferModelView;
 #endif
 
+//Program//
 void main() {
 	//Coords
 	texCoord = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;

@@ -5,8 +5,6 @@ float texture2DShadow(sampler2D shadowtex, vec3 shadowPos) {
 }
 
 #ifdef VC
-uniform vec4 lightningBoltPosition;
-
 float lightningFlashEffect(vec3 worldPos, vec3 lightningBoltPosition, float lightDistance){ //Thanks to Xonk!
     vec3 lightningPos = worldPos - vec3(lightningBoltPosition.x, max(worldPos.y, lightningBoltPosition.y), lightningBoltPosition.z);
 
@@ -49,7 +47,7 @@ void getCloudSample(vec2 rayPos, vec2 wind, float attenuation, float amount, flo
 
 void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z1, float dither, inout float currentDepth) {
 	//Total visibility
-	float visibility = caveFactor * int(z1 > 0.56);
+	float visibility = caveFactor * int(0.56 < z1);
 
 	#if MC_VERSION >= 11900
 	visibility *= 1.0 - darknessFactor;
@@ -57,11 +55,18 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z1, f
 
 	visibility *= 1.0 - blindFactor;
 
-	if (visibility > 0.0) {
+	if (0 < visibility) {
 		//Positions
 		vec3 viewPos = ToView(vec3(texCoord, z1));
 		vec3 nViewPos = normalize(viewPos);
 		vec3 nWorldPos = normalize(ToWorld(viewPos));
+
+		#ifdef DISTANT_HORIZONS
+		float dhZ = texture2D(dhDepthTex0, texCoord).r;
+		vec4 dhScreenPos = vec4(texCoord, dhZ, 1.0);
+		vec4 dhViewPos = dhProjectionInverse * (dhScreenPos * 2.0 - 1.0);
+			 dhViewPos /= dhViewPos.w;
+		#endif
 
 		//Cloud parameters
 		float speed = VC_SPEED;
@@ -82,13 +87,18 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z1, f
 		float maxDist = max(lowerPlane, upperPlane);
 
 		float planeDifference = maxDist - minDist;
+		#ifdef DISTANT_HORIZONS
+		float rayLength = thickness * 8.0;
+			  rayLength /= nWorldPos.y * nWorldPos.y * 8.0 + 1.0;
+		#else
 		float rayLength = thickness * 5.0;
 			  rayLength /= nWorldPos.y * nWorldPos.y * 5.0 + 1.0;
+		#endif
 		vec3 startPos = cameraPosition + minDist * nWorldPos;
 		vec3 sampleStep = nWorldPos * rayLength;
 		int sampleCount = int(min(planeDifference / rayLength, 16) + dither);
 
-		if (maxDist >= 0.0 && sampleCount > 0) {
+		if (0 < maxDist && 0 < sampleCount) {
 			float cloud = 0.0;
 			float cloudAlpha = 0.0;
 			float cloudLighting = 0.0;
@@ -129,28 +139,32 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z1, f
 			auroraVisibility *= visibilityMultiplier;
 			#endif
 
-			//DH Depth rejection
-			#ifdef DISTANT_HORIZONS
-			float dhZ = texture2D(dhDepthTex0, texCoord).r;
-			#endif
-
 			//Ray marcher
 			for (int i = 0; i < sampleCount; i++, rayPos += sampleStep, sampleTotalLength += rayLength) {
-				if (cloudAlpha > 0.99 || (sampleTotalLength > length(viewPos) && z1 < 1.0)) break;
+				if (0.99 < cloudAlpha || (length(viewPos) < sampleTotalLength && z1 < 1.0)) break;
 
 				#ifdef DISTANT_HORIZONS
-				if ((sampleTotalLength > length(viewPos) && dhZ < 1.0)) break;
+				if ((length(dhViewPos.xyz) < sampleTotalLength && dhZ < 1.0)) break;
 				#endif
 
                 vec3 worldPos = rayPos - cameraPosition;
+				float rayDistance = length(worldPos.xz) * 0.085;
 
-				#ifdef VC_SHADOWS
+				#ifndef DISTANT_HORIZONS
+				float fog = pow16(smoothstep(mix(VC_DISTANCE, 300, wetness), 16.0, rayDistance)); //Fog
+				#else
+				float fog = pow16(smoothstep(mix(VC_DISTANCE * 2.0, 300, wetness), 16.0, rayDistance)); //Fog
+				#endif
+
+				if (fog < 0.01) break;
+
+				#ifdef VC_LIGHTRAYS
 				float shadow1 = clamp(texture2DShadow(shadowtex1, ToShadow(worldPos)), 0.0, 1.0);
 				#else
 				float shadow1 = 1.0;
 
 				//Indoor leak prevention
-				if (eyeBrightnessSmooth.y < 200.0 && length(worldPos) < shadowDistance) {
+				if (eyeBrightnessSmooth.y < 220.0 && length(worldPos) < shadowDistance) {
 					shadow1 = clamp(texture2DShadow(shadowtex1, ToShadow(worldPos)), 0.0, 1.0);
 
 					if (shadow1 <= 0.0) break;
@@ -158,31 +172,26 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z1, f
 				#endif
 
 				float noise = 0.0;
-				float rayDistance = length(worldPos.xz) * 0.085;
 				float attenuation = smoothstep(height, cloudTop, rayPos.y);
 
 				getCloudSample(rayPos.xz, wind, attenuation, amount, frequency, thickness, density, detail, noise);
 
 				float sampleLighting = pow(attenuation, 0.9 - halfVoLSqr * 0.2);
 					  sampleLighting *= 1.0 - pow(noise, noiseLightFactor) * 0.9 + 0.1;
-				#ifdef VC_SHADOWS
+				#ifdef VC_LIGHTRAYS
 					  sampleLighting *= mix(1.0, 0.25 + shadow1 * 0.75, float(length(worldPos) < shadowDistance));
 				#endif
 
 				cloudLighting = mix(cloudLighting, sampleLighting, noise * (1.0 - cloud * cloud));
 				cloud = mix(cloud, 1.0, noise);
-				#ifndef DISTANT_HORIZONS
-				noise *= pow16(smoothstep(mix(VC_DISTANCE, 300, wetness), 16.0, rayDistance)); //Fog
-				#else
-				noise *= pow16(smoothstep(mix(VC_DISTANCE * 2.0, 300, wetness), 16.0, rayDistance)); //Fog
-				#endif
+				noise *= fog;
 				cloudAlpha = mix(cloudAlpha, 1.0, noise);
 
                 float lightning = min(lightningFlashEffect(worldPos, lightningBoltPosition.xyz, 256.0) * lightningBoltPosition.w * 4.0, 1.0);
 				cloudLighting = mix(cloudLighting, pow(sampleLighting, 0.25) * 6.0, lightning);
 
 				//gbuffers_water cloud discard check
-				if (noise > minimalNoise && currentDepth == maxDepth) {
+				if (minimalNoise < noise && currentDepth == maxDepth) {
 					currentDepth = sampleTotalLength;
 				}
 			}
@@ -200,7 +209,7 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z1, f
 			cloudColor = mix(cloudColor, vec3(0.4, 2.5, 0.9) * auroraVisibility, pow2(cloudLighting) * auroraVisibility * 0.125);
 			#endif
 
-			float opacity = clamp(mix(VC_OPACITY, 0.99, (cameraPosition.y / height)), 0.0, 1.0 - wetness * 0.5);
+			float opacity = clamp(mix(VC_OPACITY, 0.99, (max(0.0, cameraPosition.y) / height)), 0.0, 1.0 - wetness * 0.5);
 
 			#if MC_VERSION >= 12104
 			opacity = mix(opacity, opacity * 0.5, isPaleGarden);
@@ -227,14 +236,14 @@ void getEndCloudSample(vec2 rayPos, vec2 wind, float attenuation, inout float no
 	float noiseCoverage = abs(attenuation - 0.125) * (attenuation > 0.125 ? 1.14 : 8.0);
 		  noiseCoverage *= noiseCoverage * 8.0;
 	
-	noise = mix(noiseBase, noiseDetail, 0.05 * int(noiseBase > 0.0)) * 22.0 - noiseCoverage;
+	noise = mix(noiseBase, noiseDetail, 0.05 * int(0 < noiseBase)) * 22.0 - noiseCoverage;
 	noise = max(noise - VF_END_AMOUNT, 0.0) * 0.75;
 	noise /= sqrt(noise * noise + 0.25);
 }
 
 void computeEndVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z1, float dither, inout float currentDepth) {
 	//Total visibility
-	float visibility = int(z1 > 0.56);
+	float visibility = int(0.56 < z1);
 
 	#if MC_VERSION >= 11900
 	visibility *= 1.0 - darknessFactor;
@@ -247,6 +256,13 @@ void computeEndVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z1
 		vec3 viewPos = ToView(vec3(texCoord, z1));
 		vec3 nViewPos = normalize(viewPos);
 		vec3 nWorldPos = normalize(ToWorld(viewPos));
+
+		#ifdef DISTANT_HORIZONS
+		float dhZ = texture2D(dhDepthTex0, texCoord).r;
+		vec4 dhScreenPos = vec4(texCoord, dhZ, 1.0);
+		vec4 dhViewPos = dhProjectionInverse * (dhScreenPos * 2.0 - 1.0);
+			 dhViewPos /= dhViewPos.w;
+		#endif
 
 		//Setting the ray marcher
 		float cloudTop = VF_END_HEIGHT + VF_END_THICKNESS * 10.0;
@@ -270,10 +286,10 @@ void computeEndVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z1
 			//Scattering variables
 			float VoU = dot(nViewPos, upVec);
 			float VoL = dot(nViewPos, sunVec);
-			float halfVoLSqrt = VoL * shadowFade * 0.5 + 0.5;
+			float halfVoLSqrt = VoL * 0.5 + 0.5;
 			float halfVoL = halfVoLSqrt * halfVoLSqrt;
 			float scattering = pow6(halfVoLSqrt);
-			float noiseLightFactor = (2.0 - VoL * shadowFade) * 5.0;
+			float noiseLightFactor = (2.0 - VoL) * 5.0;
 
 			vec3 rayPos = startPos + sampleStep * dither;
 			
@@ -285,7 +301,11 @@ void computeEndVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z1
 
 			//Ray marcher
 			for (int i = 0; i < sampleCount; i++, rayPos += sampleStep, sampleTotalLength += rayLength) {
-				if (cloudAlpha > 0.99 || (sampleTotalLength > length(viewPos) && z1 < 1.0)) break;
+				if (0.99 < cloudAlpha || (length(viewPos) < sampleTotalLength && z1 < 1.0)) break;
+
+				#ifdef DISTANT_HORIZONS
+				if ((length(dhViewPos.xyz) < sampleTotalLength && dhZ < 1.0)) break;
+				#endif
 
                 vec3 worldPos = rayPos - cameraPosition;
 

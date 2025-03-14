@@ -39,7 +39,7 @@ vec4 rayTrace(sampler2D depthtex, vec3 viewPos, vec3 normal, float dither, float
 		}
 
         rayDir *= incMult;
-        rayPos += rayDir * (0.9 + 0.1 * dither);
+        rayPos += rayDir * (0.95 + 0.05 * dither);
 		viewPosRT = start + rayPos;
     }
 

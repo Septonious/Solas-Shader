@@ -22,10 +22,10 @@ vec3 FXAA311(vec3 color) {
 	vec2 view = 1.0 / vec2(viewWidth, viewHeight);
 	
 	float lumaCenter = getLuminance(color);
-	float lumaDown  = getLuminance(texture2DLod(colortex1, texCoord + vec2( 0.0, -1.0) * view, 0.0).rgb);
-	float lumaUp    = getLuminance(texture2DLod(colortex1, texCoord + vec2( 0.0,  1.0) * view, 0.0).rgb);
-	float lumaLeft  = getLuminance(texture2DLod(colortex1, texCoord + vec2(-1.0,  0.0) * view, 0.0).rgb);
-	float lumaRight = getLuminance(texture2DLod(colortex1, texCoord + vec2( 1.0,  0.0) * view, 0.0).rgb);
+	float lumaDown  = getLuminance(texture2DLod(colortex0, texCoord + vec2( 0.0, -1.0) * view, 0.0).rgb);
+	float lumaUp    = getLuminance(texture2DLod(colortex0, texCoord + vec2( 0.0,  1.0) * view, 0.0).rgb);
+	float lumaLeft  = getLuminance(texture2DLod(colortex0, texCoord + vec2(-1.0,  0.0) * view, 0.0).rgb);
+	float lumaRight = getLuminance(texture2DLod(colortex0, texCoord + vec2( 1.0,  0.0) * view, 0.0).rgb);
 	
 	float lumaMin = min(lumaCenter, min(min(lumaDown, lumaUp), min(lumaLeft, lumaRight)));
 	float lumaMax = max(lumaCenter, max(max(lumaDown, lumaUp), max(lumaLeft, lumaRight)));
@@ -33,10 +33,10 @@ vec3 FXAA311(vec3 color) {
 	float lumaRange = lumaMax - lumaMin;
 	
 	if (lumaRange > max(edgeThresholdMin, lumaMax * edgeThreshold)) {
-		float lumaDownLeft  = getLuminance(texture2DLod(colortex1, texCoord + vec2(-1.0, -1.0) * view, 0.0).rgb);
-		float lumaUpRight   = getLuminance(texture2DLod(colortex1, texCoord + vec2( 1.0,  1.0) * view, 0.0).rgb);
-		float lumaUpLeft    = getLuminance(texture2DLod(colortex1, texCoord + vec2(-1.0,  1.0) * view, 0.0).rgb);
-		float lumaDownRight = getLuminance(texture2DLod(colortex1, texCoord + vec2( 1.0, -1.0) * view, 0.0).rgb);
+		float lumaDownLeft  = getLuminance(texture2DLod(colortex0, texCoord + vec2(-1.0, -1.0) * view, 0.0).rgb);
+		float lumaUpRight   = getLuminance(texture2DLod(colortex0, texCoord + vec2( 1.0,  1.0) * view, 0.0).rgb);
+		float lumaUpLeft    = getLuminance(texture2DLod(colortex0, texCoord + vec2(-1.0,  1.0) * view, 0.0).rgb);
+		float lumaDownRight = getLuminance(texture2DLod(colortex0, texCoord + vec2( 1.0, -1.0) * view, 0.0).rgb);
 		
 		float lumaDownUp    = lumaDown + lumaUp;
 		float lumaLeftRight = lumaLeft + lumaRight;
@@ -86,10 +86,8 @@ vec3 FXAA311(vec3 color) {
 		vec2 uv1 = currentUv - offset;
 		vec2 uv2 = currentUv + offset;
 
-		float lumaEnd1 = getLuminance(texture2DLod(colortex1, uv1, 0.0).rgb);
-		float lumaEnd2 = getLuminance(texture2DLod(colortex1, uv2, 0.0).rgb);
-		lumaEnd1 -= lumaLocalAverage;
-		lumaEnd2 -= lumaLocalAverage;
+		float lumaEnd1 = getLuminance(texture2DLod(colortex0, uv1, 0.0).rgb) - lumaLocalAverage;
+		float lumaEnd2 = getLuminance(texture2DLod(colortex0, uv2, 0.0).rgb) - lumaLocalAverage;
 		
 		bool reached1 = abs(lumaEnd1) >= gradientScaled;
 		bool reached2 = abs(lumaEnd2) >= gradientScaled;
@@ -105,11 +103,11 @@ vec3 FXAA311(vec3 color) {
 		if (!reachedBoth) {
 			for(int i = 2; i < iterations; i++) {
 				if (!reached1) {
-					lumaEnd1 = getLuminance(texture2DLod(colortex1, uv1, 0.0).rgb);
+					lumaEnd1 = getLuminance(texture2DLod(colortex0, uv1, 0.0).rgb);
 					lumaEnd1 = lumaEnd1 - lumaLocalAverage;
 				}
 				if (!reached2) {
-					lumaEnd2 = getLuminance(texture2DLod(colortex1, uv2, 0.0).rgb);
+					lumaEnd2 = getLuminance(texture2DLod(colortex0, uv2, 0.0).rgb);
 					lumaEnd2 = lumaEnd2 - lumaLocalAverage;
 				}
 				
@@ -133,13 +131,10 @@ vec3 FXAA311(vec3 color) {
 
 		bool isDirection1 = distance1 < distance2;
 		float distanceFinal = min(distance1, distance2);
-
 		float edgeThickness = (distance1 + distance2);
-
 		float pixelOffset = - distanceFinal / edgeThickness + 0.5;
 		
 		bool isLumaCenterSmaller = lumaCenter < lumaLocalAverage;
-
 		bool correctVariation = ((isDirection1 ? lumaEnd1 : lumaEnd2) < 0.0) != isLumaCenterSmaller;
 
 		float finalOffset = correctVariation ? pixelOffset : 0.0;
@@ -155,7 +150,7 @@ vec3 FXAA311(vec3 color) {
 
 		finalOffset = max(finalOffset, subPixelOffsetFinal);
 		
-		// Compute the final UV coordinates.
+		//Compute the final UV coordinates.
 		vec2 finalUv = texCoord;
 		if (isHorizontal) {
 			finalUv.y += finalOffset * stepLength;
@@ -163,7 +158,7 @@ vec3 FXAA311(vec3 color) {
 			finalUv.x += finalOffset * stepLength;
 		}
 
-		color = texture2DLod(colortex1, finalUv, 0.0).rgb;
+		color = texture2DLod(colortex0, finalUv, 0.0).rgb;
 	}
 
 	return color;
