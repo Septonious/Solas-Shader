@@ -44,11 +44,11 @@ void computeLPVFog(inout vec3 fog, in vec3 translucent, in float dither) {
 	visibility *= 1.0 - blindFactor;
 
     //LPV Fog Intensity
-	float intensity = 140.0;
+	float intensity = 120.0;
 	#ifdef OVERWORLD
           intensity *= 1.0 - sunVisibility * eBS * 0.25;
-		  intensity = mix(intensity, 180.0, wetness * eBS);
-		  intensity = mix(180.0, intensity, caveFactor);
+		  intensity = mix(intensity, 140.0, wetness * eBS);
+		  intensity = mix(160.0, intensity, caveFactor);
 	#endif
 	#ifdef NETHER
 		  intensity = 120.0;

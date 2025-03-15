@@ -81,7 +81,7 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 //LPV Fog//
 #define LPV_FOG
 #define LPV_CLOUDY_FOG
-#define LPV_FOG_STRENGTH 1.1 //[0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5]
+#define LPV_FOG_STRENGTH 0.9 //[0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5]
 
 //Nether Cloudy Fog//
 #define NETHER_CLOUDY_FOG
@@ -478,7 +478,7 @@ float linearStep(float edge0, float edge1, float x) {
 #undef VC_SHADOWS
 #endif
 
-#if defined VC_SHADOWS || !defined REALTIME_SHADOWS
+#if defined VC_SHADOWS || !defined REALTIME_SHADOWS || defined DH_TERRAIN || defined DH_WATER
 #undef GI
 #endif
 
