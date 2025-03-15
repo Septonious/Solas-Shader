@@ -5,10 +5,7 @@
 
 //Varyings//
 in vec2 texCoord;
-
-#ifdef VL
 in vec3 sunVec, upVec;
-#endif
 
 //Uniforms//
 #if defined LPV_FOG || defined VL || defined FIREFLIES
@@ -90,10 +87,7 @@ uniform mat4 dhProjectionInverse;
 #if defined LPV_FOG || defined VL || defined FIREFLIES
 float eBS = eyeBrightnessSmooth.y / 240.0;
 float caveFactor = mix(clamp((cameraPosition.y - 56.0) / 16.0, float(sign(isEyeInWater)), 1.0), 1.0, eBS);
-
-#ifdef VL
 float sunVisibility = clamp(dot(sunVec, upVec) + 0.1, 0.0, 0.25) * 4.0;
-#endif
 #endif
 
 //Includes//
@@ -168,17 +162,12 @@ void main() {
 
 //Varyings//
 out vec2 texCoord;
-
-#ifdef VL
 out vec3 sunVec, upVec;
-#endif
 
 //Uniforms//
-#ifdef VL
 uniform float timeAngle;
 
 uniform mat4 gbufferModelView;
-#endif
 
 //Program//
 void main() {
@@ -186,13 +175,11 @@ void main() {
 	texCoord = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;
 	
 	//Sun Vector
-	#ifdef VL
 	const vec2 sunRotationData = vec2(cos(sunPathRotation * 0.01745329251994), -sin(sunPathRotation * 0.01745329251994));
 	float ang = fract(timeAngle - 0.25);
 	ang = (ang + (cos(ang * PI) * -0.5 + 0.5 - ang) / 3.0) * TAU;
 	sunVec = normalize((gbufferModelView * vec4(vec3(-sin(ang), cos(ang) * sunRotationData) * 2000.0, 1.0)).xyz);
 	upVec = normalize(gbufferModelView[1].xyz);
-	#endif
 
 	//Position
 	gl_Position = ftransform();
