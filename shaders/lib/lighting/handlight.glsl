@@ -9,8 +9,10 @@ void getHandLightColor(inout vec3 blockLighting, in vec3 normal, in vec3 pos) {
 
         vec3 handLightColor = mix(color1, color2, 0.5);
 
-
         vec3 lighting = handLightColor * pow3(handlight) * DYNAMIC_HANDLIGHT_STRENGTH;
+        #ifdef GBUFFERS_HAND
+             lighting *= 2.0;
+        #endif
         blockLighting += lighting;
     }
 }

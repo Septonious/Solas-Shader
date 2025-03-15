@@ -486,7 +486,7 @@ float linearStep(float edge0, float edge1, float x) {
 #undef VPS
 #endif
 
-#if (!defined GBUFFERS_TERRAIN && !defined GBUFFERS_TEXTURED && !defined GBUFFERS_ENTITIES && !defined GBUFFERS_BLOCK) || (defined DH_TERRAIN || defined DH_WATER)
+#if (!defined GBUFFERS_TERRAIN && !defined GBUFFERS_TEXTURED && !defined GBUFFERS_ENTITIES && !defined GBUFFERS_BLOCK && !defined GBUFFERS_HAND) || (defined DH_TERRAIN || defined DH_WATER)
 #undef DYNAMIC_HANDLIGHT
 #endif
 
