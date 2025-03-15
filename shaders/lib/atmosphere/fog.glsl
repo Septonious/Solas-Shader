@@ -48,10 +48,6 @@ void getNormalFog(inout vec3 color, in vec3 worldPos, in vec3 atmosphereColor, i
 	float fogAltitude = clamp(exp2(-max(worldPos.y + cameraPosition.y - fogVariableHeight, 0.0) / exp2(FOG_HEIGHT_FALLOFF)), 0.0, 1.0);
 	float fogDensity = FOG_DENSITY * (2.0 - caveFactor) * (1.0 - pow(eBS, 0.1) * timeBrightness * 0.5);
 
-	#ifdef DISTANT_HORIZONS
-	fogDensity *= 2.0;
-	#endif
-
 	#if MC_VERSION >= 12104
 	fogDensity = mix(fogDensity, 6.0, isPaleGarden);
 	fogDistance *= 1.0 - isPaleGarden * 0.75;

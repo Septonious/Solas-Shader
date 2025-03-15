@@ -12,6 +12,10 @@ uniform float far, near;
 uniform float viewWidth, viewHeight;
 #endif
 
+#ifdef DISTANT_HORIZONS
+uniform float dhFarPlane, dhNearPlane;
+#endif
+
 uniform sampler2D colortex0;
 
 #ifdef AO
@@ -51,15 +55,7 @@ void main() {
 	if (z0 < 1.0) {
 		color *= getAmbientOcclusion(z0);
 	} else if (dhZ < 1.0) {
-		z = 1.0 - 1e-5;
-		
-		vec4 dhScreenPos = vec4(texCoord, dhZ, 1.0);
-		viewPos = dhProjectionInverse * (dhScreenPos * 2.0 - 1.0);
-		viewPos /= viewPos.w;
-
-		#ifdef AO
-		color.rgb *= getAmbientOcclusionDH(dhZ);
-		#endif
+		color *= getAmbientOcclusionDH(dhZ);
 	}
 	#endif
 	#endif

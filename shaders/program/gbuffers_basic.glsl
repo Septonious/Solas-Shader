@@ -60,6 +60,7 @@ vec3 lightVec = sunVec;
 //Program//
 void main() {
 	vec4 albedo = color;
+	if (albedo.a <= 0.01) discard;
 	vec3 newNormal = normal;
 
 	vec3 screenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z);
@@ -75,7 +76,7 @@ void main() {
 	gbuffersLighting(albedo, screenPos, viewPos, worldPos, newNormal, shadow, lightmap, NoU, NoL, NoE, 0.0, 0.0, 0.0, 0.0);
 
 	/* DRAWBUFFERS:0 */
-	gl_FragData[0] = vec4(albedo.rgb, 1.0);
+	gl_FragData[0] = vec4(albedo.rgb * albedo.a, 1.0);
 }
 
 #endif

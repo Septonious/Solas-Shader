@@ -56,6 +56,9 @@ void computeVL(inout vec3 vl, in vec3 translucent, in float dither) {
 
 	#ifdef OVERWORLD
 	int sampleCount = int(VL_SAMPLES + 2 * mefade);
+	#ifdef DISTANT_HORIZONS
+		sampleCount += 4;
+	#endif
 	#else
 	int sampleCount = VL_SAMPLES;
 	#endif
@@ -82,17 +85,12 @@ void computeVL(inout vec3 vl, in vec3 translucent, in float dither) {
 	vec3 sampleStepS = shadowPos - startPos;
 	vec3 sampleStepW = worldPos - gbufferModelViewInverse[3].xyz;
 
-	float minDistFactor = 16.0;
+	float minDistFactor = 2.0;
 	float maxDistFactor = shadowDistance + 256.0;
 	#ifdef DISTANT_HORIZONS
-		  maxDistFactor += dhRenderDistance;
+		  maxDistFactor += dhRenderDistance * 0.1;
 	#endif
-	
-	#ifdef DISTANT_HORIZONS
-		float maxDist = min(length(sampleStepW), max(maxDistFactor, dhRenderDistance)) / length(sampleStepW);
-	#else
-		float maxDist = min(length(sampleStepW), maxDistFactor) / length(sampleStepW);
-	#endif
+	float maxDist = min(length(sampleStepW), maxDistFactor) / length(sampleStepW);
 
 	sampleStepS *= maxDist;
 	sampleStepW *= maxDist;
@@ -123,7 +121,7 @@ void computeVL(inout vec3 vl, in vec3 translucent, in float dither) {
 		  visibility *= 0.5;
 		  #endif
 	#else
-	float visibility = exp(pow4(VoLC)) * 0.075;
+	float visibility = exp(pow4(VoLC)) * 0.1;
 	#endif
 
 	#if MC_VERSION >= 11900

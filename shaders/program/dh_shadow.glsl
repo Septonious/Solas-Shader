@@ -8,7 +8,6 @@
 //Varyings//
 in vec2 texCoord;
 in vec4 color;
-
 in float overdrawCull;
 
 //Uniforms//
@@ -35,7 +34,6 @@ void main() {
 //Varyings//
 out vec2 texCoord;
 out vec4 color;
-
 out float overdrawCull;
 
 //Uniforms//
@@ -54,7 +52,7 @@ void main() {
 
 	vec3 position = mat3(gl_ModelViewMatrix) * vec3(gl_Vertex) + gl_ModelViewMatrix[3].xyz;
 	vec3 worldPos = mat3(shadowModelViewInverse) * position + shadowModelViewInverse[3].xyz;
-	overdrawCull = 1.0 - clamp(1.0 - length(worldPos) / max(far + 8.0, 0.0), 0.0, 1.0);
+	overdrawCull = 1.0 - clamp(1.0 - length(worldPos) / max(far + 16.0, 0.0), 0.0, 1.0);
 
 	gl_Position = vec4(projMAD(gl_ProjectionMatrix, position), 1.0);
 
@@ -62,7 +60,7 @@ void main() {
 	float distortFactor = dist * shadowMapBias + (1.0 - shadowMapBias);
 	
 	gl_Position.xy *= 1.0 / distortFactor;
-	gl_Position.z = gl_Position.z * 0.2;
+	gl_Position.z /= 6.0;
 }
 
 #endif
