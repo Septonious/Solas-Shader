@@ -148,7 +148,7 @@ vec3 lightVec = sunVec;
 //Program//
 void main() {
 	vec4 albedo = texture2D(texture, texCoord);
-	vec4 texture = albedo;
+	vec4 albedoTexture = albedo;
 	if (albedo.a <= 0.00001) discard;
 	albedo *= color;
 
@@ -163,7 +163,7 @@ void main() {
 	if (water > 0.5) {
 		albedo.rgb = mix(color.rgb, waterColor.rgb, 0.5);
 		#ifdef VANILLA_WATER
-		albedo.rgb *= texture.rgb * (1.0 + pow4(length(texture.rgb)));
+		albedo.rgb *= albedoTexture.rgb * (1.0 + pow4(length(albedoTexture.rgb)));
 		#endif
 		albedo.a = WATER_A;
 	}

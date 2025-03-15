@@ -514,7 +514,7 @@ float linearStep(float edge0, float edge1, float x) {
 #endif
 
 #ifndef IS_IRIS
-#undef DYNAMIC_HANDLIGHT
+#undef GI
 #endif
 
 #ifndef VX_SUPPORT

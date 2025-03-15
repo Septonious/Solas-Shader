@@ -43,9 +43,7 @@ void getNormalFog(inout vec3 color, in vec3 worldPos, in vec3 atmosphereColor, i
     float fogDistanceFactor = mix(65.0, FOG_DISTANCE * (0.7 + timeBrightness * 0.3), caveFactor);
 	float fogDistance = min(192.0 / farPlane, 1.0) * (100.0 / fogDistanceFactor);
 	float fogVariableHeight = FOG_HEIGHT;
-
 		  fogVariableHeight += texture2D(noisetex, (worldPos.xz + cameraPosition.xz + frameCounter * 0.06 * VC_SPEED) * 0.00003).b * 50.0 - 50.0;
-
 	float fogAltitudeFactor = clamp(exp2(-max(cameraPosition.y - fogVariableHeight, 0.0) / exp2(FOG_HEIGHT_FALLOFF)), 0.0, 1.0);
 	float fogAltitude = clamp(exp2(-max(worldPos.y + cameraPosition.y - fogVariableHeight, 0.0) / exp2(FOG_HEIGHT_FALLOFF)), 0.0, 1.0);
 	float fogDensity = FOG_DENSITY * (2.0 - caveFactor) * (1.0 - pow(eBS, 0.1) * timeBrightness * 0.5);
