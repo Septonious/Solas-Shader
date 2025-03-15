@@ -29,6 +29,8 @@ uniform int heldItemId, heldItemId2;
 #endif
 
 #ifdef DISTANT_HORIZONS
+uniform int dhRenderDistance;
+
 uniform float dhFarPlane;
 #endif
 

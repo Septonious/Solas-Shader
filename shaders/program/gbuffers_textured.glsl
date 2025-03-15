@@ -15,6 +15,10 @@ in vec2 texCoord, lmCoord;
 uniform int isEyeInWater;
 uniform int frameCounter;
 
+#ifdef DISTANT_HORIZONS
+uniform int dhRenderDistance;
+#endif
+
 #ifdef DYNAMIC_HANDLIGHT
 uniform int heldItemId, heldItemId2;
 #endif

@@ -21,6 +21,10 @@ flat in int mat;
 uniform int isEyeInWater;
 uniform int frameCounter;
 
+#ifdef DISTANT_HORIZONS
+uniform int dhRenderDistance;
+#endif
+
 #ifdef VC_SHADOWS
 uniform int worldDay, worldTime;
 #endif
