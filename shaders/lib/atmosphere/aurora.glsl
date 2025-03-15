@@ -5,8 +5,8 @@ float getAuroraNoise(vec2 coord) {
 	return max(1.0 - 2.0 * abs(noise - 3.0), 0.0);
 }
 
-void drawAurora(inout vec3 color, in vec3 worldPos, in float VoU, in float caveFactor, in float volumetricClouds) {
-	float visibilityMultiplier = pow6(1.0 - sunVisibility) * (1.0 - wetness) * (1.0 - volumetricClouds) * caveFactor * AURORA_BRIGHTNESS;
+void drawAurora(inout vec3 color, in vec3 worldPos, in float VoU, in float caveFactor) {
+	float visibilityMultiplier = pow6(1.0 - sunVisibility) * (1.0 - wetness) * caveFactor * AURORA_BRIGHTNESS;
 	float visibility = 0.0;
 
 	#ifdef OVERWORLD

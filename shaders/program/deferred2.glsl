@@ -208,7 +208,7 @@ void main() {
 		#endif
 
 		#ifdef AURORA
-		drawAurora(skyColor, worldPos, VoU, caveFactor, cloudBlockFactor);
+		drawAurora(skyColor, worldPos, VoU, caveFactor);
 		#endif
 
 		#ifdef STARS
