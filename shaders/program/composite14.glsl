@@ -63,7 +63,6 @@ uniform sampler2D depthtex0;
 
 #ifdef LENS_FLARE
 uniform vec3 sunPosition, skyColor;
-uniform mat4 gbufferProjection;
 #endif
 
 #ifdef BLOOM
@@ -72,7 +71,7 @@ uniform sampler2D colortex1;
 uniform mat4 gbufferProjectionInverse;
 #endif
 
-#ifdef DOF
+#if defined DOF || defined LENS_FLARE
 uniform mat4 gbufferProjection;
 #endif
 

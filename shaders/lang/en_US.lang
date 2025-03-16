@@ -494,6 +494,7 @@ screen.BLOOM_CONFIG=Bloom Config
 
 option.BLOOM=Bloom
 option.BLOOM_STRENGTH=Bloom Strength
+value.BLOOM_STRENGTH.4.00=§cBSL
 option.BLOOM_TILE_SIZE=Tile Size
 option.BLOOM_TILE_SIZE.comment=Adjusts the size of each bloom tile. Higher values give less accuracy and larger radius. Lower values give more accuracy and smaller radius.
 option.BLOOM_CONTRAST=Contrast

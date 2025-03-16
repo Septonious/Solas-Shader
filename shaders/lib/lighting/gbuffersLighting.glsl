@@ -144,7 +144,7 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
         
         vec3 shadowPos = ToShadow(worldPosM);
 
-        float offset = 0.001;
+        float offset = 0.001 - shadowMapResolution * 0.0000001;
         float viewDistance = 1.0 - clamp(lViewPos * 0.01, 0.0, 1.0);
         
         shadow = computeShadow(shadowPos, offset, lightmap.y, subsurface, viewDistance);
@@ -167,24 +167,26 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
 
     shadow = mix(fakeShadow, shadow, vec3(shadowLightingFade));
 
-    #ifdef VC_SHADOWS
     //Cloud Shadows
-    float speed = VC_SPEED;
-    float amount = VC_AMOUNT;
-    float frequency = VC_FREQUENCY;
-    float density = VC_DENSITY;
-    float height = VC_HEIGHT;
+    #ifdef VC_SHADOWS
+    if (worldPos.y + cameraPosition.y < VC_HEIGHT - VC_THICKNESS - 25.0) {
+        float speed = VC_SPEED;
+        float amount = VC_AMOUNT;
+        float frequency = VC_FREQUENCY;
+        float density = VC_DENSITY;
+        float height = VC_HEIGHT;
 
-    getDynamicWeather(speed, amount, frequency, density, height);
+        getDynamicWeather(speed, amount, frequency, density, height);
 
-    vec2 wind = vec2(frameTimeCounter * speed * 0.005, sin(frameTimeCounter * speed * 0.1) * 0.01) * speed * 0.1;
-    vec3 worldSunVec = mat3(gbufferModelViewInverse) * lightVec;
-    vec3 cloudShadowPos = worldPos + cameraPosition + (worldSunVec / max(abs(worldSunVec.y), 0.0)) * max((VC_HEIGHT + VC_THICKNESS + 25.0) - worldPos.y - cameraPosition.y, 0.0);
+        vec2 wind = vec2(frameTimeCounter * speed * 0.005, sin(frameTimeCounter * speed * 0.1) * 0.01) * speed * 0.1;
+        vec3 worldSunVec = mat3(gbufferModelViewInverse) * lightVec;
+        vec3 cloudShadowPos = worldPos + cameraPosition + (worldSunVec / max(abs(worldSunVec.y), 0.0)) * max((VC_HEIGHT + VC_THICKNESS + 25.0) - worldPos.y - cameraPosition.y, 0.0);
 
-    float noise = 0.0;
-    getCloudShadow(cloudShadowPos.xz, wind, amount, frequency, density, noise);
+        float noise = 0.0;
+        getCloudShadow(cloudShadowPos.xz, wind, amount, frequency, density, noise);
 
-    shadow = mix(vec3(0.0), shadow, vec3(noise) * VC_OPACITY);
+        shadow = mix(vec3(0.0), shadow, vec3(noise) * VC_OPACITY);
+    }
     #endif
 
     //Main Lighting
