@@ -114,7 +114,7 @@ void getNormalFog(inout vec3 color, in vec3 worldPos, in vec3 atmosphereColor, i
 #endif
 
 void Fog(inout vec3 color, in vec3 viewPos, in vec3 worldPos, in vec3 atmosphereColor) {
-    float lViewPos = length(viewPos);
+    float lViewPos = length(viewPos.xz);
     float lWorldPos = length(worldPos.xz);
 
 	if (isEyeInWater < 1) {
