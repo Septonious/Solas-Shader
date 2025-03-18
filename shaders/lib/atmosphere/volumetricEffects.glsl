@@ -45,10 +45,16 @@ void computeLPVFog(inout vec3 fog, in vec3 translucent, in float dither) {
 
     //LPV Fog Intensity
 	float intensity = 150.0;
+    float density = 0.75;
 	#ifdef OVERWORLD
           intensity *= 1.0 - sunVisibility * eBS * 0.5;
-		  intensity = mix(intensity, 200.0, wetness * eBS);
-		  intensity = mix(175.0, intensity, caveFactor);
+          density *= 0.75 + sunVisibility * eBS * 0.25;
+
+		  intensity += wetness * eBS * 50.0;
+          density -= wetness * eBS * 0.25;
+
+		  intensity = mix(250.0, intensity, caveFactor);
+          density = mix(0.6, density, caveFactor);
 	#endif
 	#ifdef NETHER
 		  intensity = 120.0;
@@ -116,8 +122,8 @@ void computeLPVFog(inout vec3 fog, in vec3 translucent, in float dither) {
         lightFog += lightSample;
     }
 
-    vec3 result = pow(lightFog / sampleCount, vec3(0.5)) * visibility * intensity * 0.01 * LPV_FOG_STRENGTH;
-    fog += result * max(pow(length(result), 0.75), 1.0 - caveFactor);
+    vec3 result = pow(lightFog / sampleCount, vec3(0.5)) * visibility;
+    fog += result * pow(length(result), density) * intensity * 0.01 * LPV_FOG_STRENGTH;
 }
 #endif
 
