@@ -16,7 +16,7 @@ uniform mat4 gbufferPreviousProjection;
 uniform mat4 gbufferPreviousModelView, gbufferModelViewInverse;
 #endif
 
-uniform sampler2D depthtex0;
+uniform sampler2D depthtex1;
 uniform sampler2D colortex1, colortex2;
 
 #ifdef TAA
@@ -38,12 +38,12 @@ void main() {
 	vec3 color = texture2DLod(colortex1, newTexCoord, 0).rgb;
 
 	#ifdef TAA
-	float z0 = texture2D(depthtex0, newTexCoord).r;
+	float z1 = texture2D(depthtex1, newTexCoord).r;
 	#endif
 
 	vec4 previousColor = vec4(texture2D(colortex2, newTexCoord).r, 0.0, 0.0, 0.0);
 	#ifdef TAA
-	     previousColor = TemporalAA(color, previousColor.r, z0);
+	     previousColor = TemporalAA(color, previousColor.r, z1);
 	#endif
 
     /* DRAWBUFFERS:12 */

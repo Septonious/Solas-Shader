@@ -81,9 +81,9 @@ vec3 NeighbourhoodClipping(vec3 color, vec3 tempColor, vec2 view) {
 	return YCoCgToRGB(tempColor);
 }
 
-vec4 TemporalAA(inout vec3 color, float tempData, float z0) {
+vec4 TemporalAA(inout vec3 color, float tempData, float z1) {
 	vec2 view = vec2(viewWidth, viewHeight);
-	vec3 coord = vec3(texCoord, z0);
+	vec3 coord = vec3(texCoord, z1);
 	vec2 prvCoord = Reprojection(coord);
 	
 	vec3 tempColor = textureCatmullRom(colortex2, prvCoord, view);

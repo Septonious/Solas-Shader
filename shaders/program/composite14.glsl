@@ -59,7 +59,7 @@ uniform sampler2D colortex3;
 
 uniform sampler2D colortex0, colortex2;
 uniform sampler2D noisetex;
-uniform sampler2D depthtex0;
+uniform sampler2D depthtex1;
 
 #ifdef LENS_FLARE
 uniform vec3 sunPosition, skyColor;
@@ -119,7 +119,7 @@ void main() {
 	vec3 color = texture2DLod(colortex0, texCoord, 0).rgb;
 
 	//Preset Variables
-	float z0 = texture2D(depthtex0, texCoord).r;
+	float z1 = texture2D(depthtex1, texCoord).r;
 
     float dither = texture2D(noisetex, gl_FragCoord.xy / 512.0).b;
     #ifdef TAA
@@ -146,12 +146,12 @@ void main() {
 
 	//Motion Blur
 	#ifdef MOTION_BLUR
-	color = getMotionBlur(color, z0);
+	color = getMotionBlur(color, z1);
 	#endif
 
 	//Depth of Field & Tilt Shift
 	#ifdef DOF
-	color = getDepthOfField(color, texCoord, z0);
+	color = getDepthOfField(color, texCoord, z1);
 	#endif
 
 	//Bloom
@@ -167,7 +167,7 @@ void main() {
 	vec2 lightPos = GetLightPos();
 	float truePos = sign(sunVec.z);
 	      
-    float visibleSun = float(texture2D(depthtex0, lightPos + 0.5).r >= 1.0);
+    float visibleSun = float(texture2D(depthtex1, lightPos + 0.5).r >= 1.0);
 		  visibleSun *= max(1.0 - isEyeInWater, eBS) * (1.0 - max(blindFactor, darknessFactor)) * (1.0 - wetness) * caveFactor;
 	
 	float multiplier = tempVisibleSun * LENS_FLARE_STRENGTH * (length(color) * 0.25 + 0.25);

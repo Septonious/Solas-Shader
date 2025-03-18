@@ -90,6 +90,7 @@ void computeVL(inout vec3 vl, in vec3 translucent, in float dither) {
 	#ifdef DISTANT_HORIZONS
 		  maxDistFactor += dhRenderDistance * 0.1;
 	#endif
+		  maxDistFactor = mix(maxDistFactor, 64.0, float(isEyeInWater == 1));
 	float maxDist = min(length(sampleStepW), maxDistFactor) / length(sampleStepW);
 
 	sampleStepS *= maxDist;
