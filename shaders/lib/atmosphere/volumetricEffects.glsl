@@ -57,7 +57,8 @@ void computeLPVFog(inout vec3 fog, in vec3 translucent, in float dither) {
           density = mix(0.6, density, caveFactor);
 	#endif
 	#ifdef NETHER
-		  intensity = 120.0;
+		  intensity = 150.0;
+          density = 0.7;
 	#endif
 
     //Ray Marching Parameters

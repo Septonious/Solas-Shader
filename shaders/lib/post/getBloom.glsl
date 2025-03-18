@@ -21,8 +21,6 @@ void getBloom(inout vec3 color, vec2 bloomCoord) {
 	#if defined OVERWORLD
 	float eBS = eyeBrightnessSmooth.y / 240.0;
 	bloomStrength *= 1.0 - timeBrightness * 0.33 * eBS;
-	#elif defined NETHER
-	bloomStrength *= 0.75;
 	#endif
 
 	#if BLOOM_CONTRAST == 0
