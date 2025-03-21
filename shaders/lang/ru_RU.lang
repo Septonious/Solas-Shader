@@ -33,6 +33,7 @@ option.VC_THICKNESS=Размер
 option.VC_SPEED=Скорость
 option.VC_DISTANCE=Дистанция Рендера
 option.VC_OPACITY=Непрозрачность
+option.VC_ATTENUATION=Толщина
 option.VC_SHADOWS=Тени от Облаков
 option.VC_LIGHTRAYS=Лучи Света в Облаках
 option.VC_LIGHTRAYS.comment=Добавляет облакам объёмное освещение (солнечные лучи).

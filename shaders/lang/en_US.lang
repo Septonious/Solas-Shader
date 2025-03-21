@@ -33,6 +33,7 @@ option.VC_THICKNESS=Thickness
 option.VC_SPEED=Speed
 option.VC_DISTANCE=Render Distance
 option.VC_OPACITY=Opacity
+option.VC_ATTENUATION=Attenuation
 option.VC_SHADOWS=Cloud Shadows
 option.VC_LIGHTRAYS=Cloud Light Rays
 option.VC_LIGHTRAYS.comment=Allows clouds to behave like VL when sunlight is obstructed by blocks.

@@ -27,10 +27,10 @@ void getDynamicWeather(inout float speed, inout float amount, inout float freque
 }
 
 void getCloudSample(vec2 rayPos, vec2 wind, float attenuation, float amount, float frequency, float thickness, float density, float detail, inout float noise) {
-	rayPos *= 0.000125 * frequency;
+	rayPos *= 0.0002 * frequency;
 
 	float noiseBase = texture2D(noisetex, rayPos + 0.5 + wind * 0.5).g;
-		  noiseBase = pow2(1.0 - noiseBase) * 0.5 + 0.4 - wetness * 0.025;
+		  noiseBase = (1.0 - noiseBase) * 0.35 + 0.25 + wetness * 0.1;
 
 	float detailZ = floor(attenuation * thickness) * 0.05;
 	float noiseDetailA = texture2D(noisetex, rayPos * 1.5 - wind + detailZ).b;
@@ -38,9 +38,9 @@ void getCloudSample(vec2 rayPos, vec2 wind, float attenuation, float amount, flo
 	float noiseDetail = mix(noiseDetailA, noiseDetailB, fract(attenuation * thickness));
 
 	float noiseCoverage = abs(attenuation - 0.125) * (attenuation > 0.125 ? 1.14 : 8.0);
-		  noiseCoverage *= noiseCoverage * 5.7;
+		  noiseCoverage *= noiseCoverage * (VC_ATTENUATION + wetness * 1.5);
 	
-	noise = mix(noiseBase, noiseDetail, detail * mix(0.05, 0.025, min(wetness + cameraPosition.y * 0.0025, 1.0)) * int(noiseBase > 0.0)) * 22.0 - noiseCoverage;
+	noise = mix(noiseBase, noiseDetail, detail * mix(0.05, 0.025, min(cameraPosition.y * 0.0025, 1.0)) * int(noiseBase > 0.0)) * 22.0 - noiseCoverage;
 	noise = max(noise - amount, 0.0) * (density * 0.25);
 	noise /= sqrt(noise * noise + 0.25);
 }
@@ -202,11 +202,11 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z1, f
 			vec3 cloudAmbientColor = mix(ambientCol, atmosphereColor * atmosphereColor, 0.5 * sunVisibility);
                  cloudAmbientColor *= 0.35 + sunVisibility * sunVisibility * (0.2 - wetness * 0.2);
 			vec3 cloudLightColor = mix(lightCol, mix(lightCol, atmosphereColor * 2.0, 0.3 * (sunVisibility + timeBrightness)) * atmosphereColor * 2.0, sunVisibility);
-                 cloudLightColor *= (1.25 + scattering) * morningEveningFactor;
+                 cloudLightColor *= (1.0 + scattering) * morningEveningFactor;
 			vec3 cloudColor = mix(cloudAmbientColor, cloudLightColor, cloudLighting);
 
 			#ifdef AURORA
-			cloudColor = mix(cloudColor, vec3(0.4, 2.5, 0.9) * auroraVisibility, pow2(cloudLighting) * auroraVisibility * 0.125);
+			cloudColor = mix(cloudColor, vec3(0.4, 2.5, 0.9) * auroraVisibility, pow2(cloudLighting) * auroraVisibility * 0.075);
 			#endif
 
 			float opacity = clamp(mix(VC_OPACITY, 0.99, (max(0.0, cameraPosition.y) / height)), 0.0, 1.0 - wetness * 0.5);
@@ -223,10 +223,10 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z1, f
 
 #ifdef END_CLOUDY_FOG
 void getEndCloudSample(vec2 rayPos, vec2 wind, float attenuation, inout float noise) {
-	rayPos *= 0.00025;
+	rayPos *= 0.0002;
 
 	float noiseBase = texture2D(noisetex, rayPos + 0.5 + wind * 0.5).g;
-		  noiseBase = pow2(1.0 - noiseBase) * 0.5 + 0.25;
+		  noiseBase = (1.0 - noiseBase) * 0.5 + 0.25;
 
 	float detailZ = floor(attenuation * VF_END_THICKNESS) * 0.05;
 	float noiseDetailA = texture2D(noisetex, rayPos * 1.5 - wind + detailZ).b;

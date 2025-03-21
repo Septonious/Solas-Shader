@@ -18,10 +18,10 @@ void getDynamicWeather(inout float speed, inout float amount, inout float freque
 
 
 void getCloudShadow(vec2 rayPos, vec2 wind, float amount, float frequency, float density, inout float noise) {
-	rayPos *= 0.000125 * frequency;
+	rayPos *= 0.0002 * frequency;
 
 	float noiseBase = texture2D(noisetex, rayPos + 0.5 + wind * 0.5).g;
-		  noiseBase = pow2(1.0 - noiseBase) * 0.5 + 0.4 - wetness * 0.025;
+		  noiseBase = (1.0 - noiseBase) * 0.35 + 0.25 + wetness * 0.1;
 
 	noise = noiseBase * 22.0;
 	noise = max(noise - amount, 0.0) * (density * 0.25);
