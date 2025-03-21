@@ -356,7 +356,7 @@ const vec3 blockLightCol = blockLightColSqrt * blockLightColSqrt;
 //Minlight Color//
 const vec3 minLightColSqrt = vec3(MINLIGHT_R, MINLIGHT_G, MINLIGHT_B) * MINLIGHT_I / 255.0;
 const vec3 minLightCol = minLightColSqrt * minLightColSqrt * 0.1;
-const vec3 caveMinLightCol = vec3(0.3, 0.4, 0.55) * 0.125;
+const vec3 caveMinLightCol = vec3(0.3, 0.4, 0.55) * 0.3;
 
 //End Color//
 const vec3 endLightColSqrt = vec3(LIGHT_END_R, LIGHT_END_G, LIGHT_END_B) / 255.0 * LIGHT_END_I;
