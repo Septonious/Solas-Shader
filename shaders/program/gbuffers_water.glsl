@@ -295,9 +295,7 @@ out vec2 texCoord, lmCoord;
 flat out int mat;
 
 //Uniforms//
-#if defined OVERWORLD || defined END
 uniform float timeAngle;
-#endif
 
 uniform mat4 gbufferModelView, gbufferModelViewInverse;
 
