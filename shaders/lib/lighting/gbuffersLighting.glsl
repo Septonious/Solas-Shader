@@ -19,7 +19,7 @@ void getCloudShadow(vec2 rayPos, vec2 wind, float amount, float frequency, float
 	noise = noiseBase * 22.0;
 	noise = max(noise - amount, 0.0) * (density * 0.25);
 	noise /= sqrt(noise * noise + 0.25);
-	noise = exp(noise * -10.0);
+	noise = exp(noise * -2.0);
     noise = clamp(noise, 0.0, 1.0);
 }
 #endif
@@ -180,7 +180,7 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
 
         vec2 wind = vec2(frameTimeCounter * speed * 0.005, sin(frameTimeCounter * speed * 0.1) * 0.01) * speed * 0.1;
         vec3 worldSunVec = mat3(gbufferModelViewInverse) * lightVec;
-        vec3 cloudShadowPos = worldPos + cameraPosition + (worldSunVec / max(abs(worldSunVec.y), 0.0)) * max((VC_HEIGHT + VC_THICKNESS + 25.0) - worldPos.y - cameraPosition.y, 0.0);
+        vec3 cloudShadowPos = worldPos + cameraPosition + (worldSunVec / max(abs(worldSunVec.y), 0.0)) * max((VC_HEIGHT + VC_THICKNESS + 45.0) - worldPos.y - cameraPosition.y, 0.0);
 
         float noise = 0.0;
         getCloudShadow(cloudShadowPos.xz, wind, amount, frequency, density, noise);

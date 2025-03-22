@@ -62,7 +62,6 @@ uniform vec3 skyColor;
 uniform vec3 fogColor;
 uniform vec3 cameraPosition;
 
-uniform sampler2D texture;
 uniform sampler2D noisetex;
 uniform sampler2D depthtex1;
 uniform sampler2D dhDepthTex1;
@@ -144,10 +143,8 @@ vec3 lightVec = sunVec;
 
 //Program//
 void main() {
-	vec4 albedo = texture2D(texture, texCoord);
-	vec4 texture = albedo;
+	vec4 albedo = color;
 	if (albedo.a <= 0.00001) discard;
-	albedo *= color;
 
 	vec3 screenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z);
 
@@ -167,9 +164,6 @@ void main() {
 
 	if (water > 0.5) {
 		albedo.rgb = mix(color.rgb, waterColor.rgb, 0.5);
-		#ifdef VANILLA_WATER
-		albedo.rgb *= texture.rgb * (1.0 + pow4(length(texture.rgb)));
-		#endif
 		albedo.a = WATER_A;
 	}
 

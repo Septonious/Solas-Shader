@@ -62,6 +62,29 @@ vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.
 vec3 lightVec = sunVec;
 #endif
 
+//From BSL
+float getLuminance(vec3 color) {
+	return dot(color,vec3(0.299, 0.587, 0.114));
+}
+
+float getBlueNoise3D(vec3 pos, vec3 normal) {
+	pos = (floor(pos + 0.01) + 0.5) / 512.0;
+
+	vec3 worldNormal = (gbufferModelViewInverse * vec4(normal, 0.0)).xyz;
+	vec3 noise3D = vec3(
+		texture2D(noisetex, pos.yz).b,
+		texture2D(noisetex, pos.xz).b,
+		texture2D(noisetex, pos.xy).b
+	);
+
+	float noiseX = noise3D.x * abs(worldNormal.x);
+	float noiseY = noise3D.y * abs(worldNormal.y);
+	float noiseZ = noise3D.z * abs(worldNormal.z);
+	float noise = noiseX + noiseY + noiseZ;
+
+	return noise - 0.25;
+}
+
 //Includes//
 #include "/lib/util/bayerDithering.glsl"
 #include "/lib/util/encode.glsl"
@@ -110,6 +133,12 @@ void main() {
 	if (viewLength < minDist) {
 		discard;
 	}
+
+	vec3 noisePos = (worldPos + cameraPosition) * 4.0;
+	float albedoLuma = getLuminance(albedo.rgb);
+	float noiseAmount = (1.0 - albedoLuma * albedoLuma) * 0.125;
+	float albedoNoise = getBlueNoise3D(noisePos, normal);
+	albedo.rgb = clamp(albedo.rgb + albedoNoise * noiseAmount, vec3(0.0), vec3(1.0));
 
 	if (foliage > 0.5) {
 		newNormal = upVec;

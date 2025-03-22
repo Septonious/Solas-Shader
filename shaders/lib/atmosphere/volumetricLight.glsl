@@ -26,7 +26,7 @@ void getCloudShadow(vec2 rayPos, vec2 wind, float amount, float frequency, float
 	noise = noiseBase * 22.0;
 	noise = max(noise - amount, 0.0) * (density * 0.25);
 	noise /= sqrt(noise * noise + 0.25);
-	noise = exp(noise * -10.0);
+	noise = exp(noise * -2.0);
     noise = clamp(noise, 0.0, 1.0);
 }
 #endif
@@ -85,7 +85,7 @@ void computeVL(inout vec3 vl, in vec3 translucent, in float dither) {
 	vec3 sampleStepS = shadowPos - startPos;
 	vec3 sampleStepW = worldPos - gbufferModelViewInverse[3].xyz;
 
-	float minDistFactor = 2.0;
+	float minDistFactor = 8.0;
 	float maxDistFactor = shadowDistance + 256.0;
 	#ifdef DISTANT_HORIZONS
 		  maxDistFactor += min(dhRenderDistance, 512.0);
@@ -121,9 +121,6 @@ void computeVL(inout vec3 vl, in vec3 translucent, in float dither) {
 		  #ifndef VC_SHADOWS
 		  visibility *= 0.5;
 		  #endif
-	#ifdef DISTANT_HORIZONS
-	visibility = 1;
-	#endif
 	#else
 	float visibility = exp(pow4(VoLC)) * 0.1;
 	#endif
@@ -150,7 +147,7 @@ void computeVL(inout vec3 vl, in vec3 translucent, in float dither) {
     float frequency = VC_FREQUENCY;
     float density = VC_DENSITY;
     float height = VC_HEIGHT;
-	float cloudTop = VC_HEIGHT + VC_THICKNESS + 35.0;
+	float cloudTop = VC_HEIGHT + VC_THICKNESS + 45.0;
 
     getDynamicWeather(speed, amount, frequency, density, height);
 
@@ -201,5 +198,5 @@ void computeVL(inout vec3 vl, in vec3 translucent, in float dither) {
 
 	if (isEyeInWater == 1.0) finalVL *= mix(waterColorSqrt, waterColorSqrt * weatherCol, wetness) * (4.0 + sunVisibility * 8.0);
 
-    vl += pow(finalVL, vec3(1.0 - pow(length(finalVL), 1.25) * 0.25));
+    vl += pow(finalVL, vec3(1.0 - pow(length(finalVL), 1.25) * 0.33));
 }

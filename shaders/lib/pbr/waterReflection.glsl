@@ -42,10 +42,6 @@ void getReflection(inout vec4 albedo, in vec3 worldPos, in vec3 viewPos, in vec3
 			float VoU = dot(skyRefPos, upVec);
 			float VoS = clamp(dot(skyRefPos, sunVec), 0.0, 1.0);
 
-			#ifdef MILKY_WAY
-			drawMilkyWay(falloff, worldPosRef, VoU, caveFactor, nebulaFactor, 0.0);
-			#endif
-
 			#ifdef STARS
 			drawStars(falloff, worldPosRef, sunVec, stars, VoU, VoS, caveFactor, nebulaFactor, 0.0, 0.5);
 			#endif

@@ -40,13 +40,17 @@ void getNormalFog(inout vec3 color, in vec3 worldPos, in vec3 atmosphereColor, i
 
 	//Overworld Fog
 	#ifdef OVERWORLD
-    float fogDistanceFactor = mix(50.0, FOG_DISTANCE * (0.7 + timeBrightness * 0.3), caveFactor);
+    float fogDistanceFactor = mix(50.0, FOG_DISTANCE, caveFactor);
 	float fogDistance = min(192.0 / farPlane, 1.0) * (100.0 / fogDistanceFactor);
 	float fogVariableHeight = FOG_HEIGHT;
 		  fogVariableHeight += texture2D(noisetex, (worldPos.xz + cameraPosition.xz + frameCounter * 0.06 * VC_SPEED) * 0.00003).b * 50.0 - 50.0;
 	float fogAltitudeFactor = clamp(exp2(-max(cameraPosition.y - fogVariableHeight, 0.0) / exp2(FOG_HEIGHT_FALLOFF)), 0.0, 1.0);
 	float fogAltitude = clamp(exp2(-max(worldPos.y + cameraPosition.y - fogVariableHeight, 0.0) / exp2(FOG_HEIGHT_FALLOFF)), 0.0, 1.0);
-	float fogDensity = FOG_DENSITY * (1.0 - pow(eBS, 0.1) * timeBrightness * 0.5);
+		  fogAltitude = mix(fogAltitude, 1.0, timeBrightness);
+	float fogDensity = FOG_DENSITY;
+	#ifdef DISTANT_HORIZONS
+		  fogDensity *= 1.5;
+	#endif
 
 	#if MC_VERSION >= 12104
 	fogDensity = mix(fogDensity, 6.0, isPaleGarden);
