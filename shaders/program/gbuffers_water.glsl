@@ -73,6 +73,11 @@ uniform sampler2D gaux1;
 
 #ifdef WATER_REFLECTIONS
 uniform sampler2D gaux3;
+
+#ifdef MILKY_WAY
+uniform sampler2D gaux4;
+#endif
+
 uniform mat4 gbufferProjection;
 #endif
 
@@ -124,6 +129,7 @@ vec3 lightVec = sunVec;
 #ifdef WATER_REFLECTIONS
 #ifdef OVERWORLD
 #include "/lib/atmosphere/stars.glsl"
+#include "/lib/atmosphere/milkyWay.glsl"
 #endif
 #include "/lib/pbr/raytracer.glsl"
 #include "/lib/pbr/waterReflection.glsl"
