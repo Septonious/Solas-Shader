@@ -146,7 +146,7 @@ void main() {
 	computeVL(vl.rgb, translucent, blueNoiseDither);
 	#endif
 
-	vl.rgb = pow(vl.rgb / 256.0, vec3(0.125));
+	vl.rgb = pow(vl.rgb / 256.0 * VL_STRENGTH, vec3(0.125));
 	#endif
 
 	/* DRAWBUFFERS:01 */

@@ -21,16 +21,8 @@ void computeLPVFog(inout vec3 fog, in vec3 translucent, in float dither) {
 	float z0 = texture2D(depthtex0, texCoord).r;
 	float z1 = texture2D(depthtex1, texCoord).r;
 
-    //Positions
-	vec3 viewPosZ0 = ToView(vec3(texCoord.xy, z0));
-    vec3 viewPosZ1 = ToView(vec3(texCoord.xy, z1));
-	vec3 worldPos = ToWorld(viewPosZ1);
-
-    float lViewPosZ0 = length(viewPosZ0);
-    float lViewPosZ1 = length(viewPosZ1);
-
 	//Total LPV Fog Visibility
-    float visibility = int(z0 > 0.56);
+    float visibility = int(z0 > 0.56) * float(isEyeInWater >= 0 && isEyeInWater <= 1);
 
 	#ifdef OVERWORLD
 	visibility *= 1.0 - timeBrightness * 0.65 * caveFactor;
@@ -43,88 +35,98 @@ void computeLPVFog(inout vec3 fog, in vec3 translucent, in float dither) {
 
 	visibility *= 1.0 - blindFactor;
 
-    //LPV Fog Intensity
-	float intensity = 150.0;
-    float density = 0.75;
-	#ifdef OVERWORLD
-          intensity *= 1.0 - sunVisibility * eBS * 0.5;
-          density *= 0.75 + sunVisibility * eBS * 0.25;
-
-		  intensity += wetness * eBS * 50.0;
-          density -= wetness * eBS * 0.25;
-
-		  intensity = mix(250.0, intensity, caveFactor);
-          density = mix(0.6, density, caveFactor);
-	#endif
-	#ifdef NETHER
-		  intensity = 150.0;
-          density = 0.7;
-	#endif
-
     //Ray Marching Parameters
-    float minDist = 3.0;
+    float minDist = 6.0;
     #ifdef OVERWORLD
           minDist += 4.0 * eBS;
     #endif
     float maxDist = min(far, VOXEL_VOLUME_SIZE * 0.5);
-    int sampleCount = int(maxDist / minDist + 0.01);
+    int sampleCount = min(int(maxDist / minDist + 0.01), 14 - int(eBS * sunVisibility * sunVisibility * 14));
 
-    vec3 rayIncrement = normalize(worldPos) * minDist;
-    vec3 rayPos = rayIncrement * dither;
+    if (sampleCount > 0 && visibility > 0) {
+        //LPV Fog Intensity
+        float intensity = 150.0;
+        float density = 0.75;
+        #ifdef OVERWORLD
+            intensity *= 1.0 - sunVisibility * eBS * 0.5;
+            density *= 0.75 + sunVisibility * eBS * 0.25;
 
-    //Ray Marching
-    for (int i = 0; i < sampleCount; i++, rayPos += rayIncrement) {
-        float rayLength = length(rayPos);
-        if (rayLength > lViewPosZ1) break;
+            intensity += wetness * eBS * 50.0;
+            density -= wetness * eBS * 0.25;
 
-        vec3 voxelPos = worldToVoxel(rayPos);
-             voxelPos /= voxelVolumeSize;
-             voxelPos = clamp(voxelPos, 0.0, 1.0);
+            intensity = mix(400.0, intensity, caveFactor);
+            density = mix(0.4, density, caveFactor);
+        #endif
+        #ifdef NETHER
+            intensity = 150.0;
+            density = 0.7;
+        #endif
 
-        vec4 lightVolume = vec4(0.0);
-        if ((frameCounter & 1) == 0) {
-            lightVolume = texture(floodfillSamplerCopy, voxelPos);
-        } else {
-            lightVolume = texture(floodfillSampler, voxelPos);
+        //Positions
+        vec3 viewPosZ0 = ToView(vec3(texCoord.xy, z0));
+        vec3 viewPosZ1 = ToView(vec3(texCoord.xy, z1));
+        vec3 worldPos = ToWorld(viewPosZ1);
+
+        float lViewPosZ0 = length(viewPosZ0);
+        float lViewPosZ1 = length(viewPosZ1);
+
+        //Ray Marching
+        vec3 rayIncrement = normalize(worldPos) * minDist;
+        vec3 rayPos = rayIncrement * dither;
+
+        for (int i = 0; i < sampleCount; i++, rayPos += rayIncrement) {
+            float rayLength = length(rayPos);
+            if (rayLength > lViewPosZ1) break;
+
+            vec3 voxelPos = worldToVoxel(rayPos);
+                voxelPos /= voxelVolumeSize;
+                voxelPos = clamp(voxelPos, 0.0, 1.0);
+
+            vec4 lightVolume = vec4(0.0);
+            if ((frameCounter & 1) == 0) {
+                lightVolume = texture(floodfillSamplerCopy, voxelPos);
+            } else {
+                lightVolume = texture(floodfillSampler, voxelPos);
+            }
+
+            vec3 lightSample = pow(lightVolume.rgb, vec3(1.0 / FLOODFILL_RADIUS));
+
+            #ifdef NETHER_CLOUDY_FOG
+            vec3 npos = (rayPos + cameraPosition) * VF_NETHER_FREQUENCY + vec3(frameTimeCounter * VF_NETHER_SPEED, 0.0, 0.0);
+
+            float n3da = texture2D(noisetex, npos.xz * 0.001 + floor(npos.y * 0.1) * 0.2).r;
+            float n3db = texture2D(noisetex, npos.xz * 0.001 + floor(npos.y * 0.1 + 1.0) * 0.2).r;
+
+            float cloudyNoise = mix(n3da, n3db, fract(npos.y * 0.1));
+                cloudyNoise = max(cloudyNoise - 0.45, 0.0);
+                cloudyNoise = min(cloudyNoise * 8.0, 1.0);
+                cloudyNoise = cloudyNoise * (1.0 + cloudyNoise * cloudyNoise);
+            lightSample = lightSample * (0.75 + cloudyNoise) + cloudyNoise * netherCol * VF_NETHER_STRENGTH / sampleCount;
+            #endif
+
+            #ifdef LPV_CLOUDY_FOG
+            vec3 npos = (rayPos + cameraPosition) * 6.0 + vec3(frameTimeCounter, 0.0, 0.0);
+
+            float n3da = texture2D(noisetex, npos.xz * 0.001 + floor(npos.y * 0.1) * 0.1).r;
+            float n3db = texture2D(noisetex, npos.xz * 0.001 + floor(npos.y * 0.1 + 1.0) * 0.1).r;
+
+            float cloudyNoise = mix(n3da, n3db, fract(npos.y * 0.1));
+                cloudyNoise = max(cloudyNoise - 0.45, 0.0);
+                cloudyNoise = min(cloudyNoise * 8.0, 1.0);
+                cloudyNoise = cloudyNoise * (1.0 + cloudyNoise * cloudyNoise);
+            lightSample *= 0.6 + cloudyNoise * 0.4;
+            #endif
+
+            float rayDistance = length(vec3(rayPos.x, rayPos.y * 2.0, rayPos.z));
+            lightSample *= max(0.0, 1.0 - rayDistance / maxDist);
+
+            if (rayLength > lViewPosZ0) lightSample *= translucent;
+            lightFog += lightSample;
         }
 
-        vec3 lightSample = pow(lightVolume.rgb, vec3(1.0 / FLOODFILL_RADIUS));
-
-        #ifdef NETHER_CLOUDY_FOG
-        vec3 npos = (rayPos + cameraPosition) * VF_NETHER_FREQUENCY + vec3(frameTimeCounter * VF_NETHER_SPEED, 0.0, 0.0);
-
-        float n3da = texture2D(noisetex, npos.xz * 0.001 + floor(npos.y * 0.1) * 0.2).r;
-        float n3db = texture2D(noisetex, npos.xz * 0.001 + floor(npos.y * 0.1 + 1.0) * 0.2).r;
-
-        float cloudyNoise = mix(n3da, n3db, fract(npos.y * 0.1));
-              cloudyNoise = max(cloudyNoise - 0.45, 0.0);
-              cloudyNoise = min(cloudyNoise * 8.0, 1.0);
-              cloudyNoise = cloudyNoise * (1.0 + cloudyNoise * cloudyNoise);
-        lightSample = lightSample * (0.75 + cloudyNoise) + cloudyNoise * netherCol * VF_NETHER_STRENGTH / sampleCount;
-        #endif
-
-        #ifdef LPV_CLOUDY_FOG
-        vec3 npos = (rayPos + cameraPosition) * 6.0 + vec3(frameTimeCounter, 0.0, 0.0);
-
-        float n3da = texture2D(noisetex, npos.xz * 0.001 + floor(npos.y * 0.1) * 0.1).r;
-        float n3db = texture2D(noisetex, npos.xz * 0.001 + floor(npos.y * 0.1 + 1.0) * 0.1).r;
-
-        float cloudyNoise = mix(n3da, n3db, fract(npos.y * 0.1));
-              cloudyNoise = max(cloudyNoise - 0.45, 0.0);
-              cloudyNoise = min(cloudyNoise * 8.0, 1.0);
-              cloudyNoise = cloudyNoise * (1.0 + cloudyNoise * cloudyNoise);
-        lightSample *= 0.65 + cloudyNoise * 0.35;
-        #endif
-
-        float rayDistance = length(vec3(rayPos.x, rayPos.y * 2.0, rayPos.z));
-        lightSample *= max(0.0, 1.0 - rayDistance / maxDist);
-
-        if (rayLength > lViewPosZ0) lightSample *= translucent;
-        lightFog += lightSample;
+        vec3 result = pow(lightFog / sampleCount, vec3(0.5)) * visibility;
+        fog += result * pow(length(result), density) * intensity * 0.01 * LPV_FOG_STRENGTH;
     }
-
-    vec3 result = pow(lightFog / sampleCount, vec3(0.5)) * visibility;
-    fog += result * pow(length(result), density) * intensity * 0.01 * LPV_FOG_STRENGTH;
 }
 #endif
 
