@@ -174,9 +174,7 @@ flat out int mat;
 uniform float viewWidth, viewHeight;
 #endif
 
-#if defined OVERWORLD || defined END
 uniform float timeAngle;
-#endif
 
 uniform mat4 gbufferModelView, gbufferModelViewInverse;
 
