@@ -205,10 +205,7 @@ void main() {
 	tangent = normalize(gl_NormalMatrix * at_tangent.xyz);
 
 	//Sun & Other vectors
-	#if defined OVERWORLD || defined END
 	sunVec = getSunVector(gbufferModelView, timeAngle);
-	#endif
-
 	upVec = normalize(gbufferModelView[1].xyz);
 	eastVec = normalize(gbufferModelView[0].xyz);
 

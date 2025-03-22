@@ -175,10 +175,7 @@ void main() {
 	texCoord = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;
 	
 	//Sun Vector
-	const vec2 sunRotationData = vec2(cos(sunPathRotation * 0.01745329251994), -sin(sunPathRotation * 0.01745329251994));
-	float ang = fract(timeAngle - 0.25);
-	ang = (ang + (cos(ang * PI) * -0.5 + 0.5 - ang) / 3.0) * TAU;
-	sunVec = normalize((gbufferModelView * vec4(vec3(-sin(ang), cos(ang) * sunRotationData) * 2000.0, 1.0)).xyz);
+	sunVec = getSunVector(gbufferModelView, timeAngle);
 	upVec = normalize(gbufferModelView[1].xyz);
 
 	//Position
