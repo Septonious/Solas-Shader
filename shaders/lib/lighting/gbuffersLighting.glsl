@@ -19,8 +19,8 @@ void getCloudShadow(vec2 rayPos, vec2 wind, float amount, float frequency, float
 	noise = noiseBase * 22.0;
 	noise = max(noise - amount, 0.0) * (density * 0.25);
 	noise /= sqrt(noise * noise + 0.25);
-	noise = clamp(noise, 0.0, 1.0);
-	noise = exp(noise * -5.0);
+	noise = exp(noise * -10.0);
+    noise = clamp(noise, 0.0, 1.0);
 }
 #endif
 
@@ -185,7 +185,7 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
         float noise = 0.0;
         getCloudShadow(cloudShadowPos.xz, wind, amount, frequency, density, noise);
 
-        shadow = mix(vec3(0.0), shadow, vec3(noise) * VC_OPACITY);
+        shadow *= noise * VC_OPACITY;
     }
     #endif
 
@@ -208,7 +208,7 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
         vec3 baseReflectance = vec3(0.1);
 
         float smoothnessF = 0.15 + length(albedo.rgb) * 0.2 + NoL * 0.2;
-        #ifdef DH_TERRAIN
+        #if defined DH_TERRAIN && defined END
               smoothnessF += 0.15;
         #endif
               smoothnessF = mix(smoothnessF, 0.95, smoothness);

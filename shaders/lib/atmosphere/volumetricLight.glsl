@@ -26,8 +26,8 @@ void getCloudShadow(vec2 rayPos, vec2 wind, float amount, float frequency, float
 	noise = noiseBase * 22.0;
 	noise = max(noise - amount, 0.0) * (density * 0.25);
 	noise /= sqrt(noise * noise + 0.25);
-	noise = clamp(noise, 0.0, 1.0);
-	noise = exp(noise * -5.0);
+	noise = exp(noise * -10.0);
+    noise = clamp(noise, 0.0, 1.0);
 }
 #endif
 
@@ -88,7 +88,7 @@ void computeVL(inout vec3 vl, in vec3 translucent, in float dither) {
 	float minDistFactor = 2.0;
 	float maxDistFactor = shadowDistance + 256.0;
 	#ifdef DISTANT_HORIZONS
-		  maxDistFactor += dhRenderDistance * 0.1;
+		  maxDistFactor += min(dhRenderDistance, 512.0);
 	#endif
 		  maxDistFactor = mix(maxDistFactor, 64.0, float(isEyeInWater == 1));
 	float maxDist = min(length(sampleStepW), maxDistFactor) / length(sampleStepW);
@@ -121,6 +121,9 @@ void computeVL(inout vec3 vl, in vec3 translucent, in float dither) {
 		  #ifndef VC_SHADOWS
 		  visibility *= 0.5;
 		  #endif
+	#ifdef DISTANT_HORIZONS
+	visibility = 1;
+	#endif
 	#else
 	float visibility = exp(pow4(VoLC)) * 0.1;
 	#endif
