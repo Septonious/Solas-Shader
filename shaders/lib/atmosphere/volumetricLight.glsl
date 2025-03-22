@@ -101,7 +101,7 @@ void computeVL(inout vec3 vl, in vec3 translucent, in float dither) {
 	if (visibility > 0) {
 		//Other Variables
 		#ifdef OVERWORLD
-		vec3 newSkyColor = pow(normalize(skyColor + 0.0001), vec3(0.75));
+		vec3 newSkyColor = normalize(skyColor + 0.0001);
 		vec3 vlColor = mix(pow(lightCol, vec3(0.85)), lightCol * newSkyColor, timeBrightness);
 		#else
 		vec3 vlColor = endLightColSqrt;
@@ -116,7 +116,7 @@ void computeVL(inout vec3 vl, in vec3 translucent, in float dither) {
 		float frequency = VC_FREQUENCY;
 		float density = VC_DENSITY;
 		float height = VC_HEIGHT;
-		float cloudTop = VC_HEIGHT + VC_THICKNESS + 45.0;
+		float cloudTop = VC_HEIGHT + VC_THICKNESS + 75.0 - timeBrightness * 30.0;
 
 		getDynamicWeather(speed, amount, frequency, density, height);
 
@@ -198,6 +198,6 @@ void computeVL(inout vec3 vl, in vec3 translucent, in float dither) {
 
 		if (isEyeInWater == 1.0) finalVL *= mix(waterColorSqrt, waterColorSqrt * weatherCol, wetness) * (4.0 + sunVisibility * 8.0);
 
-		vl += pow(finalVL, vec3(1.0 - pow(length(finalVL), 1.25) * 0.33));
+		vl += finalVL;
 	}
 }

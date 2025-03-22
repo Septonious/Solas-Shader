@@ -169,7 +169,7 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
 
     //Cloud Shadows
     #ifdef VC_SHADOWS
-    if (worldPos.y + cameraPosition.y < VC_HEIGHT - VC_THICKNESS - 25.0) {
+    if (worldPos.y + cameraPosition.y < VC_HEIGHT - VC_THICKNESS + 45.0) {
         float speed = VC_SPEED;
         float amount = VC_AMOUNT;
         float frequency = VC_FREQUENCY;
