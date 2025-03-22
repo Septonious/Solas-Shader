@@ -31,7 +31,7 @@ void getDenseFog(inout vec3 color, float lViewPos) {
 
 //Normal Fog
 #ifndef END
-void getNormalFog(inout vec3 color, in vec3 worldPos, in vec3 atmosphereColor, in float lViewPos, in float lWorldPos) {
+void getNormalFog(inout vec3 color, in vec3 viewPos, in vec3 worldPos, in vec3 atmosphereColor, in float lViewPos, in float lWorldPos) {
     #if defined DISTANT_HORIZONS && (defined DEFERRED || defined DH_WATER || defined GBUFFERS_WATER)
     float farPlane = dhRenderDistance - 128.0;
     #else
@@ -45,7 +45,7 @@ void getNormalFog(inout vec3 color, in vec3 worldPos, in vec3 atmosphereColor, i
 	float fogVariableHeight = FOG_HEIGHT;
 		  fogVariableHeight += texture2D(noisetex, (worldPos.xz + cameraPosition.xz + frameCounter * 0.06 * VC_SPEED) * 0.00003).b * 50.0 - 50.0;
 	float fogAltitude = clamp(exp2(-max(worldPos.y + cameraPosition.y - fogVariableHeight, 0.0) / exp2(FOG_HEIGHT_FALLOFF)), 0.0, 1.0);
-		  fogAltitude = mix(fogAltitude, 1.0, timeBrightness * 0.5);
+		  fogAltitude = mix(fogAltitude, 0.5, timeBrightness * 0.5);
 	float fogDensity = FOG_DENSITY;
 	#ifdef DISTANT_HORIZONS
 		  fogDensity *= 1.5;
@@ -56,10 +56,10 @@ void getNormalFog(inout vec3 color, in vec3 worldPos, in vec3 atmosphereColor, i
 	fogDistance *= 1.0 - isPaleGarden * 0.75;
 	#endif
 
-    float fog = 1.0 - exp(-(0.0075 + wetness * caveFactor * 0.0025) * lViewPos * fogDistance);
+    float fog = 1.0 - exp(-(0.005 + wetness * caveFactor * 0.0025) * lViewPos * fogDistance);
 		  fog = clamp(fog * fogDensity * fogAltitude, 0.0, 1.0);
 
-	vec3 fogCol = mix(caveMinLightCol * atmosphereColor, mix(atmosphereColor, ambientColor, 0.25) * 0.85, caveFactor);
+	vec3 fogCol = mix(caveMinLightCol * atmosphereColor, mix(atmosphereColor, normalize(skyColor + 0.000001) * 0.75, 0.2), caveFactor);
 
 	//Distant Fade
 	#ifdef DISTANT_FADE
@@ -122,7 +122,7 @@ void Fog(inout vec3 color, in vec3 viewPos, in vec3 worldPos, in vec3 atmosphere
 
 	if (isEyeInWater < 1) {
 		#ifndef END
-        getNormalFog(color, worldPos, atmosphereColor, lViewPos, lWorldPos);
+        getNormalFog(color, viewPos, worldPos, atmosphereColor, lViewPos, lWorldPos);
 		#endif
     } else if (1 < isEyeInWater) {
         getDenseFog(color, lViewPos);
