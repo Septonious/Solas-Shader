@@ -117,9 +117,7 @@ out vec3 eastVec, sunVec, upVec;
 out vec2 texCoord, lmCoord;
 
 //Uniforms//
-#if defined OVERWORLD || defined END
 uniform float timeAngle;
-#endif
 
 uniform mat4 gbufferModelView, gbufferModelViewInverse;
 

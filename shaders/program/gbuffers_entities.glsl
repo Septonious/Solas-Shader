@@ -169,9 +169,7 @@ flat out int mat;
 //Uniforms//
 uniform int entityId;
 
-#if defined OVERWORLD || defined END
 uniform float timeAngle;
-#endif
 
 uniform mat4 gbufferModelView, gbufferModelViewInverse;
 

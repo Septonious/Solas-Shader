@@ -293,9 +293,7 @@ out vec4 vTexCoord, vTexCoordAM;
 uniform float viewWidth, viewHeight;
 #endif
 
-#if defined OVERWORLD || defined END
 uniform float timeAngle;
-#endif
 
 #if defined WAVING_LEAVES || defined WAVING_PLANTS
 uniform float frameTimeCounter;
