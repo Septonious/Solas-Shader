@@ -36,23 +36,24 @@ void computeLPVFog(inout vec3 fog, in vec3 translucent, in float dither) {
 	visibility *= 1.0 - blindFactor;
 
     //Ray Marching Parameters
+    float eBS01 = pow(eBS, 0.1);
     float minDist = 6.0;
     #ifdef OVERWORLD
-          minDist += 4.0 * eBS;
+          minDist += 4.0 * eBS01;
     #endif
     float maxDist = min(far, VOXEL_VOLUME_SIZE * 0.5);
-    int sampleCount = min(int(maxDist / minDist + 0.01), 14 - int(eBS * sunVisibility * sunVisibility * 14));
+    int sampleCount = min(int(maxDist / minDist + 0.01), 14 - int(eBS01 * sunVisibility * sunVisibility * 14));
 
     if (sampleCount > 0 && visibility > 0) {
         //LPV Fog Intensity
         float intensity = 150.0;
         float density = 0.75;
         #ifdef OVERWORLD
-            intensity *= 1.0 - sunVisibility * eBS * 0.5;
-            density *= 0.75 + sunVisibility * eBS * 0.25;
+            intensity *= 1.0 - sunVisibility * eBS01 * 0.5;
+            density *= 0.75 + sunVisibility * eBS01 * 0.25;
 
-            intensity += wetness * eBS * 50.0;
-            density -= wetness * eBS * 0.25;
+            intensity += wetness * eBS01 * 50.0;
+            density -= wetness * eBS01 * 0.25;
 
             intensity = mix(400.0, intensity, caveFactor);
             density = mix(0.4, density, caveFactor);
@@ -187,7 +188,7 @@ void computeFireflies(inout float fireflies, in vec3 translucent, in float dithe
     float lViewPosZ1 = length(viewPosZ1);
 
 	//Total fireflies visibility
-	float visibility = eBS * eBS * (1.0 - sunVisibility) * (1.0 - wetness) * float(isEyeInWater == 0);
+	float visibility = eBS01 * eBS01 * (1.0 - sunVisibility) * (1.0 - wetness) * float(isEyeInWater == 0);
 
 	#if MC_VERSION >= 11900
 	visibility *= 1.0 - darknessFactor;
