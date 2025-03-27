@@ -88,6 +88,7 @@ void computeVL(inout vec3 vl, in vec3 translucent, in float dither) {
 		  visibility *= mix(meVisRatio, 2.0 - sunVisibility, min(timeBrightness + (1.0 - sunVisibility), 1.0));
 		  visibility = mix(visibility, 0.5, indoorFactor) * waterFactor;
 		  visibility *= clamp(1.0 - exp(-length(viewPos) * 0.0075), 0.0, 1.0);
+		  visibility *= caveFactor;
 	#else
 	float visibility = exp(pow4(VoLC)) * 0.1;
 	#endif
