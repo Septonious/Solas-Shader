@@ -46,7 +46,7 @@ void getNormalFog(inout vec3 color, in vec3 viewPos, in vec3 worldPos, in vec3 a
 		  fogVariableHeight += texture2D(noisetex, (worldPos.xz + cameraPosition.xz + frameCounter * 0.03 * VC_SPEED) * 0.00004).b * 30.0;
 		  fogVariableHeight += texture2D(noisetex, (worldPos.xz + cameraPosition.xz + frameCounter * 0.06 * VC_SPEED) * 0.00008).b * 20.0;
 	float fogAltitude = clamp(exp2(-max(worldPos.y + cameraPosition.y - fogVariableHeight, 0.0) / exp2(FOG_HEIGHT_FALLOFF)), 0.0, 1.0);
-		  fogAltitude = mix(fogAltitude, 0.5, timeBrightness * 0.5);
+		  fogAltitude = mix(fogAltitude, 0.6, timeBrightness * 0.3);
 	float fogDensity = FOG_DENSITY;
 	#ifdef DISTANT_HORIZONS
 		  fogDensity *= 1.5;

@@ -1,3 +1,5 @@
+#define COMPOSITE_3
+
 //Settings//
 #include "/lib/common.glsl"
 
@@ -47,6 +49,10 @@ uniform vec3 cameraPosition;
 #endif
 
 uniform vec3 fogColor;
+
+#ifdef LPV_FOG
+uniform vec4 lightningBoltPosition;
+#endif
 
 uniform sampler2D colortex0;
 
@@ -103,10 +109,18 @@ float sunVisibility = clamp(dot(sunVec, upVec) + 0.1, 0.0, 0.25) * 4.0;
 #include "/lib/color/netherColor.glsl"
 #endif
 
+#ifdef LPV_FOG
+#include "/lib/lighting/lightning.glsl"
+#endif
+
 #include "/lib/atmosphere/volumetricEffects.glsl"
 #endif
 
 #ifdef VL
+#ifdef VC_SHADOWS
+#include "/lib/lighting/cloudShadows.glsl"
+#endif
+
 #include "/lib/util/ToShadow.glsl"
 #include "/lib/color/lightColor.glsl"
 #include "/lib/atmosphere/volumetricLight.glsl"

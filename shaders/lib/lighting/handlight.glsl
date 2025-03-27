@@ -1,6 +1,6 @@
 uniform vec3 relativeEyePosition;
 
-void getHandLightColor(inout vec3 blockLighting, in vec3 normal, in vec3 pos) {
+void getHandLightColor(inout vec3 blockLighting, in vec3 pos) {
     if ((heldItemId >= 1 && heldItemId <= 60) || (heldItemId2 >= 1 && heldItemId2 <= 60)) {
         float handlight = clamp((32.0 - length(pos) * 5.0) * 0.015, 0.0, 1.0);
 
@@ -13,6 +13,7 @@ void getHandLightColor(inout vec3 blockLighting, in vec3 normal, in vec3 pos) {
         #ifdef GBUFFERS_HAND
              lighting *= 2.0;
         #endif
+
         blockLighting += lighting;
     }
 }

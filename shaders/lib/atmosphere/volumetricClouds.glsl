@@ -5,15 +5,6 @@ float texture2DShadow(sampler2D shadowtex, vec3 shadowPos) {
 }
 
 #ifdef VC
-float lightningFlashEffect(vec3 worldPos, vec3 lightningBoltPosition, float lightDistance){ //Thanks to Xonk!
-    vec3 lightningPos = worldPos - vec3(lightningBoltPosition.x, max(worldPos.y, lightningBoltPosition.y), lightningBoltPosition.z);
-
-    float lightningLight = max(1.0 - length(lightningPos) / lightDistance, 0.0);
-          lightningLight = exp(-24.0 * (1.0 - lightningLight));
-
-    return lightningLight;
-}
-
 void getDynamicWeather(inout float speed, inout float amount, inout float frequency, inout float thickness, inout float density, inout float detail, inout float height) {
 	int worldDayInterpolated = int((worldDay * 24000 + worldTime) / 24000);
 	float dayAmountFactor = abs(worldDayInterpolated % 7 / 2 - 0.5) * 0.5;
@@ -111,6 +102,7 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z1, f
 			float halfVoLSqr = halfVoL * halfVoL;
 			float scattering = pow6(halfVoL);
 			float noiseLightFactor = (2.0 - VoL * shadowFade) * density;
+			float lightning = 0.0;
 
 			vec3 rayPos = startPos + sampleStep * dither;
 			
@@ -187,8 +179,7 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z1, f
 				noise *= fog;
 				cloudAlpha = mix(cloudAlpha, 1.0, noise);
 
-                float lightning = min(lightningFlashEffect(worldPos, lightningBoltPosition.xyz, 256.0) * lightningBoltPosition.w * 4.0, 1.0);
-				cloudLighting = mix(cloudLighting, pow(sampleLighting, 0.25) * 6.0, lightning);
+                lightning = min(lightningFlashEffect(worldPos, lightningBoltPosition.xyz, 256.0) * lightningBoltPosition.w * 4.0, 1.0);
 
 				//gbuffers_water cloud discard check
 				if (minimalNoise < noise && currentDepth == maxDepth) {
@@ -203,7 +194,7 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z1, f
                  cloudAmbientColor *= 0.35 + sunVisibility * sunVisibility * (0.2 - wetness * 0.2);
 			vec3 cloudLightColor = mix(lightCol, mix(lightCol, atmosphereColor * 2.0, 0.3 * (sunVisibility + timeBrightness)) * atmosphereColor * 2.0, sunVisibility);
                  cloudLightColor *= (1.0 + scattering) * morningEveningFactor;
-			vec3 cloudColor = mix(cloudAmbientColor, cloudLightColor, cloudLighting);
+			vec3 cloudColor = mix(cloudAmbientColor, cloudLightColor, cloudLighting)  * (1.0 + lightning * 100);
 
 			#ifdef AURORA
 			cloudColor = mix(cloudColor, vec3(0.4, 2.5, 0.9) * auroraVisibility, pow2(cloudLighting) * auroraVisibility * 0.075);

@@ -111,6 +111,7 @@ float sunVisibility = clamp(dot(sunVec, upVec) + 0.1, 0.0, 0.25) * 4.0;
 
 #ifdef VC
 #ifndef BLOCKY_CLOUDS
+#include "/lib/lighting/lightning.glsl"
 #include "/lib/atmosphere/volumetricClouds.glsl"
 #else
 #include "/lib/atmosphere/volumetricBlockyClouds.glsl"

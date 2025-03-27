@@ -1,15 +1,4 @@
 #ifdef LPV_FOG
-uniform vec4 lightningBoltPosition;
-
-float lightningFlashEffect(vec3 worldPos, vec3 lightningBoltPosition, float lightDistance){ //Thanks to Xonk!
-    vec3 lightningPos = worldPos - vec3(lightningBoltPosition.x, max(worldPos.y, lightningBoltPosition.y), lightningBoltPosition.z);
-
-    float lightningLight = max(1.0 - length(lightningPos) / lightDistance, 0.0);
-          lightningLight = exp(-24.0 * (1.0 - lightningLight));
-
-    return lightningLight;
-}
-
 float getLuminance(vec3 color) {
 	return dot(color, vec3(0.299, 0.587, 0.114));
 }
@@ -92,6 +81,11 @@ void computeLPVFog(inout vec3 fog, in vec3 translucent, in float dither) {
 
             vec3 lightSample = pow(lightVolume.rgb, vec3(1.0 / FLOODFILL_RADIUS));
 
+            //Lightning
+            float lightning = min(lightningFlashEffect(rayPos, lightningBoltPosition.xyz, 256.0) * lightningBoltPosition.w * 4.0, 1.0);
+            lightSample += vec3(lightning) * 0.5;
+
+            //Nether Cloudy Fog
             #ifdef NETHER_CLOUDY_FOG
             vec3 npos = (rayPos + cameraPosition) * VF_NETHER_FREQUENCY + vec3(frameTimeCounter * VF_NETHER_SPEED, 0.0, 0.0);
 
@@ -105,6 +99,7 @@ void computeLPVFog(inout vec3 fog, in vec3 translucent, in float dither) {
             lightSample = lightSample * (0.75 + cloudyNoise) + cloudyNoise * netherCol * VF_NETHER_STRENGTH / sampleCount;
             #endif
 
+            //Overworld Cloudy LPV Fog
             #ifdef LPV_CLOUDY_FOG
             vec3 npos = (rayPos + cameraPosition) * 6.0 + vec3(frameTimeCounter, 0.0, 0.0);
 
