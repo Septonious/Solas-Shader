@@ -4,7 +4,7 @@ void getSunMoon(inout vec3 color, in vec3 nViewPos, in vec3 worldPos, in vec3 li
 	if (0 < visibility) {
 		float sun = pow16(pow32(VoS * VoS)) * cloudFactor;
 		float moon = pow32(pow32(VoM)) * cloudFactor;
-		float glare = pow24(VoS + VoM);
+		float glare = pow8(VoS + VoM);
 
 		if (0 < moon && 0 < moonPhase) { // Moon phases, uses the same method as Complementary v4
 			float phaseFactor = int(moonPhase != 4) * (1.0 - int(4 < moonPhase) * 2.0) * 0.00175;
