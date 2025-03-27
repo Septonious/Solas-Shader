@@ -1,5 +1,5 @@
 void getRainbow(inout vec3 color, in vec3 worldPos, in float VoU, in float size, in float radius, in float caveFactor) {
-	float visibility = pow3(sunVisibility) * (1.0 - rainStrength) * (1.0 - isSnowy)* max(VoU, 0.0) * caveFactor * RAINBOW_BRIGHTNESS;
+	float visibility = pow3(sunVisibility) * (1.0 - rainStrength) * (1.0 - isSnowy) * wetness * max(VoU, 0.0) * caveFactor * RAINBOW_BRIGHTNESS;
 
 	if (0 < visibility) {
 		vec2 planeCoord = mix(worldPos.xy, worldPos.zy, timeBrightness * timeBrightness) / (worldPos.y + length(worldPos.xz) * 0.65);
