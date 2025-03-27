@@ -39,7 +39,7 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 #define MILKY_WAY_BRIGHTNESS 2.00 //[0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00]
 
 #define RAINBOW
-#define RAINBOW_BRIGHTNESS 1.00 //[0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00]
+#define RAINBOW_BRIGHTNESS 1.50 //[0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00]
 
 //#define SKYBOX
 #define SKYBOX_MIX_FACTOR 0.5 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
