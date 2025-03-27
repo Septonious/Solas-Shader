@@ -68,7 +68,7 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 #define VC_SPEED 1.00 //[0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00 2.50 3.00 3.50 4.00]
 #define VC_OPACITY 0.7 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
 #define VC_DISTANCE 1000.0 //[500.0 600.0 700.0 800.0 900.0 1000.0 1100.0 1200.0 1300.0 1400.0 1500.0]
-#define VC_ATTENUATION 2.5 //[2.0 2.5 3.0 3.5 4.0 4.5 5.0 5.5 6.0]
+#define VC_ATTENUATION 3.0 //[2.0 2.5 3.0 3.5 4.0 4.5 5.0 5.5 6.0]
 #define VC_SHADOWS
 //#define VC_LIGHTRAYS
 //#define BLOCKY_CLOUDS
