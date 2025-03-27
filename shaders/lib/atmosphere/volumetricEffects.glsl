@@ -37,7 +37,7 @@ void computeLPVFog(inout vec3 fog, in vec3 translucent, in float dither) {
 
     //Ray Marching Parameters
     float eBS01 = pow(eBS, 0.1);
-    float minDist = 6.0;
+    float minDist = 3.0 + caveFactor * 3.0;
     #ifdef OVERWORLD
           minDist += 4.0 * eBS01;
     #endif
@@ -120,6 +120,7 @@ void computeLPVFog(inout vec3 fog, in vec3 translucent, in float dither) {
 
             float rayDistance = length(vec3(rayPos.x, rayPos.y * 2.0, rayPos.z));
             lightSample *= max(0.0, 1.0 - rayDistance / maxDist);
+            lightSample *= pow2(min(1.0, rayLength * 0.3125));
 
             if (rayLength > lViewPosZ0) lightSample *= translucent;
             lightFog += lightSample;
