@@ -44,7 +44,7 @@ void computeLPVFog(inout vec3 fog, in vec3 translucent, in float dither) {
             intensity += wetness * eBS01 * 50.0;
             density -= wetness * eBS01 * 0.25;
 
-            intensity = mix(400.0, intensity, caveFactor);
+            intensity = mix(300.0, intensity, caveFactor);
             density = mix(0.4, density, caveFactor);
         #endif
         #ifdef NETHER
