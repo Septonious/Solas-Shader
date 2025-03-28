@@ -154,6 +154,7 @@ void main() {
 
 	vec3 newNormal = normal;
 	vec2 refraction = vec2(0.0);
+	vec2 lightmap = clamp(lmCoord, 0.0, 1.0);
 	float emission = pow8(lmCoord.x) + int(mat == 10031) * pow4(length(albedo.rgb)) * 2.0;
 	float cloudBlendOpacity = 1.0;
 
@@ -161,7 +162,7 @@ void main() {
 	float glass = float(mat >= 10201 && mat <= 10216);
 
 	if (water > 0.5) {
-		albedo.rgb = mix(color.rgb, waterColor.rgb, 0.5);
+		albedo.rgb = mix(color.rgb, waterColor.rgb, 0.5) * (0.35 + lightmap.y * 0.65);
 		#ifdef VANILLA_WATER
 		albedo.rgb *= albedoTexture.rgb * (1.0 + pow4(length(albedoTexture.rgb)));
 		#endif
@@ -176,7 +177,6 @@ void main() {
 	#endif
 	vec3 nViewPos = normalize(viewPos);
 	vec3 worldPos = ToWorld(viewPos);
-	vec2 lightmap = clamp(lmCoord, 0.0, 1.0);
 
 	//Volumetric Clouds Blending
 	#ifdef VC

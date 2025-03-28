@@ -87,7 +87,7 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
             if (0.49 < subsurface && subsurface < 0.51) { //Leaves
                 NoLm += 0.5 * shadowLightingFade * (0.75 + sss * 0.75);
             } else { //Foliage
-                NoLm += shadowLightingFade * (0.35 + sss) * (1.0 - float(subsurface > 0.29 && subsurface < 0.31) * 0.5);
+                NoLm += 0.5 * shadowLightingFade * (0.25 + sss * 0.75) * (1.0 - float(subsurface > 0.29 && subsurface < 0.31) * 0.5);
             }
         }
         #endif
@@ -127,6 +127,7 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
         vec3 shadowPos = ToShadow(worldPosM);
 
         float offset = 0.001 - shadowMapResolution * 0.0000001;
+              offset *= 1.0 + subsurface * 3.0 * sqrt(1.0 - clamp(NoL, 0.0, 1.0));
         float viewDistance = 1.0 - clamp(lViewPos * 0.01, 0.0, 1.0);
         
         shadow = computeShadow(shadowPos, offset, lightmap.y, subsurface, viewDistance);

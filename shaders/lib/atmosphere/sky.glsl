@@ -51,7 +51,7 @@ vec3 getAtmosphericScattering(vec3 viewPos, vec3 lightPos) {
          totalSky *= sunAbsorption * 0.5 + 0.5 * length(sunAbsorption);
 
     //Final calculations
-    vec3 daySky = mix(normalize(skyColor + 0.00001) * 1.5, vec3(0.62, 0.69, 1.00), 0.5 - timeBrightness * 0.25);
+    vec3 daySky = mix(normalize(skyColor + 0.00001), vec3(0.62, 0.69, 1.00), 0.5 - timeBrightness * 0.25);
          daySky = mix(daySky, lightColSqrt, pow2(1.0 - VoUClamped) * (1.0 - wetness * 0.5) * (1.0 - timeBrightness) * 0.4);
          daySky = mix(daySky * skyDensity, totalSky, rayleighScatteringMixer);
          daySky = jodieReinhardTonemap(daySky * PI);
