@@ -16,7 +16,7 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 //Tonemap//
 #define TONEMAP_CONTRAST 2.0 //[1.0 1.2 1.4 1.6 1.8 2.0 2.2 2.4 2.6 2.8 3.0 3.2 3.4 3.6 3.8 4.0]
 #define TONEMAP_BRIGHTNESS 2.8 //[2.0 2.1 2.2 2.3 2.4 2.5 2.6 2.7 2.8 2.9 3.0 3.1 3.2 3.3 3.4 3.5 3.6 3.7 3.8 3.9 4.0 4.1 4.2 4.3 4.4 4.5 4.6 4.7 4.8 4.9 5.0]
-#define TONEMAP_WHITE_THRESHOLD 2.6 //[2.0 2.2 2.4 2.6 2.8 3.0 3.2 3.4 3.6 3.8 4.0]
+#define TONEMAP_WHITE_THRESHOLD 2.4 //[2.0 2.2 2.4 2.6 2.8 3.0 3.2 3.4 3.6 3.8 4.0]
 #define TONEMAP_HIGHLIGHTS 0.38 //[0.10 0.12 0.14 0.16 0.18 0.20 0.22 0.24 0.26 0.28 0.30 0.32 0.34 0.36 0.38 0.40 0.42 0.44 0.46 0.48 0.50]
 #define TONEMAP_SHADOWS 0.10 //[0.05 0.06 0.07 0.08 0.09 0.10 0.11 0.12 0.13 0.14 0.15]
 
