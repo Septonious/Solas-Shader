@@ -103,10 +103,10 @@ void computeLPVFog(inout vec3 fog, in vec3 translucent, in float dither) {
             #ifdef LPV_CLOUDY_FOG
             vec3 npos = (rayPos + cameraPosition) * 6.0 + vec3(frameTimeCounter, 0.0, 0.0);
 
-            float n3da = texture2D(noisetex, npos.xz * 0.001 + floor(npos.y * 0.1) * 0.1).r;
-            float n3db = texture2D(noisetex, npos.xz * 0.001 + floor(npos.y * 0.1 + 1.0) * 0.1).r;
+            float n3da = texture2D(noisetex, npos.xz * 0.001 + floor(npos.y * 0.15) * 0.15).r;
+            float n3db = texture2D(noisetex, npos.xz * 0.001 + floor(npos.y * 0.15 + 1.0) * 0.15).r;
 
-            float cloudyNoise = mix(n3da, n3db, fract(npos.y * 0.1));
+            float cloudyNoise = mix(n3da, n3db, fract(npos.y * 0.15));
                 cloudyNoise = max(cloudyNoise - 0.45, 0.0);
                 cloudyNoise = min(cloudyNoise * 8.0, 1.0);
                 cloudyNoise = cloudyNoise * (1.0 + cloudyNoise * cloudyNoise);
