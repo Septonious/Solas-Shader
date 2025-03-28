@@ -150,6 +150,8 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
     shadow = mix(fakeShadow, shadow, vec3(shadowLightingFade));
 
     //Cloud Shadows
+    float cloudShadow = 1.0;
+
     #ifdef VC_SHADOWS
     if (worldPos.y + cameraPosition.y < VC_HEIGHT - VC_THICKNESS + 45.0) {
         float speed = VC_SPEED;
@@ -167,8 +169,9 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
         float noise = 0.0;
         getCloudShadow(cloudShadowPos.xz, wind, amount, frequency, density, noise);
 
-        shadow *= noise * VC_OPACITY;
+        cloudShadow = noise * VC_OPACITY;
     }
+    shadow *= cloudShadow;
     #endif
 
     //Main Lighting
@@ -201,7 +204,7 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
         #endif
 
         #ifdef OVERWORLD
-        specularHighlight = getSpecularHighlight(normal, viewPos, smoothnessF, baseReflectance, lightCol, shadow * vanillaDiffuse, color.a);
+        specularHighlight = getSpecularHighlight(normal, viewPos, smoothnessF, baseReflectance, lightCol, shadow * cloudShadow * vanillaDiffuse, color.a);
         #else
         specularHighlight = getSpecularHighlight(normal, viewPos, smoothnessF, baseReflectance, endLightCol, shadow * vanillaDiffuse, color.a);
         #endif
