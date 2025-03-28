@@ -189,7 +189,7 @@ void main() {
 	texCoord = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;
 	
 	//Sun Vector
-	sunVec = getSunVector(gbufferModelView, timeAngle);
+	getSunVector(gbufferModelView, timeAngle, sunVec);
 	upVec = normalize(gbufferModelView[1].xyz);
 
 	//Position

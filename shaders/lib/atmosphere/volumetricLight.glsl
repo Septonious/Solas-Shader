@@ -63,7 +63,7 @@ void computeVL(inout vec3 vl, in vec3 translucent, in float dither) {
 		  visibility *= min(length(viewPos * 0.01), 1.0);
 		  visibility *= caveFactor;
 	#else
-	float visibility = exp(pow4(VoLC)) * 0.1;
+	float visibility = min(length(viewPos * 0.01), 1.0) * float(0.56 < z0) * pow2((dot(nViewPos, sunVec))) * 0.25;
 	#endif
 
 	#if MC_VERSION >= 11900

@@ -153,7 +153,7 @@ void main() {
 	
 	//Sun & Other Vectors
 	#ifdef WATER_FOG
-	sunVec = getSunVector(gbufferModelView, timeAngle);
+	getSunVector(gbufferModelView, timeAngle, sunVec);
 	upVec = normalize(gbufferModelView[1].xyz);
 	#endif
 

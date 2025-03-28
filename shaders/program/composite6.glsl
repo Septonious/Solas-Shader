@@ -129,7 +129,7 @@ void main() {
 	
 	//Sun Vector
 	#if (defined PBR || defined GENERATED_SPECULAR) && defined OVERWORLD
-	sunVec = getSunVector(gbufferModelView, timeAngle);
+	getSunVector(gbufferModelView, timeAngle, sunVec);
 	upVec = normalize(gbufferModelView[1].xyz);
 	#endif
 

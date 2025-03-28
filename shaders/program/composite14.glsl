@@ -216,7 +216,7 @@ void main() {
 	
 	//Sun Vector
 	#ifdef LENS_FLARE
-	sunVec = getSunVector(gbufferModelView, timeAngle);
+	getSunVector(gbufferModelView, timeAngle, sunVec);
 	upVec = normalize(gbufferModelView[1].xyz);
 	#endif
 

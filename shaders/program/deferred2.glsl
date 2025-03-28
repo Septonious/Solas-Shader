@@ -313,7 +313,7 @@ void main() {
 	
 	//Sun & Other vectors
     #if defined OVERWORLD || defined END
-	sunVec = getSunVector(gbufferModelView, timeAngle);
+	getSunVector(gbufferModelView, timeAngle, sunVec);
 	upVec = normalize(gbufferModelView[1].xyz);
 	#endif
 
