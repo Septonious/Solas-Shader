@@ -10,7 +10,7 @@ float cdist(vec2 coord) {
 	return max(abs(coord.x - 0.5), abs(coord.y - 0.5)) * 1.85;
 }
 
-const float errMult = 3.0;
+const float errMult = 2.2;
 
 vec4 rayTrace(sampler2D depthtex, vec3 viewPos, vec3 normal, float dither, float fresnel, out float border, int refSamples, int samples, float refMult, float incMult) {
 	vec3 pos = vec3(0.0);
@@ -22,24 +22,26 @@ vec4 rayTrace(sampler2D depthtex, vec3 viewPos, vec3 normal, float dither, float
 	vec3 viewPosRT = viewPos + rayDir;
 	vec3 rayPos = rayDir;
 	vec3 rfragpos = vec3(0.0);
+	int refinementPasses = 0;
 
     for(int i = 0; i < samples; i++) {
-        pos = nvec3(gbufferProjection * nvec4(viewPosRT)) * 0.5 + 0.5;
-		if (abs(pos.x - 0.5) > 0.6 || abs(pos.y - 0.5) > 0.55) break;
+        pos = nvec3(gbufferProjection * vec4(viewPosRT, 1.0)) * 0.5 + 0.5;
+		if (pos.x < -0.05 || pos.x > 1.05 || pos.y < -0.05 || pos.y > 1.05) break;
 
-		rfragpos = vec3(pos.xy, texture2D(depthtex, pos.xy).r);
-        rfragpos = nvec3(gbufferProjectionInverse * nvec4(rfragpos * 2.0 - 1.0));
-		dist = length(start - rfragpos);
+		vec3 rfragpos = vec3(pos.xy, texture2D(depthtex,pos.xy).r);
+        rfragpos = nvec3(gbufferProjectionInverse * vec4(rfragpos * 2.0 - 1.0, 1.0));
+		dist = abs(dot(normalize(start - rfragpos), normal));
 
-		for (int j = 0; j < refSamples; j++) {
-			if (length(viewPosRT - rfragpos) < length(rayDir) * errMult) {
-				rayPos -= rayDir;
-				rayDir *= refMult;
-			}
+        float err = length(viewPosRT - rfragpos);
+		float lVector = length(rayDir) * pow(length(rayPos), 0.1) * errMult;
+		if (err < lVector) {
+			refinementPasses++;
+			if (refinementPasses >= refSamples) break;
+			rayPos -= rayDir;
+			rayDir *= refMult;
 		}
-
         rayDir *= incMult;
-        rayPos += rayDir * (0.95 + 0.05 * dither);
+        rayPos += rayDir * (0.15 * dither + 0.85);
 		viewPosRT = start + rayPos;
     }
 
