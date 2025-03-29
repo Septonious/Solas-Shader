@@ -60,7 +60,7 @@ void computeVL(inout vec3 vl, in vec3 translucent, in float dither) {
 	float visibility = float(0.56 < z0) * shadowFade * VoLP;
 		  visibility *= mix(meVisRatio, 2.0 - sunVisibility, min(timeBrightness + (1.0 - sunVisibility), 1.0));
 		  visibility = mix(visibility, 0.5, indoorFactor) * waterFactor;
-		  visibility *= min(length(viewPos * 0.01), 1.0);
+		  visibility *= min(length(viewPos * 0.005), 1.0);
 		  visibility *= caveFactor;
 	#else
 	float dragonBattle = gl_Fog.start / far;
