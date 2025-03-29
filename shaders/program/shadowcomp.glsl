@@ -75,7 +75,7 @@ void main() {
 	}
 
 	if (!doFloodfill) {
-		vec3 color = blocklightColorArray[min(voxel, blocklightColorArray.length() - 1u)];
+		vec3 color = getBlocklightColor(int(voxel) + 1);
 		light = pow(color, vec3(FLOODFILL_RADIUS));
 
 		#ifdef OVERWORLD
