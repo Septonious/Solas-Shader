@@ -227,7 +227,7 @@ void getEndCloudSample(vec2 rayPos, vec2 wind, float attenuation, inout float no
 	float noiseCoverage = abs(attenuation - 0.125) * (attenuation > 0.125 ? 1.14 : 8.0);
 		  noiseCoverage *= noiseCoverage * 8.0;
 	
-	noise = mix(noiseBase, noiseDetail, 0.05 * int(0 < noiseBase)) * 22.0 - noiseCoverage;
+	noise = mix(noiseBase, noiseDetail, 0.025 * int(0 < noiseBase)) * 22.0 - noiseCoverage;
 	noise = max(noise - VF_END_AMOUNT, 0.0) * 0.75;
 	noise /= sqrt(noise * noise + 0.25);
 }
@@ -256,18 +256,19 @@ void computeEndVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z1
 		#endif
 
 		//Setting the ray marcher
-		float cloudTop = VF_END_HEIGHT + VF_END_THICKNESS * 10.0;
+		float dragonBattle = gl_Fog.start / far;
+		float cloudTop = VF_END_HEIGHT + VF_END_THICKNESS * 10.0 * (1.75 - dragonBattle * 0.75);
 		float lowerPlane = (VF_END_HEIGHT - cameraPosition.y) / nWorldPos.y;
 		float upperPlane = (cloudTop - cameraPosition.y) / nWorldPos.y;
 		float minDist = max(min(lowerPlane, upperPlane), 0.0);
 		float maxDist = max(lowerPlane, upperPlane);
 
 		float planeDifference = maxDist - minDist;
-		float rayLength = VF_END_THICKNESS * 5.0;
+		float rayLength = VF_END_THICKNESS * 5.0 * (1.75 - dragonBattle * 0.75);
 			  rayLength /= nWorldPos.y * nWorldPos.y * 3.0 + 1.0;
 		vec3 startPos = cameraPosition + minDist * nWorldPos;
 		vec3 sampleStep = nWorldPos * rayLength;
-		int sampleCount = int(min(planeDifference / rayLength, 32) + dither);
+		int sampleCount = int(min(planeDifference / rayLength, 24) + dither);
 
 		if (maxDist >= 0.0 && sampleCount > 0) {
 			float cloud = 0.0;
@@ -288,7 +289,7 @@ void computeEndVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z1
 			float minimalNoise = 0.25 + dither * 0.25;
 			float sampleTotalLength = minDist + rayLength * dither;
 
-			vec2 wind = vec2(frameTimeCounter * VC_SPEED * 0.0005, sin(frameTimeCounter * VC_SPEED * 0.001) * 0.005) * VF_END_HEIGHT * 0.05;
+			vec2 wind = vec2(frameTimeCounter * VC_SPEED * 0.0005, sin(frameTimeCounter * VC_SPEED * 0.001) * 0.005) * VF_END_HEIGHT * 0.1 * (4.0 - dragonBattle * 3.0);
 
 			//Ray marcher
 			for (int i = 0; i < sampleCount; i++, rayPos += sampleStep, sampleTotalLength += rayLength) {

@@ -63,7 +63,12 @@ void computeVL(inout vec3 vl, in vec3 translucent, in float dither) {
 		  visibility *= min(length(viewPos * 0.01), 1.0);
 		  visibility *= caveFactor;
 	#else
-	float visibility = min(length(viewPos * 0.01), 1.0) * float(0.56 < z0) * pow2((dot(nViewPos, sunVec))) * 0.25;
+	float dragonBattle = gl_Fog.start / far;
+	float cutoff = min(length(viewPos * 0.01), 1.0) * float(0.56 < z0);
+	float endBlackHolePos = pow2(clamp(dot(nViewPos, sunVec), 0.0, 1.0));
+	float visibilityNormal = endBlackHolePos * 0.25;
+	float visibilityDragon = 0.5 + endBlackHolePos;
+	float visibility = cutoff * mix(visibilityDragon, visibilityNormal, clamp(dragonBattle, 0.0, 1.0));
 	#endif
 
 	#if MC_VERSION >= 11900

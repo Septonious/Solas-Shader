@@ -18,8 +18,9 @@ void getEndVortex(inout vec3 color, in vec3 worldPos, in vec3 stars, in float Vo
 		float ring1 = pow24(pow32(VoS)) * 10000.0;
 		float ring2 = pow20(pow32(VoS)) * 10000.0 - ring1 * 5.0;
 		float ring3 = pow32(pow32(VoS)) * 2000.0;
-		float ring4 = pow24(pow32(VoS)) * 900.0 - ring3 * 5.4;
-		float rings = clamp(ring2, 0.0, 1.0) + clamp(pow5(ring4) * 400000, 0.0, 1.0);
+		float ring4 = pow24(pow32(VoS)) * 950.0 - ring3 * 6.7;
+			  ring4 = clamp(pow5(ring4) * 400000, 0.0, 1.0);
+		float rings = clamp(ring2, 0.0, 1.0) + (0.5 + float(ring4 > 0.02) * 0.5) * ring4 * 8.0;
 
 		float hole = pow32(pow32(VoS)) * 5000000.0;
 			  hole = clamp(hole, 0.0, 1.0);
@@ -27,7 +28,7 @@ void getEndVortex(inout vec3 color, in vec3 worldPos, in vec3 stars, in float Vo
 		vec3 accretionDisk = endLightCol * 12.0;
 		vec3 spiral = getSpiral(planeCoord1, VoS);
 
-		color = mix(color, spiral, length(spiral));
+		color = mix(color, spiral * 4.0, length(spiral * spiral));
 		color += endLightCol * pow8(VoS) * 0.075;
 		color *= 1.0 - hole;
 		color += clamp(rings * accretionDisk, 0.0, 1.0);
