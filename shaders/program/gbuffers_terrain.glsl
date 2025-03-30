@@ -370,7 +370,7 @@ void main() {
 	gl_Position = gl_ProjectionMatrix * gbufferModelView * position;
 
     #ifdef TAA
-    gl_Position.xy = TAAJitter(gl_Position.xy, gl_Position.w);
+	if (mat != 30001) gl_Position.xy = TAAJitter(gl_Position.xy, gl_Position.w);
     #endif
 
 	#ifndef DRM_S0L4S

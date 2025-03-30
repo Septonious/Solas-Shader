@@ -119,7 +119,7 @@ void main() {
 
 	vec3 shadow = vec3(0.0);
 
-    if (blockEntityId == 10303) {
+    if (blockEntityId == 9999) {
 		vec2 portalCoordPlayerPos = screenPos.xy;
 
 		float portalNoise = texture2D(noisetex, portalCoordPlayerPos * 0.25).r * 0.25 + 0.375;
