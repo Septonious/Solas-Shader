@@ -33,7 +33,7 @@ void computeVL(inout vec3 vl, in vec3 translucent, in float dither) {
 	float denseForestFactor = min(isSwamp + isJungle, 1.0);
 	float meVisRatio = (1.0 - VL_STRENGTH_RATIO) + pow(VoLC, 1.3) * VL_STRENGTH_RATIO;
 	float visibility = float(0.56 < z0) * shadowFade * VoLP;
-		  visibility *= mix(meVisRatio, 4.0 - sunVisibility * 3.5, min(timeBrightness + (1.0 - sunVisibility), 1.0));
+		  visibility *= mix(meVisRatio, 4.0 - sunVisibility * 3.25, min(timeBrightness + (1.0 - sunVisibility), 1.0));
 		  visibility = mix(visibility * (1.0 + denseForestFactor * 0.5), 0.5, indoorFactor) * waterFactor;
 		  visibility *= caveFactor;
 	#else
@@ -65,9 +65,12 @@ void computeVL(inout vec3 vl, in vec3 translucent, in float dither) {
 		int sampleCount = VL_SAMPLES;
 		#endif
 
-		float maxDist = min(128.0 + shadowDistance, 256.0);
+		float maxDist = shadowDistance;
+		#ifdef VC_SHADOWS
+			 maxDist += 200.0;
+		#endif
 		#ifdef DISTANT_HORIZONS
-			  maxDist += min(dhRenderDistance, 384.0);
+			  maxDist += min(dhRenderDistance, 400.0);
 		#endif
 		float minDist = (maxDist / sampleCount) * (0.5 + min(length(viewPos * 0.5), 1.5));
 
