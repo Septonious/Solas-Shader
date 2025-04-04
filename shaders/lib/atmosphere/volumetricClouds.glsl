@@ -190,8 +190,8 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z1, f
 			//Final color calculations
             float morningEveningFactor = mix(1.0, 0.66, sqrt(sunVisibility) * (1.0 - timeBrightnessSqrt));
 
-			vec3 cloudAmbientColor = mix(ambientCol, atmosphereColor * atmosphereColor, 0.5 * sunVisibility);
-                 cloudAmbientColor *= 0.35 + sunVisibility * sunVisibility * (0.2 - wetness * 0.2);
+			vec3 cloudAmbientColor = mix(ambientCol, atmosphereColor * atmosphereColor, 0.4 * sunVisibility);
+                 cloudAmbientColor *= 0.4 + sunVisibility * sunVisibility * (0.2 - wetness * 0.2);
 			vec3 cloudLightColor = mix(lightCol, mix(lightCol, atmosphereColor * 2.0, 0.3 * (sunVisibility + timeBrightness)) * atmosphereColor * 2.0, sunVisibility);
                  cloudLightColor *= (1.0 + scattering) * morningEveningFactor;
 			vec3 cloudColor = mix(cloudAmbientColor, cloudLightColor, cloudLighting)  * (1.0 + lightning * 100);

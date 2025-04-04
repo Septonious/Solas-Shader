@@ -18,7 +18,7 @@ vec3 lightSun = normalize(mix(pow((colorSun + 0.055) / 1.055, vec3(2.2)), colorS
 vec3 lightNight = mix(pow((colorNight + 0.055) / 1.055, vec3(2.2)), colorNight / 12.92, step(colorNight, vec3(0.04045))) * LIGHTINTENSITY_N * 0.5;
 
 #ifdef PURPLE_MORNINGS
-vec3 lightColRaw = mix(lightNight, mix(vec3(lightSun.r, lightSun.g, lightSun.b * (2.25 - clamp((mefade + timeBrightness) * 6.0, 0.0, 1.25))), normalize(skyColor + 0.0001), 0.1), sunVisibility * sunVisibility);
+vec3 lightColRaw = mix(lightNight, mix(vec3(lightSun.r, lightSun.g, lightSun.b * (2.0 - clamp((mefade + timeBrightness) * 5.0, 0.0, 1.0))), normalize(skyColor + 0.0001), 0.1), sunVisibility * sunVisibility);
 #else
 vec3 lightColRaw = mix(lightNight, mix(lightSun, normalize(skyColor + 0.0001), 0.1), sunVisibility * sunVisibility);
 #endif

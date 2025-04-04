@@ -31,19 +31,17 @@ void computeVL(inout vec3 vl, in vec3 translucent, in float dither) {
 	#ifdef OVERWORLD
 	float waterFactor = 1.0 - float(isEyeInWater == 1) * 0.5;
 	float denseForestFactor = min(isSwamp + isJungle, 1.0);
-	float meVisRatio = (1.0 - VL_STRENGTH_RATIO) + clamp(exp(VoLC * VoLC * 0.25) * pow(VoLC, 1.3), 0.0, 1.0) * VL_STRENGTH_RATIO;
+	float meVisRatio = (1.0 - VL_STRENGTH_RATIO) + pow(VoLC, 1.3) * VL_STRENGTH_RATIO;
 	float visibility = float(0.56 < z0) * shadowFade * VoLP;
-		  visibility *= mix(meVisRatio, 2.0 - sunVisibility, min(timeBrightness + (1.0 - sunVisibility), 1.0));
-		  visibility = mix(visibility, 0.5, indoorFactor) * waterFactor;
-		  visibility *= min(length(viewPos * 0.005), 1.0);
+		  visibility *= mix(meVisRatio, 3.0 - sunVisibility * 2.0, min(timeBrightness + (1.0 - sunVisibility), 1.0));
+		  visibility = mix(visibility * (1.0 + denseForestFactor * 0.5), 0.5, indoorFactor) * waterFactor;
 		  visibility *= caveFactor;
 	#else
 	float dragonBattle = gl_Fog.start / far;
-	float cutoff = min(length(viewPos * 0.0025), 1.0) * float(0.56 < z0);
 	float endBlackHolePos = pow2(clamp(dot(nViewPos, sunVec), 0.0, 1.0));
 	float visibilityNormal = endBlackHolePos * 0.25;
 	float visibilityDragon = 0.5 + endBlackHolePos;
-	float visibility = cutoff * mix(visibilityDragon, visibilityNormal, clamp(dragonBattle, 0.0, 1.0));
+	float visibility = float(0.56 < z0) * mix(visibilityDragon, visibilityNormal, clamp(dragonBattle, 0.0, 1.0));
 	#endif
 
 	#if MC_VERSION >= 11900
@@ -67,11 +65,11 @@ void computeVL(inout vec3 vl, in vec3 translucent, in float dither) {
 		int sampleCount = VL_SAMPLES;
 		#endif
 
-		float maxDist = min(shadowDistance, 256.0);
-		float minDist = (maxDist / sampleCount);
-		#ifndef VC_SHADOWS
-			  minDist *= 0.75;
+		float maxDist = min(128.0 + shadowDistance, 256.0);
+		#ifdef DISTANT_HORIZONS
+			  maxDist += min(dhRenderDistance, 384.0);
 		#endif
+		float minDist = (maxDist / sampleCount) * (0.5 + min(length(viewPos * 0.5), 1.5));
 
 		#if MC_VERSION >= 12100
 			  minDist *= 1.0 - isPaleGarden * 0.35;
@@ -153,8 +151,8 @@ void computeVL(inout vec3 vl, in vec3 translucent, in float dither) {
 			}
 		}
 
-        finalVL *= visibility * VL_STRENGTH;
-		if (isEyeInWater == 1.0) finalVL *= mix(waterColorSqrt, waterColorSqrt * weatherCol, wetness) * (4.0 + sunVisibility * 8.0);
+        finalVL *= visibility;
+		if (isEyeInWater == 1.0) finalVL *= mix(waterColorSqrt, waterColorSqrt * weatherCol, wetness) * (4.0 + sunVisibility * 4.0);
 	}
-    vl += finalVL;
+    vl += finalVL * VL_STRENGTH;
 }

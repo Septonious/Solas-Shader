@@ -59,7 +59,10 @@ void getNormalFog(inout vec3 color, in vec3 viewPos, in vec3 worldPos, in vec3 a
     float fog = 1.0 - exp(-(0.005 + wetness * caveFactor * 0.0025) * pow(lViewPos, 0.85) * fogDistance);
 		  fog = clamp(fog * fogDensity * fogAltitude, 0.0, 1.0);
 
-	vec3 fogCol = mix(caveMinLightCol * atmosphereColor, mix(atmosphereColor, normalize(skyColor + 0.000001) * 0.75, 0.2 * sunVisibility), caveFactor);
+	vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.0);
+	float VoL = dot(normalize(viewPos), lightVec);
+	float VoLC = clamp(VoL, 0.0, 1.0);
+	vec3 fogCol = mix(caveMinLightCol * atmosphereColor, mix(atmosphereColor, normalize(skyColor + 0.000001) * 0.75, (0.2 - timeBrightness * 0.1) * sunVisibility * VoLC), caveFactor);
 
 	//Distant Fade
 	#ifdef DISTANT_FADE
