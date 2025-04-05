@@ -71,9 +71,9 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 
 //VL//
 #define VL
-#define VL_STRENGTH 1.60 //[0.10 0.20 0.30 0.40 0.50 0.60 0.70 0.80 0.90 1.00 1.10 1.20 1.30 1.40 1.50 1.60 1.70 1.80 1.90 2.00]
+#define VL_STRENGTH 1.40 //[0.10 0.20 0.30 0.40 0.50 0.60 0.70 0.80 0.90 1.00 1.10 1.20 1.30 1.40 1.50 1.60 1.70 1.80 1.90 2.00]
 #define VL_SAMPLES 9 //[5 6 7 8 9 10 11 12 13 14 15 16]
-#define VL_STRENGTH_RATIO 0.40 //[0.05 0.10 0.15 0.20 0.25 0.30 0.35 0.40 0.45 0.50]
+#define VL_STRENGTH_RATIO 0.50 //[0.05 0.10 0.15 0.20 0.25 0.30 0.35 0.40 0.45 0.50]
 
 //LPV Fog//
 #define LPV_FOG

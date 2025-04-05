@@ -50,7 +50,7 @@ void drawPlanarClouds(inout vec3 color, in vec3 atmosphereColor, in vec3 worldPo
 		vec3 cloudAmbientColor = mix(ambientCol, atmosphereColor * atmosphereColor, 0.5 * sunVisibility);
 			 cloudAmbientColor *= 0.25 + sunVisibility * sunVisibility * (0.2 - wetness * 0.2);
 		vec3 cloudLightColor = mix(lightCol, mix(lightCol, atmosphereColor, 0.5 * sunVisibility) * atmosphereColor * 2.0, sunVisibility * (1.0 - timeBrightness * 0.33));
-			 cloudLightColor *= 1.0 + pow24(VoL) * 3.0;
+			 cloudLightColor *= 1.0 + pow24(VoL) * 2.0;
 
 		vec3 cloudColor = mix(cloudLightColor, cloudAmbientColor, cloudLighting);
 			 cloudColor = pow(cloudColor, vec3(1.0 / 2.2));

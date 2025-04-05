@@ -31,7 +31,7 @@ void computeLPVFog(inout vec3 fog, in vec3 translucent, in float dither) {
           minDist += 4.0 * eBS01;
     #endif
     float maxDist = min(far, VOXEL_VOLUME_SIZE * 0.5);
-    int sampleCount = min(int(maxDist / minDist + 0.01), 14 - int(eBS01 * sunVisibility * sunVisibility * 14));
+    int sampleCount = min(int(maxDist / minDist + 0.01), 14 - int(eBS01 * sunVisibility * 14));
 
     if (sampleCount > 0 && visibility > 0) {
         //LPV Fog Intensity
@@ -115,7 +115,7 @@ void computeLPVFog(inout vec3 fog, in vec3 translucent, in float dither) {
 
             float rayDistance = length(vec3(rayPos.x, rayPos.y * 2.0, rayPos.z));
             lightSample *= max(0.0, 1.0 - rayDistance / maxDist);
-            lightSample *= pow2(min(1.0, rayLength * 0.3125));
+            lightSample *= pow2(min(1.0, rayLength * 0.25));
 
             if (rayLength > lViewPosZ0) lightSample *= translucent;
             lightFog += lightSample;

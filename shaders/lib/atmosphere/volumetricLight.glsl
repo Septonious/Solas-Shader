@@ -31,9 +31,9 @@ void computeVL(inout vec3 vl, in vec3 translucent, in float dither) {
 	#ifdef OVERWORLD
 	float waterFactor = 1.0 - float(isEyeInWater == 1) * 0.5;
 	float denseForestFactor = min(isSwamp + isJungle, 1.0);
-	float meVisRatio = (1.0 - VL_STRENGTH_RATIO) + pow(VoLC, 1.3) * VL_STRENGTH_RATIO;
+	float meVisRatio = (1.0 - VL_STRENGTH_RATIO) + clamp(pow(VoLC, 1.3) * VL_STRENGTH_RATIO, 0.0, VL_STRENGTH_RATIO);
 	float visibility = float(0.56 < z0) * shadowFade * VoLP;
-		  visibility *= mix(meVisRatio, 4.0 - sunVisibility * 3.25, min(timeBrightness + (1.0 - sunVisibility), 1.0));
+		  visibility *= mix(meVisRatio, (4.0 - sunVisibility * 3.5) * VoLC, clamp(timeBrightness + (1.0 - sunVisibility), 0.0, 1.0));
 		  visibility = mix(visibility * (1.0 + denseForestFactor * 0.5), 0.5, indoorFactor) * waterFactor;
 		  visibility *= caveFactor;
 	#else
