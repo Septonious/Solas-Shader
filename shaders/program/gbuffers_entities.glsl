@@ -123,6 +123,13 @@ void main() {
 	float metalness = 0.0;
 	float subsurface = 0.0;
 
+	float text = float(albedo.a > 0.49 && albedo.a < 0.51);
+	albedo.rgb *= 1.0 + text;
+	float textBG = float(length(albedo.rgb) < 0.1 && albedo.a > 0.2 && albedo.a < 0.5);
+	if (textBG > 0.5) {
+		discard;
+	}
+
 	float lightningBolt = float(mat == 1);
 
 	if (lightningBolt > 0.5) {
@@ -130,7 +137,8 @@ void main() {
 		albedo.a = 0.75;
 	}
 
-	if (lightningBolt < 0.5) {
+
+	if (lightningBolt < 0.5 && text < 0.5) {
 		vec3 screenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z);
 		vec3 viewPos = ToNDC(screenPos);
 		vec3 worldPos = ToWorld(viewPos);

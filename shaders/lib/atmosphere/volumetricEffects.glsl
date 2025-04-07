@@ -80,6 +80,7 @@ void computeLPVFog(inout vec3 fog, in vec3 translucent, in float dither) {
             }
 
             vec3 lightSample = pow(lightVolume.rgb, vec3(1.0 / FLOODFILL_RADIUS));
+                 lightSample *= pow(length(lightSample), 0.8);
 
             //Lightning
             float lightning = min(lightningFlashEffect(rayPos, lightningBoltPosition.xyz, 256.0) * lightningBoltPosition.w * 4.0, 1.0);
