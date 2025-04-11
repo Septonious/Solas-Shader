@@ -100,7 +100,7 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z1, f
 			float VoL = dot(nViewPos, lightVec);
 			float halfVoL = mix(abs(VoL) * 0.8, VoL, shadowFade) * 0.5 + 0.5;
 			float halfVoLSqr = halfVoL * halfVoL;
-			float scattering = pow6(halfVoL);
+			float scattering = pow24(halfVoL);
 			float noiseLightFactor = (2.0 - VoL * shadowFade) * density;
 			float lightning = 0.0;
 
