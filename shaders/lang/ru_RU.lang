@@ -51,10 +51,13 @@ option.PLANAR_CLOUDS_OPACITY=Непрозрачность
 screen.VL_CONFIG=Настройки Солнечных Лучей
 
 option.VL=Солнечные Лучи
-option.VL_STRENGTH=Сила
+option.VL_STRENGTH=Общая Яркость
 option.VL_SAMPLES=Качество
 option.VL_STRENGTH_RATIO=Отношение Яркости
 option.VL_STRENGTH_RATIO.comment=Определяет яркость лучей ближе к солнцу. Низкие значения делают лучи ярче у солнца и слабее позади.
+option.VL_DAY=Яркость Днём
+option.VL_MORNING_EVENING=Яркость Утром/Вечером
+option.VL_NIGHT=Яркость Ночью
 
 #----------------------------------------------------------------------------------#
 
@@ -62,7 +65,7 @@ screen.VF_NETHER_CONFIG=Настройки 3D Тумана в Аду
 
 option.NETHER_CLOUDY_FOG=3D Туман в Аду
 option.NETHER_CLOUDY_FOG.comment=Работает только при включённом световом тумане.
-option.VF_NETHER_STRENGTH=Сила
+option.VF_NETHER_STRENGTH=Яркость
 option.VF_NETHER_SPEED=Скорость
 option.VF_NETHER_FREQUENCY=Частота
 

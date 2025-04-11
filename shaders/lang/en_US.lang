@@ -51,17 +51,20 @@ option.PLANAR_CLOUDS_OPACITY=Opacity
 screen.VL_CONFIG=Volumetric Light Config
 
 option.VL=Volumetric Light
-option.VL_STRENGTH=Strength
+option.VL_STRENGTH=Intensity
 option.VL_SAMPLES=Samples
-option.VL_STRENGTH_RATIO=Strength Ratio
+option.VL_STRENGTH_RATIO=Intensity Ratio
 option.VL_STRENGTH_RATIO.comment=Controls the strength of volumetric light rays depending on the distance to the sun. Lower values make VL stronger closer to the sun and weaker farther away.
+option.VL_DAY=Day Intensity
+option.VL_MORNING_EVENING=Morning/Evening Intensity
+option.VL_NIGHT=Night Intensity
 
 #----------------------------------------------------------------------------------#
 
 screen.VF_NETHER_CONFIG=Nether Cloudy Fog Config
 
 option.NETHER_CLOUDY_FOG=Nether Cloudy Fog
-option.VF_NETHER_STRENGTH=Strength
+option.VF_NETHER_STRENGTH=Intensity
 option.VF_NETHER_SPEED=Speed
 option.VF_NETHER_FREQUENCY=Frequency
 
@@ -81,7 +84,7 @@ screen.LPV_FOG_CONFIG=Light Fog Config
 
 option.LPV_FOG=Light Fog
 option.LPV_FOG.comment=Allows light sources to contribute to fog illumination
-option.LPV_FOG_STRENGTH=Strength
+option.LPV_FOG_STRENGTH=Intensity
 
 #----------------------------------------------------------------------------------#
 
@@ -243,7 +246,7 @@ screen.INORMALS=Normals Config
 
 option.GENERATED_NORMALS=Generated Normals
 option.GENERATED_NORMALS.comment=Automatically generated normals on blocks
-option.NORMAL_STRENGTH=Strength
+option.NORMAL_STRENGTH=Intensity
 option.NORMAL_RESOLUTION=Resolution
 option.NORMAL_THRESHOLD=Generation Threshold
 
