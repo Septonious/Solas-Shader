@@ -26,17 +26,15 @@ void computeVL(inout vec3 vl, in vec3 translucent, in float dither) {
 	float VoL = dot(nViewPos, lightVec);
 	float VoLC = clamp(VoL, 0.0, 1.0);
 		  VoLC = mix(VoLC, 0.5, 0.25 * float(isEyeInWater == 1));
-	float VoLP = 1.0 + VoL;
 
 	#ifdef OVERWORLD
 	float waterFactor = 1.0 - float(isEyeInWater == 1) * 0.5;
 	float denseForestFactor = min(isSwamp + isJungle, 1.0);
 	float meVisRatio = (1.0 - VL_STRENGTH_RATIO) + clamp(pow(VoLC, 1.3) * VL_STRENGTH_RATIO, 0.0, VL_STRENGTH_RATIO);
-	float visibility = float(0.56 < z0) * shadowFade * VoLP;
-		  visibility *= mix(VL_NIGHT, mix(VL_MORNING_EVENING, VL_DAY, timeBrightness), pow(sunVisibility, 0.33));
+	float visibility = mix(VL_NIGHT, mix(VL_MORNING_EVENING, VL_DAY, timeBrightness), pow(sunVisibility, 0.33));
 		  visibility *= mix(meVisRatio, (0.5 - sunVisibility * 0.5) + pow(VoLC, 1.1), clamp(timeBrightness + (1.0 - sunVisibility), 0.0, 1.0));
 		  visibility = mix(visibility * (1.0 + denseForestFactor * 0.5), 0.5, indoorFactor);
-		  visibility *= waterFactor * caveFactor;
+		  visibility *= float(0.56 < z0) * waterFactor * caveFactor * shadowFade;
 	#else
 	float dragonBattle = gl_Fog.start / far;
 	float endBlackHolePos = pow2(clamp(dot(nViewPos, sunVec), 0.0, 1.0));
