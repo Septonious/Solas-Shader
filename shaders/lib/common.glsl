@@ -521,6 +521,14 @@ float linearStep(float edge0, float edge1, float x) {
 #undef LPV_FOG
 #endif
 
+#if MC_VERSION <= 11650
+#undef DYNAMIC_HANDLIGHT
+
+#ifdef GBUFFERS_ENTITIES
+#undef GENERATED_EMISSION
+#endif
+#endif
+
 //I'm looking at you SHITASS
 //Don't ever try to steal Solas or its code. You WILL be punished.
 #include "/lib/util/drm.glsl"

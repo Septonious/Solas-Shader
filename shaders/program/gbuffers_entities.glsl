@@ -124,19 +124,23 @@ void main() {
 	float subsurface = 0.0;
 
 	float text = float(albedo.a > 0.49 && albedo.a < 0.51);
-	albedo.rgb *= 1.0 + text;
 	float textBG = float(length(albedo.rgb) < 0.1 && albedo.a > 0.2 && albedo.a < 0.5);
+	float lightningBolt = float(mat == 1);
+
+	#if MC_VERSION <= 11650
+	text = 0.0;
+	textBG = 0.0;
+	lightningBolt = 0.0;
+	#else
+	albedo.rgb *= 1.0 + text;
 	if (textBG > 0.5) {
 		discard;
 	}
-
-	float lightningBolt = float(mat == 1);
-
 	if (lightningBolt > 0.5) {
 		albedo.rgb = vec3(1.0, 1.2, 1.7) * 0.5;
 		albedo.a = 0.75;
 	}
-
+	#endif
 
 	if (lightningBolt < 0.5 && text < 0.5) {
 		vec3 screenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z);
@@ -148,7 +152,7 @@ void main() {
 		float NoL = clamp(dot(newNormal, lightVec), 0.0, 1.0);
 		float NoE = clamp(dot(newNormal, eastVec), -1.0, 1.0);
 
-		#if defined GENERATED_EMISSION || defined GENERATED_SPECULAR
+		#ifdef GENERATED_EMISSION
 		generateIPBR(albedo, worldPos, viewPos, lightmap, emission, smoothness, metalness, subsurface);
 		#endif
 

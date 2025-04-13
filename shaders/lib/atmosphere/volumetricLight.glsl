@@ -41,7 +41,7 @@ void computeVL(inout vec3 vl, in vec3 translucent, in float dither) {
 	float dragonBattle = gl_Fog.start / far;
 	float endBlackHolePos = pow2(clamp(dot(nViewPos, sunVec), 0.0, 1.0));
 	float visibilityNormal = endBlackHolePos * 0.25;
-	float visibilityDragon = 0.5 + endBlackHolePos;
+	float visibilityDragon = 0.25 + endBlackHolePos * 0.5;
 	float visibility = float(0.56 < z0) * mix(visibilityDragon, visibilityNormal, clamp(dragonBattle, 0.0, 1.0));
 	#endif
 
