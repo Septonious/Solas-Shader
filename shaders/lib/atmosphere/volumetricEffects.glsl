@@ -172,19 +172,8 @@ vec3 calculateMovement(vec3 worldPos, float lightIntensity, float speed, vec2 mu
 }
 
 void computeFireflies(inout float fireflies, in vec3 translucent, in float dither) {
-	//Depths
-	float z0 = texture2D(depthtex0, texCoord).r;
-	float z1 = texture2D(depthtex1, texCoord).r;
-
-    //Positions
-	vec3 viewPosZ0 = ToView(vec3(texCoord.xy, z0));
-    vec3 viewPosZ1 = ToView(vec3(texCoord.xy, z1));
-	vec3 worldPos = ToWorld(viewPosZ1);
-
-    float lViewPosZ0 = length(viewPosZ0);
-    float lViewPosZ1 = length(viewPosZ1);
-
 	//Total fireflies visibility
+    float eBS01 = pow(eBS, 0.1);
 	float visibility = eBS01 * eBS01 * (1.0 - sunVisibility) * (1.0 - wetness) * float(isEyeInWater == 0);
 
 	#if MC_VERSION >= 11900
@@ -193,31 +182,46 @@ void computeFireflies(inout float fireflies, in vec3 translucent, in float dithe
 
 	visibility *= 1.0 - blindFactor;
 
-    //Ray Marching Parameters
-    float minDist = 3.0;
-    float maxDist = min(far, 96.0);
-    int sampleCount = int(maxDist / minDist + 0.01);
+    if (visibility > 0.0) {
+        //Depths
+        float z0 = texture2D(depthtex0, texCoord).r;
+        float z1 = texture2D(depthtex1, texCoord).r;
 
-    vec3 rayIncrement = normalize(worldPos) * minDist;
-    vec3 rayPos = rayIncrement * dither;
+        //Positions
+        vec3 viewPosZ0 = ToView(vec3(texCoord.xy, z0));
+        vec3 viewPosZ1 = ToView(vec3(texCoord.xy, z1));
+        vec3 worldPos = ToWorld(viewPosZ1);
 
-    //Ray Marching
-    for (int i = 0; i < sampleCount; i++, rayPos += rayIncrement) {
-        float rayLength = length(rayPos);
-        if (rayLength > lViewPosZ1) break;
+        float lViewPosZ0 = length(viewPosZ0);
+        float lViewPosZ1 = length(viewPosZ1);
 
-        vec3 nposA = rayPos + cameraPosition;
-             nposA += calculateMovement(nposA, 0.6, 3.0, vec2(2.4, 1.8));
-             nposA += vec3(sin(frameTimeCounter * 0.50), - sin(frameTimeCounter * 0.75), cos(frameTimeCounter * 1.25));
+        //Ray Marching Parameters
+        float minDist = 4.0;
+        float maxDist = min(far, 50.0);
+        int sampleCount = int(maxDist / minDist + 0.01);
 
-        float fireflyNoise = getFireflyNoise(nposA);
-              fireflyNoise = clamp(fireflyNoise - 0.675, 0.0, 1.0);
+        vec3 rayIncrement = normalize(worldPos) * minDist;
+        vec3 rayPos = rayIncrement * dither;
 
-        float rayDistance = length(vec3(rayPos.x, rayPos.y * 2.0, rayPos.z));
-        fireflyNoise *= max(0.0, 1.0 - rayDistance / maxDist);
+        //Ray Marching
+        for (int i = 0; i < sampleCount; i++, rayPos += rayIncrement) {
+            float rayLength = length(rayPos);
+            if (rayLength > lViewPosZ1) break;
+            if (rayPos.y + cameraPosition.y > 100.0) break;
 
-        if (rayLength > lViewPosZ0) break;
-        fireflies += fireflyNoise * (1.0 - clamp(nposA.y * 0.01, 0.0, 1.0)) * visibility * 64.0;
+            vec3 npos = rayPos + cameraPosition;
+                 npos += calculateMovement(npos, 0.6, 3.0, vec2(2.6, 1.3));
+                 npos += vec3(sin(frameTimeCounter * 0.50), - sin(frameTimeCounter * 0.75), cos(frameTimeCounter * 1.25));
+
+            float fireflyNoise = getFireflyNoise(npos * 1.5);
+                  fireflyNoise = clamp(fireflyNoise - 0.725, 0.0, 1.0);
+
+            float rayDistance = length(vec3(rayPos.x, rayPos.y, rayPos.z));
+                  fireflyNoise *= max(0.0, 1.0 - rayDistance / maxDist);
+
+            if (rayLength > lViewPosZ0) break;
+            fireflies += fireflyNoise * (1.0 - clamp(npos.y * 0.01, 0.0, 1.0)) * visibility * 256.0;
+        }
     }
 }
 #endif
