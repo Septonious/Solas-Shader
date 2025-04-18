@@ -33,7 +33,7 @@ void getDenseFog(inout vec3 color, float lViewPos) {
 #ifndef END
 void getNormalFog(inout vec3 color, in vec3 viewPos, in vec3 worldPos, in vec3 atmosphereColor, in float lViewPos, in float lWorldPos) {
     #if defined DISTANT_HORIZONS && (defined DEFERRED || defined DH_WATER || defined GBUFFERS_WATER)
-    float farPlane = dhRenderDistance - 128.0;
+    float farPlane = dhRenderDistance * 0.4;
     #else
     float farPlane = far;
     #endif
@@ -48,8 +48,9 @@ void getNormalFog(inout vec3 color, in vec3 viewPos, in vec3 worldPos, in vec3 a
 	float fogAltitude = clamp(exp2(-max(worldPos.y + cameraPosition.y - fogVariableHeight, 0.0) / exp2(FOG_HEIGHT_FALLOFF)), 0.0, 1.0);
 		  fogAltitude = mix(fogAltitude, 0.6, timeBrightness * 0.3);
 	float fogDensity = FOG_DENSITY;
+
 	#ifdef DISTANT_HORIZONS
-		  fogDensity *= 1.5;
+		  fogDensity *= 0.75;
 	#endif
 
 	#if MC_VERSION >= 12104

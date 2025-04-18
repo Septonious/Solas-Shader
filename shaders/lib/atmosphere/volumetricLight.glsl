@@ -68,12 +68,10 @@ void computeVL(inout vec3 vl, in vec3 translucent, in float dither) {
 		#ifdef VC_SHADOWS
 			 maxDist += 200.0;
 		#endif
-		#ifdef DISTANT_HORIZONS
-			  maxDist += min(dhRenderDistance, 400.0);
-		#endif
+
 		float minDist = (maxDist / sampleCount) * 0.75;
 
-		#if MC_VERSION >= 12100
+		#if MC_VERSION >= 12104
 			  minDist *= 1.0 - isPaleGarden * 0.35;
 		#endif
 
