@@ -7,7 +7,6 @@
 
 //Varyings//
 in vec4 color;
-in vec3 normal;
 in vec3 eastVec, sunVec, upVec;
 in vec2 lmCoord;
 
@@ -61,19 +60,15 @@ vec3 lightVec = sunVec;
 void main() {
 	vec4 albedo = color;
 	if (albedo.a <= 0.01) discard;
-	vec3 newNormal = normal;
+	vec3 newNormal = vec3(1.0);
 
 	vec3 screenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z);
 	vec3 viewPos = ToNDC(screenPos);
 	vec3 worldPos = ToWorld(viewPos);
 	vec2 lightmap = clamp(lmCoord, 0.0, 1.0);
 
-	float NoU = clamp(dot(newNormal, upVec), -1.0, 1.0);
-	float NoL = clamp(dot(newNormal, lightVec), 0.0, 1.0);
-	float NoE = clamp(dot(newNormal, eastVec), -1.0, 1.0);
-
 	vec3 shadow = vec3(0.0);
-	gbuffersLighting(albedo, screenPos, viewPos, worldPos, newNormal, shadow, lightmap, NoU, NoL, NoE, 0.0, 0.0, 0.0, 0.0);
+	gbuffersLighting(albedo, screenPos, viewPos, worldPos, newNormal, shadow, lightmap, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0);
 
 	/* DRAWBUFFERS:0 */
 	gl_FragData[0] = vec4(albedo.rgb, mix(1.0, albedo.a, float(length(albedo.rgb) > 0.0)));
@@ -87,7 +82,6 @@ void main() {
 
 //Varyings//
 out vec4 color;
-out vec3 normal;
 out vec3 eastVec, sunVec, upVec;
 out vec2 lmCoord;
 
@@ -101,9 +95,6 @@ void main() {
 	//Lightmap Coord
 	lmCoord = (gl_TextureMatrix[1] * gl_MultiTexCoord1).xy;
 	lmCoord = clamp((lmCoord - 0.03125) * 1.06667, vec2(0.0), vec2(0.9333, 1.0));
-
-	//Normal
-	normal = normalize(gl_NormalMatrix * gl_Normal);
 
 	//Sun & Other vectors
 	getSunVector(gbufferModelView, timeAngle, sunVec);
