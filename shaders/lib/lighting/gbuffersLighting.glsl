@@ -177,6 +177,10 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
 
     //Main Lighting
     #ifdef OVERWORLD
+    #ifdef DISTANT_HORIZONS
+    shadow *= lightmap.y;
+    #endif
+
     float rainFactor = 1.0 - wetness * 0.75;
     vec3 sceneLighting = mix(ambientCol * pow4(lightmap.y), lightCol, shadow * rainFactor * shadowFade);
          sceneLighting *= 1.0 + sss * realShadow * shadowLightingFade;

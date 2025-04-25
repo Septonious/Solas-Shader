@@ -49,25 +49,6 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, in float z1
 			float lViewPos = length(viewPos);
 			float lViewPosFar = lViewPos < far ? lViewPos - 1.0 : 99999999.0;
 
-			#ifdef AURORA
-			float visibilityMultiplier = pow8(1.0 - sunVisibility) * (1.0 - wetness) * caveFactor * AURORA_BRIGHTNESS;
-			float auroraVisibility = 0.0;
-
-			#ifdef AURORA_FULL_MOON_VISIBILITY
-			auroraVisibility = mix(auroraVisibility, 1.0, float(moonPhase == 0));
-			#endif
-
-			#ifdef AURORA_COLD_BIOME_VISIBILITY
-			auroraVisibility = mix(auroraVisibility, 1.0, isSnowy);
-			#endif
-
-			#ifdef AURORA_ALWAYS_VISIBLE
-			auroraVisibility = 1.0;
-			#endif
-
-			auroraVisibility *= visibilityMultiplier;
-			#endif
-
 			//Blend colors with the sky
 			float atmosphereMixer = 0.5 * sunVisibility * sunVisibility;
 			vec3 cloudLightCol = mix(lightCol, atmosphereColor, atmosphereMixer) * (1.0 + pow8(VoL));
@@ -125,9 +106,6 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, in float z1
 				cloudLighting = mix(cloudLighting, 1.0, (noiseL - noise * 0.5) * shadowFade);
 			}
 			vec3 cloudColor = mix(cloudLightCol, cloudAmbientCol, cloudLighting);
-				 #ifdef AURORA
-				 cloudColor = mix(cloudColor.rgb, vec3(0.4, 2.5, 0.9) * auroraVisibility, 0.02 - cloudLighting * auroraVisibility * 0.02);
-				 #endif
 
 			vc = vec4(cloudColor, cloudAlpha * VC_OPACITY) * visibility;
 		}
