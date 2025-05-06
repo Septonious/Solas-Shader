@@ -13,7 +13,7 @@ void drawStars(inout vec3 color, in vec3 worldPos, in vec3 sunVec, inout vec3 st
 		vec2 planeCoord0 = worldPos.xz / (length(worldPos.y) + length(worldPos.xz));
 			 planeCoord0 += cameraPosition.xz * 0.00001;
 			 planeCoord0 += frameTimeCounter * 0.0001;
-			 planeCoord0 = floor(planeCoord0 * 600.0) / 600.0;
+			 planeCoord0 = floor(planeCoord0 * 600.0 * STAR_AMOUNT) / (600.0 * STAR_AMOUNT);
 
 		vec2 planeCoord1 = worldPos.xz / (length(worldPos.y) + length(worldPos.xz));
 			 planeCoord1 *= size;

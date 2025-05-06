@@ -225,13 +225,14 @@ option.RAIN_PUDDLES=Дождевые Лужи
 option.RAIN_PUDDLES_STRENGTH=Сила Дождевых Луж
 option.SPECULAR_STRENGTH=Сила Отражений
 option.WATER_REFLECTIONS=Отражения в Воде
-option.GENERATED_EMISSION=Встроенное Свечение
-option.GENERATED_EMISSION.comment=Автоматически определяет светящиеся элементы блоков и существ. §c[-]§r Не рекомендуется использовать со сторонними ресурспаками.
+option.WATER_REFLECTIONS_STRENGTH=Сила Отражений в Воде
 
 #----------------------------------------------------------------------------------#
 
 screen.IEMISSION=Настройки Свечения
 
+option.GENERATED_EMISSION=Встроенное Свечение
+option.GENERATED_EMISSION.comment=Автоматически определяет светящиеся элементы блоков и существ. §c[-]§r Не рекомендуется использовать со сторонними ресурспаками.
 option.EMISSIVE_FLOWERS=Светящиеся Цветы
 option.EMISSIVE_ORES=Светящиеся Руды
 option.EMISSIVE_CONCRETE=Светящийся Бетон

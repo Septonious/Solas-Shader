@@ -226,14 +226,14 @@ option.RAIN_PUDDLES=Rain Puddles
 option.RAIN_PUDDLES_STRENGTH=Rain Puddles Strength
 option.SPECULAR_STRENGTH=Specular Strength
 option.WATER_REFLECTIONS=Water Reflections
-
-option.GENERATED_EMISSION=Generated Emission
-option.GENERATED_EMISSION.comment=Automatically determines emissive blocks
+option.WATER_REFLECTIONS_STRENGTH=Water Reflections Intensity
 
 #----------------------------------------------------------------------------------#
 
 screen.IEMISSION=Emissives Config
 
+option.GENERATED_EMISSION=Generated Emission
+option.GENERATED_EMISSION.comment=Automatically determines emissive blocks
 option.EMISSIVE_FLOWERS=Emissive Flowers
 option.EMISSIVE_ORES=Emissive Ores
 option.EMISSIVE_CONCRETE=Emissive Concrete
