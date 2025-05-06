@@ -132,17 +132,19 @@ void main() {
 	textBG = 0.0;
 	lightningBolt = 0.0;
 	#else
+	/*
 	albedo.rgb *= 1.0 + text;
 	if (textBG > 0.5) {
 		discard;
 	}
+	*/
 	if (lightningBolt > 0.5) {
 		albedo.rgb = vec3(1.0, 1.2, 1.7) * 0.5;
 		albedo.a = 0.75;
 	}
 	#endif
 
-	if (lightningBolt < 0.5 && text < 0.5) {
+	if (lightningBolt < 0.5) { // && text < 0.5
 		vec3 screenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z);
 		vec3 viewPos = ToNDC(screenPos);
 		vec3 worldPos = ToWorld(viewPos);

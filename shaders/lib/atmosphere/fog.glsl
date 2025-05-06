@@ -33,7 +33,7 @@ void getDenseFog(inout vec3 color, float lViewPos) {
 #ifndef END
 void getNormalFog(inout vec3 color, in vec3 viewPos, in vec3 worldPos, in vec3 atmosphereColor, in float lViewPos, in float lWorldPos) {
     #if defined DISTANT_HORIZONS && (defined DEFERRED || defined DH_WATER || defined GBUFFERS_WATER)
-    float farPlane = dhRenderDistance * 0.4;
+    float farPlane = dhRenderDistance * 0.6;
     #else
     float farPlane = far;
     #endif

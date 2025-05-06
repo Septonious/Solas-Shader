@@ -31,11 +31,14 @@ void computeLPVFog(inout vec3 fog, in vec3 translucent, in float dither) {
           minDist += 4.0 * eBS01;
     #endif
     float maxDist = min(far, VOXEL_VOLUME_SIZE * 0.5);
-    int sampleCount = min(int(maxDist / minDist + 0.01), 14 - int(eBS01 * sunVisibility * 14));
+    int sampleCount = int(maxDist / minDist + 0.01);
+    #ifdef OVERWORLD
+        sampleCount = min(sampleCount, 24 - int(eBS01 * sunVisibility * 24));
+    #endif
 
     if (sampleCount > 0 && visibility > 0) {
         //LPV Fog Intensity
-        float intensity = 150.0;
+        float intensity = 100.0;
         float density = 0.75;
         #ifdef OVERWORLD
             intensity *= 1.0 - sunVisibility * eBS01 * 0.5;
@@ -44,12 +47,12 @@ void computeLPVFog(inout vec3 fog, in vec3 translucent, in float dither) {
             intensity += wetness * eBS01 * 50.0;
             density -= wetness * eBS01 * 0.25;
 
-            intensity = mix(300.0, intensity, caveFactor);
+            intensity = mix(200.0, intensity, caveFactor);
             density = mix(0.4, density, caveFactor);
         #endif
         #ifdef NETHER
-            intensity = 150.0;
-            density = 0.7;
+            intensity = 50.0;
+            density = 1.0;
         #endif
 
         //Positions
@@ -69,8 +72,11 @@ void computeLPVFog(inout vec3 fog, in vec3 translucent, in float dither) {
             if (rayLength > lViewPosZ1) break;
 
             vec3 voxelPos = worldToVoxel(rayPos);
-                voxelPos /= voxelVolumeSize;
-                voxelPos = clamp(voxelPos, 0.0, 1.0);
+                 voxelPos /= voxelVolumeSize;
+                 voxelPos = clamp(voxelPos, 0.0, 1.0);
+
+            float floodfillFade = maxOf(abs(rayPos) / (voxelVolumeSize * 0.5));
+                  floodfillFade = clamp(floodfillFade, 0.0, 1.0);
 
             vec4 lightVolume = vec4(0.0);
             if ((frameCounter & 1) == 0) {
@@ -80,7 +86,7 @@ void computeLPVFog(inout vec3 fog, in vec3 translucent, in float dither) {
             }
 
             vec3 lightSample = pow(lightVolume.rgb, vec3(1.0 / FLOODFILL_RADIUS));
-                 lightSample *= pow(length(lightSample), 0.8);
+                 lightSample *= 1.0 - floodfillFade * floodfillFade;
 
             //Lightning
             float lightning = min(lightningFlashEffect(rayPos, lightningBoltPosition.xyz, 256.0) * lightningBoltPosition.w * 4.0, 1.0);
@@ -123,7 +129,7 @@ void computeLPVFog(inout vec3 fog, in vec3 translucent, in float dither) {
         }
 
         vec3 result = pow(lightFog / sampleCount, vec3(0.5)) * visibility;
-        fog += result * pow(length(result), density) * intensity * 0.01 * LPV_FOG_STRENGTH;
+        fog += result * pow(clamp(length(result), 0.0, 1.0), density) * intensity * 0.01 * LPV_FOG_STRENGTH;
     }
 }
 #endif
