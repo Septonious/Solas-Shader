@@ -27,10 +27,10 @@ void drawStars(inout vec3 color, in vec3 worldPos, in vec3 sunVec, inout vec3 st
 				vec2 sunCoord = sunVec.xz / (sunVec.y + length(sunVec));
 				vec2 planeCoord2 = worldPos.xz / (length(worldPos) + worldPos.y) - sunCoord;
 				float spiral1 = getSpiralWarping(planeCoord2) * clamp(VoU, 0.0, 1.0);
-				planeCoord0 += spiral1 * 0.00025;
-				planeCoord0 *= 0.15;
-				planeCoord1 += spiral1 * 0.00025;
-				planeCoord1 *= 0.15;
+				planeCoord0 += spiral1 * 0.0005;
+				planeCoord0 *= 0.25;
+				planeCoord1 += spiral1 * 0.0005;
+				planeCoord1 *= 0.25;
 			 }
 			 #endif
 
