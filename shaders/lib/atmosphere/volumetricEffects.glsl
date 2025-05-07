@@ -14,7 +14,7 @@ void computeLPVFog(inout vec3 fog, in vec3 translucent, in float dither) {
     float visibility = int(z0 > 0.56) * float(isEyeInWater >= 0 && isEyeInWater <= 1);
 
 	#ifdef OVERWORLD
-	visibility *= 1.0 - timeBrightness * 0.65 * caveFactor;
+	visibility *= 1.0 - pow(timeBrightness, 0.5) * eBS;
 	visibility = mix(1.0, visibility, caveFactor);
 	#endif
 
@@ -25,27 +25,23 @@ void computeLPVFog(inout vec3 fog, in vec3 translucent, in float dither) {
 	visibility *= 1.0 - blindFactor;
 
     //Ray Marching Parameters
-    float eBS01 = pow(eBS, 0.1);
     float minDist = 3.0 + caveFactor * 3.0;
     #ifdef OVERWORLD
-          minDist += 4.0 * eBS01;
+          minDist += 4.0 * eBS;
     #endif
     float maxDist = min(far, VOXEL_VOLUME_SIZE * 0.5);
-    int sampleCount = int(maxDist / minDist + 0.01);
-    #ifdef OVERWORLD
-        sampleCount = min(sampleCount, 24 - int(eBS01 * sunVisibility * 24));
-    #endif
+    int sampleCount = min(int(maxDist / minDist + 0.01), 24);
 
     if (sampleCount > 0 && visibility > 0) {
         //LPV Fog Intensity
         float intensity = 100.0;
         float density = 0.75;
         #ifdef OVERWORLD
-            intensity *= 1.0 - sunVisibility * eBS01 * 0.5;
-            density *= 0.75 + sunVisibility * eBS01 * 0.25;
+            intensity *= 1.0 - sunVisibility * eBS * 0.5;
+            density *= 0.75 + sunVisibility * eBS * 0.25;
 
-            intensity += wetness * eBS01 * 50.0;
-            density -= wetness * eBS01 * 0.25;
+            intensity += wetness * eBS * 50.0;
+            density -= wetness * eBS * 0.25;
 
             intensity = mix(200.0, intensity, caveFactor);
             density = mix(0.4, density, caveFactor);
@@ -122,14 +118,13 @@ void computeLPVFog(inout vec3 fog, in vec3 translucent, in float dither) {
 
             float rayDistance = length(vec3(rayPos.x, rayPos.y * 2.0, rayPos.z));
             lightSample *= max(0.0, 1.0 - rayDistance / maxDist);
-            lightSample *= pow2(min(1.0, rayLength * 0.25));
 
             if (rayLength > lViewPosZ0) lightSample *= translucent;
             lightFog += lightSample;
         }
 
         vec3 result = pow(lightFog / sampleCount, vec3(0.5)) * visibility;
-        fog += result * pow(clamp(length(result), 0.0, 1.0), density) * intensity * 0.01 * LPV_FOG_STRENGTH;
+        fog += result * pow(clamp(length(result), 0.0, 1.0), density) * intensity * 0.01 * LPV_FOG_STRENGTH  ;
     }
 }
 #endif
@@ -179,8 +174,7 @@ vec3 calculateMovement(vec3 worldPos, float lightIntensity, float speed, vec2 mu
 
 void computeFireflies(inout float fireflies, in vec3 translucent, in float dither) {
 	//Total fireflies visibility
-    float eBS01 = pow(eBS, 0.1);
-	float visibility = eBS01 * eBS01 * (1.0 - sunVisibility) * (1.0 - wetness) * float(isEyeInWater == 0);
+	float visibility = pow(eBS, 0.25) * (1.0 - sunVisibility) * (1.0 - wetness) * float(isEyeInWater == 0);
 
 	#if MC_VERSION >= 11900
 	visibility *= 1.0 - darknessFactor;

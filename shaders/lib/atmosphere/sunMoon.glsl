@@ -21,7 +21,7 @@ void getSunMoon(inout vec3 color, in vec3 nViewPos, in vec3 worldPos, in vec3 li
 		     sunColor *= pow4(min(length(sunColor), 1.0)) * 2.0;
 		vec3 moonColor = moon * lightNight * (10.0 + int(moonPhase == 4) * 2.0);
 		     moonColor *= pow6(min(length(moonColor), 1.0));
-		vec3 glareColor = glare * lightColSqrt * 0.25;
+		vec3 glareColor = glare * lightColSqrt * 0.2;
 
 		if (moonPhase == 0) {
 			worldPos = normalize(worldPos);
