@@ -168,6 +168,7 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 //Water//
 //#define VANILLA_WATER
 #define WATER_REFLECTIONS
+#define WATER_REFLECTIONS_STRENGTH 0.7 //[0.5 0.6 0.7 0.8 0.9 1.0]
 #define WATER_NORMALS 1 //[0 1 2]
 #define WATER_NORMAL_BUMP 0.5 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
 #define WATER_NORMAL_OFFSET 0.5 //[0.2 0.3 0.4 0.5 0.6 0.7 0.8]
