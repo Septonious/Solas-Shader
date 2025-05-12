@@ -12,9 +12,9 @@ void computeVL(inout vec3 vl, in vec3 translucent, in float dither) {
 	float z1 = texture2D(depthtex1, texCoord).r;
 
 	//Positions
-	vec3 viewPos = ToView(vec3(texCoord.xy, z0));
     vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.0);
 	vec3 worldSunVec = mat3(gbufferModelViewInverse) * lightVec;
+	vec3 viewPos = ToView(vec3(texCoord.xy, z0));
 	vec3 nViewPos = normalize(viewPos);
 
     //Total Visibility & Variables
@@ -24,8 +24,10 @@ void computeVL(inout vec3 vl, in vec3 translucent, in float dither) {
 	#endif
 
 	float VoL = dot(nViewPos, lightVec);
+	float VoU = dot(nViewPos, upVec);
 	float VoLC = clamp(VoL, 0.0, 1.0);
 		  VoLC = mix(VoLC, 0.5, 0.25 * float(isEyeInWater == 1));
+	float VoUC = clamp(VoU, 0.0, 1.0);
 
 	#ifdef OVERWORLD
 	float waterFactor = 1.0 - float(isEyeInWater == 1) * 0.5;
@@ -35,6 +37,10 @@ void computeVL(inout vec3 vl, in vec3 translucent, in float dither) {
 		  visibility *= mix(meVisRatio, (0.5 - sunVisibility * 0.5) + pow(VoLC, 1.1), clamp(timeBrightness + (1.0 - sunVisibility), 0.0, 1.0));
 		  visibility = mix(visibility * (1.0 + denseForestFactor * 0.5), 0.5, indoorFactor);
 		  visibility *= float(0.56 < z0) * waterFactor * caveFactor * shadowFade;
+
+		  #if !defined VC_SHADOWS || !defined VC
+		  visibility *= 1.0 - VoU;
+		  #endif
 	#else
 	float dragonBattle = gl_Fog.start / far;
 	float endBlackHolePos = pow2(clamp(dot(nViewPos, sunVec), 0.0, 1.0));
@@ -57,8 +63,9 @@ void computeVL(inout vec3 vl, in vec3 translucent, in float dither) {
 		//Variables
 		#ifdef OVERWORLD
 		int sampleCount = int(VL_SAMPLES + 2 * mefade);
+
 		#ifdef DISTANT_HORIZONS
-			sampleCount += 4;
+		sampleCount += 4;
 		#endif
 		#else
 		int sampleCount = VL_SAMPLES;
@@ -71,6 +78,10 @@ void computeVL(inout vec3 vl, in vec3 translucent, in float dither) {
 
 		float minDist = (maxDist / sampleCount) * 0.75;
 
+		#ifdef DISTANT_HORIZONS
+			  minDist *= 0.35;
+		#endif
+
 		#if MC_VERSION >= 12104
 			  minDist *= 1.0 - isPaleGarden * 0.35;
 		#endif
@@ -78,7 +89,13 @@ void computeVL(inout vec3 vl, in vec3 translucent, in float dither) {
 		float maxCurrentDist = min(linearDepth1, maxDist);
 
 		vec3 shadowCol = vec3(0.0);
+
+		#ifdef OVERWORLD
 		vec3 newSkyColor = pow(normalize(skyColor + 0.0001), vec3(0.75));
+        vec3 vlColor = mix(pow(lightCol, vec3(0.85)), lightCol * newSkyColor, timeBrightness);
+        #else
+        vec3 vlColor = endLightColSqrt;
+        #endif
 
 		//Cloud Shadows Paramteres
 		#ifdef VC_SHADOWS
@@ -120,12 +137,6 @@ void computeVL(inout vec3 vl, in vec3 translucent, in float dither) {
 						shadowCol = texture2D(shadowcolor0, shadowPos.xy).rgb;
 					}
 				}
-				#endif
-
-				#ifdef OVERWORLD
-				vec3 vlColor = mix(pow(lightCol, vec3(0.85)), lightCol * newSkyColor, timeBrightness);
-				#else
-				vec3 vlColor = endLightColSqrt;
 				#endif
 
 				vec3 shadow = clamp(shadow1 * pow2(shadowCol) + shadow0 * vlColor * float(isEyeInWater == 0), 0.0, 8.0);

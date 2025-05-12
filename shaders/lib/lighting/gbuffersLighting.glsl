@@ -228,7 +228,7 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
 
     //Lightning
     float lightning = min(lightningFlashEffect(worldPos, lightningBoltPosition.xyz, 256.0) * lightningBoltPosition.w * 4.0, 1.0);
-    sceneLighting += vec3(lightning) * (clamp(dot(lightningBoltPosition.xyz, worldNormal), 0.0, 1.0) * 0.9 + 0.1);
+    sceneLighting += vec3(lightning) * (clamp(dot(lightningBoltPosition.xyz, worldNormal), 0.0, 1.0) * 0.9 + 0.1) * lightmap.y;
 
     //Aurora Lighting
     #if defined AURORA && defined AURORA_LIGHTING_INFLUENCE && !defined GBUFFERS_TEXTURED && !defined GBUFFERS_WATER && !defined GBUFFERS_BASIC

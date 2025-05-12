@@ -14,12 +14,14 @@ in vec3 sunVec, upVec;
 uniform int isEyeInWater;
 uniform int frameCounter;
 
-#ifdef DISTANT_HORIZONS
-uniform int dhRenderDistance;
-#endif
-
 #ifdef VC_SHADOWS
 uniform int worldDay, worldTime;
+#endif
+
+#ifdef DISTANT_HORIZONS
+uniform int dhRenderDistance;
+
+uniform float dhFarPlane, dhNearPlane;
 #endif
 
 uniform float viewWidth, viewHeight;
@@ -61,10 +63,6 @@ uniform sampler2D noisetex;
 uniform sampler2D colortex1;
 uniform sampler2D depthtex0, depthtex1;
 
-#ifdef DISTANT_HORIZONS
-uniform sampler2D dhDepthTex;
-#endif
-
 #ifdef LPV_FOG
 uniform sampler3D floodfillSampler, floodfillSamplerCopy;
 #endif
@@ -83,10 +81,6 @@ uniform mat4 shadowModelView, shadowProjection;
 uniform mat4 gbufferProjection;
 uniform mat4 gbufferModelViewInverse;
 uniform mat4 gbufferProjectionInverse;
-#endif
-
-#ifdef DISTANT_HORIZONS
-uniform mat4 dhProjectionInverse;
 #endif
 
 //Common Variables//

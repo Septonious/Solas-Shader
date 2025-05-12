@@ -8,9 +8,25 @@ vec3 worldToVoxel(vec3 worldPos) {
 }
 
 float getLogarithmicDepth(float dist) {
-	return (far * (dist - near)) / (dist * (far - near));
+	float far2 = far;
+	float near2 = near;
+
+	#ifdef DISTANT_HORIZONS
+	far2 = max(far, dhFarPlane);
+	near2 = min(near, dhNearPlane);
+	#endif
+
+	return (far2 * (dist - near2)) / (dist * (far2 - near2));
 }
 
 float getLinearDepth2(float depth) {
-    return 2.0 * near * far / (far + near - (2.0 * depth - 1.0) * (far - near));
+	float far2 = far;
+	float near2 = near;
+
+	#ifdef DISTANT_HORIZONS
+	far2 = max(far, dhFarPlane);
+	near2 = min(near, dhNearPlane);
+	#endif
+
+    return 2.0 * near2 * far2 / (far2 + near2 - (2.0 * depth - 1.0) * (far2 - near2));
 }
