@@ -78,9 +78,6 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
     //Subsurface Scattering
     float sss = 0.0;
 
-    #if defined DH_TERRAIN && MC_VERSION > 12101
-    shadow = vec3(texture2D(colortex5, screenPos.xy).r);
-    #else
     if (0 < shadowLightingFade) {
         #ifdef REALTIME_SHADOWS
         #if defined OVERWORLD && defined GBUFFERS_TERRAIN
@@ -136,7 +133,6 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
         shadow = computeShadow(shadowPos, offset, lightmap.y, subsurface, viewDistance);
         #endif
     }
-    #endif
 
     vec3 realShadow = shadow;
     vec3 fakeShadow = getFakeShadow(lightmap.y);
@@ -153,7 +149,7 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
     #endif
 
     #if defined DH_TERRAIN && MC_VERSION > 12101
-    shadow = shadow;
+    shadow = mix(vec3(texture2D(colortex5, screenPos.xy).r), shadow, vec3(shadowLightingFade));
     #else
     shadow = mix(fakeShadow, shadow, vec3(shadowLightingFade));
     #endif
