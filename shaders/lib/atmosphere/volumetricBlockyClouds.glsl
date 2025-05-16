@@ -29,6 +29,9 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, in float z1
 		vec3 viewPos = ToView(vec3(texCoord, z1));
 		vec3 nWorldPos = normalize(ToWorld(viewPos));
 		float distanceFactor = VC_DISTANCE;
+		#ifdef DISTANT_HORIZONS
+			  distanceFactor *= 2.0;
+		#endif
 		
 		//Set the two planes here between which the ray marching will be done
 		const float stretching = 8.0;
@@ -40,19 +43,32 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, in float z1
 
 		float sampleTotalLength = minDist + rayLength * dither;
 
-		int sampleCount = clamp(int(rayLength), 0, 16);
+		int sampleCount = clamp(int(rayLength), 0, 24);
 
 		if (0 < sampleCount) {
 			//Other variables
 			vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.0);
-			float VoL = clamp(dot(normalize(viewPos), lightVec), 0.0, 1.0) * shadowFade;
+			vec3 worldLightVec = normalize(ToWorld(lightVec * 1000000.0));
 			float lViewPos = length(viewPos);
 			float lViewPosFar = lViewPos < far ? lViewPos - 1.0 : 99999999.0;
 
+			#ifdef DISTANT_HORIZONS
+			float dhZ = texture2D(dhDepthTex0, texCoord).r;
+			vec4 dhScreenPos = vec4(texCoord, dhZ, 1.0);
+			vec4 dhViewPos = dhProjectionInverse * (dhScreenPos * 2.0 - 1.0);
+				 dhViewPos /= dhViewPos.w;
+
+			float lViewPosDH = length(dhViewPos);
+			float lViewPosDHFar = lViewPosDH < dhFarPlane ? lViewPosDH - 1.0 : 99999999.0;
+			#endif
+
 			//Blend colors with the sky
-			float atmosphereMixer = 0.5 * sunVisibility * sunVisibility;
-			vec3 cloudLightCol = mix(lightCol, atmosphereColor, atmosphereMixer) * (1.0 + pow8(VoL));
-			vec3 cloudAmbientCol = mix(ambientCol, atmosphereColor * 0.5, atmosphereMixer);
+            float morningEveningFactor = mix(1.0, 0.66, sqrt(sunVisibility) * (1.0 - timeBrightnessSqrt));
+
+			vec3 cloudAmbientColor = mix(ambientCol, atmosphereColor * atmosphereColor, 0.4 * sunVisibility);
+                 cloudAmbientColor *= 0.4 + sunVisibility * sunVisibility * (0.2 - wetness * 0.2);
+			vec3 cloudLightColor = mix(lightCol, mix(lightCol, atmosphereColor * 2.25, 0.25 * (sunVisibility + timeBrightness)) * atmosphereColor * 2.25, sunVisibility);
+                 cloudLightColor *= morningEveningFactor;
 
 			//Precompute the ray position
 			vec3 rayPos = cameraPosition + nWorldPos * minDist;
@@ -75,6 +91,10 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, in float z1
 
 				if (0.99 < cloudAlpha || lViewPosFar < lWorldPos || distanceFactor < lWorldPosXZ) break;
 
+				#ifdef DISTANT_HORIZONS
+				if (lViewPosDHFar < lWorldPos) break;
+				#endif
+
 				float shadowSample = 1.0;
 				float shadowLength = clamp(shadowDistance * 0.9166667 - length(worldPos.xz), 0.0, 1.0);
 
@@ -92,7 +112,7 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, in float z1
 
 				//Shaping
 				float noise = getCloudNoise(rayPos.xz);
-				float noiseL = getCloudNoise(rayPos.xz + normalize(ToWorld(lightVec * 1000000.0)).xz * 2.0);
+				float noiseL = getCloudNoise(rayPos.xz + worldLightVec.xz * 2.0);
 
 				cloudAlpha = mix(cloudAlpha, 1.0, noise);
 
@@ -105,9 +125,9 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, in float z1
 				cloudLighting = clamp(smoothstep(VC_HEIGHT + stretching * noise, VC_HEIGHT - stretching * noise, rayPos.y), 0.0, 1.0);
 				cloudLighting = mix(cloudLighting, 1.0, (noiseL - noise * 0.5) * shadowFade);
 			}
-			vec3 cloudColor = mix(cloudLightCol, cloudAmbientCol, cloudLighting);
+			vec3 cloudColor = mix(cloudLightColor, cloudAmbientColor, cloudLighting);
 
-			vc = vec4(cloudColor, cloudAlpha * VC_OPACITY) * visibility;
+			vc = vec4(cloudColor, cloudAlpha * min(VC_OPACITY + 0.1, 1.0)) * visibility;
 		}
 	}
 	vc *= visibility;

@@ -36,7 +36,7 @@ void computeVL(inout vec3 vl, in vec3 translucent, in float dither) {
 	float visibility = mix(VL_NIGHT, mix(VL_MORNING_EVENING, VL_DAY, timeBrightness), pow(sunVisibility, 0.33));
 		  visibility *= mix(meVisRatio, (0.5 - sunVisibility * 0.5) + pow(VoLC, 1.1), clamp(timeBrightness + (1.0 - sunVisibility), 0.0, 1.0));
 		  visibility = mix(visibility * (1.0 + denseForestFactor * 0.5), 0.5, indoorFactor);
-		  visibility *= float(0.56 < z0) * waterFactor * caveFactor * shadowFade;
+		  visibility *= float(z0 > 0.56) * waterFactor * caveFactor * shadowFade;
 
 		  #if !defined VC_SHADOWS || !defined VC
 		  visibility *= 1.0 - VoU;

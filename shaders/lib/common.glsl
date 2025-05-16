@@ -8,6 +8,7 @@ const float sunPathRotation = -40.0; //[-85.0 -80.0 -75.0 -70.0 -65.0 -60.0 -55.
 const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 
 #define REALTIME_SHADOWS
+#define DH_SCREENSPACE_SHADOWS
 #define SHADOW_COLOR
 #define VPS
 #define VPS_BLUR_STRENGTH 0.55 //[0.20 0.25 0.30 0.35 0.40 0.45 0.50 0.55 0.60 0.65 0.70 0.75 0.80]
@@ -71,11 +72,11 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 
 //VL//
 #define VL
-#define VL_STRENGTH 1.50 //[0.10 0.20 0.30 0.40 0.50 0.60 0.70 0.80 0.90 1.00 1.10 1.20 1.30 1.40 1.50 1.60 1.70 1.80 1.90 2.00]
+#define VL_STRENGTH 1.25 //[0.10 0.20 0.30 0.40 0.50 0.60 0.70 0.80 0.90 1.00 1.10 1.20 1.30 1.40 1.50 1.60 1.70 1.80 1.90 2.00]
 #define VL_SAMPLES 9 //[5 6 7 8 9 10 11 12 13 14 15 16]
-#define VL_STRENGTH_RATIO 0.60 //[0.05 0.10 0.15 0.20 0.25 0.30 0.35 0.40 0.45 0.50 0.55 0.60 0.65 0.70 0.75 0.80 0.85 0.90]
+#define VL_STRENGTH_RATIO 0.70 //[0.05 0.10 0.15 0.20 0.25 0.30 0.35 0.40 0.45 0.50 0.55 0.60 0.65 0.70 0.75 0.80 0.85 0.90]
 #define VL_NIGHT 2.00 //[0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00]
-#define VL_MORNING_EVENING 1.50 //[0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00]
+#define VL_MORNING_EVENING 1.25 //[0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00]
 #define VL_DAY 1.00 //[0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00]
 
 //LPV Fog//
@@ -100,7 +101,7 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 #define DISTANT_FADE
 #define DISTANT_FADE_STYLE 0 //[0 1]
 #define FOG_DISTANCE 100 //[10 15 20 25 30 35 40 45 50 55 60 65 70 75 80 85 90 95 100 110 120 130 140 150]
-#define FOG_DENSITY 1.0 //[0.0 0.2 0.4 0.6 0.8 1.0 1.2 1.4 1.6 1.8 2.0]
+#define FOG_DENSITY 0.8 //[0.0 0.2 0.4 0.6 0.8 1.0 1.2 1.4 1.6 1.8 2.0]
 #define FOG_HEIGHT 100.0 //[10 15 20 25 30 35 40 45 50 55 60 65 70 75 80 85 90 95 100 105 110 115 120 125 130 135 140 145 150 200 300 400 500 600 700 800 900 1000]
 #define FOG_HEIGHT_FALLOFF 6.00 //[4.00 4.50 5.00 5.50 6.00 6.50 7.00 7.50 8.00 8.50 9.00 9.50 10.00]
 
@@ -436,14 +437,6 @@ float linearStep(float edge0, float edge1, float x) {
 
 ////////////// S H E N A N I G A N S //////////////
 
-#ifdef PARALLAX
-#undef GENERATED_NORMALS
-#endif
-
-#ifdef PBR
-#undef GENERATED_SPECULAR
-#endif
-
 #ifndef OVERWORLD
 #undef MILKY_WAY
 #undef RAINBOW
@@ -473,6 +466,18 @@ float linearStep(float edge0, float edge1, float x) {
 #ifdef NETHER
 #undef VL
 #undef LPV_CLOUDY_FOG
+#endif
+
+#ifdef PARALLAX
+#undef GENERATED_NORMALS
+#endif
+
+#ifdef PBR
+#undef GENERATED_SPECULAR
+#endif
+
+#ifndef DISTANT_HORIZONS
+#undef DH_SCREENSPACE_SHADOWS
 #endif
 
 #if defined GBUFFERS_TEXTURED || defined GBUFFERS_BASIC || defined BLOCKY_CLOUDS || !defined VC

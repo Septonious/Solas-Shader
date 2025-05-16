@@ -15,14 +15,12 @@ uniform sampler2D tex;
 
 //Program//
 void main() {
-    vec4 albedo = texture2D(tex, texCoord) * color;
-
-	if (albedo.a < 0.01 || overdrawCull < 1.0) {
-		discard;
+	if (overdrawCull < 1.0) {
 		return;
+		discard;
 	}
-	
-	gl_FragData[0] = albedo;
+
+	gl_FragData[0] = texture2D(tex, texCoord);
 }
 
 #endif

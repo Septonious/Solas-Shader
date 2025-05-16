@@ -44,6 +44,10 @@ uniform vec3 skyColor;
 uniform vec3 fogColor;
 uniform vec3 cameraPosition;
 
+#ifdef DH_SCREENSPACE_SHADOWS
+uniform sampler2D colortex5;
+#endif
+
 uniform sampler2D noisetex;
 
 uniform mat4 dhProjectionInverse;
