@@ -35,8 +35,8 @@ float screenSpaceDHShadows(float z1, float dhZ1) {
 	float rayLength = ((viewPosDH.z + sunPosition.z * far2) > -near2) ? (-near2 - viewPosDH.z) / sunPosition.z : far2;
     vec3 rayDir = ToClipDH(viewPosDH + sunPosition * rayLength, isDH) - clipPosition;
          rayDir = rayDir / max(abs(rayDir.x) / viewSize.x, abs(rayDir.y) / viewSize.y);
-		 rayDir *= 6.0;
-	
+		 rayDir *= 4.0;
+
 	vec3 screenPos = clipPosition + rayDir * blueNoiseDither;
 
 	float minDepth = screenPos.z;
@@ -55,7 +55,6 @@ float screenSpaceDHShadows(float z1, float dhZ1) {
 		
 		minDepth = maxDepth - 1.0 / getLinearDepth(currentDepth, near2, far2);
 		maxDepth += rayDir.z;
-
 		screenPos += rayDir;
 	}
 
