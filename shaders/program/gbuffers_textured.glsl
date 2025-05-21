@@ -23,6 +23,10 @@ uniform int dhRenderDistance;
 uniform int heldItemId, heldItemId2;
 #endif
 
+#ifdef DISTANT_HORIZONS
+uniform float dhFarPlane;
+#endif
+
 uniform float far, near;
 uniform float viewWidth, viewHeight;
 
@@ -124,7 +128,11 @@ void main() {
 
 	//Volumetric Clouds Blending
 	#ifdef VC
+	#ifndef DISTANT_HORIZONS
 	float cloudDepth = texture2D(gaux1, screenPos.xy).g * (far * 2.0);
+	#else
+	float cloudDepth = texture2D(gaux1, screenPos.xy).g * dhFarPlane;
+	#endif
 	cloudBlendOpacity = step(length(viewPos), cloudDepth);
 
 	if (cloudBlendOpacity == 0) {

@@ -180,7 +180,11 @@ void main() {
 
 	//Volumetric Clouds Blending
 	#ifdef VC
+	#ifndef DISTANT_HORIZONS
 	float cloudDepth = texture2D(gaux1, screenPos.xy).g * (far * 2.0);
+	#else
+	float cloudDepth = texture2D(gaux1, screenPos.xy).g * dhFarPlane;
+	#endif
 	cloudBlendOpacity = step(length(viewPos), cloudDepth);
 
 	if (cloudBlendOpacity == 0) {
