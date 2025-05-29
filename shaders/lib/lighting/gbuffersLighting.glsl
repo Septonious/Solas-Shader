@@ -148,7 +148,7 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
     fakeShadow *= NoL;
     #endif
 
-    #if defined DH_TERRAIN && MC_VERSION > 12101
+    #if defined DH_TERRAIN && MC_VERSION > 12101 && defined DH_SCREENSPACE_SHADOWS
     shadow = mix(vec3(texture2D(colortex5, screenPos.xy).r), shadow, vec3(shadowLightingFade));
     #else
     shadow = mix(fakeShadow, shadow, vec3(shadowLightingFade));
