@@ -31,10 +31,10 @@ uniform float far, near;
 #ifdef TAA
 uniform float frameTimeCounter;
 #endif
+#endif
 
 #ifdef OVERWORLD
 uniform float timeBrightness;
-#endif
 #endif
 
 #ifdef DOF

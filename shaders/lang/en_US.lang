@@ -111,16 +111,19 @@ option.MILKY_WAY_BRIGHTNESS=Milky Way Brightness
 option.END_NEBULA=Ender Nebula
 option.END_NEBULA_BRIGHTNESS=Ender Nebula Brightness
 option.RAINBOW=Rainbow
+option.RAINBOW_BRIGHTNESS=Rainbow Brightness
 
 #----------------------------------------------------------------------------------#
 
 screen.AURORA_CONFIG=Aurora Config
 
 option.AURORA=Aurora Borealis
-option.AURORA_COLD_BIOME_VISIBILITY=Aurora Cold Biome Visibility
+option.AURORA_COLD_BIOME_VISIBILITY=Cold Biome Visibility
 option.AURORA_COLD_BIOME_VISIBILITY.comment=Enables aurora only when player is in a cold biome
-option.AURORA_FULL_MOON_VISIBILITY=Aurora Full Moon Visibility
+option.AURORA_FULL_MOON_VISIBILITY=Full Moon Visibility
 option.AURORA_FULL_MOON_VISIBILITY.comment=Enables aurora only when the Moon if full
+option.AURORA_ALWAYS_VISIBLE=Constant Visibility
+option.AURORA_ALWAYS_VISIBLE.comment=Makes aurora appear every night.
 option.AURORA_BRIGHTNESS=Aurora Brightness
 
 #----------------------------------------------------------------------------------#

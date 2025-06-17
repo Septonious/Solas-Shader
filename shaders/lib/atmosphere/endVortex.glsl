@@ -10,7 +10,7 @@ vec3 getSpiral(vec2 coord, float hole) {
 }
 
 void getEndVortex(inout vec3 color, in vec3 worldPos, in vec3 stars, in float VoU, in float VoS) {
-	if (0.5 < VoS) {
+	if (VoS > 0.5 && VoU > -0.2) {
 		vec3 sunVec = mat3(gbufferModelViewInverse) * sunVec;
 		vec2 sunCoord = sunVec.xz / (sunVec.y + length(sunVec));
 		vec2 planeCoord1 = worldPos.xz / (worldPos.y + length(worldPos)) - sunCoord;

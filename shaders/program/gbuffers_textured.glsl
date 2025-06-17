@@ -65,10 +65,6 @@ uniform vec3 cameraPosition;
 uniform sampler2D texture;
 uniform sampler2D noisetex;
 
-#ifdef VC
-uniform sampler2D gaux1;
-#endif
-
 uniform sampler3D floodfillSampler, floodfillSamplerCopy;
 uniform usampler3D voxelSampler;
 
@@ -116,7 +112,6 @@ void main() {
 	vec4 albedo = albedoTexture * color;
 		 albedo.a *= albedo.a;
 	vec3 newNormal = normal;
-	float cloudBlendOpacity = 1.0;
 	float emission = 0.0;
 
 	if (albedo.r < 0.29 && albedo.g < 0.45 && albedo.b > 0.75) discard;
@@ -125,20 +120,6 @@ void main() {
 	vec3 viewPos = ToNDC(screenPos);
 	vec3 worldPos = ToWorld(viewPos);
 	vec2 lightmap = clamp(lmCoord, 0.0, 1.0);
-
-	//Volumetric Clouds Blending
-	#ifdef VC
-	#ifndef DISTANT_HORIZONS
-	float cloudDepth = texture2D(gaux1, screenPos.xy).g * (far * 2.0);
-	#else
-	float cloudDepth = texture2D(gaux1, screenPos.xy).g * dhFarPlane;
-	#endif
-	cloudBlendOpacity = step(length(viewPos), cloudDepth);
-
-	if (cloudBlendOpacity == 0) {
-		discard;
-	}
-	#endif
 
 	float NoU = clamp(dot(newNormal, upVec), -1.0, 1.0);
 	float NoL = clamp(dot(newNormal, lightVec), 0.0, 1.0);
@@ -180,7 +161,6 @@ void main() {
 	#endif
 
 	Fog(albedo.rgb, viewPos, worldPos, atmosphereColor);
-	albedo.a *= cloudBlendOpacity;
 
 	/* DRAWBUFFERS:0 */
 	gl_FragData[0] = albedo;
