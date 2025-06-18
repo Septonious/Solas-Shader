@@ -256,9 +256,11 @@ void computeEndVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z1
 		#endif
 
 		//Setting the ray marcher
-
 		float dragonBattle = 1.0;
 
+		#if MC_VERSION <= 12104
+			 dragonBattle = gl_Fog.start / far;
+		#endif
 
 		float cloudTop = VF_END_HEIGHT + VF_END_THICKNESS * 10.0 * (1.75 - dragonBattle * 0.75);
 		float lowerPlane = (VF_END_HEIGHT - cameraPosition.y) / nWorldPos.y;

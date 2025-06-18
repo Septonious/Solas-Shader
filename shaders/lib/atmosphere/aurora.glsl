@@ -47,16 +47,16 @@ void drawAurora(inout vec3 color, in vec3 worldPos, in float VoU, in float caveF
 			vec3 planeCoord = worldPos * ((16.0 - kpIndex * 8.0 + currentStep * (12.0 + abs(pulse * 6.0) + kpIndex * 4.0) - clamp(cameraPosition.y * 0.004, 0.0, 9.0)) / worldPos.y) * 0.025;
 				 planeCoord.z += planeCoord.y * tiltFactor;
 				 planeCoord.x += planeCoord.y * tiltFactor;
-			vec2 offsetNoiseCoord = planeCoord.xz + cameraPosition.xz * 0.00005;
-				 planeCoord *= 0.5 + texture2D(noisetex, (offsetNoiseCoord + frameTimeCounter * 0.0001) * 0.05).r * 0.5;
 
 			if (planeCoord.x + planeCoord.z < kpIndex) {
-				float fade = min(abs(planeCoord.x + planeCoord.z), 1.0);
-				vec2 coord = planeCoord.xz + cameraPosition.xz * 0.0001;
+				vec2 offsetNoiseCoord = planeCoord.xz + cameraPosition.xz * 0.00005;
+				 planeCoord *= 0.5 + texture2D(noisetex, (offsetNoiseCoord + frameTimeCounter * 0.0001) * 0.05).r * 0.5;
 
+				vec2 coord = planeCoord.xz + cameraPosition.xz * 0.0001;
 				float noise = getAuroraNoise(coord + frameTimeCounter * 0.0008);
 				
 				if (noise > 0) {
+					float fade = min(abs(planeCoord.x + planeCoord.z), 1.0);
 					float noiseBase = noise;
 					float auroraDistanceFactor = max(1.0 - length(planeCoord.xz) * 0.25, 0.0);
 
