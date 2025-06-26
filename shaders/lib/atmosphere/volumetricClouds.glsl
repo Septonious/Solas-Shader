@@ -9,7 +9,7 @@ void getDynamicWeather(inout float speed, inout float amount, inout float freque
 	int worldDayInterpolated = int((worldDay * 24000 + worldTime) / 24000);
 	float dayAmountFactor = abs(worldDayInterpolated % 7 / 2 - 0.5) * 0.5;
 	float dayDensityFactor = abs(worldDayInterpolated % 9 / 4 - worldDayInterpolated % 2);
-	float dayFrequencyFactor = 1.0 + abs(worldDayInterpolated % 6 / 4 - worldDayInterpolated % 2) * 0.65;
+	float dayFrequencyFactor = 1.0 + abs(worldDayInterpolated % 6 / 4 - worldDayInterpolated % 2) * 0.4;
 
 	amount = mix(amount, 11.5, wetness) - dayAmountFactor;
 	thickness += dayFrequencyFactor - 0.75;
@@ -20,8 +20,13 @@ void getDynamicWeather(inout float speed, inout float amount, inout float freque
 void getCloudSample(vec2 rayPos, vec2 wind, float attenuation, float amount, float frequency, float thickness, float density, float detail, inout float noise) {
 	rayPos *= 0.0002 * frequency;
 
-	float noiseBase = texture2D(noisetex, rayPos + 0.5 + wind * 0.5).g;
-		  noiseBase = (1.0 - noiseBase) * 0.35 + 0.25 + wetness * 0.1;
+	float deformNoise = clamp(texture2D(noisetex, rayPos * 0.1 + wind * 0.25).g * 3.0, 0.0, 1.0);
+	float noiseSample = texture2D(noisetex, rayPos + 0.5 + wind * 0.5).g;
+	float noiseBase = (1.0 - noiseSample) * 0.35 + 0.25 + wetness * 0.1;
+
+	amount *= 0.8 + deformNoise * 0.25;
+	density *= 3.0 - pow3(deformNoise) * 2.0;
+	detail *= 0.75 + deformNoise * 0.25;
 
 	float detailZ = floor(attenuation * thickness) * 0.05;
 	float noiseDetailA = texture2D(noisetex, rayPos * 1.5 - wind + detailZ).b;

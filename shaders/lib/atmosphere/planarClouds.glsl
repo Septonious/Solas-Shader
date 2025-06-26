@@ -43,7 +43,7 @@ void drawPlanarClouds(inout vec3 color, in vec3 atmosphereColor, in vec3 worldPo
 		auroraVisibility *= visibilityMultiplier;
 		#endif
 
-		pc = noise * pow(VoU, 1.25) * (1.0 - wetness) * (1.0 - volumetricClouds) * caveFactor;
+		pc = noise * pow(VoU, 1.25) * (1.0 - wetness) * pow2(1.0 - volumetricClouds) * caveFactor;
 
 		float cloudLighting = (noiseL - noise * 0.5) * shadowFade * noise;
 

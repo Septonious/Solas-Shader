@@ -98,21 +98,14 @@ void computeVolumetrics(inout vec4 result, in vec3 translucent, in float dither)
     #endif
 
     //LPV Fog Variables
-    float lpvIntensity = 100.0;
-    float lpvDensity = 0.7;
+    float lpvIntensity = 50.0;
     #ifdef OVERWORLD
         lpvIntensity *= 1.0 - sunVisibility * eBS * 0.5;
-        lpvDensity *= 0.7 + sunVisibility * eBS * 0.3;
-
         lpvIntensity += wetness * eBS * 50.0;
-        lpvDensity -= wetness * eBS * 0.2;
-
         lpvIntensity = mix(150.0, lpvIntensity, caveFactor);
-        lpvDensity = mix(0.4, lpvDensity, caveFactor);
     #endif
     #ifdef NETHER
         lpvIntensity = 120.0;
-        lpvDensity = 0.8;
     #endif
 
     lpvIntensity *= LPV_FOG_STRENGTH;
@@ -186,7 +179,7 @@ void computeVolumetrics(inout vec4 result, in vec3 translucent, in float dither)
             }
 
             lpvFog = pow(lightVolume.rgb, vec3(1.0 / FLOODFILL_RADIUS)) * (1.0 - floodfillFade * floodfillFade);
-            lpvFog *= pow(clamp(length(lpvFog), 0.0, 1.0), lpvDensity) * lpvIntensity * currentSampleIntensity;
+            lpvFog *= lpvIntensity * currentSampleIntensity;
         }
         #endif
 
