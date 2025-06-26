@@ -52,14 +52,14 @@ void main() {
 	vec3 color = texture2D(colortex0, texCoord).rgb;
 
 	#if defined LPV_FOG || defined VL
-	vec3 volume = texture2D(colortex1, texCoord + vlOffsets[0] / vec2(viewWidth, viewHeight)).rgb;
-		 volume+= texture2D(colortex1, texCoord + vlOffsets[1] / vec2(viewWidth, viewHeight)).rgb;
-		 volume+= texture2D(colortex1, texCoord + vlOffsets[2] / vec2(viewWidth, viewHeight)).rgb;
-		 volume+= texture2D(colortex1, texCoord + vlOffsets[3] / vec2(viewWidth, viewHeight)).rgb;
-	volume *= 0.25;
-	volume = pow8(volume) * 256.0;
+	vec3 volumetrics = texture2D(colortex1, texCoord + vlOffsets[0] / vec2(viewWidth, viewHeight)).rgb;
+		 volumetrics+= texture2D(colortex1, texCoord + vlOffsets[1] / vec2(viewWidth, viewHeight)).rgb;
+		 volumetrics+= texture2D(colortex1, texCoord + vlOffsets[2] / vec2(viewWidth, viewHeight)).rgb;
+		 volumetrics+= texture2D(colortex1, texCoord + vlOffsets[3] / vec2(viewWidth, viewHeight)).rgb;
+	volumetrics *= 0.25;
+	volumetrics = pow8(volumetrics) * 256.0;
 
-	color += volume;
+	color += volumetrics;
 
 	#ifdef FIREFLIES
 	color += getDiskBlur8(colortex1, texCoord, 4.0) * vec3(1.0, 2.0, 0.8) * FIREFLIES_BRIGHTNESS;

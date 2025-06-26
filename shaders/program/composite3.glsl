@@ -105,9 +105,8 @@ float sunVisibility = clamp(dot(sunVec, upVec) + 0.1, 0.0, 0.25) * 4.0;
 
 #ifdef LPV_FOG
 #include "/lib/lighting/lightning.glsl"
+#include "/lib/vx/voxelization.glsl"
 #endif
-
-#include "/lib/atmosphere/volumetricEffects.glsl"
 #endif
 
 #ifdef VL
@@ -117,49 +116,31 @@ float sunVisibility = clamp(dot(sunVec, upVec) + 0.1, 0.0, 0.25) * 4.0;
 
 #include "/lib/util/ToShadow.glsl"
 #include "/lib/color/lightColor.glsl"
-#include "/lib/atmosphere/volumetricLight.glsl"
 #endif
 #endif
+
+#include "/lib/atmosphere/volumetricRayMarcher.glsl"
 
 //Program//
 void main() {
 	vec3 color = texture2D(colortex0, texCoord).rgb;
-	vec4 vl = vec4(0.0);
-	float fireflies = 0.0;
+	vec4 volumetrics = vec4(0.0);
 
 	#if defined LPV_FOG || defined VL || defined FIREFLIES
 	vec3 translucent = texture2D(colortex1, texCoord).rgb;
 
-	float bayerDither = Bayer8(gl_FragCoord.xy);
-
-	#ifdef TAA
-	bayerDither = fract(bayerDither + frameTimeCounter * 16.0);
-	#endif
-
-	#ifdef FIREFLIES
-	computeFireflies(fireflies, translucent, bayerDither);
-	#endif
-
-	#ifdef LPV_FOG
-	computeLPVFog(vl.rgb, translucent, bayerDither);
-	#endif
-
-	#ifdef VL
 	float blueNoiseDither = texture2D(noisetex, gl_FragCoord.xy / 512.0).b;
-
 	#ifdef TAA
-	blueNoiseDither = fract(blueNoiseDither + 1.61803398875 * mod(float(frameCounter), 3600.0));
+		  blueNoiseDither = fract(blueNoiseDither + 1.61803398875 * mod(float(frameCounter), 3600.0));
 	#endif
 
-	computeVL(vl.rgb, translucent, blueNoiseDither);
-	#endif
-
-	vl.rgb = pow(vl.rgb / 256.0, vec3(0.125));
+	computeVolumetrics(volumetrics, translucent, blueNoiseDither);
+	volumetrics.rgb = pow(volumetrics.rgb / 256.0, vec3(0.125));
 	#endif
 
 	/* DRAWBUFFERS:01 */
 	gl_FragData[0].rgb = color;
-	gl_FragData[1] = vec4(vl.rgb, fireflies);
+	gl_FragData[1] = volumetrics;
 }
 
 #endif

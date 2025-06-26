@@ -38,7 +38,7 @@ vec3 getAtmosphericScattering(vec3 viewPos, vec3 lightPos) {
     //Realistic sky scattering
     vec3 worldPos = normalize(ToWorld(viewPos)) * PI;
 
-    float density = 1.25 - timeBrightness * 0.5;
+    const float density = 1.0;
     float zenith = getZenithDensity(density, worldPos.y);
     float sunPointDistMult = clamp(length(max(lightPos.y + multiScatterPhase, 0.0)), 0.0, 1.0);
     
@@ -55,7 +55,7 @@ vec3 getAtmosphericScattering(vec3 viewPos, vec3 lightPos) {
          daySky = mix(daySky * skyDensity, totalSky, rayleighScatteringMixer);
          daySky = jodieReinhardTonemap(daySky * PI);
          daySky = pow(daySky, vec3(2.2));
-         daySky = mix(daySky, lightColSqrt, pow2(1.0 - VoUClamped) * (1.0 - wetness * 0.5) * (1.0 - timeBrightness) * 0.4);
+         daySky = mix(daySky, lightColSqrt, pow2(1.0 - VoUClamped) * (1.0 - wetness * 0.5) * (1.0 - timeBrightness) * 0.25);
          daySky = mix(daySky, lightColSqrt, sunScatteringMixer);
     vec3 nightSky = lightNight * 0.6;
          //Tint the atmosphere with slight green when aurora is visible
