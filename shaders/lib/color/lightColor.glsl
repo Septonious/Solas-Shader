@@ -1,10 +1,13 @@
 #ifdef OVERWORLD
+uniform float isDesert, isMesa, isSwamp, isMushroom, isSavanna, isJungle;
+
 float timeBrightnessSqrt = sqrt(timeBrightness);
 float mefade = 1.0 - clamp(abs(timeAngle - 0.5) * 8.0 - 1.5, 0.0, 1.0);
 
 float temperatureSun = mix(mix(LIGHTTEMP_SS, LIGHTTEMP_ME, timeBrightnessSqrt), LIGHTTEMP_D, timeBrightness * timeBrightness) * 0.01;
 float temperatureNight = LIGHTTEMP_N * 0.01;
 
+vec3 biomeColor = vec3(1.1, 1.3, 0.7) * isJungle + vec3(1.1, 1.6, 0.6) * isSwamp + vec3(2.0, 1.3, 0.4) * isDesert + vec3(2.5, 1.2, 0.2) * isMesa + vec3(1.8, 1.2, 0.5) * isSavanna;
 vec3 colorSun = vec3(1.0, clamp(0.390081578 * log(temperatureSun) - 0.631841443, 0.0, 1.0), clamp(0.543206789 * log(temperatureSun - 10.0) - 1.196254089, 0.0, 1.0));
 vec3 colorNight = vec3(clamp(1.292936186 * pow(temperatureNight - 60.0, -0.133204759), 0.0, 1.0), clamp(1.129890860 * pow(temperatureNight - 60.0, -0.075514849), 0.0, 1.0), 1.0);
 

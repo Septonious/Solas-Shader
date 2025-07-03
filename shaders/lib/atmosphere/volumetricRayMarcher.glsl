@@ -7,13 +7,23 @@ float texture2DShadow(sampler2D shadowtex, vec3 shadowPos) {
 #endif
 
 #ifdef OVERWORLD_CLOUDY_FOG
+float getFogSample(vec3 fogPos, vec2 wind) {
+    fogPos *= 0.25;
+    float n3da = texture2D(noisetex, fogPos.xz * 0.001 + floor(fogPos.y * 0.15) * 0.15).r;
+    float n3db = texture2D(noisetex, fogPos.xz * 0.001 + floor(fogPos.y * 0.15 + 1.0) * 0.15).r;
+
+    float cloudyNoise = mix(n3da, n3db, fract(fogPos.y * 0.15));
+          cloudyNoise = max(cloudyNoise - 0.4, 0.0);
+          cloudyNoise = min(cloudyNoise * 8.0, 1.0);
+          cloudyNoise *= 1.0 + cloudyNoise * cloudyNoise;
+    return cloudyNoise;
+}
 #endif
 
 void computeVolumetrics(inout vec4 result, in vec3 translucent, in float dither) {
     //Stuff which we're doing
     vec3 volumetricLighting = vec3(0.0);
     vec3 lpvFog = vec3(0.0);
-    vec3 cloudyFog = vec3(0.0);
     float fireflies = 0.0;
 
 	//Depths
@@ -21,16 +31,6 @@ void computeVolumetrics(inout vec4 result, in vec3 translucent, in float dither)
 	float z1 = texture2D(depthtex1, texCoord).r;
     float linearDepth0 = getLinearDepth2(z0);
     float linearDepth1 = getLinearDepth2(z1);
-
-    //Ray Marcher Parameters
-    int sampleCount = 12 + int((1.0 - mefade) * 4);
-    float maxDist = 96.0 + shadowDistance;
-    #if defined VC_SHADOWS && defined VL
-          maxDist += 128.0;
-    #endif
-
-    float minDist = (maxDist / sampleCount) * 0.75;
-    float maxCurrentDist = min(linearDepth1, maxDist);
 
 	//Positions & Common variables
     vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.0);
@@ -54,41 +54,8 @@ void computeVolumetrics(inout vec4 result, in vec3 translucent, in float dither)
 
 	totalVisibility *= 1.0 - blindFactor;
 
-    //Volumetric Lighting Variables
-    #ifdef VL
-	#ifdef OVERWORLD
-    float VoLExt = pow(VoL * 0.5 + 0.5, 1.5);
-    float sunVisibilityM = pow(sunVisibility, 0.33);
-	float meVisRatio = (1.0 - VL_STRENGTH_RATIO) + clamp(VoLC * VL_STRENGTH_RATIO, 0.0, VL_STRENGTH_RATIO);
-	float vlVisibility = mix(VL_NIGHT, mix(VL_MORNING_EVENING, VL_DAY, timeBrightness), sunVisibilityM);
-          vlVisibility *= mix(meVisRatio, VoLExt, min(timeBrightness + (1.0 - sunVisibilityM), 1.0));
-		  #if !defined VC_SHADOWS || !defined VC
-		  vlVisibility *= 1.0 - VoU;
-		  #endif
-          vlVisibility = mix(vlVisibility, VoLExt * 0.5, float(isEyeInWater == 1));
-          vlVisibility *= caveFactor * shadowFade;
-          vlVisibility /= sampleCount;
-	#else
-	float dragonBattle = 1.0;
-	#if MC_VERSION <= 12104
-		  dragonBattle = gl_Fog.start / far;
-	#endif
-
-	float endBlackHolePos = pow2(clamp(dot(nViewPos, sunVec), 0.0, 1.0));
-	float visibilityNormal = endBlackHolePos * 0.25;
-	float visibilityDragon = 0.25 + endBlackHolePos * 0.5;
-	float vlVisibility = float(0.56 < z0) * mix(visibilityDragon, visibilityNormal, clamp(dragonBattle, 0.0, 1.0));
-	#endif
-
-    #ifdef OVERWORLD
-    vec3 newSkyColor = pow(normalize(skyColor + 0.0001), vec3(0.75));
-    vec3 vlCol = mix(pow(lightCol, vec3(0.85)), lightCol * newSkyColor, timeBrightness);
-    #else
-    vec3 vlCol = endLightColSqrt;
-    #endif
-
-    #ifdef VC_SHADOWS
     float speed = VC_SPEED;
+    #ifdef VC_SHADOWS
     float amount = VC_AMOUNT;
     float frequency = VC_FREQUENCY;
     float density = VC_DENSITY;
@@ -96,9 +63,55 @@ void computeVolumetrics(inout vec4 result, in vec3 translucent, in float dither)
     float cloudTop = VC_HEIGHT + VC_THICKNESS + 75.0 - timeBrightness * 30.0;
 
     getDynamicWeather(speed, amount, frequency, density, height);
+    #endif
 
     vec2 wind = vec2(frameTimeCounter * speed * 0.005, sin(frameTimeCounter * speed * 0.1) * 0.01) * speed * 0.1;
+
+    //Ray Marcher Parameters
+    int sampleCount = VL_SAMPLES + int((1.0 - mefade) * 4);
+    float maxDist = 96.0 + shadowDistance;
+    #if defined VC_SHADOWS && defined VL
+          maxDist += 128.0;
     #endif
+
+    float minDist = (maxDist / sampleCount) * 0.75;
+    float maxCurrentDist = min(linearDepth1, maxDist);
+    float distanceMixer = 1.0 - clamp(lViewPos * 0.005, 0.0, 1.0);
+
+    //Volumetric Lighting Variables
+    #ifdef VL
+	#ifdef OVERWORLD
+        float VoLExt = pow(VoL * 0.5 + 0.5, 1.5);
+        float sunVisibilityM = pow(sunVisibility, 0.33);
+        float meVisRatio = (1.0 - VL_STRENGTH_RATIO) + clamp(VoLC * VL_STRENGTH_RATIO, 0.0, VL_STRENGTH_RATIO);
+        float vlVisibility = mix(VL_NIGHT, mix(VL_MORNING_EVENING, VL_DAY, timeBrightness), sunVisibilityM);
+              vlVisibility *= mix(meVisRatio, VoLExt, min(timeBrightness + (1.0 - sunVisibilityM), 1.0));
+            #if !defined VC_SHADOWS || !defined VC
+              vlVisibility *= 1.0 - VoU;
+            #endif
+              vlVisibility = mix(vlVisibility, VoLExt * 0.5, float(isEyeInWater == 1));
+              vlVisibility *= caveFactor * shadowFade;
+              vlVisibility /= sampleCount;
+	#else
+        float dragonBattle = 1.0;
+        #if MC_VERSION <= 12104
+              dragonBattle = gl_Fog.start / far;
+        #endif
+        float endBlackHolePos = pow2(clamp(dot(nViewPos, sunVec), 0.0, 1.0));
+        float visibilityNormal = endBlackHolePos * 0.25;
+        float visibilityDragon = 0.25 + endBlackHolePos * 0.5;
+        float vlVisibility = float(0.56 < z0) * mix(visibilityDragon, visibilityNormal, clamp(dragonBattle, 0.0, 1.0));
+	#endif
+
+    #ifdef OVERWORLD
+        vec3 newSkyColor = pow(normalize(skyColor + 0.0001), vec3(0.75));
+        vec3 vlCol = mix(pow(lightCol, vec3(0.85)), lightCol * newSkyColor, timeBrightness);
+    #else
+        vec3 vlCol = endLightColSqrt;
+    #endif
+
+    vlVisibility *= VL_STRENGTH;
+    vlVisibility *= min(1.0, length(viewPos) * 0.01);
     #endif
 
     //LPV Fog Variables
@@ -114,9 +127,17 @@ void computeVolumetrics(inout vec4 result, in vec3 translucent, in float dither)
 
     lpvIntensity *= LPV_FOG_STRENGTH;
 
+    //Cloudy Fog Variables
+    float cloudyFogVisibility = isJungle + isSwamp + isDesert + isMesa + isSavanna;
+          cloudyFogVisibility *= sunVisibility * (1.0 - timeBrightness);
+
+    vec3 cloudyFogCol = skyColor * biomeColor;
+         cloudyFogCol = normalize(cloudyFogCol) * 2.0;
+
+    //Ray Marching
     for (int i = 0; i < sampleCount; i++) {
-        float currentDist = pow(i + dither, 1.0 + i / sampleCount) * minDist - 0.95;
-              currentDist = mix(exp2(i + dither), currentDist, clamp(lViewPos * 0.01, 0.0, 1.0));
+        float currentDist = pow(i + dither, 1.0 + i / sampleCount) * minDist;
+              currentDist = mix(currentDist, exp2(i + dither), distanceMixer);
 
         if (currentDist > maxCurrentDist || linearDepth1 < currentDist || (linearDepth0 < currentDist && translucent.rgb == vec3(0.0))) {
             break;
@@ -160,6 +181,19 @@ void computeVolumetrics(inout vec4 result, in vec3 translucent, in float dither)
             volumetricLighting *= 1.0 - min((worldPos.y + cameraPosition.y - VC_THICKNESS) * (1.0 / cloudTop), 1.0);
             #endif
 
+            //Overworld ground cloudy fog
+            #ifdef OVERWORLD_CLOUDY_FOG
+            vec3 fogPos = worldPos + cameraPosition;
+            float lWorldPosXZ = length(worldPos.xz);
+            float fogSample = 0.0;
+            if (fogPos.y > 0.0 && fogPos.y < 100.0 && length(volumetricLighting) > 0.0 && cloudyFogVisibility > 0.0) {
+                fogSample = getFogSample(fogPos, wind);
+                fogSample *= max(0.0, 1.0 - lWorldPosXZ * 0.0025);
+            }
+            float altitudeFactor = clamp(fogPos.y * 0.01, 0.0, 1.0);
+            volumetricLighting *= mix(1.0, fogSample * 8.0, altitudeFactor * (1.0 - altitudeFactor) * cloudyFogVisibility);
+            #endif
+
             volumetricLighting *= vlVisibility;
         }
         #endif
@@ -187,21 +221,15 @@ void computeVolumetrics(inout vec4 result, in vec3 translucent, in float dither)
         }
         #endif
 
-        //Overworld ground cloudy fog
-        #ifdef OVERWORLD_CLOUDY_FOG
-        #endif
-
         //Translucency Blending
         if (linearDepth0 < currentDist) {
             volumetricLighting *= translucent;
             lpvFog *= translucent;
-            cloudyFog *= translucent;
         }
 
         //Accumulate samples
         result.rgb += volumetricLighting;
         result.rgb += lpvFog;
-        result.rgb += cloudyFog;
         result.a += fireflies;
     }
     result *= totalVisibility;

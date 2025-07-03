@@ -30,7 +30,6 @@ uniform float frameTimeCounter;
 uniform float timeBrightness, wetness;
 uniform float blindFactor;
 uniform float timeAngle, shadowFade;
-uniform float isJungle, isSwamp;
 
 #if MC_VERSION >= 12104
 uniform float isPaleGarden;
