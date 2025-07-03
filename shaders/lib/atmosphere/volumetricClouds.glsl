@@ -218,7 +218,7 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z1, f
 #endif
 
 #ifdef END_CLOUDY_FOG
-void getEndCloudSample(vec2 rayPos, vec2 wind, float attenuation, inout float noise) {
+void getEndCloudSample(vec2 rayPos, vec2 wind, float dragonBattle, float attenuation, inout float noise) {
 	rayPos *= 0.0002;
 
 	float noiseBase = texture2D(noisetex, rayPos + 0.5 + wind * 0.5).g;
@@ -233,7 +233,7 @@ void getEndCloudSample(vec2 rayPos, vec2 wind, float attenuation, inout float no
 		  noiseCoverage *= noiseCoverage * 8.0;
 	
 	noise = mix(noiseBase, noiseDetail, 0.025 * int(0 < noiseBase)) * 22.0 - noiseCoverage;
-	noise = max(noise - VF_END_AMOUNT, 0.0) * 0.75;
+	noise = max(noise - VF_END_AMOUNT + dragonBattle, 0.0) * (1.0 - dragonBattle * 0.5);
 	noise /= sqrt(noise * noise + 0.25);
 }
 
@@ -262,9 +262,8 @@ void computeEndVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z1
 
 		//Setting the ray marcher
 		float dragonBattle = 1.0;
-
 		#if MC_VERSION <= 12104
-			 dragonBattle = gl_Fog.start / far;
+			  dragonBattle = gl_Fog.start / far;
 		#endif
 
 		float cloudTop = VF_END_HEIGHT + VF_END_THICKNESS * 10.0 * (1.75 - dragonBattle * 0.75);
@@ -317,7 +316,7 @@ void computeEndVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z1
 				float rayDistance = length(worldPos.xz) * 0.1;
 				float attenuation = smoothstep(VF_END_HEIGHT, cloudTop, rayPos.y);
 
-				getEndCloudSample(rayPos.xz * 1.5, wind, attenuation, noise);
+				getEndCloudSample(rayPos.xz * 1.5, wind, dragonBattle, attenuation, noise);
 
 				float sampleLighting = pow(attenuation, 0.9 + halfVoL * 1.1) * 1.25 + 0.25;
 					  sampleLighting *= 1.0 - pow(noise, noiseLightFactor);
