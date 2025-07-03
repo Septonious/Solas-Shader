@@ -30,7 +30,7 @@ vec3 getAtmosphericScattering(vec3 viewPos, vec3 lightPos) {
     float scatteringWidth = pow(1.0 - VoUClamped, 2.0 - VoSClamped) * pow3(min(1.0 + VoURaw, 1.0));
 
     float sunScatteringMixer = (1.0 - timeBrightness * 0.5) * (1.0 - wetness * 0.45) * VoSClamped;
-          sunScatteringMixer = sunScatteringMixer * scatteringWidth * 0.6;
+          sunScatteringMixer = sunScatteringMixer * scatteringWidth * 0.4;
 
     float rayleighScatteringMixer = 0.3 + sunVisibility * 0.3;
           rayleighScatteringMixer *= (1.0 - wetness * 0.45) * (1.0 - timeBrightness * timeBrightness * 0.5);

@@ -21,19 +21,19 @@ void getCloudSample(vec2 rayPos, vec2 wind, float attenuation, float amount, flo
 	rayPos *= 0.0002 * frequency;
 
 	float deformNoise = clamp(texture2D(noisetex, rayPos * 0.1 + wind * 0.25).g * 3.0, 0.0, 1.0);
-	float noiseSample = texture2D(noisetex, rayPos + 0.5 + wind * 0.5).g;
+	float noiseSample = texture2D(noisetex, rayPos * 0.5 + wind * 0.5).r;
 	float noiseBase = (1.0 - noiseSample) * 0.35 + 0.25 + wetness * 0.1;
 
-	amount *= 0.8 + deformNoise * 0.25;
+	amount *= 0.7 + deformNoise * 0.3;
 	density *= 3.0 - pow3(deformNoise) * 2.0;
 	detail *= 0.75 + deformNoise * 0.25;
 
 	float detailZ = floor(attenuation * thickness) * 0.05;
-	float noiseDetailA = texture2D(noisetex, rayPos * 1.5 - wind + detailZ).b;
-	float noiseDetailB = texture2D(noisetex, rayPos * 1.5 - wind + detailZ + 0.05).b;
+	float noiseDetailA = texture2D(noisetex, rayPos - wind + detailZ).b;
+	float noiseDetailB = texture2D(noisetex, rayPos - wind + detailZ + 0.05).b;
 	float noiseDetail = mix(noiseDetailA, noiseDetailB, fract(attenuation * thickness));
 
-	float noiseCoverage = abs(attenuation - 0.125) * (attenuation > 0.125 ? 1.14 : 8.0);
+	float noiseCoverage = abs(attenuation - 0.125) * (attenuation > 0.125 ? 1.1 : 8.0);
 		  noiseCoverage *= noiseCoverage * (VC_ATTENUATION + wetness * 1.5);
 	
 	noise = mix(noiseBase, noiseDetail, detail * mix(0.05, 0.025, min(cameraPosition.y * 0.0025, 1.0)) * int(noiseBase > 0.0)) * 22.0 - noiseCoverage;

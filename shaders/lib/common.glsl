@@ -63,7 +63,7 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 #define VC_THICKNESS 16.0 //[8.0 10.0 12.0 14.0 16.0 18.0 20.0]
 #define VC_DETAIL 0.7 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
 #define VC_SPEED 1.00 //[0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00 2.50 3.00 3.50 4.00]
-#define VC_OPACITY 0.7 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
+#define VC_OPACITY 0.8 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
 #define VC_DISTANCE 1000.0 //[500.0 600.0 700.0 800.0 900.0 1000.0 1100.0 1200.0 1300.0 1400.0 1500.0]
 #define VC_ATTENUATION 3.0 //[2.0 2.5 3.0 3.5 4.0 4.5 5.0 5.5 6.0]
 #define VC_SHADOWS
@@ -76,13 +76,16 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 #define VL_SAMPLES 9 //[5 6 7 8 9 10 11 12 13 14 15 16]
 #define VL_STRENGTH_RATIO 0.80 //[0.05 0.10 0.15 0.20 0.25 0.30 0.35 0.40 0.45 0.50 0.55 0.60 0.65 0.70 0.75 0.80 0.85 0.90]
 #define VL_NIGHT 2.50 //[0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00]
-#define VL_MORNING_EVENING 1.25 //[0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00]
+#define VL_MORNING_EVENING 1.00 //[0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00]
 #define VL_DAY 1.00 //[0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00]
 
 //LPV Fog//
 #define LPV_FOG
 #define LPV_CLOUDY_FOG
 #define LPV_FOG_STRENGTH 1.50 //[1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00]
+
+//Overworld Cloudy Fog//
+#define OVERWORLD_CLOUDY_FOG
 
 //Nether Cloudy Fog//
 #define NETHER_CLOUDY_FOG

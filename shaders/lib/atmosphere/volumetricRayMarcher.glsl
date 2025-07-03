@@ -6,10 +6,14 @@ float texture2DShadow(sampler2D shadowtex, vec3 shadowPos) {
 }
 #endif
 
+#ifdef OVERWORLD_CLOUDY_FOG
+#endif
+
 void computeVolumetrics(inout vec4 result, in vec3 translucent, in float dither) {
     //Stuff which we're doing
     vec3 volumetricLighting = vec3(0.0);
     vec3 lpvFog = vec3(0.0);
+    vec3 cloudyFog = vec3(0.0);
     float fireflies = 0.0;
 
 	//Depths
@@ -111,8 +115,8 @@ void computeVolumetrics(inout vec4 result, in vec3 translucent, in float dither)
     lpvIntensity *= LPV_FOG_STRENGTH;
 
     for (int i = 0; i < sampleCount; i++) {
-        float currentDist = (i + dither) * minDist;
-              currentDist = min(currentDist, (exp2(i + dither)) * 1.0);
+        float currentDist = pow(i + dither, 1.0 + i / sampleCount) * minDist - 0.95;
+              currentDist = mix(exp2(i + dither), currentDist, clamp(lViewPos * 0.01, 0.0, 1.0));
 
         if (currentDist > maxCurrentDist || linearDepth1 < currentDist || (linearDepth0 < currentDist && translucent.rgb == vec3(0.0))) {
             break;
@@ -120,8 +124,8 @@ void computeVolumetrics(inout vec4 result, in vec3 translucent, in float dither)
         
         vec3 worldPos = ToWorld(ToView(vec3(texCoord, getLogarithmicDepth(currentDist))));
 
-        #ifdef VL
         //VL calculations
+        #ifdef VL
         if (vlVisibility > 0.0) {
             vec3 shadowCol = vec3(0.0);
 
@@ -160,8 +164,8 @@ void computeVolumetrics(inout vec4 result, in vec3 translucent, in float dither)
         }
         #endif
 
-        #ifdef LPV_FOG
         //LPV Fog calculations
+        #ifdef LPV_FOG
         vec3 voxelPos = worldToVoxel(worldPos);
              voxelPos /= voxelVolumeSize;
              voxelPos = clamp(voxelPos, 0.0, 1.0);
@@ -183,15 +187,21 @@ void computeVolumetrics(inout vec4 result, in vec3 translucent, in float dither)
         }
         #endif
 
+        //Overworld ground cloudy fog
+        #ifdef OVERWORLD_CLOUDY_FOG
+        #endif
+
         //Translucency Blending
         if (linearDepth0 < currentDist) {
             volumetricLighting *= translucent;
             lpvFog *= translucent;
+            cloudyFog *= translucent;
         }
 
         //Accumulate samples
         result.rgb += volumetricLighting;
         result.rgb += lpvFog;
+        result.rgb += cloudyFog;
         result.a += fireflies;
     }
     result *= totalVisibility;

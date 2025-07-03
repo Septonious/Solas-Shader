@@ -29,16 +29,11 @@ uniform float far, near;
 uniform float frameTimeCounter;
 uniform float timeBrightness, wetness;
 uniform float blindFactor;
-
-#ifdef VL
 uniform float timeAngle, shadowFade;
 uniform float isJungle, isSwamp;
 
 #if MC_VERSION >= 12104
 uniform float isPaleGarden;
-#endif
-
-uniform vec3 skyColor;
 #endif
 
 #if MC_VERSION >= 11900
@@ -51,6 +46,7 @@ uniform vec3 cameraPosition;
 #endif
 
 uniform vec3 fogColor;
+uniform vec3 skyColor;
 
 #ifdef LPV_FOG
 uniform vec4 lightningBoltPosition;
@@ -115,10 +111,10 @@ float sunVisibility = clamp(dot(sunVec, upVec) + 0.1, 0.0, 0.25) * 4.0;
 #endif
 
 #include "/lib/util/ToShadow.glsl"
-#include "/lib/color/lightColor.glsl"
 #endif
 #endif
 
+#include "/lib/color/lightColor.glsl"
 #include "/lib/atmosphere/volumetricRayMarcher.glsl"
 
 //Program//

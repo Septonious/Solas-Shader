@@ -13,10 +13,10 @@ void getCloudShadow(vec2 rayPos, vec2 wind, float amount, float frequency, float
 	rayPos *= 0.0002 * frequency;
 
 	float deformNoise = clamp(texture2D(noisetex, rayPos * 0.1 + wind * 0.25).g * 3.0, 0.0, 1.0);
-	float noiseSample = texture2D(noisetex, rayPos + 0.5 + wind * 0.5).g;
+	float noiseSample = texture2D(noisetex, rayPos * 0.5 + wind * 0.5).r;
 	float noiseBase = (1.0 - noiseSample) * 0.35 + 0.25 + wetness * 0.1;
 
-	amount *= 0.8 + deformNoise * 0.25;
+	amount *= 0.7 + deformNoise * 0.3;
 	density *= 3.0 - pow3(deformNoise) * 2.0;
 
 	noise = noiseBase * 22.0;

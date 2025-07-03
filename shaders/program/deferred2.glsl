@@ -20,10 +20,8 @@ uniform int frameCounter;
 uniform int dhRenderDistance;
 #endif
 
-#ifdef VC
 uniform int worldDay;
 uniform int worldTime;
-#endif
 
 #ifdef OVERWORLD
 uniform int moonPhase;
