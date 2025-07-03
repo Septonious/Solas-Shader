@@ -7,22 +7,21 @@ float texture2DShadow(sampler2D shadowtex, vec3 shadowPos) {
 #endif
 
 #ifdef OVERWORLD_CLOUDY_FOG
-float getFogSample(vec3 fogPos, vec2 wind) {
-    fogPos *= 0.25;
-    float n3da = texture2D(noisetex, fogPos.xz * 0.001 + floor(fogPos.y * 0.15) * 0.15).r;
-    float n3db = texture2D(noisetex, fogPos.xz * 0.001 + floor(fogPos.y * 0.15 + 1.0) * 0.15).r;
+#include "/lib/atmosphere/overworldCloudyFog.glsl"
+#endif
 
-    float cloudyNoise = mix(n3da, n3db, fract(fogPos.y * 0.15));
-          cloudyNoise = max(cloudyNoise - 0.4, 0.0);
-          cloudyNoise = min(cloudyNoise * 8.0, 1.0);
-          cloudyNoise *= 1.0 + cloudyNoise * cloudyNoise;
-    return cloudyNoise;
-}
+#ifdef NETHER_SMOKE
+#include "/lib/atmosphere/netherSmoke.glsl"
+#endif
+
+#ifdef FIREFLIES
+#include "/lib/atmosphere/fireflies.glsl"
 #endif
 
 void computeVolumetrics(inout vec4 result, in vec3 translucent, in float dither) {
     //Stuff which we're doing
     vec3 volumetricLighting = vec3(0.0);
+    vec3 cloudyFog = vec3(0.0);
     vec3 lpvFog = vec3(0.0);
     float fireflies = 0.0;
 
@@ -68,7 +67,10 @@ void computeVolumetrics(inout vec4 result, in vec3 translucent, in float dither)
     vec2 wind = vec2(frameTimeCounter * speed * 0.005, sin(frameTimeCounter * speed * 0.1) * 0.01) * speed * 0.1;
 
     //Ray Marcher Parameters
-    int sampleCount = VL_SAMPLES + int((1.0 - mefade) * 4);
+    int sampleCount = VL_SAMPLES;
+    #ifdef OVERWORLD
+        sampleCount += int((1.0 - mefade) * 4);
+    #endif
     float maxDist = 96.0 + shadowDistance;
     #if defined VC_SHADOWS && defined VL
           maxDist += 128.0;
@@ -100,7 +102,7 @@ void computeVolumetrics(inout vec4 result, in vec3 translucent, in float dither)
         float endBlackHolePos = pow2(clamp(dot(nViewPos, sunVec), 0.0, 1.0));
         float visibilityNormal = endBlackHolePos * 0.25;
         float visibilityDragon = 0.25 + endBlackHolePos * 0.5;
-        float vlVisibility = float(0.56 < z0) * mix(visibilityDragon, visibilityNormal, clamp(dragonBattle, 0.0, 1.0));
+        float vlVisibility = float(0.56 < z0) * mix(visibilityDragon, visibilityNormal, clamp(dragonBattle, 0.0, 1.0)) * 0.25;
 	#endif
 
     #ifdef OVERWORLD
@@ -122,28 +124,46 @@ void computeVolumetrics(inout vec4 result, in vec3 translucent, in float dither)
         lpvIntensity = mix(150.0, lpvIntensity, caveFactor);
     #endif
     #ifdef NETHER
-        lpvIntensity = 120.0;
+        lpvIntensity = 25.0;
     #endif
 
     lpvIntensity *= LPV_FOG_STRENGTH;
 
     //Cloudy Fog Variables
+    #ifdef OVERWORLD_CLOUDY_FOG
     float cloudyFogVisibility = isJungle + isSwamp + isDesert + isMesa + isSavanna;
           cloudyFogVisibility *= sunVisibility * (1.0 - timeBrightness);
 
     vec3 cloudyFogCol = skyColor * biomeColor;
          cloudyFogCol = normalize(cloudyFogCol) * 2.0;
+    #endif
+
+    #ifdef NETHER_SMOKE
+    vec3 wind2 = vec3(-sin(frameTimeCounter * 0.3) * 0.2, -4.0 * frameTimeCounter, cos(frameTimeCounter * 0.5) * 0.4);
+    #endif
+
+    //Fireflies Variables
+    #ifdef FIREFLIES
+    float ffIntensity = pow(eBS, 0.25) * (1.0 - sunVisibility) * (1.0 - wetness) * float(isEyeInWater == 0);
+    vec3 wind3 = vec3(sin(frameTimeCounter * 0.50), - sin(frameTimeCounter * 0.75), cos(frameTimeCounter * 1.25));
+    #endif
 
     //Ray Marching
     for (int i = 0; i < sampleCount; i++) {
+        #ifdef OVERWORLD
         float currentDist = pow(i + dither, 1.0 + i / sampleCount) * minDist;
               currentDist = mix(currentDist, exp2(i + dither), distanceMixer);
+        #else
+        float currentDist = exp2(i + dither) * 4.0;
+        #endif
 
         if (currentDist > maxCurrentDist || linearDepth1 < currentDist || (linearDepth0 < currentDist && translucent.rgb == vec3(0.0))) {
             break;
         }
         
         vec3 worldPos = ToWorld(ToView(vec3(texCoord, getLogarithmicDepth(currentDist))));
+        float lWorldPos = length(worldPos);
+        float lWorldPosXZ = length(worldPos.xz);
 
         //VL calculations
         #ifdef VL
@@ -184,10 +204,9 @@ void computeVolumetrics(inout vec4 result, in vec3 translucent, in float dither)
             //Overworld ground cloudy fog
             #ifdef OVERWORLD_CLOUDY_FOG
             vec3 fogPos = worldPos + cameraPosition;
-            float lWorldPosXZ = length(worldPos.xz);
             float fogSample = 0.0;
             if (fogPos.y > 0.0 && fogPos.y < 100.0 && length(volumetricLighting) > 0.0 && cloudyFogVisibility > 0.0) {
-                fogSample = getFogSample(fogPos, wind);
+                fogSample = getOverworldFogSample(fogPos, wind);
                 fogSample *= max(0.0, 1.0 - lWorldPosXZ * 0.0025);
             }
             float altitudeFactor = clamp(fogPos.y * 0.01, 0.0, 1.0);
@@ -221,14 +240,39 @@ void computeVolumetrics(inout vec4 result, in vec3 translucent, in float dither)
         }
         #endif
 
+        //Nether Cloudy Fog
+        #ifdef NETHER_SMOKE
+        if (lWorldPos < 128.0) {
+            float currentSampleIntensity = (currentDist / maxDist) / sampleCount;
+            float fogSample = getNetherFogSample(worldPos + cameraPosition + wind2);
+            cloudyFog += netherCol * fogSample * currentSampleIntensity * 64.0;
+        }
+        #endif
+
+        //Fireflies
+        #ifdef FIREFLIES
+        if (lWorldPosXZ < 64.0) {
+            vec3 npos = worldPos + cameraPosition;
+                 npos += calculateMovement(npos, 0.6, 3.0, vec2(2.6, 1.3));
+                 npos += wind3;
+
+            float fireflyNoise = getFireflyNoise(npos * 1.5);
+                  fireflyNoise = clamp(fireflyNoise - 0.725, 0.0, 1.0);
+
+            fireflies += fireflyNoise * (1.0 - clamp(npos.y * 0.01, 0.0, 1.0)) * ffIntensity * 256.0;
+        }
+        #endif
+
         //Translucency Blending
         if (linearDepth0 < currentDist) {
             volumetricLighting *= translucent;
+            cloudyFog *= translucent;
             lpvFog *= translucent;
         }
 
         //Accumulate samples
         result.rgb += volumetricLighting;
+        result.rgb += cloudyFog;
         result.rgb += lpvFog;
         result.a += fireflies;
     }

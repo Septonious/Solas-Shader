@@ -63,8 +63,7 @@ option.VL_NIGHT=Яркость Ночью
 
 screen.VF_NETHER_CONFIG=Настройки 3D Тумана в Аду
 
-option.NETHER_CLOUDY_FOG=3D Туман в Аду
-option.NETHER_CLOUDY_FOG.comment=Работает только при включённом световом тумане.
+option.NETHER_SMOKE=Дым в Аду
 option.VF_NETHER_STRENGTH=Яркость
 option.VF_NETHER_SPEED=Скорость
 option.VF_NETHER_FREQUENCY=Частота

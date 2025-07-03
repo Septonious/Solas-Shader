@@ -88,7 +88,7 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 #define OVERWORLD_CLOUDY_FOG
 
 //Nether Cloudy Fog//
-#define NETHER_CLOUDY_FOG
+#define NETHER_SMOKE
 #define VF_NETHER_STRENGTH 1.5 //[0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2.0 2.1 2.2 2.3 2.4 2.5]
 #define VF_NETHER_FREQUENCY 3.00 //[2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00]
 #define VF_NETHER_SPEED 6.00 //[1.00 1.50 2.00 2.50 3.00 3.50 4.00 4.50 5.00 5.50 6.00 6.50 7.00 7.50 8.00]
@@ -455,10 +455,11 @@ float linearStep(float edge0, float edge1, float x) {
 #undef GI
 #undef LENS_FLARE
 #undef DH_SCREENSPACE_SHADOWS
+#undef OVERWORLD_CLOUDY_FOG
 #endif
 
 #ifndef NETHER
-#undef NETHER_CLOUDY_FOG
+#undef NETHER_SMOKE
 #endif
 
 #ifndef END

@@ -63,7 +63,7 @@ option.VL_NIGHT=Night Intensity
 
 screen.VF_NETHER_CONFIG=Nether Cloudy Fog Config
 
-option.NETHER_CLOUDY_FOG=Nether Cloudy Fog
+option.NETHER_SMOKE=Nether Smoke
 option.VF_NETHER_STRENGTH=Intensity
 option.VF_NETHER_SPEED=Speed
 option.VF_NETHER_FREQUENCY=Frequency

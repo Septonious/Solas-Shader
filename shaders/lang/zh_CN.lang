@@ -58,7 +58,7 @@ option.VL_STRENGTH_RATIO.comment=根据和太阳的距离控制体积光的强�
 
 screen.VF_NETHER_CONFIG=下界云雾配置
 
-option.NETHER_CLOUDY_FOG=下界云雾
+option.NETHER_SMOKE=下界云雾
 option.VF_NETHER_STRENGTH=强度
 option.VF_NETHER_SPEED=速度
 option.VF_NETHER_FREQUENCY=频率

@@ -58,7 +58,7 @@ option.VL_STRENGTH_RATIO.comment=Contrôle l'intensité de la LV en fonction de 
 
 screen.VF_NETHER_CONFIG=Configuration Brouillard du Nether
 
-option.NETHER_CLOUDY_FOG=Brouillard du Nether
+option.NETHER_SMOKE=Brouillard du Nether
 option.VF_NETHER_STRENGTH=Intensité
 option.VF_NETHER_SPEED=Vitesse
 option.VF_NETHER_FREQUENCY=Fréquence
