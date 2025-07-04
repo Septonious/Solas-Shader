@@ -85,7 +85,7 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 #define LPV_FOG_STRENGTH 1.50 //[1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00]
 
 //Overworld Cloudy Fog//
-#define OVERWORLD_CLOUDY_FOG
+//#define OVERWORLD_CLOUDY_FOG
 
 //Nether Cloudy Fog//
 #define NETHER_SMOKE

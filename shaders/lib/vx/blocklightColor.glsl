@@ -47,8 +47,8 @@ vec3 getBlocklightColor(in int id) {
 
     //Lit Redstone Ore
     if (id == 29) color = vec3(1.00, 0.05, 0.00);
-    //Powered Rails
-    if (id == 30) color = vec3(1.00, 0.05, 0.00);
+    //Powered Rails & Shot Target
+    if (id == 30) color = vec3(1.00, 0.05, 0.00) * 0.5;
     //Nether Portal
     if (id == 31) color = vec3(NP_R, NP_G, NP_B) * NP_I;
     //Orchre Froglight

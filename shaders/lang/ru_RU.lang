@@ -51,6 +51,7 @@ option.PLANAR_CLOUDS_OPACITY=Непрозрачность
 screen.VL_CONFIG=Настройки Солнечных Лучей
 
 option.VL=Солнечные Лучи
+option.OVERWORLD_CLOUDY_FOG=3D Туман в Обычном Мире
 option.VL_STRENGTH=Общая Яркость
 option.VL_SAMPLES=Качество
 option.VL_STRENGTH_RATIO=Отношение Яркости
@@ -61,7 +62,7 @@ option.VL_NIGHT=Яркость Ночью
 
 #----------------------------------------------------------------------------------#
 
-screen.VF_NETHER_CONFIG=Настройки 3D Тумана в Аду
+screen.VF_NETHER_CONFIG=Настройки 3D Дыма в Аду
 
 option.NETHER_SMOKE=Дым в Аду
 option.VF_NETHER_STRENGTH=Яркость

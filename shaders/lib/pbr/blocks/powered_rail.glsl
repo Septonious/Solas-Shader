@@ -1,3 +1,3 @@
 else if (material == 30) {
-    emission = int(albedo.r > 0.5 && albedo.g < 0.2);
+    emission = int(albedo.r > 0.6 && albedo.g < 0.3);
 }

@@ -51,6 +51,7 @@ option.PLANAR_CLOUDS_OPACITY=Opacity
 screen.VL_CONFIG=Volumetric Light Config
 
 option.VL=Volumetric Light
+option.OVERWORLD_CLOUDY_FOG=Overworld Cloudy Fog
 option.VL_STRENGTH=Intensity
 option.VL_SAMPLES=Samples
 option.VL_STRENGTH_RATIO=Intensity Ratio
