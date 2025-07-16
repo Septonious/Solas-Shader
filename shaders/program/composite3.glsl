@@ -10,7 +10,6 @@ in vec2 texCoord;
 in vec3 sunVec, upVec;
 
 //Uniforms//
-#if defined LPV_FOG || defined VL || defined FIREFLIES
 uniform int isEyeInWater;
 uniform int frameCounter;
 
@@ -42,8 +41,6 @@ uniform float darknessFactor;
 uniform ivec2 eyeBrightnessSmooth;
 
 uniform vec3 cameraPosition;
-#endif
-
 uniform vec3 fogColor;
 uniform vec3 skyColor;
 
@@ -79,11 +76,9 @@ uniform mat4 gbufferProjectionInverse;
 #endif
 
 //Common Variables//
-#if defined LPV_FOG || defined VL || defined FIREFLIES
 float eBS = eyeBrightnessSmooth.y / 240.0;
 float caveFactor = mix(clamp((cameraPosition.y - 56.0) / 16.0, float(sign(isEyeInWater)), 1.0), 1.0, eBS);
 float sunVisibility = clamp(dot(sunVec, upVec) + 0.1, 0.0, 0.25) * 4.0;
-#endif
 
 //Includes//
 #if defined LPV_FOG || defined VL || defined FIREFLIES

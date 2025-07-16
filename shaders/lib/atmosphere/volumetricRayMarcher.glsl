@@ -117,11 +117,11 @@ void computeVolumetrics(inout vec4 result, in vec3 translucent, in float dither)
     #endif
 
     //LPV Fog Variables
-    float lpvIntensity = 50.0;
+    float lpvIntensity = 40.0;
     #ifdef OVERWORLD
         lpvIntensity *= 1.0 - sunVisibility * eBS * 0.5;
         lpvIntensity += wetness * eBS * 50.0;
-        lpvIntensity = mix(150.0, lpvIntensity, caveFactor);
+        lpvIntensity = mix(60.0, lpvIntensity, caveFactor);
     #endif
     #ifdef NETHER
         lpvIntensity = 25.0;
