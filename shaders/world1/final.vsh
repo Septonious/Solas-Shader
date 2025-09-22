@@ -1,6 +1,6 @@
 #version 130
 
-#define END
 #define VSH
+#define END
 
-#include "/program/final.glsl"
+#include "/programs/final.glsl"

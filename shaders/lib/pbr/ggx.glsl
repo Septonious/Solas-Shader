@@ -35,6 +35,7 @@ float getNoHSquared(float radiusTan, float NoL, float NoV, float VoL) {
 float GGXTrowbridgeReitz(float NoHsqr, float roughness){
     float roughnessSqr = roughness * roughness;
     float distr = NoHsqr * (roughnessSqr - 1.0) + 1.0;
+
     return roughnessSqr / (PI * distr * distr);
 }
 
@@ -49,20 +50,30 @@ float SchlickGGX(float NoL, float NoV, float roughness){
 
 vec3 SphericalGaussianFresnel(float HoL, vec3 baseReflectance){
     float fresnel = exp2(((-5.55473 * HoL) - 6.98316) * HoL);
+
     return fresnel * (1.0 - baseReflectance) + baseReflectance;
 }
 
 vec3 GGX(vec3 normal, vec3 viewPos, float smoothness, vec3 baseReflectance, float sunSize) {
     float roughness = max(1.0 - smoothness, 0.025);
-    roughness *= roughness;
+          roughness *= roughness;
     viewPos = -viewPos;
     
+    #ifdef OVERWORLD
     vec3 halfVec = normalize(lightVec + viewPos);
 
     float HoL = clamp(dot(halfVec, lightVec), 0.0, 1.0);
     float NoL = clamp(dot(normal,  lightVec), 0.0, 1.0);
     float NoV = clamp(dot(normal,  viewPos), -1.0, 1.0);
     float VoL = dot(lightVec, viewPos);
+    #else
+    vec3 halfVec = normalize(sunVec + viewPos);
+
+    float HoL = clamp(dot(halfVec, sunVec), 0.0, 1.0);
+    float NoL = clamp(dot(normal,  sunVec), 0.0, 1.0);
+    float NoV = clamp(dot(normal,  viewPos), -1.0, 1.0);
+    float VoL = dot(sunVec, viewPos);
+    #endif
 
     float NoHsqr = getNoHSquared(sunSize, NoL, NoV, VoL);
     if (NoV < 0.0){
@@ -86,14 +97,15 @@ vec3 GGX(vec3 normal, vec3 viewPos, float smoothness, vec3 baseReflectance, floa
 
 vec3 getSpecularHighlight(vec3 normal, vec3 viewPos, float smoothness, vec3 baseReflectance,
                           vec3 specularColor, vec3 shadow, float smoothLighting) {
-    if (dot(shadow, shadow) < 0.00001) return vec3(0.0);
+    if (dot(shadow, shadow) < 0.001) return vec3(0.0);
+    if (smoothness < 0.05) return vec3(0.0);
 
     smoothLighting *= smoothLighting;
     
     #ifdef OVERWORLD
-    vec3 specular = GGX(normal, normalize(viewPos), smoothness, baseReflectance, 0.075);
+    vec3 specular = GGX(normal, normalize(viewPos), smoothness, baseReflectance, 0.040);
          specular *= shadow * shadowFade * smoothLighting;
-         specular *= pow2(1.0 - wetness);
+         specular *= 1.0 - wetness;
     #else
     vec3 specular = GGX(normal, normalize(viewPos), smoothness, baseReflectance, 0.150);
          specular *= shadow * smoothLighting;

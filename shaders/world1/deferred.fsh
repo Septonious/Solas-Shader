@@ -1,6 +1,6 @@
 #version 130
 
-#define END
 #define FSH
+#define END
 
-#include "/program/deferred.glsl"
+#include "/programs/deferred.glsl"

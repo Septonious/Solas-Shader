@@ -1,6 +1,6 @@
 #version 130
 
-#define NETHER
 #define FSH
+#define NETHER
 
-#include "/program/deferred.glsl"
+#include "/programs/deferred.glsl"

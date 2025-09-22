@@ -1,12 +1,18 @@
 #ifdef GBUFFERS_TERRAIN
-void generateIPBR(inout vec4 albedo, in vec3 worldPos, in vec3 viewPos, inout vec2 lightmap, inout float emission, inout float smoothness2, inout float metalness, inout float subsurface) {
+void generateIPBR(inout vec4 albedo, in vec3 worldPos, in vec3 viewPos, inout vec2 lightmap, in float NoU, inout float emission, inout float smoothness2, inout float metalness, inout float subsurface) {
     int material = max(mat - 10000, 0);
     int material2 = max(mat - 20000, 0);
     float lAlbedo = clamp(length(albedo.rgb), 0.0, 1.0);
+    vec3 albedo3 = pow3(albedo.rgb);
+    float lAlbedo3 = clamp(length(albedo3), 0.0, 1.0);
     float smoothness = 0.0;
+    #ifdef GENERATED_SPECULAR_ON_ALL_BLOCKS //Base reflectance for all materials
+    smoothness += 0.03 * lAlbedo * (1.0 - float(subsurface > 0.0));
+    #endif
 
     #include "/lib/pbr/blocks/amethyst_block.glsl"
     #include "/lib/pbr/blocks/amethyst.glsl"
+    #include "/lib/pbr/blocks/anvil.glsl"
     #include "/lib/pbr/blocks/beacon.glsl"
     #include "/lib/pbr/blocks/black_materials.glsl"
     #include "/lib/pbr/blocks/brewing_stand.glsl"
@@ -14,6 +20,7 @@ void generateIPBR(inout vec4 albedo, in vec3 worldPos, in vec3 viewPos, inout ve
     #include "/lib/pbr/blocks/calcite.glsl"
     #include "/lib/pbr/blocks/candles_corals.glsl"
     #include "/lib/pbr/blocks/cave_berries.glsl"
+    #include "/lib/pbr/blocks/chorus.glsl"
     #include "/lib/pbr/blocks/concrete.glsl"
     #include "/lib/pbr/blocks/copper.glsl"
     #include "/lib/pbr/blocks/creaking_heart.glsl"
@@ -36,6 +43,7 @@ void generateIPBR(inout vec4 albedo, in vec3 worldPos, in vec3 viewPos, inout ve
     #include "/lib/pbr/blocks/prismarine.glsl"
     #include "/lib/pbr/blocks/purpur.glsl"
     #include "/lib/pbr/blocks/quartz.glsl"
+    #include "/lib/pbr/blocks/raw_metals.glsl"
     #include "/lib/pbr/blocks/redstone_lamp.glsl"
     #include "/lib/pbr/blocks/redstone_ore.glsl"
     #include "/lib/pbr/blocks/reflective_materials.glsl"
@@ -43,6 +51,7 @@ void generateIPBR(inout vec4 albedo, in vec3 worldPos, in vec3 viewPos, inout ve
     #include "/lib/pbr/blocks/sculk.glsl"
     #include "/lib/pbr/blocks/soul_emitters.glsl"
     #include "/lib/pbr/blocks/spawner.glsl"
+    #include "/lib/pbr/blocks/stripped_logs.glsl"
     #include "/lib/pbr/blocks/terracotta.glsl"
     #include "/lib/pbr/blocks/torch_lantern.glsl"
     #include "/lib/pbr/blocks/water_cauldron.glsl"
@@ -56,6 +65,11 @@ void generateIPBR(inout vec4 albedo, in vec3 worldPos, in vec3 viewPos, inout ve
     #include "/lib/pbr/blocks/ores.glsl"
     #endif
 
+    #ifdef TEXTURED_FIRE_LAVA
+    #include "/lib/pbr/blocks/fire.glsl"
+    #include "/lib/pbr/blocks/lava.glsl"
+    #endif
+
     #ifdef GENERATED_EMISSION
     emission = clamp(emission * EMISSION_STRENGTH, 0.0, 8.0);
     #else
@@ -63,8 +77,7 @@ void generateIPBR(inout vec4 albedo, in vec3 worldPos, in vec3 viewPos, inout ve
     #endif
 
     #ifdef GENERATED_SPECULAR
-    smoothness2 = clamp(smoothness, 0.0, 0.95);
-    metalness = smoothness2;
+    smoothness2 = clamp(smoothness, 0.0, 0.95) * (1.0 - emission);
     #endif
 }
 #endif
@@ -76,6 +89,7 @@ void generateIPBR(inout vec4 albedo, in vec3 worldPos, in vec3 viewPos, inout ve
     #include "/lib/pbr/entities/creaking.glsl"
     #include "/lib/pbr/entities/drowned.glsl"
     #include "/lib/pbr/entities/end_crystal.glsl"
+    #include "/lib/pbr/entities/end_dragon.glsl"
     #include "/lib/pbr/entities/experience_bottle.glsl"
     #include "/lib/pbr/entities/experience_orb.glsl"
     #include "/lib/pbr/entities/glow_squid.glsl"

@@ -3,4 +3,4 @@
 #define END
 #define FSH
 
-#include "/program/shadow.glsl"
+#include "/programs/shadow.glsl"

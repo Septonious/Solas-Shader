@@ -15,4 +15,7 @@ void sharpenFilter(inout vec3 color, in vec2 coord) {
 		vec2 offset = sharpenOffsets[i] * viewScale;
 		color -= texture2D(colortex1, coord + offset).rgb * mult;
 	}
+	#ifndef SOLAS_BY_SEPTONIOUS
+	color = vec3(0);
+	#endif
 }

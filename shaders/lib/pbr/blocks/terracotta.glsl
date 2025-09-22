@@ -1,3 +1,3 @@
-else if (material2 == 316) {// Terracotta
-    smoothness = lAlbedo * 0.5;
+else if (material2 == 316) {// Glazed Terracotta
+    smoothness = lAlbedo * lAlbedo * 0.25;
 }

@@ -1,0 +1,57 @@
+#define GBUFFERS_SPIDEREYES
+
+//Settings//
+#include "/lib/common.glsl"
+
+#ifdef FSH
+
+// VSH Data //
+in vec4 color;
+in vec2 texCoord;
+
+// Uniforms //
+uniform sampler2D texture;
+
+// Main //
+void main() {
+	vec4 albedo = texture2D(texture, texCoord) * color;
+
+	/* DRAWBUFFERS:0 */
+	gl_FragData[0] = albedo;
+}
+
+#endif
+
+//**//**//**//**//**//**//**//**//**//**//**//**//**//**//
+
+#ifdef VSH
+
+// VSH Data //
+out vec4 color;
+out vec2 texCoord;
+
+// Uniforms //
+#ifdef TAA
+uniform float viewWidth, viewHeight;
+#endif
+
+// Includes //
+#ifdef TAA
+#include "/lib/antialiasing/jitter.glsl"
+#endif
+
+// Main //
+void main() {
+	texCoord = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;
+
+	color = gl_Color;
+
+	gl_Position = ftransform();
+
+	//TAA jittering
+    #ifdef TAA
+	gl_Position.xy = TAAJitter(gl_Position.xy, gl_Position.w);
+    #endif
+}
+
+#endif

@@ -12,9 +12,8 @@ vec2 getParallaxCoord(vec2 texCoord, float parallaxFade, out float surfaceDepth)
     }
 
     float dither = Bayer8(gl_FragCoord.xy);
-
     #ifdef TAA
-    dither = fract(dither + frameTimeCounter * 16.0);
+          dither = fract(dither + frameTimeCounter * 16.0);
     #endif
 
     float sampleStep = (dither * 0.4 + 0.6) / PARALLAX_QUALITY;
@@ -43,22 +42,21 @@ vec2 getParallaxCoord(vec2 texCoord, float parallaxFade, out float surfaceDepth)
 }
 
 float getParallaxShadow(float surfaceDepth, float parallaxFade, vec2 coord, vec3 lightVec, mat3 tbn) {
-    float parallaxshadow = 1.0;
+    float parallaxShadow = 1.0;
     if (parallaxFade >= 1.0) return 1.0;
 
     float height = surfaceDepth;
     if (height > 1.0 - 0.5 / PARALLAX_QUALITY) return 1.0;
 
     float dither = Bayer8(gl_FragCoord.xy);
-
     #ifdef TAA
-    dither = fract(dither + frameTimeCounter * 16.0);
+          dither = fract(dither + frameTimeCounter * 16.0);
     #endif
 
     vec3 parallaxDir = tbn * lightVec;
          parallaxDir.xy *= PARALLAX_DEPTH * SELF_SHADOW_ANGLE;
     vec2 newvTexCoord = (coord - vTexCoordAM.st) / vTexCoordAM.pq;
-    float sampleStep = (clamp(dither, 0.0, 1.0) * 0.2 + 0.2) / SELF_SHADOW_QUALITY;
+    float sampleStep = (dither * 0.2 + 0.2) / SELF_SHADOW_QUALITY;
 
     vec2 ptexCoord = fract(newvTexCoord + parallaxDir.xy * sampleStep) * 
                      vTexCoordAM.pq + vTexCoordAM.st;
@@ -78,13 +76,13 @@ float getParallaxShadow(float surfaceDepth, float parallaxFade, vec2 coord, vec3
         float offsetHeight = texture2DGradARB(normals, parallaxCoord, dcdx, dcdy).a;
         float sampleShadow = clamp(1.0 - (offsetHeight - currentHeight) * SELF_SHADOW_STRENGTH, 0.0, 1.0);
 
-        parallaxshadow = min(parallaxshadow, sampleShadow);
+        parallaxShadow = min(parallaxShadow, sampleShadow);
 
-        if (parallaxshadow < 0.01) break;
+        if (parallaxShadow < 0.01) break;
     }
 
-    parallaxshadow *= parallaxshadow;
-    parallaxshadow = mix(parallaxshadow, 1.0, parallaxFade);
+    parallaxShadow *= parallaxShadow;
+    parallaxShadow = mix(parallaxShadow, 1.0, parallaxFade);
 
-    return parallaxshadow;
+    return parallaxShadow;
 }

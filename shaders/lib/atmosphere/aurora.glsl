@@ -44,7 +44,7 @@ void drawAurora(inout vec3 color, in vec3 worldPos, in float VoU, in float caveF
 		float tiltFactor = 0.05 + (1.0 - kpIndex) * 0.2; //Tilt factor. The stronger the geomagnetic storm, the less Aurora tilts towards the North
 
 		for (int i = 0; i < samples; i++) {
-			vec3 planeCoord = worldPos * ((16.0 - kpIndex * 8.0 + currentStep * (12.0 + abs(pulse * 6.0) + kpIndex * 4.0) - clamp(cameraPosition.y * 0.004, 0.0, 9.0)) / worldPos.y) * 0.025;
+			vec3 planeCoord = worldPos * ((32.0 - kpIndex * 8.0 + currentStep * (12.0 + abs(pulse * 6.0) + kpIndex * 4.0) - clamp(cameraPosition.y * 0.004, 0.0, 9.0)) / worldPos.y) * 0.025;
 				 planeCoord.z += planeCoord.y * tiltFactor;
 				 planeCoord.x += planeCoord.y * tiltFactor;
 

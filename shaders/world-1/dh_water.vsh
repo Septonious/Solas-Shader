@@ -3,4 +3,4 @@
 #define NETHER
 #define VSH
 
-#include "/program/dh_water.glsl"
+#include "/programs/dh_water.glsl"

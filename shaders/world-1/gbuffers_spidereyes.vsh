@@ -3,4 +3,4 @@
 #define NETHER
 #define VSH
 
-#include "/program/gbuffers_spidereyes.glsl"
+#include "/programs/gbuffers_spidereyes.glsl"

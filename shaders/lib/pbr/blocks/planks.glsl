@@ -1,5 +1,5 @@
 else if (material2 == 314) {// Other Planks
-    smoothness = 0.235 * length(albedo.rgb);
-} else if (material2 == 315) {// Dark Oak Planks
-    smoothness = 0.45 * lAlbedo;
+    smoothness = 0.07 * pow3(lAlbedo);
+} else if (material2 == 315) {// Dark Oak & Spruce Planks
+    smoothness = 0.09 * lAlbedo * lAlbedo;
 }

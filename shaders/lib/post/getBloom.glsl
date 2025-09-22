@@ -15,15 +15,14 @@ void getBloom(inout vec3 color, vec2 bloomCoord) {
 	vec3 blur5 = getBloomTile(5.0 + BLOOM_TILE_SIZE, bloomCoord, vec2(0.6875, 0.25) + vec2(12.5, 4.0) * viewSize);
 
 	vec3 blur = (blur1 * 3.58 + blur2 * 3.35 + blur3 * 2.72 + blur4 * 1.87 + blur5) / 12.52;
-	
-	float bloomStrength = BLOOM_STRENGTH;
 
-	#if defined OVERWORLD
-	float eBS = eyeBrightnessSmooth.y / 240.0;
-	bloomStrength *= 1.0 - timeBrightness * 0.33 * eBS;
-	#elif defined NETHER
-	bloomStrength += 0.5;
-	#endif
+    #if defined OVERWORLD
+    float bloomStrength = BLOOM_STRENGTH_OVERWORLD;
+    #elif defined NETHER
+    float bloomStrength = BLOOM_STRENGTH_NETHER;
+    #elif defined END
+    float bloomStrength = BLOOM_STRENGTH_END;
+    #endif
 
 	#if BLOOM_CONTRAST == 0
 	color = mix(color, blur, 0.25 * bloomStrength);

@@ -3,4 +3,4 @@
 #define END
 #define VSH
 
-#include "/program/dh_terrain.glsl"
+#include "/programs/dh_terrain.glsl"

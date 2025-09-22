@@ -1,6 +1,6 @@
-#version 130 
+#version 130
 
-#define END
 #define VSH
+#define END
 
-#include "/program/gbuffers_hand.glsl"
+#include "/programs/gbuffers_hand.glsl"

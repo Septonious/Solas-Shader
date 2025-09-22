@@ -8,8 +8,8 @@ float GetPuddles(vec3 worldPos, vec2 coord, float skylight, float NoU, float wet
           height = mix(1.0, height, PARALLAX_DEPTH);
           height = smoothstep(1.0, 0.95, height) * 0.1 - 0.05;
     #endif
-    float noise = texture2D(noisetex, worldPos.xz * 0.500).r * 0.85;
-		  noise*= texture2D(noisetex, worldPos.xz * 0.250).r * 0.75;
+    float noise = texture2D(noisetex, worldPos.xz * 0.500).r * 0.75;
+		  noise*= texture2D(noisetex, worldPos.xz * 0.250).r * 0.50;
           #ifdef PBR
           noise += height;
           #endif
@@ -27,9 +27,9 @@ vec2 getpos(vec2 i){
 }
 
 float GetRipple(vec3 worldPos, vec2 offset) {
-	vec2 ppos = worldPos.xz + offset * 0.1 + frameTimeCounter * 0.01;
+	vec2 ppos = worldPos.xz + offset * 0.1 + frameTimeCounter * 0.05;
          ppos = vec2(ppos.x * 0.7 + ppos.y * 0.7, ppos.x * -0.7 +  ppos.y * 0.7) * 0.8;
-    vec2 ppossh = ppos + vec2(fract(0.618 * floor(ppos.y)) * sin(frameTimeCounter * 0.05), 0.0);
+    vec2 ppossh = ppos + vec2(fract(0.618 * floor(ppos.y)) * sin(frameTimeCounter * 0.25), 0.0);
     vec2 pposfr = fract(ppossh);
     vec2 pposfl = floor(ppossh);
 	
@@ -37,7 +37,7 @@ float GetRipple(vec3 worldPos, vec2 offset) {
 	      val+= texture2D(noisetex, ppos / 64.0 - frameTimeCounter * 0.005).r * 0.125;
 
     float seed = rand(pposfl);
-    float rippleTime = frameTimeCounter * 1.7 + fract(seed * 1.618);
+    float rippleTime = frameTimeCounter * 1.5 + fract(seed * 1.618);
     float rippleSeed = seed + floor(rippleTime) * 1.618;
     vec2 ripplePos = getpos(pposfl + rippleSeed);
     float ripple = clamp(1.0 - 4.0 * length(pposfr - ripplePos), 0.0, 1.0);
@@ -72,6 +72,6 @@ void ApplyPuddleToMaterial(float puddles, inout vec4 albedo, inout float smoothn
     float puddleSmoothness = sqrt(1.0 - 0.75 * porosity);
     float puddleDarkening = (0.5 * porosity + 0.15);	
     
-    smoothness = mix(smoothness, 1.0, clamp(puddles * puddleSmoothness * 3.0, 0.0, 1.0));
+    smoothness = mix(smoothness, 1.0, clamp(puddles * puddleSmoothness * 4.0, 0.0, 1.0));
     albedo.rgb *= 1.0 - (puddles * puddleDarkening);
 }

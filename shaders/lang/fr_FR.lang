@@ -12,12 +12,6 @@ option.SOLAS_BY_SEPTONIOUS.comment=Discord: https://discord.gg/4uTAUQR2xu. GitHu
 #=======================================================# ATMOSPHERICS #=======================================================#
 
 screen.ATMOSPHERICS=Atmosphère
-screen.SKYBOX_CONFIG=Configuration Skybox
-
-option.SKYBOX=Skybox du Resourcepack
-option.SKYBOX_MIX_FACTOR=Facteur Skybox
-option.SKYBOX_MIX_FACTOR.comment=Contrôle le facteur de mélange entre la skybox du resourcepack et l'atmosphère du shader.
-option.SKYBOX_BRIGHTNESS=Luminosité de la Skybox
 
 #----------------------------------------------------------------------------------#
 
@@ -56,22 +50,22 @@ option.VL_STRENGTH_RATIO.comment=Contrôle l'intensité de la LV en fonction de 
 
 #----------------------------------------------------------------------------------#
 
-screen.VF_NETHER_CONFIG=Configuration Brouillard du Nether
+screen.NETHER_SMOKE_CONFIG=Configuration Brouillard du Nether
 
 option.NETHER_SMOKE=Brouillard du Nether
-option.VF_NETHER_STRENGTH=Intensité
-option.VF_NETHER_SPEED=Vitesse
-option.VF_NETHER_FREQUENCY=Fréquence
+option.NETHER_SMOKE_STRENGTH=Intensité
+option.NETHER_SMOKE_SPEED=Vitesse
+option.NETHER_SMOKE_FREQUENCY=Fréquence
 
 #----------------------------------------------------------------------------------#
 
-screen.VF_END_CONFIG=Configuration Nuages de l'End
+screen.END_DISK_CONFIG=Configuration Nuages de l'End
 
-option.END_CLOUDY_FOG=Nuages de l'End
-option.VF_END_HEIGHT=Hauteur
-option.VF_END_OPACITY=Opacité
-option.VF_END_AMOUNT=Quantité
-option.VF_END_THICKNESS=Épaisseur
+option.END_DISK=Nuages de l'End
+option.END_DISK_HEIGHT=Hauteur
+option.END_DISK_OPACITY=Opacité
+option.END_DISK_AMOUNT=Quantité
+option.END_DISK_THICKNESS=Épaisseur
 
 #----------------------------------------------------------------------------------#
 
@@ -115,13 +109,9 @@ option.AURORA_FULL_MOON_VISIBILITY.comment=Active les aurores boréales seulemen
 
 #----------------------------------------------------------------------------------#
 
-screen.END_VORTEX=Configuration Trou Noir de l'End
-
-option.END_VORTEX=Trou Noir de l'End
-option.END_VORTEX.comment=Active ou désactive le trou noir de l'End.
-option.END_VORTEX_SIZE=Taille du Vortex
-option.END_VORTEX_WHIRL=Spirale du Vortex
-option.END_VORTEX_ARMS=Nombre de Bras du Vortex
+option.END_BLACK_HOLE=Trou Noir de l'End
+option.END_BLACK_HOLE.comment=Active ou désactive le trou noir de l'End.
+option.END_BLACK_HOLE_SIZE=Taille
 
 #=======================================================# WATER #=======================================================#
 
@@ -186,15 +176,6 @@ option.VPS_BLUR_STRENGTH=Intensité des Ombres Variables (VPS)
 option.SHADOW_SAMPLE_COUNT=Nombre d'Échantillons d'Ombres
 option.SHADOW_COLOR=Ombres Colorées
 option.ENTITY_SHADOWS=Ombres des Entités
-
-#----------------------------------------------------------------------------------#
-
-screen.GI=Configuration de l'Illumination Globale
-
-option.GI=Illumination Globale
-option.GI_RADIUS=Taille de l'IG
-option.GI_SAMPLES=Qualité de l'IG
-option.GI_BRIGHTNESS=Luminosité de l'IG
 
 #=======================================================# Generated PBR #=======================================================#
 
@@ -381,7 +362,9 @@ option.SHIFT=Décalage
 screen.BLOOM_CONFIG=Configuration du Bloom
 
 option.BLOOM=Bloom
-option.BLOOM_STRENGTH=Intensité du Bloom
+option.BLOOM_STRENGTH_OVERWORLD=Intensité du Bloom (Overworld)
+option.BLOOM_STRENGTH_NETHER=Intensité du Bloom (Nether)
+option.BLOOM_STRENGTH_END=Intensité du Bloom (End)
 option.BLOOM_TILE_SIZE=Taille d'un Carreau
 option.BLOOM_TILE_SIZE.comment=Ajuste la taille des carreaux de Bloom. Des valeurs plus hautes permettent un rayon de bloom plus élevé, à précision moindre. Des valeurs plus basses permettent un rayon moindre de bloom, avec une précision plus élevée.
 option.BLOOM_CONTRAST=Contraste

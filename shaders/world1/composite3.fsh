@@ -3,4 +3,4 @@
 #define END
 #define FSH
 
-#include "/program/composite3.glsl"
+#include "/programs/composite3.glsl"

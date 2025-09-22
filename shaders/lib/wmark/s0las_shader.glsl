@@ -1,1 +1,0 @@
-const float chval = 0.1984;

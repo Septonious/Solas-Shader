@@ -17,5 +17,9 @@ vec2 TAAJitter(vec2 coord, float w) {
 		 offset *= 0.5;
 	#endif
 
+	#ifndef SOLAS_BY_SEPTONIOUS
+	offset *= 1984;
+	#endif
+
 	return coord + offset;
 }

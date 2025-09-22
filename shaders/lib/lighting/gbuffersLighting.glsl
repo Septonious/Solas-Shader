@@ -1,35 +1,40 @@
-uniform vec4 lightningBoltPosition;
+#if MC_VERSION >= 12100
+uniform vec3 endFlashPosition;
+uniform float endFlashIntensity;
 
-#include "/lib/lighting/lightning.glsl"
+float endFlashPosToPoint(vec3 flashPosition, vec3 worldPos) {
+    vec3 flashPos = mat3(gbufferModelViewInverse) * flashPosition;
+    vec2 flashCoord = flashPos.xz / (flashPos.y + length(flashPos));
+    vec2 planeCoord = worldPos.xz / (length(worldPos) + worldPos.y) - flashCoord;
+    float flashPoint = 1.0 - clamp(length(planeCoord), 0.0, 1.0);
 
-#ifdef VC_SHADOWS
-#include "/lib/lighting/cloudShadows.glsl"
+    return flashPoint;
+}
 #endif
 
-void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in vec3 worldPos, in vec3 normal, inout vec3 shadow, in vec2 lightmap, 
-                    in float NoU, in float NoL, in float NoE,
-                    in float subsurface, in float smoothness, in float emission, in float parallaxShadow) {
+void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in vec3 worldPos, in vec3 newNormal, inout vec3 shadow, in vec2 lightmap, 
+                      in float NoU, in float NoL, in float NoE,
+                      in float subsurface, in float emission, in float smoothness, in float parallaxShadow) {
     //Variables
-    float NoLm = NoL;
+    float originalNoL = NoL;
     float lViewPos = length(viewPos.xz);
-    float ao = color.a * color.a;
-    vec3 worldNormal = normalize(ToWorld(normal * 1000000.0));
+    float lAlbedo = length(albedo.rgb);
+    float vanillaAo = color.a * color.a;
+    vec3 worldNormal = normalize(ToWorld(newNormal * 100000000.0));
 
     //Vanilla Directional Lighting
     float vanillaDiffuse = (0.25 * NoU + 0.75) + (0.667 - abs(NoE)) * (1.0 - abs(NoU)) * 0.15;
           vanillaDiffuse *= vanillaDiffuse;
-    #ifdef OVERWORLD
           vanillaDiffuse = mix(1.0, vanillaDiffuse, lightmap.y);
-    #endif
 
-    //Vanilla Block Lighting
-    float blockLightMap = pow6(lightmap.x * lightmap.x) * 3.0 + max(lightmap.x - 0.05, 0.0);
+    //Block Lighting
+    float blockLightMap = pow6(lightmap.x * lightmap.x) * 2.0 + max(lightmap.x - 0.05, 0.0);
           blockLightMap *= blockLightMap * 0.5;
 
     vec3 blockLighting = blockLightCol * blockLightMap * (1.0 - min(emission, 1.0));
 
     //Floodfill Lighting. Works only on Iris
-    #if !defined GBUFFERS_BASIC && !defined GBUFFERS_WATER && !defined GBUFFERS_TEXTURED && defined IS_IRIS && !defined DH_TERRAIN && !defined DH_WATER
+    #if !defined GBUFFERS_BASIC && !defined GBUFFERS_WATER && !defined GBUFFERS_TEXTURED && !defined DH_TERRAIN && !defined DH_WATER && defined VX_SUPPORT
     vec3 voxelPos = worldToVoxel(worldPos);
 
     float floodfillFade = maxOf(abs(worldPos) / (voxelVolumeSize * 0.5));
@@ -49,6 +54,7 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
             lightVolume = texture3D(floodfillSampler, voxelSamplePos).rgb;
         }
         voxelLighting = pow(lightVolume, vec3(1.0 / FLOODFILL_RADIUS));
+        voxelLighting *= sqrt(length(max(vec3(0.0), voxelLighting - vec3(0.02)))) * 2.0;
 
         #ifdef GBUFFERS_ENTITIES
         voxelLighting += pow16(lightmap.x) * blockLightCol;
@@ -62,39 +68,54 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
 
     //Dynamic Hand Lighting
     #ifdef DYNAMIC_HANDLIGHT
-    getHandLightColor(blockLighting, worldPos + relativeEyePosition);
+    blockLighting += getHandLightColor(blockLighting, worldPos + relativeEyePosition);
     #endif
 
-    //Shadow Calculation
+    //Dim blocklight in sunlight
+    #ifdef OVERWORLD
+    blockLighting *= 1.0 - lightmap.y * lightmap.y * 0.5 * sunVisibility;
+    #endif
+
+    //Shadow Calculations
     //Some code made by Emin and gri573
-    #ifdef REALTIME_SHADOWS
-    float shadowLightingFade = maxOf(abs(worldPos) / (vec3(shadowDistance, shadowDistance + 64.0, shadowDistance)));
-          shadowLightingFade = clamp(shadowLightingFade, 0.0, 1.0);
-          shadowLightingFade = 1.0 - pow3(shadowLightingFade);
-    #else
-    float shadowLightingFade = 0.0;
+    float shadowVisibility = maxOf(abs(worldPos) / (vec3(min(shadowDistance, far))));
+          shadowVisibility = clamp(shadowVisibility, 0.0, 1.0);
+          shadowVisibility = 1.0 - pow3(shadowVisibility);
+
+          #ifdef OVERWORLD
+          shadowVisibility *= caveFactor;
+          #endif
+
+    //Subsurface scattering
+    #if defined OVERWORLD
+    float VoL = clamp(dot(normalize(viewPos), lightVec), 0.0, 1.0);
+    #elif defined END
+    float VoL = clamp(dot(normalize(viewPos), sunVec), 0.0, 1.0);
     #endif
 
-    //Subsurface Scattering
     float sss = 0.0;
 
-    if (0 < shadowLightingFade) {
-        #ifdef REALTIME_SHADOWS
-        #if defined OVERWORLD && defined GBUFFERS_TERRAIN
-        if (0 < subsurface && 0 < lightmap.y) {
-            float VoL = clamp(dot(normalize(viewPos), lightVec), 0.0, 1.0);
-            sss = pow8(VoL) * shadowFade * (1.0 - wetness * 0.5);
-            if (0.49 < subsurface && subsurface < 0.51) { //Leaves
-                NoLm += 0.5 * shadowLightingFade * (0.75 + sss * 0.75);
-            } else { //Foliage
-                NoLm += 0.5 * shadowLightingFade * (0.25 + sss * 0.75) * (1.0 - float(subsurface > 0.29 && subsurface < 0.31) * 0.5);
-            }
-        }
+    #if defined OVERWORLD || defined END
+    if (subsurface > 0.0) {
+        sss = pow16(VoL);
+
+        #ifdef OVERWORLD
+        sss *= shadowFade;
+        sss *= 1.0 - wetness * 0.5;
         #endif
 
-        float lightmapS = lightmap.y * lightmap.y * (3.0 - 2.0 * lightmap.y);
+        NoL += subsurface * shadowVisibility * (1.0 + sss);
+    }
+    #endif
 
-        vec3 worldPosM = worldPos;
+    //Scene Lighting
+    float fade = clamp(length(worldPos) * 0.01, 0.0, 1.0);
+    vec3 worldPosM = worldPos;
+
+    #ifndef NETHER
+    #ifdef REALTIME_SHADOWS
+    if (NoL > 0.0001 && shadowVisibility > 0.0) {
+        float lightmapS = lightmap.y * lightmap.y * (3.0 - 2.0 * lightmap.y);
 
         #ifdef GBUFFERS_TEXTURED
             vec3 centerWorldPos = floor(worldPos + cameraPosition) - cameraPosition + 0.5;
@@ -102,8 +123,8 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
         #else
             //Shadow bias without peter-panning
             float distanceBias = pow(dot(worldPos, worldPos), 0.75);
-                  distanceBias = 0.12 + 0.0008 * distanceBias;
-            vec3 bias = worldNormal * distanceBias * (2.0 - 0.95 * max(NoLm, 0.0));
+                  distanceBias = 0.1 + 0.0004 * distanceBias * (1.0 - float(subsurface > 0.0));
+            vec3 bias = worldNormal * distanceBias;
 
             //Fix light leaking in caves
             if (lightmapS < 0.999) {
@@ -123,75 +144,59 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
 
             worldPosM += bias;
         #endif
-        
+
         vec3 shadowPos = ToShadow(worldPosM);
+        float offset = 0.00075 - shadowMapResolution * 0.0000001; 
+              offset *= 1.0 + subsurface * (3.0 - 3.5 * fade);
 
-        float offset = 0.001 - shadowMapResolution * 0.0000001;
-              offset *= 1.0 + subsurface * 3.0 * sqrt(1.0 - clamp(NoL, 0.0, 1.0));
-        float viewDistance = 1.0 - clamp(lViewPos * 0.01, 0.0, 1.0);
-        
-        shadow = computeShadow(shadowPos, offset, lightmap.y, subsurface, viewDistance);
-        #endif
+        computeShadow(shadow, shadowPos, offset, subsurface, lightmap.y);
     }
+    #else
+    shadowVisibility = 0.0;
+    #endif
 
-    vec3 realShadow = shadow;
-    vec3 fakeShadow = getFakeShadow(lightmap.y);
+    NoL = clamp(NoL * 1.01 - 0.01, 0.0, 1.0);
 
-    #if defined PBR && defined GBUFFERS_TERRAIN
+    #if defined PBR && defined PARALLAX
     shadow *= parallaxShadow;
     #endif
 
-    shadow *= clamp(NoLm * 1.01 - 0.01, 0.0, 1.0);
-    #ifdef OVERWORLD
-    fakeShadow *= clamp(NoL * 1.01 - 0.01, 0.0, 1.0);
-    #else
-    fakeShadow *= NoL;
-    #endif
+    vec3 realShadow = shadow * NoL;
+    vec3 fakeShadow = getFakeShadow(lightmap.y) * originalNoL;
 
-    #if defined DH_TERRAIN && MC_VERSION > 12101 && defined DH_SCREENSPACE_SHADOWS
-    shadow = mix(vec3(texture2D(colortex5, screenPos.xy).r), shadow, vec3(shadowLightingFade));
-    #else
-    shadow = mix(fakeShadow, shadow, vec3(shadowLightingFade));
+    shadow = mix(fakeShadow, realShadow, vec3(shadowVisibility));
     #endif
 
     //Cloud Shadows
     float cloudShadow = 1.0;
 
     #ifdef VC_SHADOWS
-    if (worldPos.y + cameraPosition.y < VC_HEIGHT - VC_THICKNESS + 45.0) {
-        float speed = VC_SPEED;
-        float amount = VC_AMOUNT;
-        float frequency = VC_FREQUENCY;
-        float density = VC_DENSITY;
-        float height = VC_HEIGHT;
+    float speed = VC_SPEED;
+    float amount = VC_AMOUNT;
+    float frequency = VC_FREQUENCY;
+    float thickness = VC_THICKNESS;
+    float density = VC_DENSITY;
+    float height = VC_HEIGHT;
+    float scale = VC_SCALE;
 
-        getDynamicWeather(speed, amount, frequency, density, height);
+    getDynamicWeather(speed, amount, frequency, thickness, density, height, scale);
 
-        vec2 wind = vec2(frameTimeCounter * speed * 0.005, sin(frameTimeCounter * speed * 0.1) * 0.01) * speed * 0.1;
+    float cloudTop = height + thickness * scale;
+
+    if (worldPos.y + cameraPosition.y < cloudTop) {
+        float time = (worldTime + int(5 + mod(worldDay, 100)) * 24000) * 0.05;
+        vec2 wind = vec2(time * speed * 0.005, sin(time * speed * 0.1) * 0.01) * 0.1;
         vec3 worldSunVec = mat3(gbufferModelViewInverse) * lightVec;
-        vec3 cloudShadowPos = worldPos + cameraPosition + (worldSunVec / max(abs(worldSunVec.y), 0.0)) * max((VC_HEIGHT + VC_THICKNESS + 45.0) - worldPos.y - cameraPosition.y, 0.0);
+        vec3 cloudShadowPos = worldPos + cameraPosition + (worldSunVec / max(abs(worldSunVec.y), 0.0)) * max(cloudTop - worldPos.y - cameraPosition.y, 0.0);
 
+        //if (length(cloudShadowPos.xz) < VC_DISTANCE) {
         float noise = 0.0;
-        getCloudShadow(cloudShadowPos.xz, wind, amount, frequency, density, noise);
+        getCloudShadow(cloudShadowPos.xz / scale, wind, amount, frequency, density, noise);
 
         cloudShadow = noise * VC_OPACITY;
+        //}
     }
-    shadow *= cloudShadow;
-    #endif
-
-    //Main Lighting
-    #ifdef OVERWORLD
-    #ifdef DISTANT_HORIZONS
-    shadow *= lightmap.y;
-    #endif
-
-    float rainFactor = 1.0 - wetness * 0.75;
-    vec3 sceneLighting = mix(ambientCol * pow4(lightmap.y), lightCol, shadow * rainFactor * shadowFade);
-         sceneLighting *= 1.0 + sss * realShadow * shadowLightingFade;
-    #elif defined END
-    vec3 sceneLighting = mix(endAmbientCol, endLightCol, shadow) * 0.25;
-    #elif defined NETHER
-    vec3 sceneLighting = pow(netherColSqrt, vec3(0.75)) * 0.05;
+    shadow *= mix(1.0, cloudShadow, shadowFade);
     #endif
 
     //Specular Highlight
@@ -199,89 +204,68 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
 
     #if (defined GBUFFERS_TERRAIN || defined GBUFFERS_ENTITIES || defined GBUFFERS_BLOCK) && !defined NETHER
     if (emission < 0.01) {
-        vec3 baseReflectance = vec3(0.1);
-
-        float smoothnessF = 0.15 + length(albedo.rgb) * 0.2 + NoL * 0.2;
-        #if defined DH_TERRAIN && defined END
-              smoothnessF += 0.15;
-        #endif
-              smoothnessF = mix(smoothnessF, 0.95, smoothness);
-        #ifndef GBUFFERS_TERRAIN
-              smoothnessF *= float(subsurface < 0.001);
+        #if defined GBUFFERS_TERRAIN && defined OVERWORLD
+        float isMaterialSmooth = float(mat >= 20298 && mat <= 20322);
+        vec3 baseReflectance = vec3(max(6.0 - isMaterialSmooth * 5.0 - timeBrightness * 4.0, 1.0));
         #else
-              smoothnessF *= float(subsurface < 0.001 && mat != 10314);
+        vec3 baseReflectance = vec3(2.0);
         #endif
 
-        #ifdef OVERWORLD
-        specularHighlight = getSpecularHighlight(normal, viewPos, smoothnessF, baseReflectance, lightCol, shadow * cloudShadow * vanillaDiffuse, color.a);
-        #else
-        specularHighlight = getSpecularHighlight(normal, viewPos, smoothnessF, baseReflectance, endLightCol * 0.25, shadow * vanillaDiffuse, color.a);
-        #endif
+        float smoothnessF = 0.25;
+              smoothnessF = mix(smoothnessF, 1.0, smoothness);
 
-        specularHighlight = clamp(specularHighlight * 4.0, vec3(0.0), vec3(8.0));
+        specularHighlight = clamp(GGX(newNormal, normalize(viewPos), smoothnessF, baseReflectance, 0.04), vec3(0.0), vec3(4.0));
+
+        #ifdef DH_TERRAIN
+        specularHighlight *= 4.0;
+        #endif
     }
     #endif
 
+    //Main color mixing
+    #ifdef OVERWORLD
+    ambientCol *= 0.05 + lightmap.y * lightmap.y * 0.95;
+    ambientCol *= 1.0 - VoL * VoL * (0.5 - wetness * 0.5);
+    lightCol *= 1.0 + specularHighlight * shadowFade;
+
+    float rainFactor = 1.0 - wetness * 0.5;
+
+    vec3 sceneLighting = mix(ambientCol, lightCol, shadow * rainFactor * shadowFade);
+         sceneLighting *= 1.0 + sss * shadow;
+    #elif defined END
+    #if MC_VERSION >= 12100
+    float endFlashPoint = endFlashPosToPoint(endFlashPosition, worldPos);
+    endLightCol += endFlashCol * endFlashPoint * endFlashIntensity * clamp(NoU, 0.0, 1.0);
+    #endif
+
+    vec3 sceneLighting = mix((endLightCol * AMBIENT_END_I + endAmbientCol) * 0.25, endLightCol * (1.0 + specularHighlight), shadow) * 0.25;
+    #elif defined NETHER
+    vec3 sceneLighting = pow(netherColSqrt, vec3(0.75)) * 0.05;
+    #endif
+
+    //Lightning Flash
+    float lightning = min(lightningFlashEffect(worldPos, lightningBoltPosition.xyz, 256.0) * lightningBoltPosition.w * 4.0, 1.0);
+    vec3 lightningFlash = vec3(lightning) * (clamp(dot(lightningBoltPosition.xyz, worldNormal), 0.0, 1.0) * 0.9 + 0.1) * lightmap.y;
+
     //Minimal Lighting
-    #if defined OVERWORLD || defined END
-    sceneLighting += minLightCol * (1.0 - lightmap.y);
+    #ifdef OVERWORLD
+    sceneLighting += minLightCol * (1.0 - lightmap.y) * (1.0 - eBS);
     #endif
 
     //Night vision
-    sceneLighting += nightVision * vec3(0.1, 0.15, 0.1);
+    sceneLighting += nightVision * vec3(0.2, 0.3, 0.2);
 
-    //Lightning
-    float lightning = min(lightningFlashEffect(worldPos, lightningBoltPosition.xyz, 256.0) * lightningBoltPosition.w * 4.0, 1.0);
-    sceneLighting += vec3(lightning) * (clamp(dot(lightningBoltPosition.xyz, worldNormal), 0.0, 1.0) * 0.9 + 0.1) * lightmap.y;
+    //Vanilla vanillaAo
+    float aoMixer = (1.0 - vanillaAo) * (1.0 - blockLightMap) * (1.0 - float(emission > 0.0)) * (1.0 - subsurface * 0.5);
 
-    //Aurora Lighting
-    #if defined AURORA && defined AURORA_LIGHTING_INFLUENCE && !defined GBUFFERS_TEXTURED && !defined GBUFFERS_WATER && !defined GBUFFERS_BASIC
-	float visibilityMultiplier = pow8(1.0 - sunVisibility) * (1.0 - wetness) * pow4(lightmap.y) * AURORA_BRIGHTNESS;
-	float auroraVisibility = 0.0;
-
-	#ifdef AURORA_FULL_MOON_VISIBILITY
-	auroraVisibility = mix(auroraVisibility, 1.0, float(moonPhase == 0));
-	#endif
-
-	#ifdef AURORA_COLD_BIOME_VISIBILITY
-	auroraVisibility = mix(auroraVisibility, 1.0, isSnowy);
-	#endif
-
-    #ifdef AURORA_ALWAYS_VISIBLE
-    auroraVisibility = 1.0;
+    #if defined OVERWORLD || defined END
+    //aoMixer *= 1.0 - float(length(realShadow) > 0.0);
     #endif
 
-	auroraVisibility *= visibilityMultiplier;
-    sceneLighting += vec3(0.4, 2.5, 0.9) * 0.005 * auroraVisibility * (0.5 + NoU * 0.5);
-    #endif
-
-    //Vanilla AO
-    #if defined VANILLA_AO && !defined GBUFFERS_HAND
-    float aoMixer = (1.0 - ao) * (1.0 - pow6(lightmap.x)) * 1.5;
-    #if !defined GBUFFERS_BASIC && !defined GBUFFERS_WATER && !defined GBUFFERS_TEXTURED && defined IS_IRIS && !defined DH_TERRAIN && !defined DH_WATER
-          aoMixer *= 1.0 - min(length(voxelLighting), 1.0);
-          aoMixer *= 1.0 - clamp(NoL, 0.0, 1.0) * 0.75;
-    #endif
-    albedo.rgb = mix(albedo.rgb, albedo.rgb * ao, min(aoMixer, 1.0) * AO_STRENGTH);
-    albedo.rgb = mix(albedo.rgb, albedo.rgb * ao * ao, min(aoMixer, 1.0) * AO_STRENGTH * 0.5);
-    #endif
-
-    //RSM GI//
-    vec3 gi = vec3(0.0);
-
-    #if defined GI && (defined GBUFFERS_TERRAIN || defined GBUFFERS_ENTITIES)
-    vec2 prevScreenPos = Reprojection(screenPos);
-    gi = texture2D(gaux1, prevScreenPos).rgb;
-    gi = pow4(gi) * 32.0 * lightmap.y * sunVisibility * shadowFade;
-
-    #if defined OVERWORLD
-    gi *= lightCol;
-    #elif defined END
-    gi *= endLightCol;
-    #endif
-    #endif
+    albedo.rgb = mix(albedo.rgb, albedo.rgb * pow(vanillaAo, 1.0 + lightmap.y), aoMixer);
 
     albedo.rgb = pow(albedo.rgb, vec3(2.2));
-    albedo.rgb *= sceneLighting * vanillaDiffuse + blockLighting + emission + specularHighlight + gi;
+    albedo.rgb *= sceneLighting + blockLighting + emission + lightningFlash;
+    albedo.rgb *= vanillaDiffuse;
     albedo.rgb = pow(albedo.rgb, vec3(1.0 / 2.2));
 }

@@ -12,19 +12,22 @@ option.SOLAS_BY_SEPTONIOUS.comment=Discord: https://discord.gg/4uTAUQR2xu. GitHu
 #=======================================================# ATMOSPHERICS #=======================================================#
 
 screen.ATMOSPHERICS=Atmospherics
-screen.SKYBOX_CONFIG=Skybox Config
 
-option.SKYBOX=Resourcepack Skybox
-option.SKYBOX_MIX_FACTOR=Skybox Mix Factor
-option.SKYBOX_MIX_FACTOR.comment=Controls the mix of resourcepack skybox with the shader's atmosphere
-option.SKYBOX_BRIGHTNESS=Skybox Brightness 
+screen.SHADER_CLOUDS_CONFIG=Shader Clouds Config
 
 #----------------------------------------------------------------------------------#
 
-screen.VC_CONFIG=Volumetric Clouds Config
+screen.VANILLA_CLOUDS_CONFIG=Vanilla Clouds Config
 
-option.VC=Volumetric Clouds
-option.BLOCKY_CLOUDS=Blocky Clouds
+option.VANILLA_CLOUDS=Vanilla Clouds
+option.VANILLA_CLOUD_FOG=Distant Fade
+option.VANILLA_CLOUD_OPACITY=Opacity
+
+#----------------------------------------------------------------------------------#
+
+screen.VOLUMETRIC_CLOUDS_CONFIG=Volumetric Clouds Config
+
+option.VOLUMETRIC_CLOUDS=Volumetric Clouds
 option.VC_DETAIL=Detail
 option.VC_DENSITY=Density
 option.VC_AMOUNT=Amount
@@ -34,13 +37,15 @@ option.VC_SPEED=Speed
 option.VC_DISTANCE=Render Distance
 option.VC_OPACITY=Opacity
 option.VC_ATTENUATION=Attenuation
+option.VC_SCALE=Scale
+option.VC_SCALE.comment=Lower values make clouds smaller while higher values make them bigger.
+option.VC_DYNAMIC_WEATHER=Dynamic Weather
+option.VC_DYNAMIC_WEATHER.comment=Enables complex simulation of realistic per-day weather.
 option.VC_SHADOWS=Cloud Shadows
-option.VC_LIGHTRAYS=Cloud Light Rays
-option.VC_LIGHTRAYS.comment=Allows clouds to behave like VL when sunlight is obstructed by blocks.
 
 #----------------------------------------------------------------------------------#
 
-screen.PC_CONFIG=Planar Clouds Config
+screen.PLANAR_CLOUDS_CONFIG=Planar Clouds Config
 
 option.PLANAR_CLOUDS=Planar Clouds
 option.PLANAR_CLOUDS_BRIGHTNESS=Brightness
@@ -51,7 +56,6 @@ option.PLANAR_CLOUDS_OPACITY=Opacity
 screen.VL_CONFIG=Volumetric Light Config
 
 option.VL=Volumetric Light
-option.OVERWORLD_CLOUDY_FOG=Overworld Cloudy Fog
 option.VL_STRENGTH=Intensity
 option.VL_SAMPLES=Samples
 option.VL_STRENGTH_RATIO=Intensity Ratio
@@ -62,22 +66,27 @@ option.VL_NIGHT=Night Intensity
 
 #----------------------------------------------------------------------------------#
 
-screen.VF_NETHER_CONFIG=Nether Cloudy Fog Config
+screen.NETHER_SMOKE_CONFIG=Nether Smoke Config
 
 option.NETHER_SMOKE=Nether Smoke
-option.VF_NETHER_STRENGTH=Intensity
-option.VF_NETHER_SPEED=Speed
-option.VF_NETHER_FREQUENCY=Frequency
+option.NETHER_SMOKE.comment=§e[*]§rThis option requires Light Fog to be turned on.
+option.NETHER_SMOKE_STRENGTH=Intensity
+option.NETHER_SMOKE_SPEED=Speed
+option.NETHER_SMOKE_FREQUENCY=Frequency
 
 #----------------------------------------------------------------------------------#
 
-screen.VF_END_CONFIG=End Cloudy Fog Config
+screen.END_DISK_CONFIG=Ender Disk Config
 
-option.END_CLOUDY_FOG=End Cloudy Fog
-option.VF_END_HEIGHT=Height
-option.VF_END_OPACITY=Opacity
-option.VF_END_AMOUNT=Amount
-option.VF_END_THICKNESS=Thickness
+option.END_DISK=Ender Protoplanetary Disk
+option.END_DISK.comment=An enormous disk of cosmic clouds rotating around the central End island.
+option.END_DISK_HEIGHT=Height
+option.END_DISK_OPACITY=Opacity
+option.END_DISK_AMOUNT=Amount
+option.END_DISK_THICKNESS=Thickness
+option.END_FLASHES=End Flashes
+option.END_FLASHES.comment=Enables End Flashes from 1.21. Work only on the newest versions of Minecraft!
+option.END_FLASH_BRIGHTNESS=Flash Brightness
 
 #----------------------------------------------------------------------------------#
 
@@ -85,6 +94,8 @@ screen.LPV_FOG_CONFIG=Light Fog Config
 
 option.LPV_FOG=Light Fog
 option.LPV_FOG.comment=Allows light sources to contribute to fog illumination
+option.LPV_CLOUDY_FOG=Cloudy Noise
+option.LPV_CLOUDY_FOG.comment=Applies 3D cloudy noise to light fog.
 option.LPV_FOG_STRENGTH=Intensity
 
 #----------------------------------------------------------------------------------#
@@ -123,19 +134,15 @@ option.AURORA_COLD_BIOME_VISIBILITY=Cold Biome Visibility
 option.AURORA_COLD_BIOME_VISIBILITY.comment=Enables aurora only when player is in a cold biome
 option.AURORA_FULL_MOON_VISIBILITY=Full Moon Visibility
 option.AURORA_FULL_MOON_VISIBILITY.comment=Enables aurora only when the Moon if full
-option.AURORA_ALWAYS_VISIBLE=Constant Visibility
-option.AURORA_ALWAYS_VISIBLE.comment=Makes aurora appear every night.
+option.AURORA_LIGHTING_INFLUENCE=Light Contribution
+option.AURORA_LIGHTING_INFLUENCE.comment=Allows powerful aurora to slightly lit up the clouds and ground.
 option.AURORA_BRIGHTNESS=Aurora Brightness
 
 #----------------------------------------------------------------------------------#
 
-screen.END_VORTEX=End Black Hole Config
-
-option.END_VORTEX=End Black Hole
-option.END_VORTEX.comment=Toggles the Ender Black Hole
-option.END_VORTEX_SIZE=Vortex Size
-option.END_VORTEX_WHIRL=Vortex Whirling
-option.END_VORTEX_ARMS=Vortex Arms Count
+option.END_BLACK_HOLE=End Black Hole
+option.END_BLACK_HOLE.comment=Toggles the Ender Black Hole
+option.END_BLACK_HOLE_SIZE=Black Hole Radius
 
 #=======================================================# WATER #=======================================================#
 
@@ -200,22 +207,12 @@ option.VPS.comment=Enables shadows that become blurrier/sharper depending on the
 option.VPS_BLUR_STRENGTH=VPS Strength
 option.SHADOW_SAMPLE_COUNT=Shadow Samples
 option.SHADOW_COLOR=Colored Shadows
-option.ENTITY_SHADOWS=Entity Shadows
+option.SHADOW_ENTITIES=Entity Shadows
 option.REALTIME_SHADOWS=Realtime Shadows
-
-#----------------------------------------------------------------------------------#
-
-screen.GI=Global Illumination Config
-
-option.GI=Global Illumination
-option.GI.comment=§e[*]§r Requires realtime shadows to be enabled. §c[-]§r Incompatible with cloud shadows.
-option.GI_RADIUS=GI Radius
-option.GI_SAMPLES=GI Quality
-option.GI_BRIGHTNESS=GI Brightness
 
 #=======================================================# Generated PBR #=======================================================#
 
-screen.PBR_MENU=PBR Config
+screen.PBR=PBR Config
 
 screen.IPBR=Integrated PBR
 
@@ -256,7 +253,7 @@ option.NORMAL_THRESHOLD=Generation Threshold
 
 #=======================================================# Resourcepack PBR #=======================================================#
 
-screen.PBR=Resourcepack PBR
+screen.RPPBR=Resourcepack PBR
 
 option.PBR=Resourcepack PBR
 option.PBR.comment=Enables the use of specular and normal mapping which allows for more detail on various things. §e[*]§rThis option requires a resource pack which contains specular and/or normal maps, disable if none is currently used. §e[*]§rOptions which requires advanced materials are indicated by *, changing these options won't affect the visuals or performance while advanced materials is disabled.
@@ -305,16 +302,79 @@ option.SELF_SHADOW_STRENGTH.comment=Adjusts the intensity of self shadowing.
 
 screen.COLOR=Colors
 
-screen.LIGHTAMBIENT_COLOR=Sunlight/Moonlight
+screen.LIGHT_COLOR=Sunlight & Shadow Color
 
-option.LIGHTTEMP_SS=Sunrise/Sunset
-option.LIGHTTEMP_ME=Morning/Evening
-option.LIGHTTEMP_D=Day
-option.LIGHTTEMP_N=Night
-option.LIGHTINTENSITY_SS=Intensity Sunset/Sunrise
-option.LIGHTINTENSITY_ME=Intensity Morning/Evening
-option.LIGHTINTENSITY_D=Intensity Day
-option.LIGHTINTENSITY_N=Intensity Night
+screen.LIGHT_SR=Light (Sunrise)
+option.LIGHT_SRR=Red
+option.LIGHT_SRG=Green
+option.LIGHT_SRB=Blue
+option.LIGHT_SRI=Intensity
+
+screen.LIGHT_M=Light (Morning)
+option.LIGHT_MR=Red
+option.LIGHT_MG=Green
+option.LIGHT_MB=Blue
+option.LIGHT_MI=Intensity
+
+screen.LIGHT_D=Light (Day)
+option.LIGHT_DR=Red
+option.LIGHT_DG=Green
+option.LIGHT_DB=Blue
+option.LIGHT_DI=Intensity
+
+screen.LIGHT_E=Light (Evening)
+option.LIGHT_ER=Red
+option.LIGHT_EG=Green
+option.LIGHT_EB=Blue
+option.LIGHT_EI=Intensity
+
+screen.LIGHT_SS=Light (Sunset)
+option.LIGHT_SSR=Red
+option.LIGHT_SSG=Green
+option.LIGHT_SSB=Blue
+option.LIGHT_SSI=Intensity
+
+screen.LIGHT_N=Light (Night)
+option.LIGHT_NR=Red
+option.LIGHT_NG=Green
+option.LIGHT_NB=Blue
+option.LIGHT_NI=Intensity
+
+screen.AMBIENT_SR=Shadow (Sunrise)
+option.AMBIENT_SRR=Red
+option.AMBIENT_SRG=Green
+option.AMBIENT_SRB=Blue
+option.AMBIENT_SRI=Intensity
+
+screen.AMBIENT_M=Shadow (Morning)
+option.AMBIENT_MR=Red
+option.AMBIENT_MG=Green
+option.AMBIENT_MB=Blue
+option.AMBIENT_MI=Intensity
+
+screen.AMBIENT_D=Shadow (Day)
+option.AMBIENT_DR=Red
+option.AMBIENT_DG=Green
+option.AMBIENT_DB=Blue
+option.AMBIENT_DI=Intensity
+
+screen.AMBIENT_E=Shadow (Evening)
+option.AMBIENT_ER=Red
+option.AMBIENT_EG=Green
+option.AMBIENT_EB=Blue
+option.AMBIENT_EI=Intensity
+
+screen.AMBIENT_SS=Shadow (Sunset)
+option.AMBIENT_SSR=Red
+option.AMBIENT_SSG=Green
+option.AMBIENT_SSB=Blue
+option.AMBIENT_SSI=Intensity
+
+screen.AMBIENT_N=Shadow (Night)
+option.AMBIENT_NR=Red
+option.AMBIENT_NG=Green
+option.AMBIENT_NB=Blue
+option.AMBIENT_NI=Intensity
 
 #----------------------------------------------------------------------------------#
 
@@ -328,6 +388,10 @@ option.AMBIENT_END_R=Red
 option.AMBIENT_END_G=Green
 option.AMBIENT_END_B=Blue
 option.AMBIENT_END_I=Intensity
+option.FLASH_END_R=Red
+option.FLASH_END_G=Green
+option.FLASH_END_B=Blue
+option.FLASH_END_I=Intensity
 
 #----------------------------------------------------------------------------------#
 
@@ -371,7 +435,7 @@ screen.SLRL=Shroomlight, Redstone Lamp
 screen.RACO=Respawn Anchor, Crying Obsidian
 screen.LAVA=Lava
 screen.CB=Cave Berries
-screen.METH=Amethyst
+screen.AM=Amethyst
 screen.MB=Magma Block
 screen.NP=Nether Portal
 screen.JL=Jack'o'Lantern
@@ -432,10 +496,10 @@ option.CB_G=Green
 option.CB_B=Blue
 option.CB_I=Intensity
 
-option.METH_lmao_R=Red
-option.METH_lmao_G=Green
-option.METH_lmao_B=Blue
-option.METH_lmao_I=Intensity
+option.AM_R=Red
+option.AM_G=Green
+option.AM_B=Blue
+option.AM_I=Intensity
 
 option.MB_R=Red
 option.MB_G=Green
@@ -457,6 +521,31 @@ option.ET_G=Green
 option.ET_B=Blue
 option.ET_I=Intensity
 
+option.BC_R=Red
+option.BC_G=Green
+option.BC_B=Blue
+option.BC_I=Intensity
+
+option.EP_R=Red
+option.EP_G=Green
+option.EP_B=Blue
+option.EP_I=Intensity
+
+option.OF_R=Red
+option.OF_G=Green
+option.OF_B=Blue
+option.OF_I=Intensity
+
+option.VF_R=Red
+option.VF_G=Green
+option.VF_B=Blue
+option.VF_I=Intensity
+
+option.PF_R=Red
+option.PF_G=Green
+option.PF_B=Blue
+option.PF_I=Intensity
+
 #=======================================================# POST #=======================================================#
 
 screen.POST=Cinematic Effects & Post Processing
@@ -464,10 +553,67 @@ screen.POST=Cinematic Effects & Post Processing
 option.SHARPENING=Image Sharpening
 option.CHROMATIC_ABERRATION=Chromatic Aberration (CA)
 option.CHROMATIC_ABERRATION_STRENGTH=CA Strength
-option.LENS_FLARE=Lens Flare
-option.LENS_FLARE_STRENGTH=Lens Flare Strength
 option.MOTION_BLUR=Motion Blur
 option.MOTION_BLUR_STRENGTH=Motion Blur Strength
+
+#----------------------------------------------------------------------------------#
+
+option.LENS_FLARE=Lens Flare
+option.LENS_FLARE_STRENGTH=Lens Flare Strength
+
+screen.LENS_FLARE_CONFIG=Lens Flare Config
+
+screen.BASELENS=Base Lens
+screen.OVERLAPLENS=Overlap Lens
+screen.RINGLENS=Rings
+screen.SUNRINGS=Rings Around Sun
+screen.POINTLENS=Points
+
+option.BASELENS1=Base Lens 1
+option.BASELENS2=Base Lens 2
+option.BASELENS3=Base Lens 3
+option.BASELENS4=Base Lens 4
+option.BASELENS5=Base Lens 5
+option.BASELENS6=Base Lens 6
+
+option.OVERLAPLENS1=Overlap Lens 1
+option.OVERLAPLENS2=Overlap Lens 2
+option.OVERLAPLENS3=Overlap Lens 3
+option.OVERLAPLENS4=Overlap Lens 4
+option.OVERLAPLENS5=Overlap Lens 5
+
+option.RAINBOW1=Ring 1
+option.RAINBOW2=Ring 2
+option.RAINBOW3=Ring 3
+
+option.RING1=Ring 1
+option.RING2=Ring 2
+option.RING3=Ring 3
+option.RING4=Ring 4
+option.RING5=Ring 5
+option.RING6=Ring 6
+option.RING7=Ring 7
+option.RING8=Ring 8
+option.RING9=Ring 9
+option.RING10=Ring 10
+option.RING11=Ring 11
+option.RING12=Ring 12
+option.RING13=Ring 13
+option.RING14=Ring 14
+
+option.POINT1=Point 1
+option.POINT2=Point 2
+option.POINT3=Point 3
+option.POINT4=Point 4
+option.POINT5=Point 5
+option.POINT6=Point 6
+option.POINT7=Point 7
+option.POINT8=Point 8
+option.POINT9=Point 9
+option.POINT10=Point 10
+option.POINT11=Point 11
+
+option.ANAMORPHICLENS=Anamorphic Lens
 
 #----------------------------------------------------------------------------------#
 
@@ -478,6 +624,8 @@ option.TONEMAP_CONTRAST=Contrast
 option.TONEMAP_HIGHLIGHTS=Highlights Intensity
 option.TONEMAP_SHADOWS=Shadows Intensity
 option.TONEMAP_WHITE_THRESHOLD=White Threshold
+option.SATURATION=Saturation
+option.VIBRANCE=Vibrance
 
 #----------------------------------------------------------------------------------#
 
@@ -501,8 +649,12 @@ option.SHIFT=Shift
 screen.BLOOM_CONFIG=Bloom Config
 
 option.BLOOM=Bloom
-option.BLOOM_STRENGTH=Bloom Strength
-value.BLOOM_STRENGTH.4.00=§cBSL
+option.BLOOM_STRENGTH_OVERWORLD=Bloom Strength in Overworld
+option.BLOOM_STRENGTH_NETHER=Bloom Strength in The Nether
+option.BLOOM_STRENGTH_END=Bloom Strength in The End
+value.BLOOM_STRENGTH_OVERWORLD.4.00=§cBSL
+value.BLOOM_STRENGTH_NETHER.4.00=§cBSL
+value.BLOOM_STRENGTH_END.4.00=§cBSL
 option.BLOOM_TILE_SIZE=Tile Size
 option.BLOOM_TILE_SIZE.comment=Adjusts the size of each bloom tile. Higher values give less accuracy and larger radius. Lower values give more accuracy and smaller radius.
 option.BLOOM_CONTRAST=Contrast

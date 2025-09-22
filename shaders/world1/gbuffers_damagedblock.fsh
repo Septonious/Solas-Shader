@@ -3,4 +3,4 @@
 #define END
 #define FSH
 
-#include "/program/gbuffers_damagedblock.glsl"
+#include "/programs/gbuffers_damagedblock.glsl"

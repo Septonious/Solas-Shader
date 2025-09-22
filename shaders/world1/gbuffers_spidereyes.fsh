@@ -1,6 +1,6 @@
-#version 130 
+#version 130
 
 #define END
 #define FSH
 
-#include "/program/gbuffers_spidereyes.glsl"
+#include "/programs/gbuffers_spidereyes.glsl"

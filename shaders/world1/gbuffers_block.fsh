@@ -1,6 +1,6 @@
 #version 130
 
-#define END
 #define FSH
+#define END
 
-#include "/program/gbuffers_block.glsl"
+#include "/programs/gbuffers_block.glsl"

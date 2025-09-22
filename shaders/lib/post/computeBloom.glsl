@@ -14,7 +14,7 @@ vec3 getBloomTile(float lod, vec2 bloomCoord, vec2 offset) {
 		for(int i = 0; i < 6; i++) {
 			for(int j = 0; j < 6; j++) {
 				float wg = weight[i] * weight[j];
-				vec2 pixelOffset = vec2((float(i) - 2.5) * pixelWidth, (float(j) - 2.5) * pixelHeight);
+				vec2 pixelOffset = vec2((float(i) - 2.75) * pixelWidth, (float(j) - 2.5) * pixelHeight);
 				vec2 sampleCoord = bloomCoord + pixelOffset * scale;
 				bloom += texture2D(colortex0, sampleCoord).rgb * wg;
 			}

@@ -3,4 +3,4 @@
 #define NETHER
 #define FSH
 
-#include "/program/gbuffers_spidereyes.glsl"
+#include "/programs/gbuffers_spidereyes.glsl"

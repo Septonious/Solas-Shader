@@ -1,6 +1,6 @@
 #version 130
 
-#define END
 #define FSH
+#define END
 
-#include "/program/composite14.glsl"
+#include "/programs/composite14.glsl"

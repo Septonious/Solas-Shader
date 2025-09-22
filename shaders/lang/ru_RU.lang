@@ -1,4 +1,4 @@
-#shaders/lang/en_US.lang
+#shaders/lang/ru_RU.lang
 
 profile.LOW=Низко
 profile.MEDIUM=Средне
@@ -12,19 +12,22 @@ option.SOLAS_BY_SEPTONIOUS.comment=Discord: https://discord.gg/4uTAUQR2xu. GitHu
 #=======================================================# ATMOSPHERICS #=======================================================#
 
 screen.ATMOSPHERICS=Атмосфера
-screen.SKYBOX_CONFIG=Настройки Скайбокса
 
-option.SKYBOX=Скайбокс из ресурспака
-option.SKYBOX_MIX_FACTOR=Слияние с атмосферой
-option.SKYBOX_MIX_FACTOR.comment=Определяет степень слияния атмосферы шейдера со скайбоксом из ресурспака.
-option.SKYBOX_BRIGHTNESS=Яркость
+screen.SHADER_CLOUDS_CONFIG=Настройки Шейдерных Облаков
+
+#----------------------------------------------------------------------------------#
+
+screen.VANILLA_CLOUDS_CONFIG=Настройки Ванильных Облаков
+
+option.VANILLA_CLOUDS=Ванильные Облака
+option.VANILLA_CLOUD_FOG=Туман Вдали
+option.VANILLA_CLOUD_OPACITY=Непрозрачность
 
 #----------------------------------------------------------------------------------#
 
 screen.VC_CONFIG=Настройки 3D Облаков
 
-option.VC=3D Облака
-option.BLOCKY_CLOUDS=Квадратные Облака
+option.VOLUMETRIC_CLOUDS=3D Облака
 option.VC_DETAIL=Детальность
 option.VC_DENSITY=Плотность
 option.VC_AMOUNT=Количество
@@ -34,13 +37,15 @@ option.VC_SPEED=Скорость
 option.VC_DISTANCE=Дистанция Рендера
 option.VC_OPACITY=Непрозрачность
 option.VC_ATTENUATION=Толщина
+option.VC_SCALE=Размер
+option.VC_SCALE.comment=Меньшие значения уменьшают облака, большие - увеличивают.
+option.VC_DYNAMIC_WEATHER=Динамическая Погода
+option.VC_DYNAMIC_WEATHER.comment=Включает динамическую симуляцию реалистичной погоды. Облака будут менять свои параметры каждый день.
 option.VC_SHADOWS=Тени от Облаков
-option.VC_LIGHTRAYS=Лучи Света в Облаках
-option.VC_LIGHTRAYS.comment=Добавляет облакам объёмное освещение (солнечные лучи).
 
 #----------------------------------------------------------------------------------#
 
-screen.PC_CONFIG=Настройки 2D Облаков
+screen.PLANAR_CLOUDS_CONFIG=Настройки 2D Облаков
 
 option.PLANAR_CLOUDS=2D Облака
 option.PLANAR_CLOUDS_BRIGHTNESS=Яркость
@@ -51,7 +56,6 @@ option.PLANAR_CLOUDS_OPACITY=Непрозрачность
 screen.VL_CONFIG=Настройки Солнечных Лучей
 
 option.VL=Солнечные Лучи
-option.OVERWORLD_CLOUDY_FOG=3D Туман в Обычном Мире
 option.VL_STRENGTH=Общая Яркость
 option.VL_SAMPLES=Качество
 option.VL_STRENGTH_RATIO=Отношение Яркости
@@ -62,22 +66,22 @@ option.VL_NIGHT=Яркость Ночью
 
 #----------------------------------------------------------------------------------#
 
-screen.VF_NETHER_CONFIG=Настройки 3D Дыма в Аду
+screen.NETHER_SMOKE_CONFIG=Настройки 3D Дыма в Аду
 
 option.NETHER_SMOKE=Дым в Аду
-option.VF_NETHER_STRENGTH=Яркость
-option.VF_NETHER_SPEED=Скорость
-option.VF_NETHER_FREQUENCY=Частота
+option.NETHER_SMOKE_STRENGTH=Яркость
+option.NETHER_SMOKE_SPEED=Скорость
+option.NETHER_SMOKE_FREQUENCY=Частота
 
 #----------------------------------------------------------------------------------#
 
-screen.VF_END_CONFIG=Настройки 3D Тумана в Энде
+screen.END_DISK_CONFIG=Настройки 3D Тумана в Энде
 
-option.END_CLOUDY_FOG=3D Туман в Энде
-option.VF_END_HEIGHT=Высота
-option.VF_END_OPACITY=Непрозрачность
-option.VF_END_AMOUNT=Количество
-option.VF_END_THICKNESS=Размер
+option.END_DISK=3D Туман в Энде
+option.END_DISK_HEIGHT=Высота
+option.END_DISK_OPACITY=Непрозрачность
+option.END_DISK_AMOUNT=Количество
+option.END_DISK_THICKNESS=Размер
 
 #----------------------------------------------------------------------------------#
 
@@ -123,18 +127,14 @@ option.AURORA_COLD_BIOME_VISIBILITY=Сияние в холодных биома�
 option.AURORA_COLD_BIOME_VISIBILITY.comment=Переключает видимость Полярного Сияния только в снежных биомах
 option.AURORA_FULL_MOON_VISIBILITY=Сияние при полной луне
 option.AURORA_FULL_MOON_VISIBILITY.comment=Переключает видимость Полярного Сияния только при полной луне
-option.AURORA_ALWAYS_VISIBLE=Сияние каждую ночь
-option.AURORA_ALWAYS_VISIBLE.comment=Северные сияния будут появляться каждую ночь независимо от условий.
+option.AURORA_LIGHTING_INFLUENCE=Освещение Объектов
+option.AURORA_LIGHTING_INFLUENCE.comment=Позволяет ярким полярным сиянияем слегка освещать землю и облака.
 option.AURORA_BRIGHTNESS=Яркость Сияния
 
 #----------------------------------------------------------------------------------#
 
-screen.END_VORTEX=Настройки Чёрной Дыры
-
-option.END_VORTEX=Чёрная Дыра в Энде
-option.END_VORTEX_SIZE=Радиус
-option.END_VORTEX_WHIRL=Закручивание
-option.END_VORTEX_ARMS=Количество Спиральных Ветвей
+option.END_BLACK_HOLE=Чёрная Дыра в Энде
+option.END_BLACK_HOLE_SIZE=Радиус Чёрной Дыры
 
 #=======================================================# WATER #=======================================================#
 
@@ -199,21 +199,12 @@ option.VPS.comment=Реалистичне тени, становящиеся р�
 option.VPS_BLUR_STRENGTH=Сила Размытия РТ
 option.SHADOW_SAMPLE_COUNT=Качество Теней
 option.SHADOW_COLOR=Цветные Тени
-option.ENTITY_SHADOWS=Тени от Существ
+option.SHADOW_ENTITIES=Тени от Существ
 option.REALTIME_SHADOWS=Реалистичные Тени
-
-#----------------------------------------------------------------------------------#
-
-screen.GI=Настройки Глобального Освещения
-
-option.GI=Глобальное Освещение (ГО)
-option.GI_RADIUS=Радиус ГО
-option.GI_SAMPLES=Качество ГО
-option.GI_BRIGHTNESS=Яркость ГО
 
 #=======================================================# Generated PBR #=======================================================#
 
-screen.PBR_MENU=Настройки PBR
+screen.PBR=Настройки PBR
 
 screen.IPBR=Встроенный PBR
 
@@ -254,9 +245,9 @@ option.NORMAL_THRESHOLD=Порог Генерации
 
 #=======================================================# Resourcepack PBR #=======================================================#
 
-screen.PBR=Сторонний PBR
+screen.RPPBR=PBR Ресурспак
 
-option.PBR=Сторонний PBR
+option.PBR=PBR Ресурспак
 option.PBR.comment=Enables the use of specular and normal mapping which allows for more detail on various things. §e[*]§rThis option requires a resource pack which contains specular and/or normal maps, disable if none is currently used. §e[*]§rOptions which requires advanced materials are indicated by *, changing these options won't affect the visuals or performance while advanced materials is disabled.
 option.MATERIAL_FORMAT=Формат Ресурспака*
 option.MATERIAL_FORMAT.comment=Determines the specular and normal map format used by the resource pack. §e[*]§rTexture artists usually tell which format is used in their resource pack, using the wrong format may give weird results.
@@ -267,9 +258,9 @@ value.MATERIAL_FORMAT.1=labPBR 1.3
 
 screen.PARALLAX_CONFIG=Настройки Параллакса
 
-option.PARALLAX=Параллакс*
+option.PARALLAX=Параллакс
 option.PARALLAX.comment=Adds displacement on a surface using height map.
-option.PARALLAX_DEPTH=Глубина Параллакса*
+option.PARALLAX_DEPTH=Глубина Параллакса
 option.PARALLAX_DEPTH.comment=Adjusts parallax deepness.
 value.PARALLAX_DEPTH.0.05=5 cm
 value.PARALLAX_DEPTH.0.10=10 cm
@@ -281,23 +272,17 @@ value.PARALLAX_DEPTH.0.35=35 cm
 value.PARALLAX_DEPTH.0.40=40 cm
 value.PARALLAX_DEPTH.0.45=45 cm
 value.PARALLAX_DEPTH.0.50=50 cm
-option.PARALLAX_QUALITY=Качество Параллакса*
-option.PARALLAX_QUALITY.comment=Adjusts the quality of parallax occlusion mapping.
-option.PARALLAX_DISTANCE=Дистанция Рендера Параллакса*
-option.PARALLAX_DISTANCE.comment=Adjusts how far parallax occlusion mapping and self shadows can be rendered.
+option.PARALLAX_QUALITY=Качество Параллакса
+option.PARALLAX_DISTANCE=Дистанция Рендера Параллакса
 
 #----------------------------------------------------------------------------------#
 
 screen.SELF_SHADOW_CONFIG=Настройки Шейдинга
 
-option.SELF_SHADOW=Тени от Нормалей*
-option.SELF_SHADOW.comment=Allows a surface to cast shadow to itself using heightmap.
-option.SELF_SHADOW_ANGLE=Угол Теней*
-option.SELF_SHADOW_ANGLE.comment=Adjusts the self shadowing angle, higher value allows the shadow to travel further.
-option.SELF_SHADOW_QUALITY=Качество Теней*
-option.SELF_SHADOW_QUALITY.comment=Adjusts the quality of self shadowing.
-option.SELF_SHADOW_STRENGTH=Сила Теней*
-option.SELF_SHADOW_STRENGTH.comment=Adjusts the intensity of self shadowing.
+option.SELF_SHADOW=Тени от Нормалей
+option.SELF_SHADOW_ANGLE=Угол Теней
+option.SELF_SHADOW_QUALITY=Качество Теней
+option.SELF_SHADOW_STRENGTH=Сила Теней
 
 #=======================================================# COLOR #=======================================================#
 
@@ -305,14 +290,77 @@ screen.COLOR=Цвета
 
 screen.LIGHTAMBIENT_COLOR=Свет & Тень (Обычный Мир)
 
-option.LIGHTTEMP_SS=Температура Рассвета/Заката
-option.LIGHTTEMP_ME=Температура Утра/Вечера
-option.LIGHTTEMP_D=Температура Дня
-option.LIGHTTEMP_N=Температура Ночи
-option.LIGHTINTENSITY_SS=Яркость Рассвета/Заката
-option.LIGHTINTENSITY_ME=Яркость Утра/Вечера
-option.LIGHTINTENSITY_D=Яркость Дня
-option.LIGHTINTENSITY_N=Яркость Ночи
+screen.LIGHT_SR=Свет (Рассвет)
+option.LIGHT_SRR=Красный
+option.LIGHT_SRG=Зелёный
+option.LIGHT_SRB=Синий
+option.LIGHT_SRI=Intensity
+
+screen.LIGHT_M=Свет (Утро)
+option.LIGHT_MR=Красный
+option.LIGHT_MG=Зелёный
+option.LIGHT_MB=Синий
+option.LIGHT_MI=Intensity
+
+screen.LIGHT_D=Свет (День)
+option.LIGHT_DR=Красный
+option.LIGHT_DG=Зелёный
+option.LIGHT_DB=Синий
+option.LIGHT_DI=Intensity
+
+screen.LIGHT_E=Свет (Вечер)
+option.LIGHT_ER=Красный
+option.LIGHT_EG=Зелёный
+option.LIGHT_EB=Синий
+option.LIGHT_EI=Intensity
+
+screen.LIGHT_SS=Свет (Закат)
+option.LIGHT_SSR=Красный
+option.LIGHT_SSG=Зелёный
+option.LIGHT_SSB=Синий
+option.LIGHT_SSI=Intensity
+
+screen.LIGHT_M=Свет (Ночь)
+option.LIGHT_NR=Красный
+option.LIGHT_NG=Зелёный
+option.LIGHT_NB=Синий
+option.LIGHT_NI=Intensity
+
+screen.AMBIENT_SR=Тень (Рассвет)
+option.AMBIENT_SRR=Красный
+option.AMBIENT_SRG=Зелёный
+option.AMBIENT_SRB=Синий
+option.AMBIENT_SRI=Intensity
+
+screen.AMBIENT_M=Тень (Утро)
+option.AMBIENT_MR=Красный
+option.AMBIENT_MG=Зелёный
+option.AMBIENT_MB=Синий
+option.AMBIENT_MI=Intensity
+
+screen.AMBIENT_D=Тень (День)
+option.AMBIENT_DR=Красный
+option.AMBIENT_DG=Зелёный
+option.AMBIENT_DB=Синий
+option.AMBIENT_DI=Intensity
+
+screen.AMBIENT_E=Тень (Вечер)
+option.AMBIENT_ER=Красный
+option.AMBIENT_EG=Зелёный
+option.AMBIENT_EB=Синий
+option.AMBIENT_EI=Intensity
+
+screen.AMBIENT_SS=Тень (Закат)
+option.AMBIENT_SSR=Красный
+option.AMBIENT_SSG=Зелёный
+option.AMBIENT_SSB=Синий
+option.AMBIENT_SSI=Intensity
+
+screen.AMBIENT_N=Тень (Ночь)
+option.AMBIENT_NR=Красный
+option.AMBIENT_NG=Зелёный
+option.AMBIENT_NB=Синий
+option.AMBIENT_NI=Intensity
 
 #----------------------------------------------------------------------------------#
 
@@ -369,7 +417,7 @@ screen.SLRL=Грибосвет, Редстоун Фонарь
 screen.RACO=Якорь Возрождения, Плачущий Обсидан
 screen.LAVA=Лава
 screen.CB=Светящиеся Ягоды
-screen.METH=Аметист
+screen.AM=Аметист
 screen.MB=Блок Магмы
 screen.NP=Адский Портал
 screen.JL=Светильник Джека
@@ -430,10 +478,10 @@ option.CB_G=Зелёный
 option.CB_B=Синий
 option.CB_I=Яркость
 
-option.METH_lmao_R=Красный
-option.METH_lmao_G=Зелёный
-option.METH_lmao_B=Синий
-option.METH_lmao_I=Яркость
+option.AM_R=Красный
+option.AM_G=Зелёный
+option.AM_B=Синий
+option.AM_I=Яркость
 
 option.MB_R=Красный
 option.MB_G=Зелёный
@@ -455,6 +503,30 @@ option.ET_G=Зелёный
 option.ET_B=Синий
 option.ET_I=Яркость
 
+option.BC_R=Красный
+option.BC_G=Зелёный
+option.BC_B=Синий
+option.BC_I=Яркость
+
+option.EP_R=Красный
+option.EP_G=Зелёный
+option.EP_B=Синий
+option.EP_I=Яркость
+
+option.OF_R=Красный
+option.OF_G=Зелёный
+option.OF_B=Синий
+option.OF_I=Яркость
+
+option.VF_R=Красный
+option.VF_G=Зелёный
+option.VF_B=Синий
+option.VF_I=Яркость
+
+option.PF_R=Красный
+option.PF_G=Зелёный
+option.PF_B=Синий
+option.PF_I=Яркость
 
 #=======================================================# POST #=======================================================#
 
@@ -464,10 +536,67 @@ option.SHARPENING=Заострение Изображения
 option.CHROMATIC_ABERRATION=Хроматическая Аберрация (ХА)
 option.CHROMATIC_ABERRATION.comment=Добавляет синие и красные края объектам (как в логотипе тиктока).
 option.CHROMATIC_ABERRATION_STRENGTH=Сила ХА
-option.LENS_FLARE=Блики
-option.LENS_FLARE_STRENGTH=Яркость бликов
 option.MOTION_BLUR=Размытие в Движении
 option.MOTION_BLUR_STRENGTH=Сила Размытия в Движении
+
+#----------------------------------------------------------------------------------#
+
+option.LENS_FLARE=Солнечные Блики
+option.LENS_FLARE_STRENGTH=Яркость Бликов
+
+screen.LENS_FLARE_CONFIG=Lens Flare Config
+
+screen.BASELENS=Основные блики
+screen.OVERLAPLENS=Перекрывающиеся блики
+screen.RINGLENS=Кольца
+screen.SUNRINGS=Кольца вокруг солнца
+screen.POINTLENS=Точечные блики
+
+option.BASELENS1=Основной блик 1
+option.BASELENS2=Основной блик 2
+option.BASELENS3=Основной блик 3
+option.BASELENS4=Основной блик 4
+option.BASELENS5=Основной блик 5
+option.BASELENS6=Основной блик 6
+
+option.OVERLAPLENS1=Перекрывающийся блик 1
+option.OVERLAPLENS2=Перекрывающийся блик 2
+option.OVERLAPLENS3=Перекрывающийся блик 3
+option.OVERLAPLENS4=Перекрывающийся блик 4
+option.OVERLAPLENS5=Перекрывающийся блик 5
+
+option.RAINBOW1=Радужное кольцо 1
+option.RAINBOW2=Радужное кольцо 2
+option.RAINBOW3=Радужное кольцо 3
+
+option.RING1=Кольцо 1
+option.RING2=Кольцо 2
+option.RING3=Кольцо 3
+option.RING4=Кольцо 4
+option.RING5=Кольцо 5
+option.RING6=Кольцо 6
+option.RING7=Кольцо 7
+option.RING8=Кольцо 8
+option.RING9=Кольцо 9
+option.RING10=Кольцо 10
+option.RING11=Кольцо 11
+option.RING12=Кольцо 12
+option.RING13=Кольцо 13
+option.RING14=Кольцо 14
+
+option.POINT1=Точка 1
+option.POINT2=Точка 2
+option.POINT3=Точка 3
+option.POINT4=Точка 4
+option.POINT5=Точка 5
+option.POINT6=Точка 6
+option.POINT7=Точка 7
+option.POINT8=Точка 8
+option.POINT9=Точка 9
+option.POINT10=Точка 10
+option.POINT11=Точка 11
+
+option.ANAMORPHICLENS=Горизонтальная линия
 
 #----------------------------------------------------------------------------------#
 
@@ -477,7 +606,9 @@ option.TONEMAP_BRIGHTNESS=Яркость
 option.TONEMAP_CONTRAST=Контрастность
 option.TONEMAP_HIGHLIGHTS=Яркость Света
 option.TONEMAP_SHADOWS=Яркость Теней
-option.TONEMAP_WHITE_THRESHOLD=Порог Белизны
+option.TONEMAP_WHITE_THRESHOLD=Порог Белого
+option.SATURATION=Линейная насыщенность
+option.VIBRANCE=Пропорциональная насыщенность
 
 #----------------------------------------------------------------------------------#
 
@@ -502,7 +633,10 @@ option.SHIFT=Смещение
 screen.BLOOM_CONFIG=Настройки Свечения
 
 option.BLOOM=Свечение
-option.BLOOM_STRENGTH=Сила Свечения
+option.BLOOM=Добавляет световое гало вокруг ярких источников света.
+option.BLOOM_STRENGTH_OVERWORLD=Сила Свечения в Обычном Мире
+option.BLOOM_STRENGTH_NETHER=Сила Свечения в Незере
+option.BLOOM_STRENGTH_END=Сила Свечения в Энде
 option.BLOOM_TILE_SIZE=Радиус
 option.BLOOM_CONTRAST=Контраст
 value.BLOOM_CONTRAST.-4=-1.00

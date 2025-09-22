@@ -1,3 +1,3 @@
 else if (material == 3) {
-    emission = pow10(lAlbedo) * 0.5;
+    emission = pow24(lAlbedo) * 0.35;
 }

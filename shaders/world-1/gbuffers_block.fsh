@@ -1,6 +1,6 @@
 #version 130
 
-#define NETHER
 #define FSH
+#define NETHER
 
-#include "/program/gbuffers_block.glsl"
+#include "/programs/gbuffers_block.glsl"

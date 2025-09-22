@@ -3,4 +3,4 @@
 #define NETHER
 #define FSH
 
-#include "/program/dh_terrain.glsl"
+#include "/programs/dh_terrain.glsl"

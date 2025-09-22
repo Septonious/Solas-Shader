@@ -1,6 +1,6 @@
 #version 130
 
-#define END
 #define VSH
+#define END
 
-#include "/program/gbuffers_terrain.glsl"
+#include "/programs/gbuffers_terrain.glsl"

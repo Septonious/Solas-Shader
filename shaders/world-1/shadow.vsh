@@ -3,4 +3,4 @@
 #define NETHER
 #define VSH
 
-#include "/program/shadow.glsl"
+#include "/programs/shadow.glsl"

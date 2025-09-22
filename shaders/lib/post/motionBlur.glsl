@@ -3,9 +3,8 @@ vec3 getMotionBlur(vec3 color, float z) {
 		float weight = 0.0;
 
 		float dither = Bayer8(gl_FragCoord.xy);
-
 		#ifdef TAA
-		dither = fract(dither * frameTimeCounter * 16.0);
+			 dither = fract(dither * frameTimeCounter * 16.0);
 		#endif
 
 		vec2 doublePixel = 2.0 / vec2(viewWidth, viewHeight);
@@ -32,7 +31,7 @@ vec3 getMotionBlur(vec3 color, float z) {
 		for(int i = 0; i < 5; i++, coord += velocity) {
 			vec2 sampleCoord = clamp(coord, doublePixel, 1.0 - doublePixel);
 			float mask = float(texture2D(depthtex1, sampleCoord).r > 0.56);
-			blur += texture2D(colortex0, sampleCoord).rgb * mask;
+			blur += texture2D(colortex1, sampleCoord).rgb * mask;
 			weight += mask;
 		}
 		blur /= max(weight, 1.0);

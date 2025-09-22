@@ -1,6 +1,8 @@
-uniform sampler2D shadowtex0, shadowtex1;
+#ifdef REALTIME_SHADOWS
+uniform sampler2D shadowtex0;
 
 #ifdef SHADOW_COLOR
+uniform sampler2D shadowtex1;
 uniform sampler2D shadowcolor0;
 #endif
 
@@ -28,57 +30,61 @@ float texture2DShadow(sampler2D shadowtex, vec3 shadowPos) {
     return clamp((shadow - shadowPos.z) * 65536.0, 0.0, 1.0);
 }
 
-#ifdef VPS
-//Variable Penumbra Shadows based on Tech's Lux Shader (https://github.com/TechDevOnGitHub)
-void findBlockerDistance(vec3 shadowPos, mat2 ditherMatrix, inout float offset, float skyLightMap, float viewDistance) {
-    float blockerDistance = 0.0;
-        
-    for (int i = 0; i < 4; i++){
-        vec2 pixelOffset = ditherMatrix * 0.015 * shadowOffsets4[i];
-        blockerDistance += shadowPos.z - texture2D(shadowtex1, shadowPos.xy + pixelOffset).r;
-    }
-    blockerDistance *= 0.25;
-    
-    offset = mix(offset, clamp(blockerDistance * VPS_BLUR_STRENGTH, offset, offset * 12.0), skyLightMap * viewDistance);
-}
-#endif
-
-vec3 computeShadow(vec3 shadowPos, float offset, float skyLightMap, float subsurface, float viewDistance) {
-    vec3 shadowCol = vec3(0.0);
+void computeShadow(inout vec3 shadow, vec3 shadowPos, float offset, float subsurface, float skyLightMap) {
     float shadow0 = 0.0;
+    vec3 shadowCol = vec3(0.0);    
 
-	float blueNoiseDither = texture2D(noisetex, gl_FragCoord.xy / 512.0).b;
-
+    float dither = texture2D(noisetex, gl_FragCoord.xy / 512.0).b * TAU;
     #ifdef TAA
-    float dither = fract(blueNoiseDither + 1.61803398875 * mod(float(frameCounter), 3600.0)) * TAU;
-    #else
-    float dither = blueNoiseDither * TAU;
+         dither = fract(dither + 1.61803398875 * mod(float(frameCounter), 3600.0));
     #endif
 
 	float cosTheta = cos(dither);
 	float sinTheta = sin(dither);
 	mat2 ditherMatrix = mat2(cosTheta, -sinTheta, sinTheta, cosTheta);
 
-    #ifdef VPS
-    if (subsurface < 0.1) findBlockerDistance(shadowPos, ditherMatrix, offset, skyLightMap, viewDistance);
-    #endif
-
     for (int i = 0; i < 8; i++) {
-        vec2 pixelOffset = ditherMatrix * offset * shadowOffsets8[i];
-        shadow0 += texture2DShadow(shadowtex0, vec3(shadowPos.xy + pixelOffset, shadowPos.z));
-
-        #ifdef SHADOW_COLOR
-        if (shadow0 < 0.999) {
-            shadowCol += texture2D(shadowcolor0, shadowPos.xy + pixelOffset).rgb *
-                        texture2DShadow(shadowtex1, vec3(shadowPos.xy + pixelOffset, shadowPos.z));
-        }
+        vec2 shadowOffset = ditherMatrix * offset * shadowOffsets8[i];
+        #ifdef END
+             shadowOffset *= 2.0;
         #endif
+
+        shadow0 += texture2DShadow(shadowtex0, vec3(shadowPos.st + shadowOffset, shadowPos.z));
     }
     shadow0 *= 0.125;
-    shadowCol *= 0.125;
 
-    return clamp(shadowCol * (1.0 - shadow0) + shadow0, 0.0, 1.0);
+    #ifdef SHADOW_COLOR
+    float doShadowColor = 1.0;
+
+    #ifdef OVERWORLD
+    doShadowColor *= 1.0 - wetness;
+    #endif
+
+    if (doShadowColor > 0.0) {
+        for (int i = 0; i < 4; i++) {
+            vec2 shadowOffset = ditherMatrix * offset * 2.0 * shadowOffsets4[i];
+            #ifdef END
+                 shadowOffset *= 2.0;
+            #endif
+
+            vec3 shadowColSample = texture2D(shadowcolor0, shadowPos.st + shadowOffset).rgb *
+                            texture2DShadow(shadowtex1, vec3(shadowPos.st + shadowOffset, shadowPos.z));
+            shadowCol += shadowColSample;
+        }
+    }
+    shadowCol *= 0.25;
+
+    #ifdef OVERWORLD
+    shadowCol *= 1.0 - wetness * 0.5;
+    #endif
+    #endif
+   
+    shadow0 *= mix(shadow0, 1.0, subsurface);
+    shadowCol *= shadowCol;
+
+    shadow = clamp(shadowCol * (1.0 - shadow0) + shadow0, vec3(0.0), vec3(16.0));
 }
+#endif
 
 vec3 getFakeShadow(float skyLight) {
 	float fakeShadow = 1.0;

@@ -12,12 +12,6 @@ option.SOLAS_BY_SEPTONIOUS.comment=Discord: https://discord.gg/4uTAUQR2xu. GitHu
 #=======================================================# ATMOSPHERICS #=======================================================#
 
 screen.ATMOSPHERICS=大气
-screen.SKYBOX_CONFIG=天空盒配置
-
-option.SKYBOX=资源包天空盒
-option.SKYBOX_MIX_FACTOR=天空盒混合系数
-option.SKYBOX_MIX_FACTOR.comment=控制资源包天空盒与光影大气混合的系数.
-option.SKYBOX_BRIGHTNESS=天空盒亮度
 
 #----------------------------------------------------------------------------------#
 
@@ -56,22 +50,22 @@ option.VL_STRENGTH_RATIO.comment=根据和太阳的距离控制体积光的强�
 
 #----------------------------------------------------------------------------------#
 
-screen.VF_NETHER_CONFIG=下界云雾配置
+screen.NETHER_SMOKE_CONFIG=下界云雾配置
 
 option.NETHER_SMOKE=下界云雾
-option.VF_NETHER_STRENGTH=强度
-option.VF_NETHER_SPEED=速度
-option.VF_NETHER_FREQUENCY=频率
+option.NETHER_SMOKE_STRENGTH=强度
+option.NETHER_SMOKE_SPEED=速度
+option.NETHER_SMOKE_FREQUENCY=频率
 
 #----------------------------------------------------------------------------------#
 
-screen.VF_END_CONFIG=末地云雾配置
+screen.END_DISK_CONFIG=末地云雾配置
 
-option.END_CLOUDY_FOG=末地云雾
-option.VF_END_HEIGHT=高度
-option.VF_END_OPACITY=不透明度
-option.VF_END_AMOUNT=数量
-option.VF_END_THICKNESS=厚度
+option.END_DISK=末地云雾
+option.END_DISK_HEIGHT=高度
+option.END_DISK_OPACITY=不透明度
+option.END_DISK_AMOUNT=数量
+option.END_DISK_THICKNESS=厚度
 
 #----------------------------------------------------------------------------------#
 
@@ -114,13 +108,9 @@ option.AURORA_FULL_MOON_VISIBILITY.comment=只有当满月的时,才会启用极
 
 #----------------------------------------------------------------------------------#
 
-screen.END_VORTEX=末地黑洞配置
-
-option.END_VORTEX=末地黑洞
-option.END_VORTEX.comment=末地天空中的黑色洞状天体开关.
-option.END_VORTEX_SIZE=涡旋尺寸
-option.END_VORTEX_WHIRL=涡旋旋扭程度
-option.END_VORTEX_ARMS=涡旋齿数
+option.END_BLACK_HOLE=末地黑洞
+option.END_BLACK_HOLE.comment=末地天空中的黑色洞状天体开关.
+option.END_BLACK_HOLE_SIZE=涡旋尺寸
 
 #=======================================================# WATER #=======================================================#
 
@@ -185,15 +175,6 @@ option.VPS_BLUR_STRENGTH=可变半阴影(VPS)强度
 option.SHADOW_SAMPLE_COUNT=阴影采样计数
 option.SHADOW_COLOR=着色阴影
 option.ENTITY_SHADOWS=实体阴影
-
-#----------------------------------------------------------------------------------#
-
-screen.GI=全局照明配置
-
-option.GI=全局照明(GI)
-option.GI_RADIUS=GI 半径
-option.GI_SAMPLES=GI 质量
-option.GI_BRIGHTNESS=GI 亮度
 
 #=======================================================# Generated PBR #=======================================================#
 
@@ -380,7 +361,9 @@ option.SHIFT=偏移
 screen.BLOOM_CONFIG=泛光配置
 
 option.BLOOM=泛光
-option.BLOOM_STRENGTH=泛光强度
+option.BLOOM_STRENGTH_OVERWORLD=泛光强度 (Overworld)
+option.BLOOM_STRENGTH_NETHER=泛光强度 (Nether)
+option.BLOOM_STRENGTH_END=泛光强度 (End)
 option.BLOOM_TILE_SIZE=泛光块绘制尺寸
 option.BLOOM_TILE_SIZE.comment=调整每块泛光块的尺寸. 提高数值会降低精度,增大半径. 降低数值会提高精度,减小半径.
 option.BLOOM_CONTRAST=对比度
