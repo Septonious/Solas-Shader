@@ -135,6 +135,11 @@ option.AURORA_BRIGHTNESS=Яркость Сияния
 
 option.END_BLACK_HOLE=Чёрная Дыра в Энде
 option.END_BLACK_HOLE_SIZE=Радиус Чёрной Дыры
+value.END_BLACK_HOLE_SIZE.3.0=Очень Маленький
+value.END_BLACK_HOLE_SIZE.2.5=Маленький
+value.END_BLACK_HOLE_SIZE.2.0=Нормальный
+value.END_BLACK_HOLE_SIZE.1.5=Большой
+value.END_BLACK_HOLE_SIZE.1.0=Очень Большой
 
 #=======================================================# WATER #=======================================================#
 

@@ -143,6 +143,11 @@ option.AURORA_BRIGHTNESS=Aurora Brightness
 option.END_BLACK_HOLE=End Black Hole
 option.END_BLACK_HOLE.comment=Toggles the Ender Black Hole
 option.END_BLACK_HOLE_SIZE=Black Hole Radius
+value.END_BLACK_HOLE_SIZE.3.0=Very Small
+value.END_BLACK_HOLE_SIZE.2.5=Small
+value.END_BLACK_HOLE_SIZE.2.0=Normal
+value.END_BLACK_HOLE_SIZE.1.5=Large
+value.END_BLACK_HOLE_SIZE.1.0=Very Large
 
 #=======================================================# WATER #=======================================================#
 

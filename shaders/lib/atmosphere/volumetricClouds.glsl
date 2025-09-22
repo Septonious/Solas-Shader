@@ -333,8 +333,7 @@ void computeEndVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z0
 			float minimalNoise = 0.25 + dither * 0.25;
 			float sampleTotalLength = minDist + rayLength * dither;
 
-			float time = (worldTime + int(5 + mod(worldDay, 100)) * 24000) * 0.05;
-			vec2 wind = vec2(time * speed * 0.005, sin(time * speed * 0.1) * 0.01) * 0.1;
+			vec2 wind = vec2(frameTimeCounter * 0.005, sin(frameTimeCounter * 0.1) * 0.01) * 0.1;
 
 			//Ray marcher
 			for (int i = 0; i < sampleCount; i++, rayPos += sampleStep, sampleTotalLength += rayLength) {
