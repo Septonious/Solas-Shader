@@ -1,41 +1,75 @@
-#define COMPOSITE_4
+#define COMPOSITE_0
 
-// Settings //
+// Setings //
 #include "/lib/common.glsl"
 
 #ifdef FSH
 
-// Varyings //
+// VSH Data //
 in vec2 texCoord;
 
 // Uniforms //
-#ifdef WATER_FOG
+uniform sampler2D colortex0;
+
+#if defined VL || defined LPV_FOG
+uniform int frameCounter;
 uniform int isEyeInWater;
 
+#if defined VL && defined VC_SHADOWS
+uniform int worldDay, worldTime;
+#endif
+
+uniform float shadowFade;
+uniform float far, near;
+#ifdef DISTANT_HORIZONS
+uniform float dhFarPlane, dhNearPlane;
+#endif
+uniform float frameTimeCounter;
+uniform float timeAngle, timeBrightness;
+uniform float wetness;
+uniform float blindFactor, nightVision;
 #if MC_VERSION >= 11900
 uniform float darknessFactor;
 #endif
 
-uniform float frameTimeCounter;
-uniform float blindFactor;
-uniform float timeBrightness, timeAngle, wetness, shadowFade;
-
 uniform ivec2 eyeBrightnessSmooth;
 
+uniform vec3 skyColor, cameraPosition;
+
+#ifdef NETHER
 uniform vec3 fogColor;
 #endif
 
-uniform sampler2D colortex0;
+uniform sampler2D colortex1;
+uniform sampler2D colortex3;
 
-#ifdef WATER_FOG
+#ifdef LPV_FOG
+uniform sampler3D floodfillSampler, floodfillSamplerCopy;
+#endif
+
+uniform sampler2D noisetex;
+uniform sampler2D shadowcolor0;
+uniform sampler2D shadowtex0, shadowtex1;
 uniform sampler2D depthtex0, depthtex1;
 
+#ifdef DISTANT_HORIZONS
+uniform sampler2D dhDepthTex0, dhDepthTex1;
+
+uniform mat4 dhProjectionInverse;
+#endif
+
+uniform mat4 gbufferProjection;
 uniform mat4 gbufferProjectionInverse;
 uniform mat4 gbufferModelView;
+uniform mat4 gbufferModelViewInverse;
+uniform mat4 shadowModelView;
+uniform mat4 shadowProjection;
 #endif
 
 // Global Variables //
-#ifdef WATER_FOG
+#if defined VL || defined LPV_FOG
+
+const bool colortex7Clear = false;
 #if defined OVERWORLD
 const vec2 sunRotationData = vec2(cos(sunPathRotation * 0.01745329251994), -sin(sunPathRotation * 0.01745329251994));
 float fractTimeAngle = fract(timeAngle - 0.25);
@@ -51,37 +85,48 @@ vec3 sunVec = vec3(0.0);
 vec3 upVec = normalize(gbufferModelView[1].xyz);
 
 float eBS = eyeBrightnessSmooth.y / 240.0;
-float sunVisibility = clamp(dot(sunVec, upVec) + 0.1, 0.0, 0.25) * 4.0;
+float caveFactor = mix(clamp((cameraPosition.y - 56.0) / 16.0, float(sign(isEyeInWater)), 1.0), 1.0, sqrt(eBS));
+float sunVisibility = clamp((dot( sunVec, upVec) + 0.15) * 3.0, 0.0, 1.0);
+float moonVisibility = clamp((dot(-sunVec, upVec) + 0.15) * 3.0, 0.0, 1.0);
+vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.0);
 #endif
 
 // Includes //
-#ifdef WATER_FOG
+#if defined VL || defined LPV_FOG
+#include "/lib/util/transformMacros.glsl"
 #include "/lib/util/ToView.glsl"
+#include "/lib/util/ToWorld.glsl"
+#include "/lib/util/ToShadow.glsl"
+#include "/lib/color/lightColor.glsl"
+#include "/lib/atmosphere/spaceConversion.glsl"
 
-#ifdef DYNAMIC_HANDLIGHT
-#include "/lib/vx/blocklightColor.glsl"
-#include "/lib/lighting/handlight.glsl"
+#if defined VL && defined VC_SHADOWS
+#include "/lib/lighting/cloudShadows.glsl"
 #endif
 
-#include "/lib/water/waterFog.glsl"
+#ifdef LPV_FOG
+#include "/lib/lighting/lightning.glsl"
+#include "/lib/vx/voxelization.glsl"
+#endif
+
+#include "/lib/atmosphere/volumetrics.glsl"
 #endif
 
 // Main //
 void main() {
 	vec3 color = texture2D(colortex0, texCoord).rgb;
 
-	#ifdef WATER_FOG
-	float z0 = texture2D(depthtex0, texCoord).r;
-	float z1 = texture2D(depthtex1, texCoord).r;
-	
-	vec3 screenPos = vec3(texCoord, z0);
-	vec3 viewPos = ToView(screenPos);
+	#if defined VL || defined LPV_FOG
+	vec3 volumetrics = vec3(0.0);
 
-	if (isEyeInWater == 1){
-		vec4 waterFog = getWaterFog(viewPos);
-		color = mix(sqrt(color), sqrt(waterFog.rgb), waterFog.a);
-		color *= color;
-	}
+	float blueNoiseDither = texture2D(noisetex, gl_FragCoord.xy / 512.0).b;
+	#ifdef TAA
+		  blueNoiseDither = fract(blueNoiseDither + 1.61803398875 * mod(float(frameCounter), 3600.0));
+	#endif
+
+	vec3 translucent = texture2D(colortex1, texCoord).rgb;
+
+	computeVolumetricLight(color, translucent, blueNoiseDither);
 	#endif
 
 	/* DRAWBUFFERS:0 */
@@ -94,14 +139,13 @@ void main() {
 
 #ifdef VSH
 
-// Varyings //
+// VSH Data //
 out vec2 texCoord;
 
 // Main //
 void main() {
 	texCoord = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;
 
-	//Position
 	gl_Position = ftransform();
 }
 

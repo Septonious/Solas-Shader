@@ -230,7 +230,7 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
 
     float rainFactor = 1.0 - wetness * 0.5;
 
-    vec3 sceneLighting = mix(ambientCol, lightCol, shadow * rainFactor * shadowFade);
+    vec3 sceneLighting = mix(ambientCol, lightCol, shadow * rainFactor * shadowFade) * (0.25 + lightmap.y * 0.75);
          sceneLighting *= 1.0 + sss * shadow;
     #elif defined END
     #if MC_VERSION >= 12100

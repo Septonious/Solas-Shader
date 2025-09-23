@@ -99,14 +99,14 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
     float isOutdoors = eBS * eBS;
     float VoLm = pow(VoLClamped, 1.25);
          vlIntensity = sunVisibility * (1.0 - VL_STRENGTH_RATIO) + VoLm * VL_STRENGTH_RATIO;
-         vlIntensity = mix(vlIntensity, VoLPositive * 4.0, timeBrightness);
+         vlIntensity = mix(vlIntensity, VoLPositive * 2.0, timeBrightness);
          vlIntensity = mix((1.0 - VoLClamped) * (2.0 + sqrt(eBS) * 2.0) * (0.25 + timeBrightnessSqrt * 0.75), vlIntensity, isOutdoors);
          vlIntensity *= mix(4.0 + VL_NIGHT, mix(VL_MORNING_EVENING, VL_DAY, timeBrightness), sunVisibility);
     #if !defined VC_SHADOWS
          vlIntensity *= max(pow6(1.0 - VoUClamped * (1.0 - timeBrightness) * sunVisibility), float(isEyeInWater == 1));
     #else
          vlIntensity = mix(vlIntensity, 1.0, clamp(cameraPosition.y / VC_HEIGHT, 0.0, 1.0));
-         vlIntensity = mix(vlIntensity, 0.5 + timeBrightnessSqrt * eBS * 0.5, float(isEyeInWater == 1));
+         vlIntensity = mix(vlIntensity, 0.5 + timeBrightnessSqrt * caveFactor * 2.5, float(isEyeInWater == 1));
     #endif
          vlIntensity *= shadowFade;
     vec3 nSkyColor = normalize(skyColor + 0.000001) * mix(vec3(1.0), biomeColor, sunVisibility * isSpecificBiome);
@@ -198,8 +198,7 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
                         }
                     }
                     #endif
-                    vlSample = clamp(shadow1 * shadowCol * shadowCol * mix(1.0, 0.35 * length(pow(shadowCol, vec3(24.0))), float(isEyeInWater == 1)) + shadow0 * vlCol * float(isEyeInWater == 0), 0.0, 1.0);
-
+                    vlSample = clamp(shadow1 * shadowCol * shadowCol * mix(1.0, 0.05 * float(length(pow(shadowCol, vec3(10.0))) > 0.1), float(isEyeInWater == 1)) + shadow0 * vlCol * float(isEyeInWater == 0), 0.0, 1.0);
                 }
 
                 //Crepuscular rays
