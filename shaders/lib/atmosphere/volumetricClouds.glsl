@@ -198,14 +198,7 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z0, f
             #endif
 
 			float VoS = clamp(dot(nViewPos, sunVec), 0.0, 1.0);
-
-			float lightingFadeOut1=clamp((worldTime - 12700) / 230, 0.0, 1.0);
-			float lightingFadeIn1=clamp((worldTime - 13500) / 220, 0.0, 1.0);
-			float lightingFadeOut2=clamp((worldTime - 22700) / 220, 0.0, 1.0);
-			float lightingFadeIn2=clamp((worldTime - 23400) / 230, 0.0, 1.0);
-			float cloudLightingFade = 1.0 - (lightingFadeOut1 - lightingFadeIn1 + lightingFadeOut2 - lightingFadeIn2);
-
-			cloudLighting = cloudLighting * cloudLightingFade + pow8(1.0 - cloudLighting) * pow(VoS, 5.0 - shadowFade * 4.0) * (1.0 - cloudLightingFade) * 0.5;
+			cloudLighting = cloudLighting * shadowFade + pow8(1.0 - cloudLighting) * pow3(VoS) * (1.0 - shadowFade) * 0.75;
 
 			vec3 nSkyColor = normalize(skyColor + 0.0001);
             vec3 cloudAmbientColor = mix(atmosphereColor * atmosphereColor * 0.5, 
