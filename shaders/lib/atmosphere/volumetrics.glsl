@@ -66,10 +66,6 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
     #endif
 
 	//Positions & Common variables
-    #ifdef VC_SHADOWS
-	vec3 wSunVec = mat3(gbufferModelViewInverse) * lightVec;
-    #endif
-
 	vec3 viewPos = ToView(vec3(texCoord.xy, z1));
     vec3 worldPos = ToWorld(viewPos);
 	vec3 nViewPos = normalize(viewPos);
@@ -77,12 +73,19 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
 	     nWorldPos /= -nViewPos.z;
 
     float lViewPos = length(viewPos);
+
+    #ifndef NETHER_SMOKE
+    #ifdef VC_SHADOWS
+	vec3 wSunVec = mat3(gbufferModelViewInverse) * lightVec;
+    #endif
+
     float VoL = dot(nViewPos, sunVec) * sunVisibility + dot(nViewPos, -sunVec) * moonVisibility;
     float VoU = dot(nViewPos, upVec);
     float VoLPositive = VoL * 0.5 + 0.5;
     float VoUPositive = VoU * 0.5 + 0.5;
     float VoLClamped = clamp(VoL, 0.0, 1.0);
     float VoUClamped = clamp(VoU, 0.0, 1.0);
+    #endif
 
     float totalVisibility = float(z0 > 0.56);
 

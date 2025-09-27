@@ -11,7 +11,7 @@ in vec2 texCoord;
 // Uniforms //
 uniform sampler2D colortex0;
 
-#if defined VL || defined LPV_FOG
+#if defined VL || defined LPV_FOG || defined NETHER_SMOKE
 uniform int frameCounter;
 uniform int isEyeInWater;
 
@@ -68,8 +68,6 @@ uniform mat4 shadowProjection;
 
 // Global Variables //
 #if defined VL || defined LPV_FOG
-
-const bool colortex7Clear = false;
 #if defined OVERWORLD
 const vec2 sunRotationData = vec2(cos(sunPathRotation * 0.01745329251994), -sin(sunPathRotation * 0.01745329251994));
 float fractTimeAngle = fract(timeAngle - 0.25);
@@ -92,7 +90,7 @@ vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.
 #endif
 
 // Includes //
-#if defined VL || defined LPV_FOG
+#if defined VL || defined LPV_FOG || defined NETHER_SMOKE
 #include "/lib/util/transformMacros.glsl"
 #include "/lib/util/ToView.glsl"
 #include "/lib/util/ToWorld.glsl"
@@ -116,7 +114,7 @@ vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.
 void main() {
 	vec3 color = texture2D(colortex0, texCoord).rgb;
 
-	#if defined VL || defined LPV_FOG
+	#if defined VL || defined LPV_FOG || defined NETHER_SMOKE
 	vec3 volumetrics = vec3(0.0);
 
 	float blueNoiseDither = texture2D(noisetex, gl_FragCoord.xy / 512.0).b;
