@@ -69,7 +69,6 @@ option.VL_NIGHT=Night Intensity
 screen.NETHER_SMOKE_CONFIG=Nether Smoke Config
 
 option.NETHER_SMOKE=Nether Smoke
-option.NETHER_SMOKE.comment=§e[*]§rThis option requires Light Fog to be turned on.
 option.NETHER_SMOKE_STRENGTH=Intensity
 option.NETHER_SMOKE_SPEED=Speed
 option.NETHER_SMOKE_FREQUENCY=Frequency
