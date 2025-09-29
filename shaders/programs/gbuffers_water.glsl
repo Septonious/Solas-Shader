@@ -269,7 +269,7 @@ void main() {
 	/* DRAWBUFFERS:013 */
 	gl_FragData[0] = albedo;
 	gl_FragData[1] = albedo;
-	gl_FragData[2] = vec4(refraction, water * 0.4 + 0.4, 1.0);
+	gl_FragData[2] = vec4(refraction * water, water * 0.4 + 0.4, 1.0);
 }
 
 #endif

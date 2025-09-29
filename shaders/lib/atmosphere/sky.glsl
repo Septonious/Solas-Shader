@@ -18,7 +18,7 @@ vec3 getAtmosphere(vec3 viewPos) {
     float VoUcm = max(VoUClamped + 0.15, 0.0);
     float colorMixer = pow(VoUcm, 0.4 + timeBrightnessSqrt * 0.15);
     vec3 scattering1 = mix(vec3(8.8 - timeBrightnessSqrt * 4.8, 1.2, 0.0), vec3(4.0, 5.8, 0.2), colorMixer);
-         scattering1 = mix(scattering1, lightColSqrt * 4.0, VoUPositive * VoUPositive * 0.5);
+         scattering1 = mix(scattering1, lightColSqrt * 4.0, VoUPositive * VoUPositive * 0.5 + timeBrightness * 0.5);
          scattering1 *= VoUcm * clamp(pow(1.0 - VoUcm, 3.0 - VoSClamped), 0.0, 1.0);
          scattering1 = pow(scattering1, vec3(1.0 + VoSPositive * 0.4)) * (1.0 + VoSPositive * (1.0 - timeBrightnessSqrt) * 0.5);
          scattering1 *= (0.6 + sunVisibility * 0.4) * (1.0 - timeBrightnessSqrt * 0.5);

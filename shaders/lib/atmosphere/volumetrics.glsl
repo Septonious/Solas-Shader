@@ -6,25 +6,6 @@ float texture2DShadow(sampler2D shadowtex, vec3 sampleShadowPos) {
 }
 #endif
 
-float get3DNoise(vec3 rayPos) {
-	rayPos += vec3(frameTimeCounter, 0.0, 0.0);
-	rayPos.xz /= 512.0;
-
-	float yResolution = 3.0;
-	float yOffsetScale = 0.35;
-	float yLow  = floor(rayPos.y / yResolution) * yOffsetScale;
-	float yHigh = yLow + yOffsetScale;
-	float yBlend = fract(rayPos.y / yResolution);
-
-	float noiseLow  = texture2D(noisetex, rayPos.xz + yLow).r;
-	float noiseHigh = texture2D(noisetex, rayPos.xz + yHigh).r;
-
-	float noise = mix(noiseLow, noiseHigh, yBlend);
-	noise = sin(noise * 28.0 + frameTimeCounter * 4.0) * 0.25 + 0.5;
-
-	return noise;
-}
-
 #ifdef NETHER_SMOKE
 float getNetherFogSample(vec3 fogPos) {
     fogPos.x *= 0.5 + cos(fogPos.y * 0.08 + frameTimeCounter * 0.3 + fract(fogPos.z * 0.01) * 0.5) * 0.0004;
@@ -79,7 +60,7 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
 	vec3 wSunVec = mat3(gbufferModelViewInverse) * lightVec;
     #endif
 
-    float VoL = dot(nViewPos, sunVec) * sunVisibility + dot(nViewPos, -sunVec) * moonVisibility;
+    float VoL = dot(nViewPos, lightVec);
     float VoU = dot(nViewPos, upVec);
     float VoLPositive = VoL * 0.5 + 0.5;
     float VoUPositive = VoU * 0.5 + 0.5;
@@ -102,13 +83,13 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
     float isOutdoors = eBS * eBS;
     float VoLm = pow(VoLClamped, 1.25);
          vlIntensity = sunVisibility * (1.0 - VL_STRENGTH_RATIO) + VoLm * VL_STRENGTH_RATIO;
-         vlIntensity = mix(vlIntensity, VoLPositive * 2.0, timeBrightness);
+         vlIntensity = mix(vlIntensity, VoLm, timeBrightness);
          vlIntensity = mix((1.0 - VoLClamped) * (2.0 + sqrt(eBS) * 2.0) * (0.25 + timeBrightnessSqrt * 0.75), vlIntensity, isOutdoors);
          vlIntensity *= mix(4.0 + VL_NIGHT, mix(VL_MORNING_EVENING, VL_DAY, timeBrightness), sunVisibility);
     #if !defined VC_SHADOWS
          vlIntensity *= max(pow6(1.0 - VoUClamped * (1.0 - timeBrightness) * sunVisibility), float(isEyeInWater == 1));
     #else
-         vlIntensity = mix(vlIntensity, 1.0, clamp(cameraPosition.y / VC_HEIGHT, 0.0, 1.0));
+         vlIntensity = mix(vlIntensity, 1.0, clamp((cameraPosition.y - VC_HEIGHT) * 0.01, 0.0, 1.0));
          vlIntensity = mix(vlIntensity, 0.5 + timeBrightnessSqrt * caveFactor * 2.5, float(isEyeInWater == 1));
     #endif
          vlIntensity *= shadowFade;
@@ -209,11 +190,9 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
                 if (rayPos.y < cloudTop) {
                     vec3 cloudShadowPos = rayPos + (wSunVec / max(abs(wSunVec.y), 0.0)) * max(cloudTop - rayPos.y, 0.0);
 
-                    //if (length(cloudShadowPos.xz) < VC_DISTANCE * 0.25) {
                     float noise = 0.0;
                     getCloudShadow(cloudShadowPos.xz / scale, wind, amount, frequency, density, noise);
                     vlSample *= noise;
-                    //}
                 }
                 vlSample *= 1.0 - min((rayPos.y - thickness) * (1.0 / cloudTop), 1.0);
                 #endif

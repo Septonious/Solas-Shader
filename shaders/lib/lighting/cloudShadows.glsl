@@ -29,6 +29,5 @@ void getCloudShadow(vec2 rayPos, vec2 wind, float amount, float frequency, float
 	noise = noiseBase * 22.0;
 	noise = max(noise - amount, 0.0) * (density * 0.25);
 	noise /= sqrt(noise * noise + 0.25);
-	noise = exp(-1.5 * noise);
-    noise = clamp(noise, 0.0, 1.0);
+    noise = clamp(exp(-noise), 0.0, 1.0);
 }
