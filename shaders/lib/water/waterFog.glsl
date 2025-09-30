@@ -34,5 +34,5 @@ vec4 getWaterFog(vec3 viewPos) {
 	waterFogColor *= 1.0 - darknessFactor;
 	#endif
 
-	return vec4(waterFogColor * (0.3 + (1.0 - fog) * 0.7), fog);
+	return vec4(waterFogColor * (0.25 + (1.0 - fog) * 0.75), fog);
 }

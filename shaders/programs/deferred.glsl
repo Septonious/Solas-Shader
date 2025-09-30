@@ -253,7 +253,6 @@ void main() {
 	#endif
 
 	//Apply fog before the clouds in Overworld
-    #ifndef END
 	#ifdef DISTANT_HORIZONS
 	if (z0 != 1.0) {
 		Fog(color, viewPos.xyz, worldPos.xyz, atmosphereColor, z0);
@@ -266,7 +265,6 @@ void main() {
 	}
 	#else
 	Fog(color, viewPos.xyz, worldPos.xyz, atmosphereColor, z0);
-	#endif
     #endif
 
 	//Volumetric Clouds
@@ -281,23 +279,6 @@ void main() {
 
 	color = mix(color, vc.rgb, vc.a);
 	#endif
-
-	//Apply fog after the clouds in The End
-    #ifdef END
-	#ifdef DISTANT_HORIZONS
-	if (z0 != 1.0) {
-		Fog(color, viewPos.xyz, worldPos.xyz, atmosphereColor, z0);
-	} else if (dhZ != 1.0) {
-		vec4 dhScreenPos = vec4(texCoord, dhZ, 1.0);
-		vec4 dhViewPos = dhProjectionInverse * (dhScreenPos * 2.0 - 1.0);
-			 dhViewPos /= dhViewPos.w;
-
-        Fog(color, dhViewPos.xyz, ToWorld(dhViewPos.xyz), atmosphereColor, z0);
-	}
-	#else
-	Fog(color, viewPos.xyz, worldPos.xyz, atmosphereColor, z0);
-	#endif
-    #endif
 
     /* DRAWBUFFERS:045 */
     gl_FragData[0].rgb = color;
