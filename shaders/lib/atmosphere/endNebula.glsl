@@ -41,6 +41,8 @@ void drawEndNebula(inout vec3 color, in vec3 worldPos, in float VoU, in float Vo
     #ifdef END_BLACK_HOLE
     //Prepare black hole parameters for warping the nebula
     const vec3 blackHoleColor = vec3(5.6, 2.2, 0.2);
+    float absVoU = abs(VoU);
+    float sqrtabsVoU = sqrt(absVoU);
     float blackHoleSize = END_BLACK_HOLE_SIZE;
     float hole = pow(pow4(pow32(VoS)), blackHoleSize);
     float gravityLens = hole;
@@ -51,8 +53,9 @@ void drawEndNebula(inout vec3 color, in vec3 worldPos, in float VoU, in float Vo
     vec2 sunCoord = wSunVec.xz / (wSunVec.y + length(wSunVec));
     vec2 blackHoleCoord = worldPos.xz / (length(worldPos) + worldPos.y) - sunCoord;
     float warping = getSpiralWarping(blackHoleCoord);
-         blackHoleCoord.x *= 0.75 - abs(VoU) * 0.25;
+         blackHoleCoord.x *= 0.75 - absVoU * 0.25;
          blackHoleCoord.y *= 5.0;
+         blackHoleCoord.y += pow2(blackHoleCoord.x * 2.25) * sqrtabsVoU;
     #endif
 
     //Ender Nebula
@@ -98,12 +101,12 @@ void drawEndNebula(inout vec3 color, in vec3 worldPos, in float VoU, in float Vo
           hole = clamp(hole * 8.0, 0.0, 1.0);
 
     float torus = 1.0 - clamp(length(blackHoleCoord), 0.0, 1.0);
-          torus = pow(pow16(torus * torus), blackHoleSize * 1.25);
+          torus = pow(pow(torus * torus, 1.0 + (180.0 + sunPathRotation) / 8.0 * (0.5 + 0.5 * sqrtabsVoU)), blackHoleSize * 1.25);
     float torusNoise = texture2D(noisetex, vec2(blackHoleCoord.x * 4.0 + frameTimeCounter * 0.05, blackHoleCoord.y)).r;
 
     color += mix(blackHoleColor, vec3(4.0), hole * hole) * hole * hole * 2.0;
     color *= 1.0 - hole;
     color += vec3(innerRing);
-    color += mix(blackHoleColor, vec3(2.0), sqrt(torus)) * clamp(torus * 4.0, 0.0, 1.0) * 2.0 * torusNoise;
+    color += mix(blackHoleColor, vec3(2.0), sqrt(torus)) * clamp(torus * 4.0, 0.0, 1.0)  * torusNoise;
     #endif
 }

@@ -164,11 +164,6 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
     vec3 realShadow = shadow * NoL;
     vec3 fakeShadow = getFakeShadow(lightmap.y) * originalNoL;
 
-    #ifdef END
-    shadow *= NoL;
-    fakeShadow *= originalNoL;
-    #endif
-
     shadow = mix(fakeShadow, realShadow, vec3(shadowVisibility));
     #endif
 
@@ -240,7 +235,7 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
     #if MC_VERSION >= 12100
     vec3 worldEndFlashPosition = mat3(gbufferModelViewInverse) * endFlashPosition;
     float endFlashDirection = clamp(dot(normalize(ToWorld(endFlashPosition * 100000000.0)), worldNormal), 0.0, 1.0);
-    sceneLighting = mix(sceneLighting, endFlashCol, 0.25 * endFlashDirection * endFlashDirection * endFlashIntensity);
+    sceneLighting = mix(sceneLighting, endFlashCol, 0.125 * endFlashDirection * endFlashDirection * endFlashIntensity);
     #endif
     #elif defined NETHER
     vec3 sceneLighting = pow(netherColSqrt, vec3(0.75)) * 0.05;

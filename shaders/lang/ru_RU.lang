@@ -197,12 +197,8 @@ screen.SHADOWS=Настройки Теней
 
 option.shadowMapResolution=Разрешение Теней
 option.shadowDistance=Дистанция Рендера Теней
-option.sunPathRotation=Угол Солнца/Луны
-option.entityShadowDistanceMul=Прорисовка Теней от Существ
-option.VPS=Размывающиеся Тени (РТ)
-option.VPS.comment=Реалистичне тени, становящиеся размытыми с дальностью.
-option.VPS_BLUR_STRENGTH=Сила Размытия РТ
-option.SHADOW_SAMPLE_COUNT=Качество Теней
+option.SUN_ANGLE_OVERWORLD=Угол Солнца/Луны (Обычный Мир)
+option.SUN_ANGLE_END=Угол Чёрной Дыры (Энд)
 option.SHADOW_COLOR=Цветные Тени
 option.SHADOW_ENTITIES=Тени от Существ
 option.REALTIME_SHADOWS=Реалистичные Тени

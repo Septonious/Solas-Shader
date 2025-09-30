@@ -110,7 +110,7 @@ void getNormalFog(inout vec3 color, in vec3 atmosphereColor, in vec3 viewPos, in
 	float fog = 1.0 - exp(-0.0001 * lViewPos);
 		  fog = clamp(fog * density, 0.0, 1.0);
 
-	vec3 fogCol = vec3(0.9, 1.0, 0.8) * endLightCol;
+	vec3 fogCol = vec3(1.0, 1.0, 0.75) * endLightColSqrt;
 	#endif
 
     //Mixing Colors depending on depth
