@@ -29,7 +29,7 @@ bool isRayMarcherHit(float currentDist, float maxDist, float linearZ0, float lin
 	return isMaxReached || opaqueReached || solidTransparentReached;
 }
 
-void calculateVLParameters(inout float intensity, inout float distanceFactor, inout float persistence, in float VoU, in float VoL) {
+void calculateVLParameters(inout float intensity, inout float distanceFactor, inout float samplePersistence, in float VoU, in float VoL) {
     float VoLPositive = VoL * 0.5 + 0.5;
     float VoUPositive = VoU * 0.5 + 0.5;
     float VoLClamped = clamp(VoL, 0.0, 1.0);
@@ -55,6 +55,9 @@ void calculateVLParameters(inout float intensity, inout float distanceFactor, in
     #endif
 
     intensity *= VL_STRENGTH * shadowFade;
+
+    distanceFactor = float(isEyeInWater) * 4.0;
+    samplePersistence *= 1.0 - closedSpaceFactor * 0.25 - float(isEyeInWater == 1) * 0.25;
 }
 
 void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither) {
@@ -196,7 +199,8 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
                         }
                     }
                     #endif
-                    vlSample = clamp(shadow1 * shadowCol * shadowCol * mix(1.0, 0.05 * float(length(pow(shadowCol, vec3(10.0))) > 0.1), float(isEyeInWater == 1)) + shadow0 * vlCol * float(isEyeInWater == 0), 0.0, 1.0);
+                    float lShadowCol = length(pow(shadowCol, vec3(6.0)));
+                    vlSample = clamp(shadow1 * shadowCol * shadowCol * mix(vec3(1.0), pow(waterColor, vec3(1.0 - lShadowCol * 0.5)) * float(lShadowCol > 0.1), vec3(float(isEyeInWater == 1))) + shadow0 * vlCol * float(isEyeInWater == 0), 0.0, 1.0);
                 }
 
                 //Crepuscular rays
