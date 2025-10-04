@@ -21,6 +21,7 @@ uniform int worldDay, worldTime;
 
 uniform float shadowFade;
 uniform float far, near;
+uniform float viewWidth, viewHeight;
 #ifdef DISTANT_HORIZONS
 uniform float dhFarPlane, dhNearPlane;
 #endif

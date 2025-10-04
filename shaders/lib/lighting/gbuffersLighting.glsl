@@ -97,14 +97,14 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
 
     #if defined OVERWORLD || defined END
     if (subsurface > 0.0) {
-        sss = pow16(VoL);
+        sss = pow6(VoL);
 
         #ifdef OVERWORLD
         sss *= shadowFade;
         sss *= 1.0 - wetness * 0.5;
         #endif
 
-        NoL += subsurface * shadowVisibility * (1.0 + sss);
+        NoL += subsurface * shadowVisibility * (0.3 + sss * 0.7);
     }
     #endif
 
@@ -209,7 +209,7 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
         vec3 baseReflectance = vec3(2.0);
         #endif
 
-        float smoothnessF = 0.25;
+        float smoothnessF = 0.1 + lAlbedo * 0.25;
               smoothnessF = mix(smoothnessF, 1.0, smoothness);
 
         specularHighlight = clamp(GGX(newNormal, normalize(viewPos), smoothnessF, baseReflectance, 0.04), vec3(0.0), vec3(4.0));
@@ -223,13 +223,16 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
     //Main color mixing
     #ifdef OVERWORLD
     ambientCol *= 0.05 + lightmap.y * lightmap.y * 0.95;
-    ambientCol *= 1.0 - VoL * VoL * (0.5 - wetness * 0.5);
-    lightCol *= 1.0 + specularHighlight * shadowFade;
+    ambientCol *= 1.0 - pow(VoL, 1.5) * (0.6 - wetness * 0.6);
+    lightCol *= 1.0 + specularHighlight * shadowFade * 2.0;
 
     float rainFactor = 1.0 - wetness * 0.5;
 
     vec3 sceneLighting = mix(ambientCol, lightCol, shadow * rainFactor * shadowFade) * (0.25 + lightmap.y * 0.75);
-         sceneLighting *= 1.0 + sss * shadow;
+         sceneLighting *= 1.0 + sss * shadow * 5.0;
+    float bouncedLight = clamp(dot(newNormal, -lightVec), 0.0, 1.0) * lightmap.y;
+    albedo.rgb *= 1.0 + bouncedLight * 0.25;
+    albedo.rgb += lightCol * bouncedLight * 0.25;
     #elif defined END
     vec3 sceneLighting = mix((endLightCol * AMBIENT_END_I + endAmbientCol) * 0.25, endLightCol * (1.0 + specularHighlight), shadow) * 0.25;
     #if MC_VERSION >= 12100

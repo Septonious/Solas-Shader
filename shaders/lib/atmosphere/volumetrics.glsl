@@ -29,6 +29,34 @@ bool isRayMarcherHit(float currentDist, float maxDist, float linearZ0, float lin
 	return isMaxReached || opaqueReached || solidTransparentReached;
 }
 
+void calculateVLParameters(inout float intensity, inout float distanceFactor, inout float persistence, in float VoU, in float VoL) {
+    float VoLPositive = VoL * 0.5 + 0.5;
+    float VoUPositive = VoU * 0.5 + 0.5;
+    float VoLClamped = clamp(VoL, 0.0, 1.0);
+    float VoUClamped = clamp(VoU, 0.0, 1.0);
+
+    float timeIntensityFactor = mix(VL_NIGHT * 2.0, mix(VL_MORNING_EVENING, VL_DAY, timeBrightness), sunVisibility);
+
+    float averageDepth = 0.0;
+	for (float i = 0.1; i < 1.0; i += 0.1) {
+		float depthSample = texelFetch(depthtex0, ivec2(viewWidth * i * 0.55, viewHeight * 0.65), 0).r;
+			  depthSample = pow4(depthSample);
+		averageDepth += depthSample * 0.1;
+	}
+    float closedSpaceFactor = 1.0 - min(1.0, pow8(eBS) * 0.5 + averageDepth * (0.5 + eBS * eBS * 0.3));
+
+    intensity = (sunVisibility * (1.0 - VL_STRENGTH_RATIO) + VoL * VL_STRENGTH_RATIO) * (1.0 - timeBrightness) + VoLPositive * VoLPositive * timeBrightness;
+    intensity = mix(intensity * timeIntensityFactor, timeIntensityFactor * 2.0, closedSpaceFactor);
+
+    #ifdef VC_SHADOWS
+    intensity = mix(intensity, 1.0, clamp((cameraPosition.y - VC_HEIGHT) * 0.01, 0.0, 1.0));
+    #else
+    intensity *= max(pow4(1.0 - VoUClamped), float(isEyeInWater == 1));
+    #endif
+
+    intensity *= VL_STRENGTH * shadowFade;
+}
+
 void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither) {
 	//Depths
 	float z0 = texture2D(depthtex0, texCoord).r;
@@ -62,10 +90,6 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
 
     float VoL = dot(nViewPos, lightVec);
     float VoU = dot(nViewPos, upVec);
-    float VoLPositive = VoL * 0.5 + 0.5;
-    float VoUPositive = VoU * 0.5 + 0.5;
-    float VoLClamped = clamp(VoL, 0.0, 1.0);
-    float VoUClamped = clamp(VoU, 0.0, 1.0);
     #endif
 
     float totalVisibility = float(z0 > 0.56);
@@ -80,23 +104,13 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
     float vlIntensity = 0.0;
 
     #ifdef VL
-    float isOutdoors = eBS * eBS;
-    float VoLm = pow(VoLClamped, 1.25);
-         vlIntensity = sunVisibility * (1.0 - VL_STRENGTH_RATIO) + VoLm * VL_STRENGTH_RATIO;
-         vlIntensity = mix(vlIntensity, VoLm, timeBrightness);
-         vlIntensity = mix((1.0 - VoLClamped) * (2.0 + sqrt(eBS) * 2.0) * (0.25 + timeBrightnessSqrt * 0.75), vlIntensity, isOutdoors);
-         vlIntensity *= mix(4.0 + VL_NIGHT, mix(VL_MORNING_EVENING, VL_DAY, timeBrightness), sunVisibility);
-    #if !defined VC_SHADOWS
-         vlIntensity *= max(pow6(1.0 - VoUClamped * (1.0 - timeBrightness) * sunVisibility), float(isEyeInWater == 1));
-    #else
-         vlIntensity = mix(vlIntensity, 1.0, clamp((cameraPosition.y - VC_HEIGHT) * 0.01, 0.0, 1.0));
-         vlIntensity = mix(vlIntensity, 0.5 + timeBrightnessSqrt * caveFactor * 2.5, float(isEyeInWater == 1));
-    #endif
-         vlIntensity *= shadowFade;
+    float vlSamplePersistence = 1.0; //Expected range: 0.1 - 1.0. Defines the VL's falloff. Lower values make VL stronger
+    float vlDistanceFactor = 0.0; //Expected range: 0.0 - 10.0. Limits VL's maximum distance. Higher values decrease maxDist
+
+    calculateVLParameters(vlIntensity, vlDistanceFactor, vlSamplePersistence, VoU, VoL);
+
     vec3 nSkyColor = normalize(skyColor + 0.000001) * mix(vec3(1.0), biomeColor, sunVisibility * isSpecificBiome);
     vec3 vlCol = mix(lightCol, nSkyColor, timeBrightness * 0.75);
-
-    vlIntensity *= VL_STRENGTH * caveFactor;
     #endif
 
     #ifdef NETHER_SMOKE
@@ -143,7 +157,7 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
         #ifdef VC_SHADOWS
             maxDist += 128.0;
         #endif
-            maxDist /= 1.0 + float(isEyeInWater == 1) * 5.0;
+            maxDist /= 1.0 + vlDistanceFactor;
 
         //Ray marching
         for (int i = 0; i < sampleCount; i++) {
@@ -157,7 +171,7 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
             if (lWorldPos > maxDist) break;
 
             float currentSampleIntensityLPV = currentDist / maxDist / sampleCount;
-            float currentSampleIntensityVL = currentDist / maxDist / sampleCount;
+            float currentSampleIntensityVL = min(pow(currentDist / maxDist / sampleCount, vlSamplePersistence), 1.0);
 
             vec3 rayPos = sampleWorldPos + cameraPosition;
 

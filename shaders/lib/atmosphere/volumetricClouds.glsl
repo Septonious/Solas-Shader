@@ -121,7 +121,7 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z0, f
 			float VoL = dot(nViewPos, lightVec);
 			float halfVoL = mix(abs(VoL), VoL, shadowFade) * 0.5 + 0.5;
 			float halfVoLSqr = halfVoL * halfVoL;
-			float scattering = pow20(halfVoL);
+			float scattering = pow12(halfVoL);
 			float noiseLightFactor = (2.0 - VoL * shadowFade) * density;
 			float heightFactor = 1.0 - clamp(cameraPosition.y / cloudTop, 0.0, 1.0);
 
@@ -159,7 +159,7 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z0, f
 				getCloudSample(rayPos.xz / scale, wind, attenuation, amount, frequency, thickness, density, detail, noise);
 
                 float lightning = min(lightningFlashEffect(worldPos, lightningBoltPosition.xyz, 512.0) * lightningBoltPosition.w * 32.0, 1.0);
-				float sampleLighting = pow(attenuation, 1.0 - halfVoLSqr * 0.25);
+				float sampleLighting = pow(attenuation, 1.0 + scattering);
 					  sampleLighting *= 1.0 - pow(noise, noiseLightFactor) * (0.85 - lightning * 0.85) + lightning * 128.0;
 
 				cloudLighting = mix(cloudLighting, sampleLighting, noise * (1.0 - cloud * cloud));
@@ -206,7 +206,7 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z0, f
 									 sunVisibility * (1.0 - wetness));
             vec3 cloudLightColor = mix(lightCol, lightCol * nSkyColor * 2.0, timeBrightnessSqrt * (0.5 - wetness * 0.5));
 				 cloudLightColor *= 0.5 + timeBrightnessSqrt * 0.5 + moonVisibility * 0.5;
-				 cloudLightColor *= 1.0 + scattering * shadowFade * 2.0;
+				 cloudLightColor *= 1.0 + scattering * shadowFade * 5.0;
 			vec3 cloudColor = mix(cloudAmbientColor, cloudLightColor, cloudLighting) * mix(vec3(1.0), biomeColor, isSpecificBiome * sunVisibility);
 			     cloudColor = mix(cloudColor, atmosphereColor * length(cloudColor) * 0.5, wetness * 0.6);
                  #ifdef AURORA_LIGHTING_INFLUENCE

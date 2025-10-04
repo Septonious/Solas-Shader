@@ -52,7 +52,7 @@ vec3 sunVec = vec3(0.0);
 vec3 upVec = normalize(gbufferModelView[1].xyz);
 
 float eBS = eyeBrightnessSmooth.y / 240.0;
-float caveFactor = mix(clamp((eyeAltitude - 56.0) / 16.0, float(sign(isEyeInWater)), 1.0), 1.0, sqrt(eBS));
+float caveFactor = mix(clamp((eyeAltitude - 76.0) / 16.0, float(sign(isEyeInWater)), 1.0), 1.0, sqrt(eBS));
 float sunVisibility = clamp(dot(sunVec, upVec) + 0.1, 0.0, 0.25) * 4.0;
 #endif
 
