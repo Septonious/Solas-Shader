@@ -43,7 +43,7 @@ void calculateVLParameters(inout float intensity, inout float distanceFactor, in
 			  depthSample = pow4(depthSample);
 		averageDepth += depthSample * 0.1;
 	}
-    float closedSpaceFactor = 1.0 - min(1.0, pow8(eBS) * 0.5 + averageDepth * (0.5 + eBS * eBS * 0.3));
+    float closedSpaceFactor = 1.0 - min(1.0, pow8(eBS) * 0.5 + averageDepth * (0.85 - eBS * eBS * 0.3));
 
     intensity = (sunVisibility * (1.0 - VL_STRENGTH_RATIO) + VoL * VL_STRENGTH_RATIO) * (1.0 - timeBrightness) + VoLPositive * VoLPositive * timeBrightness;
     intensity = mix(intensity * timeIntensityFactor, timeIntensityFactor * 2.0, closedSpaceFactor);
