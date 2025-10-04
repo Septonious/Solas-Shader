@@ -49,7 +49,7 @@ void calculateVLParameters(inout float intensity, inout float distanceFactor, in
     intensity = mix(intensity * timeIntensityFactor, timeIntensityFactor * 2.0, closedSpaceFactor);
 
     #ifdef VC_SHADOWS
-    intensity = mix(intensity, 1.0, clamp((cameraPosition.y - VC_HEIGHT) * 0.01, 0.0, 1.0));
+    intensity = mix(intensity, 1.0, clamp((cameraPosition.y - VC_HEIGHT) * 0.01 + float(isEyeInWater == 1), 0.0, 1.0));
     #else
     intensity *= max(pow4(1.0 - VoUClamped), float(isEyeInWater == 1));
     #endif
@@ -199,7 +199,7 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
                         }
                     }
                     #endif
-                    float lShadowCol = min(1.0, length(pow(shadowCol, vec3(6.0))));
+                    float lShadowCol = min(1.0, length(pow(shadowCol, vec3(3.0))));
                     vlSample = clamp(shadow1 * shadowCol * shadowCol * mix(vec3(1.0), 0.5 * pow(waterColor, vec3(1.0 - lShadowCol * 0.5)) * lShadowCol, vec3(float(isEyeInWater == 1))) + shadow0 * vlCol * float(isEyeInWater == 0), 0.0, 1.0);
                 }
 
