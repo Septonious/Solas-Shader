@@ -223,13 +223,13 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
     //Main color mixing
     #ifdef OVERWORLD
     ambientCol *= 0.05 + lightmap.y * lightmap.y * 0.95;
-    ambientCol *= 1.0 - pow(VoL, 1.5) * (0.5 - wetness * 0.5);
-    lightCol *= 1.0 + specularHighlight * shadowFade * 2.0;
+    ambientCol *= 1.0 - pow(VoL, 1.5) * (0.5 - wetness * 0.5) * sunVisibility;
+    lightCol *= 1.0 + specularHighlight * shadowFade;
 
     float rainFactor = 1.0 - wetness * 0.5;
 
     vec3 sceneLighting = mix(ambientCol, lightCol, shadow * rainFactor * shadowFade) * (0.25 + lightmap.y * 0.75);
-         sceneLighting *= 1.0 + sss * shadow * 5.0;
+         sceneLighting *= 1.0 + sss * shadow * 2.0;
     //float bouncedLight = clamp(dot(newNormal, -lightVec), 0.0, 1.0) * lightmap.y;
     //albedo.rgb *= 1.0 + bouncedLight * 0.25;
     //albedo.rgb += lightCol * bouncedLight * 0.25;
