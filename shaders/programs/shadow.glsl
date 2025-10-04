@@ -52,7 +52,7 @@ void main() {
 	#ifdef WATER_CAUSTICS
 	if (mat == 10001 && lmCoord.y >= 0.01){
 		float caustics = getWaterCaustics(worldPos + cameraPosition);
-		albedo.rgb = vec3(0.5 + caustics);
+		albedo.rgb = vec3(0.5 + caustics * 0.5);
         albedo.rgb *= lmCoord.y;
 	}
 	#endif

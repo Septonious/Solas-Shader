@@ -170,7 +170,7 @@ void main() {
 		vec3 oScreenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), oDepth);
 		vec3 oViewPos = ToNDC(oScreenPos);
 
-		waterFog = getWaterFog(viewPos - oViewPos);
+		waterFog = getWaterFog(albedo.rgb, viewPos - oViewPos);
 
 		albedo.rgb = waterFog.rgb * 4.0;
 		albedo.g *= 1.4; //Correciton

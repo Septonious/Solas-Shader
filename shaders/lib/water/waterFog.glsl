@@ -1,5 +1,11 @@
-vec4 getWaterFog(vec3 viewPos) {
-	float fog = length(viewPos) * 0.01 * WATER_FOG_DENSITY;
+vec4 getWaterFog(inout vec3 color, vec3 viewPos) {
+	float absorption = length(viewPos) * 0.01 * WATER_FOG_DENSITY;
+		  absorption = 1.0 - exp(WATER_FOG_EXPONENT * 2.0 * absorption);
+	color.r *= 1.0 - absorption;
+	color.g *= 1.0 - absorption * absorption * 0.5;
+	color *= 1.0 - absorption * absorption * absorption * 0.5;
+
+	float fog = length(viewPos) * 0.005 * WATER_FOG_DENSITY;
 		  fog = 1.0 - exp(WATER_FOG_EXPONENT * fog);
 
 	vec3 waterFogColor = waterColor;
@@ -8,7 +14,7 @@ vec4 getWaterFog(vec3 viewPos) {
 		 waterFogColor = mix(waterFogColor, weatherCol.rgb * 0.25, wetness * 0.25);
 
 	if (isEyeInWater == 1) {
-		waterFogColor *= 0.15 + sunVisibility * 0.8;
+		waterFogColor *= 0.15 + sunVisibility * 0.25;
 
 		if (caveFactor > 0.0) {
 			vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.0);
@@ -34,5 +40,5 @@ vec4 getWaterFog(vec3 viewPos) {
 	waterFogColor *= 1.0 - darknessFactor;
 	#endif
 
-	return vec4(waterFogColor * (0.25 + (1.0 - fog) * 0.75), fog);
+	return vec4(waterFogColor, fog);
 }

@@ -81,7 +81,7 @@ void main() {
 	vec3 viewPos = ToView(screenPos);
 
 	if (isEyeInWater == 1){
-		vec4 waterFog = getWaterFog(viewPos);
+		vec4 waterFog = getWaterFog(color, viewPos);
 		color = mix(sqrt(color), sqrt(waterFog.rgb), waterFog.a);
 		color *= color;
 	}
