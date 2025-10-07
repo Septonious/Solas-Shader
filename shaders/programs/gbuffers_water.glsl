@@ -174,7 +174,7 @@ void main() {
 
 		albedo.rgb = waterFog.rgb * 4.0;
 		albedo.g *= 1.4; //Correciton
-		albedo.a = 0.1 + waterFog.a * (0.9 - float(isEyeInWater == 1) * 0.4);
+		albedo.a = min(0.1 + 3.0 * WATER_A * waterFog.a * (0.9 - float(isEyeInWater == 1) * 0.7), 1.0);
 		#endif
 	} else if (portal > 0.5) {
 		vec2 noisePos = worldPos.xy + cameraPosition.xy;

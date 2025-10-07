@@ -55,9 +55,11 @@ void calculateVLParameters(inout float intensity, inout float distanceFactor, in
     #endif
 
     intensity *= VL_STRENGTH * shadowFade;
-
-    distanceFactor = float(isEyeInWater) * 4.0;
     samplePersistence *= 1.0 - closedSpaceFactor * 0.25 - float(isEyeInWater == 1) * 0.25;
+    distanceFactor = float(isEyeInWater) * 4.0;
+    #ifdef DISTANT_HORIZONS
+    distanceFactor *= 2.0;
+    #endif
 }
 
 void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither) {
@@ -199,8 +201,8 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
                         }
                     }
                     #endif
-                    float lShadowCol = min(1.0, length(pow(shadowCol, vec3(3.0))));
-                    vlSample = clamp(shadow1 * shadowCol * shadowCol * mix(vec3(1.0), 0.5 * pow(waterColor, vec3(1.0 - lShadowCol * 0.5)) * lShadowCol, vec3(float(isEyeInWater == 1))) + shadow0 * vlCol * float(isEyeInWater == 0), 0.0, 1.0);
+                    float lShadowCol = min(1.0, length(shadowCol * shadowCol * shadowCol * shadowCol));
+                    vlSample = clamp(shadow1 * shadowCol * shadowCol * mix(vec3(1.0), pow(waterColor, vec3(1.0 - lShadowCol * 0.5)) * lShadowCol, vec3(float(isEyeInWater == 1))) + shadow0 * vlCol * float(isEyeInWater == 0), 0.0, 1.0);
                 }
 
                 //Crepuscular rays

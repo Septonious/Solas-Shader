@@ -22,12 +22,14 @@ vec4 getWaterFog(inout vec3 color, vec3 viewPos) {
 			float VoL = dot(normalize(viewPos), lightVec);
 			float glare = clamp(VoL * 0.5 + 0.5, 0.0, 1.0) * shadowFade; 
 				glare = 0.03 / (1.0 - 0.97 * glare) - 0.03;
-			waterFogColor *= 1.0 + (0.5 + glare * 16.0 * timeBrightness) * caveFactor;
+			waterFogColor *= 1.0 + (0.5 + glare * 64.0 * timeBrightness) * caveFactor;
 		}
 
 		waterFogColor *= 0.25 + eBS * 0.75;
 	}
 	#endif
+
+	waterFogColor *= 1.0 - pow(fog, 0.25) * 0.75;
 
     //Dynamic Hand Lighting
     #ifdef DYNAMIC_HANDLIGHT

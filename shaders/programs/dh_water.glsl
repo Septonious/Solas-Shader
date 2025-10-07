@@ -160,8 +160,23 @@ void main() {
     float emission = pow8(lmCoord.x);
 
 	if (water > 0.5) {
-		albedo.rgb = mix(color.rgb, waterColor.rgb, 0.5) * WATER_I;
+		#ifdef VANILLA_WATER
+		albedo.rgb *= albedoTexture.rgb * (1.0 + pow4(lAlbedo));
 		albedo.a = WATER_A;
+		#else
+		//Water Light Absorption & Scattering
+		vec4 waterFog = vec4(0.0);
+
+		float oDepth = texture2D(depthtex1, screenPos.xy).r;
+		vec3 oScreenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), oDepth);
+		vec3 oViewPos = ToNDC(oScreenPos);
+
+		waterFog = getWaterFog(albedo.rgb, viewPos - oViewPos);
+
+		albedo.rgb = waterFog.rgb * 4.0;
+		albedo.g *= 1.4; //Correciton
+		albedo.a = 0.1 + waterFog.a * (0.9 - float(isEyeInWater == 1) * 0.4);
+		#endif
 	}
 
 	float dither = Bayer8(gl_FragCoord.xy);
@@ -222,23 +237,6 @@ void main() {
 	#elif defined END
 	vec3 atmosphereColor = endAmbientColSqrt * 0.25;
 	#endif
-
-	//Water Light Absorption & Scattering
-	vec4 waterFog = vec4(0.0);
-
-	if (water > 0.5 && isEyeInWater == 0) {
-		#ifdef WATER_FOG
-		float oDepth = texture2D(dhDepthTex1, screenPos.xy).r;
-		vec3 oScreenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), oDepth);
-		vec3 oViewPos = ToNDC(oScreenPos);
-
-		waterFog = getWaterFog(viewPos - oViewPos);
-
-		albedo.rgb = mix(sqrt(albedo.rgb), sqrt(waterFog.rgb), waterFog.a);
-		albedo.rgb *= albedo.rgb;
-		albedo.a = clamp(albedo.a * (0.5 + waterFog.a * (1.5 + lightmap.y * 0.5)), 0.05, 0.95);
-		#endif
-	}
 
 	//Reflections
 	#ifdef WATER_REFLECTIONS
