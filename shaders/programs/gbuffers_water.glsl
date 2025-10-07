@@ -170,9 +170,10 @@ void main() {
 		vec3 oScreenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), oDepth);
 		vec3 oViewPos = ToNDC(oScreenPos);
 
-		waterFog = getWaterFog(albedo.rgb, viewPos - oViewPos);
+		vec3 colorMult = vec3(1.0);
+		waterFog = getWaterFog(colorMult, viewPos - oViewPos);
 
-		albedo.rgb = waterFog.rgb * 4.0;
+		albedo.rgb = waterFog.rgb * 3.0;
 		albedo.g *= 1.4; //Correciton
 		albedo.a = min(0.1 + 3.0 * WATER_A * waterFog.a * (0.9 - float(isEyeInWater == 1) * 0.7), 1.0);
 		#endif

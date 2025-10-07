@@ -1,9 +1,9 @@
-vec4 getWaterFog(inout vec3 color, vec3 viewPos) {
+vec4 getWaterFog(inout vec3 colorMult, vec3 viewPos) {
 	float absorption = length(viewPos) * 0.01 * WATER_FOG_DENSITY;
 		  absorption = 1.0 - exp(WATER_FOG_EXPONENT * 2.0 * absorption);
-	color.r *= 1.0 - absorption;
-	color.g *= 1.0 - absorption * absorption * 0.5;
-	color *= 1.0 - absorption * absorption * absorption * 0.5;
+	colorMult.r *= 1.0 - absorption;
+	colorMult.g *= 1.0 - absorption * absorption * 0.5;
+	colorMult *= 1.0 - absorption * absorption * absorption * 0.5;
 
 	float fog = length(viewPos) * 0.005 * WATER_FOG_DENSITY;
 		  fog = 1.0 - exp(WATER_FOG_EXPONENT * fog);
@@ -22,14 +22,14 @@ vec4 getWaterFog(inout vec3 color, vec3 viewPos) {
 			float VoL = dot(normalize(viewPos), lightVec);
 			float glare = clamp(VoL * 0.5 + 0.5, 0.0, 1.0) * shadowFade; 
 				glare = 0.03 / (1.0 - 0.97 * glare) - 0.03;
-			waterFogColor *= 1.0 + (0.5 + glare * 64.0 * timeBrightness) * caveFactor;
+			waterFogColor *= 1.0 + (0.5 + glare * 32.0 * timeBrightness) * caveFactor;
 		}
 
 		waterFogColor *= 0.25 + eBS * 0.75;
 	}
 	#endif
 
-	waterFogColor *= 1.0 - pow(fog, 0.25) * 0.75;
+	waterFogColor *= 1.0 - pow(fog, 0.2) * (0.8 - float(isEyeInWater == 1) * 0.2);
 
     //Dynamic Hand Lighting
     #ifdef DYNAMIC_HANDLIGHT
