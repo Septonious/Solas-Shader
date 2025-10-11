@@ -18,6 +18,7 @@ void getBloom(inout vec3 color, vec2 bloomCoord) {
 
     #if defined OVERWORLD
     float bloomStrength = BLOOM_STRENGTH_OVERWORLD;
+		  bloomStrength += float(isEyeInWater == 1);
     #elif defined NETHER
     float bloomStrength = BLOOM_STRENGTH_NETHER;
     #elif defined END
