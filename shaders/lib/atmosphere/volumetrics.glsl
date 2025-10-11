@@ -54,7 +54,7 @@ void calculateVLParameters(inout float intensity, inout float distanceFactor, in
     intensity *= max(pow4(1.0 - VoUClamped), float(isEyeInWater == 1));
     #endif
 
-    intensity *= VL_STRENGTH * shadowFade;
+    intensity *= VL_STRENGTH * shadowFade * caveFactor;
     samplePersistence *= 1.0 - closedSpaceFactor * 0.25 - float(isEyeInWater == 1) * 0.25;
     distanceFactor = float(isEyeInWater) * 5.0;
 }
@@ -122,7 +122,7 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
     //LPV Fog Variables
     float lpvFogIntensity = LPV_FOG_STRENGTH * (10.0 - float(isEyeInWater == 1) * 9.0);
     #ifdef OVERWORLD
-          lpvFogIntensity *= (1.0 - eBS * timeBrightnessSqrt) * (3.0 - caveFactor * 2.0);
+          lpvFogIntensity *= (1.0 - eBS * timeBrightnessSqrt);
     #elif defined NETHER
           lpvFogIntensity *= 1.5;
     #elif defined END
