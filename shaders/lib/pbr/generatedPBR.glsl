@@ -22,6 +22,7 @@ void generateIPBR(inout vec4 albedo, in vec3 worldPos, in vec3 viewPos, inout ve
     #include "/lib/pbr/blocks/cave_berries.glsl"
     #include "/lib/pbr/blocks/chorus.glsl"
     #include "/lib/pbr/blocks/concrete.glsl"
+    #include "/lib/pbr/blocks/copper_emitters.glsl"
     #include "/lib/pbr/blocks/copper.glsl"
     #include "/lib/pbr/blocks/creaking_heart.glsl"
     #include "/lib/pbr/blocks/dark_materials.glsl"

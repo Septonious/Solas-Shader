@@ -176,6 +176,9 @@ vec3 getBlocklightColor(int id) {
 	//Warped Fungus
 	else if(id == 82) color = vec3(0.3, 0.6, 0.9) * 0.5;
 
+	//Copper Torches, Lanterns, Etc
+	else if(id == 83 || id == 84) color = vec3(0.1, 0.7, 0.2) * 0.5;
+
 	//Generic emitters with different colors
 	//Blocks in this range will emit their respective color
 	//A good way to quickly make modded blocks emit light
