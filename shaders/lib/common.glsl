@@ -221,7 +221,7 @@ const float sunPathRotation = 180.0;
 // LPV Fog //
 #define LPV_FOG
 //#define LPV_CLOUDY_FOG
-#define LPV_FOG_STRENGTH 2.00 //[0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00]
+#define LPV_FOG_STRENGTH 1.25 //[0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00]
 
 // Planar Clouds //
 #define PLANAR_CLOUDS
