@@ -124,7 +124,7 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
     #ifdef OVERWORLD
           lpvFogIntensity *= (1.0 - eBS * timeBrightnessSqrt);
     #elif defined NETHER
-          lpvFogIntensity *= 1.5;
+          lpvFogIntensity *= 0.5;
     #elif defined END
           lpvFogIntensity *= 2.0;
     #endif
@@ -159,7 +159,10 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
         #ifdef VC_SHADOWS
             maxDist += 128.0;
         #endif
+
+        #ifdef OVERWORLD
             maxDist /= 1.0 + vlDistanceFactor;
+        #endif
 
         //Ray marching
         for (int i = 0; i < sampleCount; i++) {
@@ -173,7 +176,10 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
             if (lWorldPos > maxDist) break;
 
             float currentSampleIntensityLPV = currentDist / maxDist / sampleCount;
-            float currentSampleIntensityVL = pow(currentDist / maxDist / sampleCount, vlSamplePersistence);
+            float currentSampleIntensityVL = currentDist / maxDist / sampleCount;
+            #ifdef OVERWORLD
+                  currentSampleIntensityVL = pow(currentSampleIntensityVL, vlSamplePersistence);
+            #endif
 
             vec3 rayPos = sampleWorldPos + cameraPosition;
 

@@ -220,8 +220,8 @@ void main() {
 	#endif
 
 	#if defined RAIN_PUDDLES && (defined GENERATED_SPECULAR || defined PBR)
-	if (emission < 0.01 && foliage < 0.1) {
-		float puddles = GetPuddles(worldPos, newCoord, lmCoord.y, NoU, wetness);
+	if (emission < 0.01 && foliage < 0.1 && isSnowy < 0.1) {
+		float puddles = GetPuddles(worldPos, newCoord, lmCoord.y, NoU, wetness * (1.0 - isSnowy));
 
 		ApplyPuddleToMaterial(puddles, albedo, smoothness, metalness, porosity);
 

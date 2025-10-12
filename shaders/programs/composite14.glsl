@@ -8,9 +8,9 @@
 in vec2 texCoord;
 
 // Uniforms //
-#ifdef LENS_FLARE
 uniform int isEyeInWater;
 
+#ifdef LENS_FLARE
 #ifdef OVERWORLD
 uniform float shadowFade;
 #endif
