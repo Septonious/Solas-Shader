@@ -1,4 +1,5 @@
 else if (material == 83 || material == 84) {
-    emission = float(lAlbedo > 0.95 || (albedo.g > 0.65 && albedo.b < 0.45)) + float((albedo.g > 0.35 && albedo.r < 0.3) && material == 83);
+    emission = float(albedo.r - albedo.b < 0.1 && albedo.g > 0.5 && material == 83);
+    emission += float(albedo.r - albedo.b < 0.1 && albedo.b * 1.1 - albedo.g - albedo.r < -0.45 && albedo.g > 0.5 && material == 84) * float(NoU > -0.5 && NoU < 0.5);
     emission *= lAlbedo * 0.33;
 }
