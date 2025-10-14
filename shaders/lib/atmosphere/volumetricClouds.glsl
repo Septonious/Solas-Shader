@@ -161,6 +161,7 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z0, f
                 float lightning = min(lightningFlashEffect(worldPos, lightningBoltPosition.xyz, 512.0) * lightningBoltPosition.w * 32.0, 1.0);
 				float sampleLighting = pow(attenuation, 1.0 + scattering);
 					  sampleLighting *= 1.0 - pow(noise, noiseLightFactor) * (0.85 - lightning * 0.85) + lightning * 128.0;
+					  sampleLighting = clamp(sampleLighting, 0.0, 1.0);
 
 				cloudLighting = mix(cloudLighting, sampleLighting, noise * (1.0 - cloud * cloud));
 				cloud = mix(cloud, 1.0, noise);
