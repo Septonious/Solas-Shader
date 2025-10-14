@@ -44,11 +44,11 @@ void getNormalFog(inout vec3 color, in vec3 atmosphereColor, in vec3 viewPos, in
           noise *= noise;
     float distanceFactor = 50.0 * (0.5 + timeBrightness * 0.75) + FOG_DISTANCE * (0.75 + caveFactor * 0.25) - wetness * 25.0;
 	float distanceMult = max(256.0 / farPlane, 2.0) * (100.0 / distanceFactor);
-	float altitudeFactor = FOG_HEIGHT + noise * 10.0 + timeBrightness * 35.0 + moonVisibility * 20.0;
-	float altitude = exp2(-max(worldPos.y + cameraPosition.y - altitudeFactor, 0.0) / exp2(FOG_HEIGHT_FALLOFF + moonVisibility + timeBrightness + wetness));
+	float altitudeFactor = FOG_HEIGHT + noise * 10.0 + timeBrightness * 35.0 + moonVisibility * 20.0 - isJungle * 15.0;
+	float altitude = exp2(-max(worldPos.y + cameraPosition.y - altitudeFactor, 0.0) / exp2(FOG_HEIGHT_FALLOFF + moonVisibility + timeBrightness + wetness - isJungle));
 		  //altitude = mix(1.0, altitude, clamp((cameraPosition.y - altitude) / altitude, 0.0, 1.0));
 	float density = FOG_DENSITY * (1.0 + sunVisibility * (1.0 - timeBrightness) * 0.75 + moonVisibility * 0.25) * (0.5 + noise);
-		  density += isLushCaves * 0.35 + isDesert * 0.25;
+		  density += isLushCaves * 0.35 + (isDesert + isJungle) * 0.5;
 
 	#if MC_VERSION >= 12104
     density += isPaleGarden;
