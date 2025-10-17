@@ -21,7 +21,7 @@ vec3 getAtmosphere(vec3 viewPos) {
          scattering1 = mix(scattering1, lightColSqrt * 4.0, VoUPositive * VoUPositive * 0.5 + timeBrightness * 0.5);
          scattering1 *= VoUcm * clamp(pow(1.0 - VoUcm, 3.0 - VoSClamped), 0.0, 1.0);
          scattering1 = pow(scattering1, vec3(1.0 + VoSPositive * 0.4)) * (1.0 + VoSPositive * (1.0 - timeBrightnessSqrt) * 0.5);
-         scattering1 *= (0.6 + sunVisibility * 0.4) * (1.0 - timeBrightnessSqrt * 0.5);
+         scattering1 *= (0.6 + sunVisibility * 0.4) * (1.0 - timeBrightnessSqrt * 0.75);
 
     float scatteringMixer = pow2(1.0 - VoUcm) * (0.6 + VoUPositive * 0.6);
     float scattering1Mixer = scatteringMixer * pow(length(scattering1), 0.33) * (1.0 - wetness * 0.75) * 0.8;

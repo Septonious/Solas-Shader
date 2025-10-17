@@ -48,6 +48,8 @@ option.VC_SHADOWS=Тени от Облаков
 screen.PLANAR_CLOUDS_CONFIG=Настройки 2D Облаков
 
 option.PLANAR_CLOUDS=2D Облака
+option.PLANAR_CLOUDS_AMOUNT=Количество
+option.PLANAR_CLOUDS_HEIGHT=Высота
 option.PLANAR_CLOUDS_BRIGHTNESS=Яркость
 option.PLANAR_CLOUDS_OPACITY=Непрозрачность
 

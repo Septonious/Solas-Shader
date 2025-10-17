@@ -17,7 +17,7 @@ void main() {
     vec4 albedo = texture2D(texture, texCoord) * color;
 	
     /* DRAWBUFFERS:0 */
-    gl_FragData[0] = albedo * 0.5;
+    gl_FragData[0] = albedo * 0.75;
 }
 
 #endif

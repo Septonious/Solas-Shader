@@ -161,7 +161,7 @@ void main() {
 
 	if (water > 0.5) {
 		#ifdef VANILLA_WATER
-		albedo.rgb *= albedoTexture.rgb * (1.0 + pow4(lAlbedo));
+		albedo.rgb *= waterColor.rgb;
 		albedo.a = WATER_A;
 		#else
 		//Water Light Absorption & Scattering
@@ -171,11 +171,12 @@ void main() {
 		vec3 oScreenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), oDepth);
 		vec3 oViewPos = ToNDC(oScreenPos);
 
-		waterFog = getWaterFog(albedo.rgb, viewPos - oViewPos);
+		vec3 colorMult = vec3(1.0);
+		waterFog = getWaterFog(colorMult, viewPos - oViewPos);
 
-		albedo.rgb = waterFog.rgb * 4.0;
-		albedo.g *= 1.4; //Correciton
-		albedo.a = 0.1 + waterFog.a * (0.9 - float(isEyeInWater == 1) * 0.4);
+		albedo.rgb = waterFog.rgb * 3.0;
+		albedo.g *= 1.0 + (1.0 - waterFog.a * 0.6); //Correciton
+		albedo.a = min(0.1 + 3.0 * WATER_A * waterFog.a * (0.9 - float(isEyeInWater == 1) * 0.7), 1.0);
 		#endif
 	}
 

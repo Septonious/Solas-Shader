@@ -361,6 +361,7 @@ void computeEndVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z0
 
 				float sampleLighting = 0.05 + clamp(noise - lightingNoise * (0.9 - scattering * 0.15), 0.0, 0.95) * (1.5 + scattering);
 					  sampleLighting *= 1.0 - noise * 0.75;
+					  sampleLighting = clamp(sampleLighting, 0.0, 1.0);
 
 				cloudLighting = mix(cloudLighting, sampleLighting, noise * (1.0 - cloud * cloud));
 				if (rayDistance < shadowDistance * 0.1) noise *= shadow1;

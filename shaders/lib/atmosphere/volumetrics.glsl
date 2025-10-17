@@ -120,9 +120,9 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
     #endif
 
     //LPV Fog Variables
-    float lpvFogIntensity = LPV_FOG_STRENGTH * (10.0 - float(isEyeInWater == 1) * 9.0);
+    float lpvFogIntensity = LPV_FOG_STRENGTH * (5.0 - float(isEyeInWater == 1) * 4.0);
     #ifdef OVERWORLD
-          lpvFogIntensity *= (1.0 - eBS * timeBrightnessSqrt) * (2.0 - caveFactor);
+          lpvFogIntensity *= (2.0 - eBS * timeBrightnessSqrt - caveFactor);
     #elif defined NETHER
           lpvFogIntensity *= 0.5;
     #elif defined END
@@ -160,7 +160,7 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
             maxDist += 128.0;
         #endif
 
-        #ifdef OVERWORLD
+        #ifdef VL
             maxDist /= 1.0 + vlDistanceFactor;
         #endif
 
@@ -177,7 +177,7 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
 
             float currentSampleIntensityLPV = currentDist / maxDist / sampleCount;
             float currentSampleIntensityVL = currentDist / maxDist / sampleCount;
-            #ifdef OVERWORLD
+            #ifdef VL
                   currentSampleIntensityVL = pow(currentSampleIntensityVL, vlSamplePersistence);
             #endif
 

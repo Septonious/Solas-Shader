@@ -31,7 +31,7 @@ option.VOLUMETRIC_CLOUDS=Volumetric Clouds
 option.VC_DETAIL=Detail
 option.VC_DENSITY=Density
 option.VC_AMOUNT=Amount
-option.VC_HEIGHT=Height
+option.VC_HEIGHT=Altitude
 option.VC_THICKNESS=Thickness
 option.VC_SPEED=Speed
 option.VC_DISTANCE=Render Distance
@@ -48,6 +48,8 @@ option.VC_SHADOWS=Cloud Shadows
 screen.PLANAR_CLOUDS_CONFIG=Planar Clouds Config
 
 option.PLANAR_CLOUDS=Planar Clouds
+option.PLANAR_CLOUDS_AMOUNT=Amount
+option.PLANAR_CLOUDS_HEIGHT=Altitude
 option.PLANAR_CLOUDS_BRIGHTNESS=Brightness
 option.PLANAR_CLOUDS_OPACITY=Opacity
 
@@ -219,6 +221,8 @@ screen.IPBR=Integrated PBR
 
 option.GENERATED_SPECULAR=Generated Specular
 option.GENERATED_SPECULAR.comment=Automatically determines reflective blocks. §c[-]§r DO NOT USE WITH AN EXTERNAL PBR RESOURCEPACK
+option.GENERATED_SPECULAR_ON_ALL_BLOCKS=Specular On All Blocks
+option.GENERATED_SPECULAR_ON_ALL_BLOCKS.comment=Allows all blocks to reflect light. The algorithm determines the block's reflectiveness automatically. §c[-]§rAffects performance.
 
 #----------------------------------------------------------------------------------#
 
