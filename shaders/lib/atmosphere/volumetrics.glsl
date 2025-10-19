@@ -29,6 +29,7 @@ bool isRayMarcherHit(float currentDist, float maxDist, float linearZ0, float lin
 	return isMaxReached || opaqueReached || solidTransparentReached;
 }
 
+#ifdef VL
 void calculateVLParameters(inout float intensity, inout float distanceFactor, inout float samplePersistence, in float VoU, in float VoL) {
     float VoLPositive = VoL * 0.5 + 0.5;
     float VoUPositive = VoU * 0.5 + 0.5;
@@ -58,6 +59,7 @@ void calculateVLParameters(inout float intensity, inout float distanceFactor, in
     samplePersistence *= 1.0 - closedSpaceFactor * 0.25 - float(isEyeInWater == 1) * 0.25;
     distanceFactor = float(isEyeInWater) * 5.0;
 }
+#endif
 
 void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither) {
 	//Depths
