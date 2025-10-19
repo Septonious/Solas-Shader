@@ -755,6 +755,7 @@ vec3 pow8(vec3 x) {return x*x*x*x*x*x*x*x;}
 
 #ifdef NETHER
 #undef VL
+#undef LENS_FLARE
 #endif
 
 #if defined IS_IRIS && !defined MC_OS_MAC
