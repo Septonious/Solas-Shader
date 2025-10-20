@@ -8,8 +8,8 @@ float texture2DShadow(sampler2D shadowtex, vec3 sampleShadowPos) {
 
 #ifdef NETHER_SMOKE
 float getNetherFogSample(vec3 fogPos) {
-    fogPos.x *= 0.5 + cos(fogPos.y * 0.08 + frameTimeCounter * 0.3 + fract(fogPos.z * 0.01) * 0.5) * 0.0004;
-    fogPos.z *= 0.5 + sin(fogPos.y * 0.12 + frameTimeCounter * 0.15 + fract(fogPos.x * 0.01) * 0.5) * 0.0002;
+    fogPos.x *= 0.5 + cos(fogPos.y * 0.5 + frameTimeCounter * 0.3 + fract(fogPos.z * 0.01) * 0.5) * 0.00004;
+    fogPos.z *= 0.5 + sin(fogPos.y * 0.7 + frameTimeCounter * 0.15 + fract(fogPos.x * 0.01) * 0.3) * 0.00006;
 
     float n3da = texture2D(noisetex, fogPos.xz * 0.005 + floor(fogPos.y * 0.1) * 0.1).r;
     float n3db = texture2D(noisetex, fogPos.xz * 0.005 + floor(fogPos.y * 0.1 + 1.0) * 0.1).r;
@@ -96,7 +96,7 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
     float VoU = dot(nViewPos, upVec);
     #endif
 
-    float totalVisibility = float(z0 > 0.56);
+    float totalVisibility = float(z0 > 0.56) * float(isEyeInWater != 2);
 
 	#if MC_VERSION >= 11900
 	totalVisibility *= 1.0 - darknessFactor;
@@ -263,7 +263,7 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
             #ifdef NETHER_SMOKE
             if (lWorldPos < 128.0) {
                 float fogSample = getNetherFogSample(rayPos * NETHER_SMOKE_FREQUENCY + wind2 * NETHER_SMOKE_SPEED);
-                vlSample += netherCol * fogSample * 32.0;
+                vlSample += netherColSqrt * netherColSqrt * netherColSqrt * netherColSqrt * fogSample * 64.0;
             }
             #endif
 

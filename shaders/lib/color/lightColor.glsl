@@ -31,6 +31,5 @@ vec3 caveBiomeColor = vec3(0.125, 0.145, 0.035) * isLushCaves + vec3(0.025, 0.09
 float isSpecificBiome = isDesert + isCherryGrove + isSwamp + isMushroom + isJungle;
 float isCaveBiome = isLushCaves + isDeepDark;
 #elif defined NETHER
-vec3 netherCol = sqrt(normalize(fogColor + 0.00000001));
-vec3 netherColSqrt = sqrt(netherCol);
+vec3 netherColSqrt = pow(normalize(fogColor + 0.00000001), vec3(0.125));
 #endif
