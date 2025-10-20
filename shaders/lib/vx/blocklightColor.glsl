@@ -177,7 +177,7 @@ vec3 getBlocklightColor(int id) {
 	else if(id == 82) color = vec3(0.3, 0.6, 0.9) * 0.5;
 
 	//Copper Torches, Lanterns, Etc
-	else if(id == 83 || id == 84) color = vec3(0.1, 0.7, 0.2) * 0.5;
+	else if(id == 83 || id == 84) color = vec3(CTL_R, CTL_G, CTL_B) * CTL_I;
 
 	//Generic emitters with different colors
 	//Blocks in this range will emit their respective color

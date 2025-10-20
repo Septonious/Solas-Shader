@@ -235,7 +235,7 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
     //albedo.rgb += lightCol * bouncedLight * 0.25;
     #elif defined END
     vec3 sceneLighting = mix((endLightCol * AMBIENT_END_I + endAmbientCol) * 0.25, endLightCol * (1.0 + specularHighlight), shadow) * 0.25;
-    #if MC_VERSION >= 12100
+    #ifdef END_FLASHES
     vec3 worldEndFlashPosition = mat3(gbufferModelViewInverse) * endFlashPosition;
     float endFlashDirection = clamp(dot(normalize(ToWorld(endFlashPosition * 100000000.0)), worldNormal), 0.0, 1.0);
     sceneLighting = mix(sceneLighting, endFlashCol, 0.125 * endFlashDirection * endFlashDirection * endFlashIntensity);

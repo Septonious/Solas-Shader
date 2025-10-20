@@ -367,16 +367,42 @@ option.AMBIENT_NI=Intensity
 
 #----------------------------------------------------------------------------------#
 
-screen.END_COLOR=Свет & Тень (Энд)
+screen.END_COLOR=Цвета Энда
+
+screen.LIGHT_END=Свет
 
 option.LIGHT_END_R=Красный
 option.LIGHT_END_G=Зелёный
 option.LIGHT_END_B=Синий
 option.LIGHT_END_I=Яркость
+
+screen.AMBIENT_END=Тень
+
 option.AMBIENT_END_R=Красный
 option.AMBIENT_END_G=Зелёный
 option.AMBIENT_END_B=Синий
 option.AMBIENT_END_I=Яркость
+
+screen.FLASH_END=Вспышки Сверхновых
+
+option.FLASH_END_R=Красный
+option.FLASH_END_G=Зелёный
+option.FLASH_END_B=Синий
+option.FLASH_END_I=Яркость
+
+screen.NEBULA_END_FIRST=Туманность (Основной цвет)
+
+option.NEBULA_END_FIRST_R=Красный
+option.NEBULA_END_FIRST_G=Зелёный
+option.NEBULA_END_FIRST_B=Синий
+option.NEBULA_END_FIRST_I=Яркость
+
+screen.NEBULA_END_SECOND=Туманность (Вторичный цвет)
+
+option.NEBULA_END_SECOND_R=Красный
+option.NEBULA_END_SECOND_G=Зелёный
+option.NEBULA_END_SECOND_B=Синий
+option.NEBULA_END_SECOND_I=Яркость
 
 #----------------------------------------------------------------------------------#
 
@@ -410,9 +436,10 @@ option.WATER_A=Непрозрачность
 
 screen.LPV_COLOR=Цвета Освещения от Блоков
 screen.GLSP=Светящийся Лишайник
-screen.BS=Варочная Стойка (уолтер убери свой ч..)
+screen.BS=Варочная Стойка (LET HIM COOK!!!)
 screen.TLCF=Факел, Фонарь и т.д.
 screen.SOUL=Факел Душ, Фонарь Душ и т.д.
+screen.CTL=Медный Факел и Лампа
 screen.ER=Стержень Энда
 screen.SL=Морской Фонарь
 screen.GS=Светокамень
@@ -455,6 +482,11 @@ option.SL_R=Красный
 option.SL_G=Зелёный
 option.SL_B=Синий
 option.SL_I=Яркость
+
+option.CTL_R=Красный
+option.CTL_G=Зелёный
+option.CTL_B=Синий
+option.CTL_I=Яркость
 
 option.GS_R=Красный
 option.GS_G=Зелёный

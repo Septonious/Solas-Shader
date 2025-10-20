@@ -40,7 +40,7 @@ vec4 getSupernovaAtPos(in vec3 flashPos, in vec3 worldPos) {
 void drawEndNebula(inout vec3 color, in vec3 worldPos, in float VoU, in float VoS) {
     #ifdef END_BLACK_HOLE
     //Prepare black hole parameters for warping the nebula
-    const vec3 blackHoleColor = vec3(5.6, 2.2, 0.2);
+    vec3 blackHoleColor = vec3(5.6, 2.2, 0.2) * endLightCol;
     float absVoU = abs(VoU);
     float sqrtabsVoU = sqrt(absVoU);
     float blackHoleSize = END_BLACK_HOLE_SIZE;
@@ -74,7 +74,9 @@ void drawEndNebula(inout vec3 color, in vec3 worldPos, in float VoU, in float Vo
           nebulaVisibility = (0.175 - pow3(VoS) * 0.175) + pow20(VoS) * 0.425;
     #endif
 
-    vec3 nebula = mix(vec3(5.6, 2.2, 0.2), vec3(0.1, 2.8, 1.1), nebulaColorMixer) * nebulaNoise * nebulaNoise * nebulaVisibility;
+    vec3 nebula = mix(endNebulaColFirst,
+                      endNebulaColSecond,
+                      nebulaColorMixer) * nebulaNoise * nebulaNoise * nebulaVisibility;
     #ifdef END_BLACK_HOLE
          nebula *= 1.0 + blackHoleColor * pow24(VoS) * 0.25;
          nebula *= max(1.0 - pow32(VoS), 0.0);

@@ -385,18 +385,40 @@ option.AMBIENT_NI=Intensity
 
 screen.END_COLOR=End Light & Ambient Color
 
+screen.LIGHT_END=Light
+
 option.LIGHT_END_R=Red
 option.LIGHT_END_G=Green
 option.LIGHT_END_B=Blue
 option.LIGHT_END_I=Intensity
+
+screen.AMBIENT_END=Shadow
+
 option.AMBIENT_END_R=Red
 option.AMBIENT_END_G=Green
 option.AMBIENT_END_B=Blue
 option.AMBIENT_END_I=Intensity
+
+screen.FLASH_END=Flashes/Supernovae
+
 option.FLASH_END_R=Red
 option.FLASH_END_G=Green
 option.FLASH_END_B=Blue
 option.FLASH_END_I=Intensity
+
+screen.NEBULA_END_FIRST=Nebula Color (Primary)
+
+option.NEBULA_END_FIRST_R=Red
+option.NEBULA_END_FIRST_G=Green
+option.NEBULA_END_FIRST_B=Blue
+option.NEBULA_END_FIRST_I=Intensity
+
+screen.NEBULA_END_SECOND=Nebula Color (Secondary)
+
+option.NEBULA_END_SECOND_R=Red
+option.NEBULA_END_SECOND_G=Green
+option.NEBULA_END_SECOND_B=Blue
+option.NEBULA_END_SECOND_I=Intensity
 
 #----------------------------------------------------------------------------------#
 
@@ -433,6 +455,7 @@ screen.GLSP=Glow Lichen, Sea Pickle
 screen.BS=Brewing Stand
 screen.TLCF=Torch, Lantern, etc
 screen.SOUL=Soul Torch, Lantern, etc
+screen.CTL=Copper Torch & Lantern
 screen.ER=End Rod
 screen.SL=Sea Lantern
 screen.GS=Glowstone
@@ -475,6 +498,11 @@ option.SL_R=Red
 option.SL_G=Green
 option.SL_B=Blue
 option.SL_I=Intensity
+
+option.CTL_R=Red
+option.CTL_G=Green
+option.CTL_B=Blue
+option.CTL_I=Intensity
 
 option.GS_R=Red
 option.GS_G=Green

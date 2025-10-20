@@ -262,7 +262,7 @@ void getEndCloudSample(vec2 rayPos, vec2 wind, float attenuation, inout float no
 	float noiseDetail = mix(noiseDetailA, noiseDetailB, fract(attenuation * END_DISK_THICKNESS));
 
 	float noiseCoverage = abs(attenuation - 0.125) * (attenuation > 0.125 ? 1.14 : 5.0);
-		  noiseCoverage *= noiseCoverage * 4.0;
+		  noiseCoverage *= noiseCoverage * 3.0;
 	
 	noise = mix(noiseBase, noiseDetail, 0.025 * int(0 < noiseBase)) * 22.0 - noiseCoverage;
 	noise = max(noise - END_DISK_AMOUNT - 1.0 + getProtoplanetaryDisk(rayPos), 0.0);
@@ -285,10 +285,11 @@ void computeEndVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z0
 		vec3 nViewPos = normalize(viewPos);
         vec3 worldPos = ToWorld(viewPos);
 		vec3 nWorldPos = normalize(worldPos);
-		vec3 worldSunVec = normalize(ToWorld(sunVec * 10000000.0));
+		vec3 worldSunVec = ToWorld(normalize(sunVec * 10000.0));
+			 worldSunVec.xz *= 32.0;
 
 		#if MC_VERSION >= 12100 && defined END_FLASHES
-		vec3 worldEndFlashPosition = normalize(ToWorld(endFlashPosition * 10000000.0));
+		vec3 worldEndFlashPosition = ToWorld(normalize(endFlashPosition * 10000.0)) * 24.0;
 		#endif
 
 		#ifdef DISTANT_HORIZONS
@@ -353,10 +354,10 @@ void computeEndVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z0
 
 				getEndCloudSample(rayPos.xz, wind, attenuation, noise);
 
-				#if MC_VERSION >= 12100 && defined END_FLASHES
-				getEndCloudSample(rayPos.xz + worldSunVec.xz * 32.0 + worldEndFlashPosition.xz * 24.0 * endFlashIntensity, wind, attenuation + worldSunVec.y * 0.15, lightingNoise);
+				#ifdef END_FLASHES
+				getEndCloudSample(rayPos.xz + worldSunVec.xz + worldEndFlashPosition.xz * endFlashIntensity, wind, attenuation + worldSunVec.y * 0.15, lightingNoise);
 				#else
-				getEndCloudSample(rayPos.xz + worldSunVec.xz * 32.0, wind, attenuation + worldSunVec.y * 0.15, lightingNoise);
+				getEndCloudSample(rayPos.xz + worldSunVec.xz, wind, attenuation + worldSunVec.y * 0.15, lightingNoise);
 				#endif
 
 				float sampleLighting = 0.05 + clamp(noise - lightingNoise * (0.9 - scattering * 0.15), 0.0, 0.95) * (1.5 + scattering);
