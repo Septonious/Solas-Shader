@@ -171,10 +171,10 @@ vec3 getBlocklightColor(int id) {
     else if(id == 80) color = vec3(0.12, 0.1, 0.1);
 
 	//Crimson Fungus
-	else if(id == 81) color = vec3(1.1, 0.3, 0.1);
+	else if(id == 81) color = vec3(1.1, 0.3, 0.1) * 0.25;
 
 	//Warped Fungus
-	else if(id == 82) color = vec3(0.3, 0.6, 0.9) * 0.5;
+	else if(id == 82) color = vec3(0.3, 0.6, 0.9) * 0.25;
 
 	//Copper Torches, Lanterns, Etc
 	else if(id == 83 || id == 84) color = vec3(CTL_R, CTL_G, CTL_B) * CTL_I;

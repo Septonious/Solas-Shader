@@ -94,6 +94,7 @@ void generateIPBR(inout vec4 albedo, in vec3 worldPos, in vec3 viewPos, inout ve
     #include "/lib/pbr/entities/experience_bottle.glsl"
     #include "/lib/pbr/entities/experience_orb.glsl"
     #include "/lib/pbr/entities/glow_squid.glsl"
+    #include "/lib/pbr/entities/hoglin.glsl"
     #include "/lib/pbr/entities/magma_cube.glsl"
     #include "/lib/pbr/entities/witch.glsl"
     #include "/lib/pbr/entities/metals.glsl"
