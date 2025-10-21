@@ -241,9 +241,10 @@ void main() {
 	//Reflections
 	#ifdef WATER_REFLECTIONS
 	if (water > 0.5 || tintedGlass > 0.5) {
-		fresnel = pow3(fresnel);
-		getReflection(albedo, viewPos, nViewPos, newNormal, fresnel * 0.85 + 0.15, lightmap.y);
-		albedo.a = mix(albedo.a, 1.0, fresnel);
+		float snellWindow = clamp(pow4(length(worldPos.xz) * 0.05), 0.05 + float(isEyeInWater == 0) * 0.95, 1.0);
+		float fresnel = clamp(1.0 + dot(normalize(normal), nViewPos), 0.0, 1.0) * snellWindow;
+		getReflection(albedo, viewPos, nViewPos, newNormal, fresnel, lightmap.y);
+		albedo.a = mix(albedo.a * snellWindow, 1.0, fresnel);
 	}
 	#endif
 

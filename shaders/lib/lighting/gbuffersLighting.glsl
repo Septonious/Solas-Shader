@@ -54,7 +54,7 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
             lightVolume = texture3D(floodfillSampler, voxelSamplePos).rgb;
         }
         voxelLighting = pow(lightVolume, vec3(1.0 / FLOODFILL_RADIUS));
-        voxelLighting *= sqrt(length(max(vec3(0.0), voxelLighting - vec3(0.02)))) * 2.0;
+        //voxelLighting *= sqrt(length(max(vec3(0.0), voxelLighting - vec3(0.02)))) * 2.0;
 
         #ifdef GBUFFERS_ENTITIES
         voxelLighting += pow16(lightmap.x) * blockLightCol;

@@ -122,7 +122,7 @@ void main() {
 		if (distort.xy != vec2(0.0)) {
 			float fovScale = gbufferProjection[1][1] / 1.37;
 
-			distort = decodeNormal(distort.xy) * REFRACTION_STRENGTH;
+			distort = decodeNormal(distort.xy) * REFRACTION_STRENGTH * (1.0 + length(viewPos.y) * float(isEyeInWater == 1));
 			distort.xy *= vec2(1.0 / aspectRatio, 1.0) * fovScale / max(length(viewPos.xyz), 8.0);
 
 			vec2 newCoord = clamp(texCoord + distort.xy, 0.0, 1.0);
