@@ -112,11 +112,11 @@ vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.
 // Main //
 void main() {
 	vec4 albedoTexture = texture2D(texture, texCoord);
-	if (albedoTexture.a <= 0.00001) discard;
+
 	vec4 albedo = albedoTexture * color;
 		 albedo.a *= albedo.a;
 
-	if (albedo.r < 0.29 && albedo.g < 0.45 && albedo.b > 0.75) discard;
+
 
     vec2 lightmap = clamp(lmCoord, vec2(0.0), vec2(1.0));
     vec3 newNormal = normal;
@@ -172,9 +172,9 @@ void main() {
 
     Fog(albedo.rgb, viewPos, worldPos, atmosphereColor, 0.0);
 
-	/* DRAWBUFFERS:03 */
+	/* DRAWBUFFERS:01 */
 	gl_FragData[0] = albedo;
-	gl_FragData[1].a = 1.0;;
+	gl_FragData[1] = vec4(0.0, 0.0, 0.0, 1.0);
 }
 
 #endif
