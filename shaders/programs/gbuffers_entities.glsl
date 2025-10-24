@@ -174,18 +174,6 @@ flat out int mat;
 // Uniforms //
 uniform int entityId;
 
-#ifdef TAA
-uniform float viewWidth, viewHeight;
-#endif
-
-uniform mat4 gbufferModelView;
-uniform mat4 gbufferModelViewInverse;
-
-// Includes //
-#ifdef TAA
-#include "/lib/antialiasing/jitter.glsl"
-#endif
-
 // Main //
 void main() {
 	texCoord = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;
@@ -200,14 +188,7 @@ void main() {
     mat = int(entityId);
 
 	//Position
-	vec4 position = gbufferModelViewInverse * gl_ModelViewMatrix * gl_Vertex;
-
-	gl_Position = gl_ProjectionMatrix * gbufferModelView * position;
-
-	//TAA jittering
-    #ifdef TAA
-	gl_Position.xy = TAAJitter(gl_Position.xy, gl_Position.w);
-    #endif
+	gl_Position = ftransform();
 }
 
 #endif

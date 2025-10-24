@@ -241,7 +241,7 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
     sceneLighting = mix(sceneLighting, endFlashCol, 0.125 * endFlashDirection * endFlashDirection * endFlashIntensity);
     #endif
     #elif defined NETHER
-    vec3 sceneLighting = pow(netherColSqrt, vec3(0.75)) * 0.05;
+    vec3 sceneLighting = pow(netherColSqrt, vec3(0.75)) * 0.025;
     #endif
 
     //Lightning Flash

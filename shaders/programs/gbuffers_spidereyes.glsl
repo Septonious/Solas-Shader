@@ -30,16 +30,6 @@ void main() {
 out vec4 color;
 out vec2 texCoord;
 
-// Uniforms //
-#ifdef TAA
-uniform float viewWidth, viewHeight;
-#endif
-
-// Includes //
-#ifdef TAA
-#include "/lib/antialiasing/jitter.glsl"
-#endif
-
 // Main //
 void main() {
 	texCoord = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;
@@ -47,11 +37,6 @@ void main() {
 	color = gl_Color;
 
 	gl_Position = ftransform();
-
-	//TAA jittering
-    #ifdef TAA
-	gl_Position.xy = TAAJitter(gl_Position.xy, gl_Position.w);
-    #endif
 }
 
 #endif

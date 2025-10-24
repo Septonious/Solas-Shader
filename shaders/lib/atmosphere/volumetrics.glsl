@@ -16,7 +16,6 @@ float getNetherFogSample(vec3 fogPos) {
 
     float cloudyNoise = mix(n3da, n3db, fract(fogPos.y * 0.1));
           cloudyNoise = max(cloudyNoise - 0.5, 0.0);
-          cloudyNoise *= 1.0 + pow3(cloudyNoise) * 64.0;
     return cloudyNoise;
 }
 #endif
@@ -263,7 +262,7 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
             #ifdef NETHER_SMOKE
             if (lWorldPos < 128.0) {
                 float fogSample = getNetherFogSample(rayPos * NETHER_SMOKE_FREQUENCY + wind2 * NETHER_SMOKE_SPEED);
-                vlSample += netherColSqrt * netherColSqrt * netherColSqrt * netherColSqrt * fogSample * 64.0;
+                vlSample += netherColSqrt * netherColSqrt * netherColSqrt * netherColSqrt * fogSample * (1.0 + fogSample) * 32.0;
             }
             #endif
 

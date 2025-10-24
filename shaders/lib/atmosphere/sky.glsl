@@ -10,7 +10,7 @@ vec3 getAtmosphere(vec3 viewPos) {
     float VoSClamped = clamp(VoS, 0.0, 1.0);
     float VoUClamped = clamp(VoU, 0.0, 1.0);
 
-    float skyDensity = exp(-(1.0 - pow(1.0 - max(VoU, 0.0), 1.5 - VoL * 0.75)) / 1.50);
+    float skyDensity = exp(-(1.0 - pow(1.0 - max(VoU, 0.0), 2.0 - sunVisibility * 0.5 - VoL * 0.75)) / 1.50);
 
     //Fake light scattering
     float mieScattering = pow16(VoSClamped);

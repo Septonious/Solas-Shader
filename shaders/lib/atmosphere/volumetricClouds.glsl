@@ -8,7 +8,7 @@ float texture2DShadow(sampler2D shadowtex, vec3 shadowPos) {
 void getDynamicWeather(inout float speed, inout float amount, inout float frequency, inout float thickness, inout float density, inout float detail, inout float height, inout float scale) {
 	#ifdef VC_DYNAMIC_WEATHER
 	int day = int((worldDay * 24000 + worldTime) / 24000);
-	float dayAmountFactor = abs(day % 7 / 2 - 0.5) * 0.5;
+	float dayAmountFactor = abs(day % 7 / 2 - 0.5) * 0.35;
 	float dayDensityFactor = abs(day % 9 / 4 - day % 2);
 	float dayFrequencyFactor = 1.0 + abs(day % 6 / 4 - day % 2) * 0.4;
     float dayScaleFactor = (day % 5 - day % 8 + day % 3) * 0.5;
@@ -207,7 +207,7 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z0, f
 									 sunVisibility * (1.0 - wetness));
             vec3 cloudLightColor = mix(lightCol, lightCol * nSkyColor * 2.0, timeBrightnessSqrt * (0.5 - wetness * 0.5));
 				 cloudLightColor *= 0.5 + timeBrightnessSqrt * 0.5 + moonVisibility * 0.5;
-				 cloudLightColor *= 1.0 + scattering * shadowFade * 5.0;
+				 cloudLightColor *= 1.0 + scattering * shadowFade * 3.0;
 			vec3 cloudColor = mix(cloudAmbientColor, cloudLightColor, cloudLighting) * mix(vec3(1.0), biomeColor, isSpecificBiome * sunVisibility);
 			     cloudColor = mix(cloudColor, atmosphereColor * length(cloudColor) * 0.5, wetness * 0.6);
                  #ifdef AURORA_LIGHTING_INFLUENCE

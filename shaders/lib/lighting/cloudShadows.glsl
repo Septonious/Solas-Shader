@@ -1,7 +1,7 @@
 void getDynamicWeather(inout float speed, inout float amount, inout float frequency, inout float thickness, inout float density, inout float height, inout float scale) {
 	#ifdef VC_DYNAMIC_WEATHER
 	int day = int((worldDay * 24000 + worldTime) / 24000);
-	float dayAmountFactor = abs(day % 7 / 2 - 0.5) * 0.5;
+	float dayAmountFactor = abs(day % 7 / 2 - 0.5) * 0.35;
 	float dayDensityFactor = abs(day % 9 / 4 - day % 2);
 	float dayFrequencyFactor = 1.0 + abs(day % 6 / 4 - day % 2) * 0.4;
     float dayScaleFactor = (day % 5 - day % 8 + day % 3) * 0.5;
