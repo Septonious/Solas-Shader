@@ -1,3 +1,3 @@
 if (currentRenderedItemId == 10001) {
-    emission = 0.25 + lAlbedo * 0.25;
+    emission = 0.125 + lAlbedo * 0.125;
 }

@@ -232,7 +232,13 @@ option.GENERATED_EMISSION=Встроенное Свечение
 option.GENERATED_EMISSION.comment=Автоматически определяет светящиеся элементы блоков и существ. §c[-]§r Не рекомендуется использовать со сторонними ресурспаками.
 option.EMISSIVE_FLOWERS=Светящиеся Цветы
 option.EMISSIVE_ORES=Светящиеся Руды
-option.EMISSIVE_CONCRETE=Светящийся Бетон
+option.EMISSIVE_EMERALD_ORE=Светящаяся Изумрудная Руда
+option.EMISSIVE_DIAMOND_ORE=Светящаяся Алмазная Руда
+option.EMISSIVE_LAPIS_ORE=Светящаяся Лазуритовая Руда
+option.EMISSIVE_REDSTONE_ORE=Светящаяся Редстоуновая Руда
+option.EMISSIVE_COPPER_ORE=Светящаяся Медная Руда
+option.EMISSIVE_GOLD_ORE=Светящаяся Золотая Руда
+option.EMISSIVE_IRON_ORE=Светящаяся Железная Руда
 option.EMISSIVE_ARMOR_TRIMS=Светящиеся Вставки Брони
 option.EMISSION_STRENGTH=Яркость Свечения
 

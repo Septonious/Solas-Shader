@@ -242,7 +242,13 @@ option.GENERATED_EMISSION=Generated Emission
 option.GENERATED_EMISSION.comment=Automatically determines emissive blocks
 option.EMISSIVE_FLOWERS=Emissive Flowers
 option.EMISSIVE_ORES=Emissive Ores
-option.EMISSIVE_CONCRETE=Emissive Concrete
+option.EMISSIVE_EMERALD_ORE=Emissive Emerald Ore
+option.EMISSIVE_DIAMOND_ORE=Emissive Diamond Ore
+option.EMISSIVE_LAPIS_ORE=Emissive Lapis Ore
+option.EMISSIVE_REDSTONE_ORE=Emissive Redstone Ore
+option.EMISSIVE_COPPER_ORE=Emissive Copper Ore
+option.EMISSIVE_GOLD_ORE=Emissive Gold Ore
+option.EMISSIVE_IRON_ORE=Emissive Iron Ore
 option.EMISSIVE_ARMOR_TRIMS=Emissive Armor Trims
 option.EMISSION_STRENGTH=Emission Strength
 
