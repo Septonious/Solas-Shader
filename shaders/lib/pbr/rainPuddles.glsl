@@ -1,19 +1,17 @@
 float GetPuddles(vec3 worldPos, vec2 coord, float skylight, float NoU, float wetness) {
     if (wetness < 0.001) return 0.0;
 
-	worldPos = (worldPos + cameraPosition) * 0.005;
+    vec3 noisePos = (worldPos + cameraPosition) * 0.005;
 
     #ifdef PBR
     float height = texture2DGradARB(normals, coord, dcdx, dcdy).a;
           height = mix(1.0, height, PARALLAX_DEPTH);
           height = smoothstep(1.0, 0.95, height) * 0.1 - 0.05;
+          noisePos += height;
     #endif
-    float noise = texture2D(noisetex, worldPos.xz * 0.500).r * 0.75;
-		  noise*= texture2D(noisetex, worldPos.xz * 0.250).r * 0.50;
-          #ifdef PBR
-          noise += height;
-          #endif
-          noise = noise * wetness;
+    float noise = texture2D(noisetex, noisePos.xz * 0.500).g * 0.3;
+		  noise += texture2D(noisetex, noisePos.xz * 0.250).r * 0.2;
+          noise = pow2(noise) * wetness;
 
 	return noise * clamp(skylight * 32.0 - 31.0, 0.0, 1.0) * clamp(NoU, 0.0, 1.0);
 }
