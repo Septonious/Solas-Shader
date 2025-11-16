@@ -1,6 +1,6 @@
-float getAuroraNoise(vec2 coord) {
-	float noise = texture2D(noisetex, coord * 0.0050 + frameTimeCounter * 0.00004).b * 3.0;
-		  noise+= texture2D(noisetex, coord * 0.0025 - frameTimeCounter * 0.00008).b * 3.0;
+float getAuroraNoise(vec2 coord, float kpIndex) {
+	float noise = texture2D(noisetex, coord * 0.005 + frameTimeCounter * 0.00004).b * 2.0;
+		  noise+= texture2D(noisetex, coord * 0.1 - frameTimeCounter * 0.00008).r * (2.5 + kpIndex);
 
 	return max(1.0 - 2.0 * abs(noise - 3.0), 0.0);
 }
@@ -25,7 +25,7 @@ void drawAurora(inout vec3 color, in vec3 worldPos, in float VoU, in float caveF
     #endif
 
 	kpIndex = clamp(kpIndex, 0.0, 9.0) / 9.0;
-	visibility *= kpIndex;
+	visibility *= kpIndex + pow4(kpIndex) * 0.5;
 
 	if (visibility > 0.1) {
 		vec3 aurora = vec3(0.0);
@@ -40,28 +40,28 @@ void drawAurora(inout vec3 color, in vec3 worldPos, in float VoU, in float caveF
 		float sampleStep = 1.0 / samples;
 		float currentStep = dither * sampleStep;
 
-		float pulse = sin(frameTimeCounter * 0.25); //Aurora tends to get brighter and dimmer when plasma arrives or fades away
-		float tiltFactor = 0.05 + (1.0 - kpIndex) * 0.2; //Tilt factor. The stronger the geomagnetic storm, the less Aurora tilts towards the North
+		float pulse = clamp(cos(sin(frameTimeCounter * 0.15) * 3.0 + frameTimeCounter * 0.35), 0.0, 1.0); //Aurora tends to get brighter and dimmer when plasma arrives or fades away
+		float tiltFactor = 0.25 - kpIndex * 0.15; //Tilt factor. The stronger the geomagnetic storm, the less Aurora tilts towards the North
 
 		for (int i = 0; i < samples; i++) {
 			vec3 planeCoord = worldPos * ((32.0 - kpIndex * 8.0 + currentStep * (12.0 + abs(pulse * 6.0) + kpIndex * 4.0) - clamp(cameraPosition.y * 0.004, 0.0, 9.0)) / worldPos.y) * 0.025;
 				 planeCoord.z += planeCoord.y * tiltFactor;
 				 planeCoord.x += planeCoord.y * tiltFactor;
 
-			if (planeCoord.x + planeCoord.z < kpIndex) {
+			if (planeCoord.x + planeCoord.z < kpIndex * kpIndex * 5.0) {
 				vec2 offsetNoiseCoord = planeCoord.xz + cameraPosition.xz * 0.00005;
 				 planeCoord *= 0.5 + texture2D(noisetex, (offsetNoiseCoord + frameTimeCounter * 0.0001) * 0.05).r * 0.5;
 
 				vec2 coord = planeCoord.xz + cameraPosition.xz * 0.0001;
-				float noise = getAuroraNoise(coord + frameTimeCounter * 0.0008);
+				float noise = getAuroraNoise(coord + frameTimeCounter * 0.0008, kpIndex);
 				
 				if (noise > 0) {
 					float fade = min(abs(planeCoord.x + planeCoord.z), 1.0);
 					float noiseBase = noise;
 					float auroraDistanceFactor = max(1.0 - length(planeCoord.xz) * 0.25, 0.0);
 
-					noise *= texture2D(noisetex, coord * 0.125 + frameTimeCounter * 0.0008).b * (0.4 - pulse * 0.1) + (0.6 + pulse * 0.1);
-					noise *= texture2D(noisetex, coord * 0.250 - frameTimeCounter * 0.0010).b * (0.5 - pulse * 0.2) + (0.5 + pulse * 0.2);
+					noise *= texture2D(noisetex, coord * 0.125 + frameTimeCounter * 0.0008).b * (0.5 - pulse * 0.1) + (0.5 + pulse * 0.1);
+					noise *= texture2D(noisetex, coord * 0.250 - frameTimeCounter * 0.0016).b * (0.6 - pulse * 0.2) + (0.4 + pulse * 0.2);
 					noise *= noise * sampleStep * auroraDistanceFactor;
 					noiseBase *= sampleStep * auroraDistanceFactor;
 
@@ -72,7 +72,7 @@ void drawAurora(inout vec3 color, in vec3 worldPos, in float VoU, in float caveF
 					vec3 auroraColor2 = mix(vec3(0.3, 4.0, 0.7), vec3(1.9, 0.4, 3.7), pow(currentStep, 0.50));
 						 auroraColor2 *= exp2(-4.5 * i * sampleStep);
 
-					vec3 auroraColor = mix(auroraColor1, auroraColor2, pow3(colorMixer));
+					vec3 auroraColor = mix(auroraColor2, auroraColor1, pow2(colorMixer * kpIndex));
 					vec3 auroraBlurredColor = auroraColor * noiseBase;
 						 auroraColor *= noise;
 						 auroraColor *= 1.0 + length(auroraColor);

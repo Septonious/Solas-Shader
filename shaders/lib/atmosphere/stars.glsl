@@ -26,9 +26,10 @@ void drawStars(inout vec3 color, in vec3 worldPos, in float VoU, in float VoS, i
 		vec2 planeCoord0 = floor(planeCoord * 500.0 * amount) / (500.0 * amount);
 		vec2 planeCoord1 = floor(planeCoord * 1000.0 * amount) / (1000.0 * amount);
 
-		float stars = getNoise(planeCoord0 + 8.0);
-			  stars*= getNoise(planeCoord1 + 14.0);
-			  stars = clamp(stars - (0.825 - nebulaFactor * 0.125), 0.0, 1.0);
+		float starNoise = getNoise(planeCoord0 + 8.0);
+			  starNoise*= getNoise(planeCoord1 + 14.0);
+
+        float stars = clamp(starNoise - (0.825 - nebulaFactor * 0.125), 0.0, 1.0);
 			  stars *= stars * stars * 512.0;
 			  stars = clamp(stars, 0.0, 16.0);
 
@@ -38,7 +39,7 @@ void drawStars(inout vec3 color, in vec3 worldPos, in float VoU, in float VoS, i
 			color *= 1.0 + nebulaNoise;
 			stars *= 1.0 + nebulaNoise;
 		}
-		color += stars * lightNight * visibility * STAR_BRIGHTNESS;
+		color += (stars + pow2(max(starNoise - 0.95, 0.0)) * 2048.0) * lightNight * visibility * STAR_BRIGHTNESS;
 		#else
 		#ifdef END_BLACK_HOLE
 		float hole = pow(pow4(pow32(VoS)), END_BLACK_HOLE_SIZE);

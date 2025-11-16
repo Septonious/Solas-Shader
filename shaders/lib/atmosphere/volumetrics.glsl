@@ -206,7 +206,7 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
                     }
                     #endif
                     float lShadowCol = min(1.0, length(shadowCol * shadowCol * shadowCol * shadowCol * shadowCol * shadowCol));
-                    vlSample = clamp(shadow1 * shadowCol * shadowCol * mix(vec3(1.0), 32.0 * pow(waterColor, vec3(1.0 - lShadowCol * 0.5)) * lShadowCol, vec3(float(isEyeInWater == 1))) + shadow0 * vlCol * float(isEyeInWater == 0), 0.0, 1.0);
+                    vlSample = clamp(shadow1 * shadowCol * shadowCol * mix(vec3(0.5), 32.0 * pow(waterColor, vec3(1.0 - lShadowCol * 0.5)) * lShadowCol, vec3(float(isEyeInWater == 1))) + shadow0 * vlCol * float(isEyeInWater == 0), 0.0, 1.0);
                 }
 
                 //Crepuscular rays
@@ -260,9 +260,10 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
 
             //Nether Smoke
             #ifdef NETHER_SMOKE
-            if (lWorldPos < 128.0) {
+            if (lWorldPos < 128.0 && rayPos.y > 40.0 && rayPos.y < 255.0) {
                 float fogSample = getNetherFogSample(rayPos * NETHER_SMOKE_FREQUENCY + wind2 * NETHER_SMOKE_SPEED);
-                vlSample += netherColSqrt * netherColSqrt * netherColSqrt * netherColSqrt * fogSample * (1.0 + fogSample) * 32.0;
+                float fade = clamp(rayPos.y / 40.0, 0.0, 1.0) * (1.0 - clamp(rayPos.y / 255.0, 0.0, 1.0));
+                vlSample += netherColSqrt * netherColSqrt * netherColSqrt * netherColSqrt * fogSample * (1.0 + fogSample) * 16.0 * fade;
             }
             #endif
 
