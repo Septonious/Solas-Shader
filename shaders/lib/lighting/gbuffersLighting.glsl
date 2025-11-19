@@ -194,7 +194,7 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
 
         cloudShadow = noise * VC_OPACITY;
     }
-    shadow *= mix(1.0, cloudShadow, shadowFade);
+    shadow *= cloudShadow;
     #endif
 
     //Specular Highlight
