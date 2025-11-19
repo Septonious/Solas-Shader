@@ -1,6 +1,7 @@
 float getAuroraNoise(vec2 coord, float kpIndex) {
+    coord *= 1.0 - kpIndex * 0.4;
 	float noise = texture2D(noisetex, coord * 0.005 + frameTimeCounter * 0.00004).b * 2.0;
-		  noise+= texture2D(noisetex, coord * 0.1 - frameTimeCounter * 0.00008).r * (2.5 + kpIndex);
+		  noise+= texture2D(noisetex, coord * 0.100 - frameTimeCounter * 0.00008).r * (2.5 + kpIndex);
 
 	return max(1.0 - 2.0 * abs(noise - 3.0), 0.0);
 }
@@ -69,7 +70,7 @@ void drawAurora(inout vec3 color, in vec3 worldPos, in float VoU, in float caveF
 
 					vec3 auroraColor1 = mix(vec3(0.6, 4.0, 0.4), vec3(3.4, 0.1, 1.5), pow(currentStep, 0.25));
 						 auroraColor1 *= exp2(-3.0 * i * sampleStep);
-					vec3 auroraColor2 = mix(vec3(0.3, 4.0, 0.7), vec3(1.9, 0.4, 3.7), pow(currentStep, 0.50));
+					vec3 auroraColor2 = mix(vec3(0.3, 4.0, 0.7), vec3(1.9 + currentStep, 0.4, 3.7), sqrt(currentStep));
 						 auroraColor2 *= exp2(-4.5 * i * sampleStep);
 
 					vec3 auroraColor = mix(auroraColor2, auroraColor1, pow2(colorMixer * kpIndex));
