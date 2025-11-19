@@ -64,7 +64,7 @@ void getCloudShadow(vec2 rayPos, vec2 wind, float amount, float frequency, float
 	float perlinNoise = texture2D(noisetex, rayPos.xy + wind * 0.5).r;
 	float noiseBase = perlinNoise * 0.6 + worleyNoise * 0.4;
 
-	noise = noiseBase * 21.75;
+	noise = noiseBase * 21.5;
 	noise = max(noise - amount, 0.0) * (density * 0.25);
 	noise /= sqrt(noise * noise + 0.25);
     noise = clamp(exp(-noise), 0.0, 1.0);
