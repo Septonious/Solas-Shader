@@ -19,7 +19,7 @@ void drawSunMoon(inout vec3 color, in vec3 worldPos, in vec3 nViewPos, in float 
                 float ang = (fractTimeAngle + (cos(fractTimeAngle * 3.14159265358979) * -0.5 + 0.5 - fractTimeAngle) / 3.0) * 6.28318530717959;
                 vec3 newSunVec = normalize((gbufferModelView * vec4(vec3(-sin(ang), cos(ang) * sunRotationData) * 2000.0, 1.0)).xyz);
 
-                moon *= 0.05 + clamp(1.0 - max(pow24(pow32(dot(nViewPos, newSunVec))) - 0.4, 0.0) * 16.0, 0.0, 1.0);
+                moon *= 0.05 + clamp(1.0 - max(pow24(pow32(dot(nViewPos, newSunVec))) - 0.5, 0.0) * 16.0, 0.0, 1.0);
             }
         }
 

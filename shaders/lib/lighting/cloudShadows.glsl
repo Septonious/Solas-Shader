@@ -31,4 +31,5 @@ void getCloudShadow(vec2 rayPos, vec2 wind, float amount, float frequency, float
 	noise /= sqrt(noise * noise + 0.25);
     noise = clamp(exp(-noise), 0.0, 1.0);
 	noise *= noise * noise;
+    noise *= min(timeBrightness * timeBrightness + moonVisibility * moonVisibility, 1.0);
 }
