@@ -43,7 +43,7 @@ void calculateVLParameters(inout float intensity, inout float distanceFactor, in
 			  depthSample = pow4(depthSample);
 		averageDepth += depthSample * 0.1;
 	}
-    float closedSpaceFactor = 1.0 - min(1.0, pow8(eBS) * 0.5 + averageDepth * (0.85 - eBS * eBS * 0.3));
+    float closedSpaceFactor = 1.0 - min(1.0, pow8(eBS) * 0.5 + averageDepth * (0.7 - eBS * eBS * 0.35));
 
     intensity = (sunVisibility * (1.0 - VL_STRENGTH_RATIO) + VoL * VL_STRENGTH_RATIO) * (1.0 - timeBrightness) + VoLPositive * VoLPositive * timeBrightness;
     intensity = mix(intensity * timeIntensityFactor, timeIntensityFactor * 2.0, closedSpaceFactor);
@@ -55,8 +55,8 @@ void calculateVLParameters(inout float intensity, inout float distanceFactor, in
     #endif
 
     intensity *= VL_STRENGTH * shadowFade * caveFactor;
-    samplePersistence *= 1.0 - closedSpaceFactor * 0.25 - float(isEyeInWater == 1) * 0.25;
-    distanceFactor = float(isEyeInWater) * 5.0;
+    samplePersistence *= 1.0 - closedSpaceFactor * 0.35 - float(isEyeInWater == 1) * 0.25;
+    distanceFactor = float(isEyeInWater) * 5.0 + closedSpaceFactor * 2.0;
 }
 #endif
 
@@ -113,7 +113,7 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
     calculateVLParameters(vlIntensity, vlDistanceFactor, vlSamplePersistence, VoU, VoL);
 
     vec3 nSkyColor = normalize(skyColor + 0.000001) * mix(vec3(1.0), biomeColor, sunVisibility * isSpecificBiome);
-    vec3 vlCol = mix(lightCol, nSkyColor, timeBrightness * 0.75);
+    vec3 vlCol = mix(lightCol, nSkyColor, timeBrightness * 0.75) * 0.1;
     #endif
 
     #ifdef NETHER_SMOKE
@@ -121,7 +121,7 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
     #endif
 
     //LPV Fog Variables
-    float lpvFogIntensity = LPV_FOG_STRENGTH * (5.0 - float(isEyeInWater == 1) * 4.0);
+    float lpvFogIntensity = LPV_FOG_STRENGTH * (3.0 - float(isEyeInWater == 1) * 2.0);
     #ifdef OVERWORLD
           lpvFogIntensity *= (2.0 - eBS * timeBrightnessSqrt - caveFactor);
     #elif defined NETHER
@@ -206,7 +206,7 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
                     }
                     #endif
                     float lShadowCol = min(1.0, length(shadowCol * shadowCol * shadowCol * shadowCol * shadowCol * shadowCol));
-                    vlSample = clamp(shadow1 * shadowCol * shadowCol * mix(vec3(0.5), 32.0 * pow(waterColor, vec3(1.0 - lShadowCol * 0.5)) * lShadowCol, vec3(float(isEyeInWater == 1))) + shadow0 * vlCol * float(isEyeInWater == 0), 0.0, 1.0);
+                    vlSample = clamp(shadow1 * shadowCol * shadowCol * mix(vec3(0.025), 32.0 * pow(waterColor, vec3(1.0 - lShadowCol * 0.5)) * lShadowCol, vec3(float(isEyeInWater == 1))) + shadow0 * vlCol * float(isEyeInWater == 0), 0.0, 1.0);
                 }
 
                 //Crepuscular rays

@@ -32,7 +32,7 @@ vec3 getAtmosphere(vec3 viewPos) {
          daySky = mix(daySky, scattering1 * (1.0 + timeBrightnessSqrt + timeBrightness), scattering1Mixer);
          daySky = mix(daySky, pow(lightColSqrt, vec3(1.5 - timeBrightnessSqrt * 0.5)) * (2.0 + mieScattering), scattering2Mixer);
 
-    vec3 nightSky = mix(lightNight * 0.65, vec3(0.04, 0.11, 0.25), VoUClamped * 0.25);
+    vec3 nightSky = mix(lightNight * 0.6, vec3(0.04, 0.11, 0.25), VoUClamped * 0.25);
     vec3 atmosphere = mix(nightSky, daySky, sunVisibility);
          atmosphere *= 1.0 - wetness * 0.125;
          atmosphere *= skyDensity;

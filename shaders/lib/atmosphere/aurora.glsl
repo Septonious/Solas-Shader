@@ -1,7 +1,7 @@
 float getAuroraNoise(vec2 coord, float kpIndex) {
     coord *= 1.0 - kpIndex * 0.4;
-	float noise = texture2D(noisetex, coord * 0.005 + frameTimeCounter * 0.00004).b * 2.0;
-		  noise+= texture2D(noisetex, coord * 0.100 - frameTimeCounter * 0.00008).r * (2.5 + kpIndex);
+	float noise = texture2D(noisetex, coord * 0.005 + frameTimeCounter * (0.00008 + kpIndex * 0.00006)).b * 2.0;
+		  noise+= texture2D(noisetex, coord * 0.100 - frameTimeCounter * (0.00016 + kpIndex * 0.00012)).r * (2.5 + kpIndex);
 
 	return max(1.0 - 2.0 * abs(noise - 3.0), 0.0);
 }
@@ -61,8 +61,8 @@ void drawAurora(inout vec3 color, in vec3 worldPos, in float VoU, in float caveF
 					float noiseBase = noise;
 					float auroraDistanceFactor = max(1.0 - length(planeCoord.xz) * 0.25, 0.0);
 
-					noise *= texture2D(noisetex, coord * 0.125 + frameTimeCounter * 0.0008).b * (0.5 - pulse * 0.1) + (0.5 + pulse * 0.1);
-					noise *= texture2D(noisetex, coord * 0.250 - frameTimeCounter * 0.0016).b * (0.6 - pulse * 0.2) + (0.4 + pulse * 0.2);
+					noise *= texture2D(noisetex, coord * 0.125 + frameTimeCounter * 0.0012).b * (0.5 - pulse * 0.1) + (0.5 + pulse * 0.1);
+					noise *= texture2D(noisetex, coord * 0.250 - frameTimeCounter * 0.0024).b * (0.6 - pulse * 0.2) + (0.4 + pulse * 0.2);
 					noise *= noise * sampleStep * auroraDistanceFactor;
 					noiseBase *= sampleStep * auroraDistanceFactor;
 
