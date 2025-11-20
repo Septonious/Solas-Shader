@@ -246,18 +246,22 @@ void main() {
 	float doParallax = 0.0;
 
 	#ifdef SELF_SHADOW
-	float pNoL = dot(newNormal, lightVec);
-
 	#ifdef OVERWORLD
+    float pNoL = dot(newNormal, lightVec);
 	doParallax = float(lightmap.y > 0.0 && pNoL > 0.0);
 	#endif
 
 	#ifdef END
+    float pNoL = dot(newNormal, sunVec);
 	doParallax = float(pNoL > 0.0);
 	#endif
 	
 	if (doParallax > 0.5 && viewLength < 1.0) {
+        #ifdef OVERWORLD
 		parallaxShadow = getParallaxShadow(surfaceDepth, parallaxFade, newCoord, lightVec, tbnMatrix);
+        #else
+        parallaxShadow = getParallaxShadow(surfaceDepth, parallaxFade, newCoord, sunVec, tbnMatrix);
+        #endif
 	} else {
 		parallaxShadow = 1.0;
 	}
