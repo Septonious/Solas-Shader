@@ -172,7 +172,7 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z0, f
 
 			//Final color calculations
             #ifdef AURORA_LIGHTING_INFLUENCE
-            float kpIndex = abs(worldDay % 9 - worldDay % 4) + int(worldDay == 0) * 9; //Determines the brightness of Aurora, its widespreadness across the sky and tilt factor
+            float kpIndex = abs(worldDay % 9 - worldDay % 4) + int(worldDay == 0) * 5; //Determines the brightness of Aurora, its widespreadness across the sky and tilt factor
             float auroraVisibility = pow6(1.0 - sunVisibility) * (1.0 - wetness) * caveFactor * AURORA_BRIGHTNESS;
 
             #ifdef OVERWORLD
@@ -207,7 +207,7 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z0, f
 			vec3 cloudColor = mix(cloudAmbientColor, cloudLightColor, cloudLighting) * mix(vec3(1.0), biomeColor, isSpecificBiome * sunVisibility);
 			     cloudColor = mix(cloudColor, atmosphereColor * length(cloudColor) * 0.5, wetness * 0.6);
                  #ifdef AURORA_LIGHTING_INFLUENCE
-                 cloudColor = mix(cloudColor, mix(vec3(0.4, 1.5, 0.6), vec3(3.4, 0.1, 1.5), kpIndex * kpIndex * 0.5), auroraVisibility * cloudLighting * cloudLighting * 0.05);
+                 cloudColor = mix(cloudColor, mix(vec3(0.4, 1.5, 0.6), vec3(3.4, 0.1, 1.5), kpIndex * kpIndex * 0.5), auroraVisibility * cloudLighting * cloudLighting * 0.035);
                  #endif
 
 			float opacity = clamp(mix(VC_OPACITY - wetness * 0.2, 1.0, (max(0.0, cameraPosition.y) / height)), 0.0, 1.0);

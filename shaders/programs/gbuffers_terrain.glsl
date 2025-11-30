@@ -22,6 +22,10 @@ in vec4 vTexCoord, vTexCoordAM;
 uniform int isEyeInWater;
 uniform int frameCounter;
 
+#ifdef AURORA_LIGHTING_INFLUENCE
+uniform int moonPhase;
+#endif
+
 #ifdef VC_SHADOWS
 uniform int worldDay, worldTime;
 #endif

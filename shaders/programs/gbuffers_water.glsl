@@ -20,6 +20,10 @@ flat in int mat;
 uniform int isEyeInWater;
 uniform int frameCounter;
 
+#ifdef AURORA_LIGHTING_INFLUENCE
+uniform int moonPhase;
+#endif
+
 #ifdef DISTANT_HORIZONS
 uniform int dhRenderDistance;
 #endif

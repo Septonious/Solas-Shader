@@ -14,6 +14,10 @@ uniform int isEyeInWater;
 uniform int frameCounter;
 uniform int blockEntityId;
 
+#ifdef AURORA_LIGHTING_INFLUENCE
+uniform int moonPhase;
+#endif
+
 #ifdef VC_SHADOWS
 uniform int worldDay, worldTime;
 #endif

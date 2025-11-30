@@ -222,9 +222,33 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
 
     //Main color mixing
     #ifdef OVERWORLD
+    #ifdef AURORA_LIGHTING_INFLUENCE
+    float kpIndex = abs(worldDay % 9 - worldDay % 4) + int(worldDay == 0) * 5; //Determines the brightness of Aurora, its widespreadness across the sky and tilt factor
+    float auroraVisibility = pow6(1.0 - sunVisibility) * (1.0 - wetness) * caveFactor * AURORA_BRIGHTNESS;
+
+    #ifdef OVERWORLD
+    #ifdef AURORA_FULL_MOON_VISIBILITY
+    kpIndex += float(moonPhase == 0) * 3;
+    #endif
+
+    #ifdef AURORA_COLD_BIOME_VISIBILITY
+    kpIndex += isSnowy * 5;
+    #endif
+    #endif
+
+    #ifdef AURORA_ALWAYS_VISIBLE
+    auroraVisibility = 1.0;
+    kpIndex = 9.0;
+    #endif
+
+    kpIndex = clamp(kpIndex, 0.0, 9.0) / 9.0;
+    auroraVisibility *= kpIndex + pow4(kpIndex) * 0.5;
+    lightCol *= vec3(0.5) + 0.5 * mix(vec3(0.4, 1.5, 0.6), vec3(3.4, 0.1, 1.5), kpIndex * kpIndex * 0.5) * auroraVisibility;
+    #endif
+
     ambientCol *= 0.05 + lightmap.y * lightmap.y * 0.95;
     ambientCol *= 1.0 - pow(VoL, 1.5) * (0.5 - wetness * 0.5) * sunVisibility;
-    lightCol *= 1.0 + specularHighlight * shadowFade;
+    lightCol *= 1.0 + specularHighlight * shadowFade * (0.5 + sunVisibility * 0.5);
 
     float rainFactor = 1.0 - wetness * 0.5;
 
