@@ -30,6 +30,8 @@ uniform float viewWidth, viewHeight;
 #ifndef MANUAL_FOCUS
 uniform float centerDepthSmooth;
 #else
+uniform float far, near;
+
 float centerDepthSmooth = ((DOF_FOCUS - near) * far) / ((far - near) * DOF_FOCUS);
 #endif
 #endif

@@ -160,7 +160,7 @@ void main() {
 
 	if (water > 0.5) {
 		#ifdef VANILLA_WATER
-		albedo.rgb *= albedoTexture.rgb * (1.0 + pow4(lAlbedo));
+		albedo.rgb *= albedoTexture.rgb;
 		albedo.a = WATER_A;
 		#else
 		//Water Light Absorption & Scattering
