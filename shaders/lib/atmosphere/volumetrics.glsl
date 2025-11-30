@@ -206,7 +206,7 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
                     }
                     #endif
                     float lShadowCol = min(1.0, length(shadowCol * shadowCol * shadowCol * shadowCol * shadowCol * shadowCol));
-                    vlSample = clamp(shadow1 * shadowCol * shadowCol * mix(vec3(0.025), 32.0 * pow(waterColor, vec3(1.0 - lShadowCol * 0.5)) * lShadowCol, vec3(float(isEyeInWater == 1))) + shadow0 * vlCol * float(isEyeInWater == 0), 0.0, 1.0);
+                    vlSample = clamp(shadow1 * shadowCol * shadowCol * mix(vec3(0.025), pow(waterColor, vec3(1.0 - lShadowCol * 0.5)) * lShadowCol, vec3(float(isEyeInWater == 1))) + shadow0 * vlCol * float(isEyeInWater == 0), 0.0, 1.0);
                 }
 
                 //Crepuscular rays
