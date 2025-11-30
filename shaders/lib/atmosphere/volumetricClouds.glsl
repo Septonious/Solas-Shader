@@ -172,7 +172,7 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z0, f
 
 			//Final color calculations
             #ifdef AURORA_LIGHTING_INFLUENCE
-            float kpIndex = abs(worldDay % 9 - worldDay % 4); //Determines the brightness of Aurora, its widespreadness across the sky and tilt factor
+            float kpIndex = abs(worldDay % 9 - worldDay % 4) + int(worldDay == 0) * 9; //Determines the brightness of Aurora, its widespreadness across the sky and tilt factor
             float auroraVisibility = pow6(1.0 - sunVisibility) * (1.0 - wetness) * caveFactor * AURORA_BRIGHTNESS;
 
             #ifdef OVERWORLD

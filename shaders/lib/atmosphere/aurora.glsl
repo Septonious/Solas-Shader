@@ -7,7 +7,7 @@ float getAuroraNoise(vec2 coord, float kpIndex) {
 }
 
 void drawAurora(inout vec3 color, in vec3 worldPos, in float VoU, in float caveFactor) {
-	float kpIndex = abs(worldDay % 9 - worldDay % 4); //Determines the brightness of Aurora, its widespreadness across the sky and tilt factor
+	float kpIndex = abs(worldDay % 9 - worldDay % 4) + int(worldDay == 0) * 9; //Determines the brightness of Aurora, its widespreadness across the sky and tilt factor
 	float visibility = pow6(1.0 - sunVisibility) * (1.0 - wetness) * caveFactor * AURORA_BRIGHTNESS;
 
 	#ifdef OVERWORLD
