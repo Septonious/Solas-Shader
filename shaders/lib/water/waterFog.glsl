@@ -22,7 +22,7 @@ vec4 getWaterFog(inout vec3 colorMult, vec3 viewPos) {
 			float VoL = dot(normalize(viewPos), lightVec);
 			float glare = clamp(VoL * 0.5 + 0.5, 0.0, 1.0) * shadowFade; 
 				glare = 0.03 / (1.0 - 0.97 * glare) - 0.03;
-			waterFogColor *= 1.0 + (0.5 + glare * 32.0 * timeBrightness) * caveFactor;
+			waterFogColor *= 1.0 + (0.5 + glare * 32.0 * timeBrightness * eBS) * caveFactor;
 		}
 
 		waterFogColor *= 0.25 + eBS * 0.75;
