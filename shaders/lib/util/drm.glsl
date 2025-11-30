@@ -1,4 +1,4 @@
-#define SOLAS_BY_SEPTONIOUS
+#define SOLAS_BY_SEPTONIOUS 1
 
 //Solas Shader is a Minecraft shaderpack created by Septonious
 //It has only two official download sources: CurseForge and Modrinth
