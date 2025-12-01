@@ -4,7 +4,7 @@ uniform vec3 relativeEyePosition;
 vec3 getHandLightColor(inout vec3 blockLighting, in vec3 pos) {
     vec3 lighting = vec3(0.0);
 
-    if ((heldItemId >= 1 && heldItemId <= 60) || (heldItemId2 >= 1 && heldItemId2 <= 60)) {
+    if ((heldItemId >= 1 && heldItemId <= 83) || (heldItemId2 >= 1 && heldItemId2 <= 83)) {
         float handlight = clamp((32.0 - length(pos) * 5.0) * 0.015, 0.0, 1.0);
 
         vec3 color1 = getBlocklightColor(heldItemId);
