@@ -21,9 +21,11 @@ flat in int mat;
 uniform int isEyeInWater;
 uniform int frameCounter;
 
-#ifdef DISTANT_HORIZONS
-uniform int dhRenderDistance;
+#ifdef AURORA_LIGHTING_INFLUENCE
+uniform int moonPhase;
 #endif
+
+uniform int dhRenderDistance;
 
 #ifdef VC_SHADOWS
 uniform int worldDay, worldTime;
@@ -31,9 +33,7 @@ uniform int worldDay, worldTime;
 
 uniform float frameTimeCounter;
 uniform float far, near;
-#ifdef DISTANT_HORIZONS
 uniform float dhFarPlane;
-#endif
 uniform float viewWidth, viewHeight;
 uniform float blindFactor, nightVision;
 #if MC_VERSION >= 11900
@@ -156,18 +156,17 @@ void main() {
 	vec2 refraction = vec2(0.0);
 
 	float water = float(mat == 10001);
-	float glass = float(mat >= 10201 && mat <= 10216);
+	float glass = 1.0 - water;
     float emission = pow8(lmCoord.x);
 
 	if (water > 0.5) {
 		#ifdef VANILLA_WATER
-		albedo.rgb *= waterColor.rgb;
 		albedo.a = WATER_A;
 		#else
 		//Water Light Absorption & Scattering
 		vec4 waterFog = vec4(0.0);
 
-		float oDepth = texture2D(depthtex1, screenPos.xy).r;
+		float oDepth = texture2D(dhDepthTex1, screenPos.xy).r;
 		vec3 oScreenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), oDepth);
 		vec3 oViewPos = ToNDC(oScreenPos);
 
@@ -191,11 +190,7 @@ void main() {
 	float cloudBlendOpacity = 1.0;
 
 	#ifdef VOLUMETRIC_CLOUDS
-	#ifndef DISTANT_HORIZONS
-	float cloudDepth = texture2D(gaux2, screenPos.xy).r * (far * 2.0);
-	#else
 	float cloudDepth = texture2D(gaux2, screenPos.xy).r * dhFarPlane;
-	#endif
 	cloudBlendOpacity = step(length(viewPos), cloudDepth);
 
 	if (cloudBlendOpacity == 0) {
@@ -241,10 +236,12 @@ void main() {
 
 	//Reflections
 	#ifdef WATER_REFLECTIONS
-	if (water > 0.5) {
-		fresnel = pow3(fresnel);
-		getReflection(albedo, viewPos, nViewPos, newNormal, fresnel * 0.85 + 0.15, lightmap.y);
-		albedo.a = mix(albedo.a, 1.0, fresnel);
+	if (water > 0.5 || glass > 0.5) {
+		float snellWindow = clamp(pow4(length(worldPos.xz) * 0.05), 0.05 + float(isEyeInWater == 0) * 0.95, 1.0);
+			  snellWindow = max(snellWindow, float(water < 0.5));
+		float fresnel = clamp(1.0 + dot(normalize(normal), nViewPos), 0.0, 1.0) * snellWindow;
+		getReflection(albedo, viewPos, nViewPos, newNormal, fresnel, lightmap.y);
+		albedo.a = mix(albedo.a * snellWindow, 1.0, fresnel);
 	}
 	#endif
 
@@ -252,9 +249,10 @@ void main() {
     Fog(albedo.rgb, viewPos, worldPos, atmosphereColor, 0.0);
 	albedo.a *= cloudBlendOpacity;
 
-	/* DRAWBUFFERS:03 */
+	/* DRAWBUFFERS:013 */
 	gl_FragData[0] = albedo;
-    gl_FragData[1].a = 1.0;
+	gl_FragData[1] = albedo;
+	gl_FragData[2] = vec4(refraction * water, water * 0.4 + 0.4, 1.0);
 }
 
 #endif

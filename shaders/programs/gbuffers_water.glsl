@@ -159,7 +159,7 @@ void main() {
 	float portal = float(mat == 10031);
 	float ice = float(mat == 10000);
 	float water = float(mat == 10001);
-	float tintedGlass = float(mat >= 10201 && mat <= 10216);
+	float glass = float(mat >= 10201 && mat <= 10216);
 	float emission = pow8(lightmap.x) + portal * lAlbedo * lAlbedo * 2.0;
 
 	if (water > 0.5) {
@@ -244,8 +244,9 @@ void main() {
 
 	//Reflections
 	#ifdef WATER_REFLECTIONS
-	if (water > 0.5 || tintedGlass > 0.5) {
+	if (water > 0.5 || glass > 0.5) {
 		float snellWindow = clamp(pow4(length(worldPos.xz) * 0.05), 0.05 + float(isEyeInWater == 0) * 0.95, 1.0);
+			  snellWindow = max(snellWindow, float(water < 0.5));
 		float fresnel = clamp(1.0 + dot(normalize(normal), nViewPos), 0.0, 1.0) * snellWindow;
 		getReflection(albedo, viewPos, nViewPos, newNormal, fresnel, lightmap.y);
 		albedo.a = mix(albedo.a * snellWindow, 1.0, fresnel);
