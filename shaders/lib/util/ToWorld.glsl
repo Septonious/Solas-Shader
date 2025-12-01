@@ -1,5 +1,5 @@
 vec3 ToWorld(vec3 viewPos) {
-	#ifndef SOLAS_BY_SEPTONIOUS
+	#if SOLAS_BY_SEPTONIOUS != 1
 	return vec3(0);
 	#endif
 

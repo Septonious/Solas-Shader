@@ -474,6 +474,11 @@ screen.MB=Magma Block
 screen.NP=Nether Portal
 screen.JL=Jack'o'Lantern
 screen.ET=Enchanting Table
+screen.BC=Beacon
+screen.EP=End Portal (With Eye)
+screen.OF=Ochre Froglight
+screen.VF=Verdant Froglight
+screen.PF=Pearlescent Froglight
 
 option.GLSP_R=Red
 option.GLSP_G=Green

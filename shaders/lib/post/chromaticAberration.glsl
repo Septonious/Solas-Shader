@@ -1,3 +1,4 @@
+/*
 void getWaterChromaticAberration(sampler2D colortex, inout vec3 color, in vec2 coord, in vec2 distort) {
 	distort *= 2.0;
 	vec2 viewScale = vec2(1.0 / aspectRatio, 1.0);
@@ -10,7 +11,7 @@ void getWaterChromaticAberration(sampler2D colortex, inout vec3 color, in vec2 c
 
 	color /= vec3(1.5, 2.0, 1.5);
 }
-
+*/
 void getChromaticAberration(sampler2D colortex, inout vec3 color, in vec2 coord) {
 	const float strength = 0.01 * CHROMATIC_ABERRATION_STRENGTH;
 	vec2 viewScale = vec2(1.0 / aspectRatio, 1.0);

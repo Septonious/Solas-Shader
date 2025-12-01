@@ -6,7 +6,7 @@ profile.HIGH=Высоко (По умолчанию)
 profile.ULTRA=Ультра
 
 option.SOLAS_BY_SEPTONIOUS=§6Solas Shader
-value.SOLAS_BY_SEPTONIOUS.0=§bОт Septonious
+value.SOLAS_BY_SEPTONIOUS.1=§bОт Septonious
 option.SOLAS_BY_SEPTONIOUS.comment=Discord: https://discord.gg/4uTAUQR2xu. GitHub: https://github.com/Septonious/Solas-Shader. Переводил сам (да, я русский).
 
 #=======================================================# ATMOSPHERICS #=======================================================#
@@ -297,7 +297,7 @@ option.SELF_SHADOW_STRENGTH=Сила Теней
 
 screen.COLOR=Цвета
 
-screen.LIGHTAMBIENT_COLOR=Свет & Тень (Обычный Мир)
+screen.LIGHT_COLOR=Свет & Тень (Обычный Мир)
 
 screen.LIGHT_SR=Свет (Рассвет)
 option.LIGHT_SRR=Красный
@@ -458,6 +458,11 @@ screen.MB=Блок Магмы
 screen.NP=Адский Портал
 screen.JL=Светильник Джека
 screen.ET=Стол Зачарований
+screen.BC=Маяк
+screen.EP=Рамка Портала в Энд
+screen.OF=Охристая Квампа
+screen.VF=Малахитовая Квампа
+screen.PF=Перламутровая Квампа
 
 option.GLSP_R=Красный
 option.GLSP_G=Зелёный

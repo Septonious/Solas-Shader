@@ -59,12 +59,6 @@ float sunVisibility = clamp(dot(sunVec, upVec) + 0.1, 0.0, 0.25) * 4.0;
 // Includes //
 #ifdef WATER_FOG
 #include "/lib/util/ToView.glsl"
-
-#ifdef DYNAMIC_HANDLIGHT
-#include "/lib/vx/blocklightColor.glsl"
-#include "/lib/lighting/handlight.glsl"
-#endif
-
 #include "/lib/water/waterFog.glsl"
 #endif
 

@@ -1,4 +1,5 @@
-#define SOLAS_BY_SEPTONIOUS 1
+#define SOLAS_BY_SEPTONIOUS 1 //[1]
+#define DRM
 
 //Solas Shader is a Minecraft shaderpack created by Septonious
 //It has only two official download sources: CurseForge and Modrinth
