@@ -26,9 +26,7 @@ uniform int frameCounter;
 uniform int moonPhase;
 #endif
 
-#ifdef VC_SHADOWS
 uniform int worldDay, worldTime;
-#endif
 
 uniform float frameTimeCounter;
 uniform float far, near;

@@ -28,9 +28,7 @@ uniform int moonPhase;
 uniform int dhRenderDistance;
 #endif
 
-#ifdef VC_SHADOWS
 uniform int worldDay, worldTime;
-#endif
 
 uniform float frameTimeCounter;
 uniform float far, near;
@@ -245,8 +243,13 @@ void main() {
 	//Reflections
 	#ifdef WATER_REFLECTIONS
 	if (water > 0.5 || glass > 0.5) {
+		#if WATER_NORMALS > 0
 		float snellWindow = clamp(pow4(length(worldPos.xz) * 0.05), 0.05 + float(isEyeInWater == 0) * 0.95, 1.0);
 			  snellWindow = max(snellWindow, float(water < 0.5));
+		#else
+		snellWindow = 1.0;
+		#endif
+
 		float fresnel = clamp(1.0 + dot(normalize(normal), nViewPos), 0.0, 1.0) * snellWindow;
 		getReflection(albedo, viewPos, nViewPos, newNormal, fresnel, lightmap.y);
 		albedo.a = mix(albedo.a * snellWindow, 1.0, fresnel);

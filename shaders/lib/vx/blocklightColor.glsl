@@ -147,8 +147,10 @@ vec3 getBlocklightColor(int id) {
 	else if(id == 69) color = vec3(0.1, 0.01, 0.15);
 	//End Portal With Eye
 	else if(id == 71) color = vec3(EP_R, EP_G, EP_B) * EP_I;
+	#ifdef EMISSIVE_ORES
 	//Zinc Ore
 	else if(id == 72) color = vec3(0.4);
+	#endif
 	//Creaking Heart (Active)
 	else if(id == 73) color = vec3(1.0, 0.3, 0.1);
 
