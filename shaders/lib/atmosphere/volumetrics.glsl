@@ -40,7 +40,7 @@ void calculateVLParameters(inout float intensity, inout float distanceFactor, in
     float averageDepth = 0.0;
 	for (float i = 0.1; i < 1.0; i += 0.1) {
 		float depthSample = texelFetch(depthtex0, ivec2(viewWidth * i * 0.55, viewHeight * 0.65), 0).r;
-			  depthSample = pow4(depthSample);
+			  depthSample = pow4(depthSample) * float(depthSample > 0.05);
 		averageDepth += depthSample * 0.1;
 	}
     float closedSpaceFactor = 1.0 - min(1.0, pow8(eBS) * 0.5 + averageDepth * (0.7 - eBS * eBS * 0.35));

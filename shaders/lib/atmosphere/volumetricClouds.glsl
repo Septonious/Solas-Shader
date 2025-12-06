@@ -7,7 +7,7 @@ float texture2DShadow(sampler2D shadowtex, vec3 shadowPos) {
 #ifdef VOLUMETRIC_CLOUDS
 void getDynamicWeather(inout float speed, inout float amount, inout float frequency, inout float thickness, inout float density, inout float detail, inout float height, inout float scale) {
 	#ifdef VC_DYNAMIC_WEATHER
-	float day = worldDay + worldTime / 24000;
+	float day = (worldDay * 24000 + worldTime) / 24000;
     float sinDay05 = sin(day * 0.5);
     float cosDay075 = cos(day * 0.75);
     float cosDay15 = cos(day * 1.5);
