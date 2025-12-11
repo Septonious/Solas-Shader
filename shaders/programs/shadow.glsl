@@ -37,10 +37,23 @@ float eBS = eyeBrightnessSmooth.y / 240.0;
 
 // Main //
 void main() {
-    vec4 albedo = texture2D(tex, texCoord) * color;
+	vec4 albedoTexture = texture2D(tex, texCoord);
+	vec4 albedo = albedoTexture;
+ 
+	#ifndef SHADOW_COLORWHEEL
+    	albedo *= color;
+		float skyLightMap = lmCoord.y;
+	#else
+		float ao;
+		vec2 lmCoordColorwheel;
+		vec4 overlayColor;
+
+		clrwl_computeFragment(albedoTexture, albedo, lmCoordColorwheel, ao, overlayColor);
+		albedo.rgb = mix(albedo.rgb, overlayColor.rgb, overlayColor.a);
+		float skyLightMap = clamp((lmCoordColorwheel - 1.0 / 32.0) * 32.0 / 30.0, vec2(0.0), vec2(1.0)).y;
+	#endif
 
 	float tintedGlass = float(mat >= 10201 && mat <= 10216);
-	float skyLightMap = lmCoord.y;
 
 	if (albedo.a < 0.01) discard;
 

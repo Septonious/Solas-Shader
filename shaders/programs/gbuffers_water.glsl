@@ -139,14 +139,24 @@ vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.
 
 // Main //
 void main() {
-	vec4 albedo = texture2D(texture, texCoord);
-	vec4 albedoTexture = albedo;
-	if (albedo.a <= 0.00001) discard;
-	albedo *= color;
+	vec4 albedoTexture = texture2D(texture, texCoord);
+	vec4 albedo = albedoTexture;
+ 
+	#ifndef GBUFFERS_TERRAIN_COLORWHEEL
+    	albedo *= color;
+		vec2 lightmap = clamp(lmCoord, vec2(0.0), vec2(1.0));
+	#else
+		float ao;
+		vec2 lmCoordColorwheel;
+		vec4 overlayColor;
+
+		clrwl_computeFragment(albedoTexture, albedo, lmCoordColorwheel, ao, overlayColor);
+		albedo.rgb = mix(albedo.rgb, overlayColor.rgb, overlayColor.a);
+		vec2 lightmap = clamp((lmCoordColorwheel - 1.0 / 32.0) * 32.0 / 30.0, vec2(0.0), vec2(1.0));
+	#endif
 
 	float lAlbedo = length(albedoTexture.rgb);
 
-    vec2 lightmap = clamp(lmCoord, vec2(0.0), vec2(1.0));
     vec3 newNormal = normal;
     vec3 screenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z);
     vec3 viewPos = ToNDC(screenPos);

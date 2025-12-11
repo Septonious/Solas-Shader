@@ -156,9 +156,21 @@ vec2 dcdy = dFdy(texCoord);
 // Main //
 void main() {
 	vec4 albedoTexture = texture2D(texture, texCoord);
-    vec4 albedo = albedoTexture * color;
+	vec4 albedo = albedoTexture;
+ 
+	#ifndef GBUFFERS_TERRAIN_COLORWHEEL
+    	albedo *= color;
+		vec2 lightmap = clamp(lmCoord, vec2(0.0), vec2(1.0));
+	#else
+		float ao;
+		vec2 lmCoordColorwheel;
+		vec4 overlayColor;
 
-    vec2 lightmap = clamp(lmCoord, vec2(0.0), vec2(1.0));
+		clrwl_computeFragment(albedoTexture, albedo, lmCoordColorwheel, ao, overlayColor);
+		albedo.rgb = mix(albedo.rgb, overlayColor.rgb, overlayColor.a);
+		vec2 lightmap = clamp((lmCoordColorwheel - 1.0 / 32.0) * 32.0 / 30.0, vec2(0.0), vec2(1.0));
+	#endif
+
     vec3 newNormal = normal;
     vec3 screenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z);
     vec3 viewPos = ToNDC(screenPos);

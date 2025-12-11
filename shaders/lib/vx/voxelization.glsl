@@ -21,9 +21,13 @@ void updateVoxelMap(uint id) {
 	vec3 shadowPos = mat3(shadowModelViewInverse) * viewPos + shadowModelViewInverse[3].xyz;
 	vec3 voxelPos = worldToVoxel(shadowPos);
 
-	bool terrain = id != 1 && any(equal(ivec4(renderStage), ivec4(MC_RENDER_STAGE_TERRAIN_SOLID, MC_RENDER_STAGE_TERRAIN_TRANSLUCENT, MC_RENDER_STAGE_TERRAIN_CUTOUT, MC_RENDER_STAGE_TERRAIN_CUTOUT_MIPPED)));
+	#ifndef SHADOW_COLORWHEEL
+		bool doVoxelization = id != 1 && any(equal(ivec4(renderStage), ivec4(MC_RENDER_STAGE_TERRAIN_SOLID, MC_RENDER_STAGE_TERRAIN_TRANSLUCENT, MC_RENDER_STAGE_TERRAIN_CUTOUT, MC_RENDER_STAGE_TERRAIN_CUTOUT_MIPPED)));
+	#else
+		bool doVoxelization = true;
+	#endif
 
-	if (terrain && isInsideVoxelVolume(voxelPos)) {
+	if (doVoxelization && isInsideVoxelVolume(voxelPos)) {
 		imageStore(voxel_img, ivec3(voxelPos), uvec4(max(id - 1, 1), uvec3(0u)));
 	}
 }
