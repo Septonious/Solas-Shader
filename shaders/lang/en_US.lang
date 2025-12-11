@@ -191,6 +191,7 @@ option.DYNAMIC_HANDLIGHT_STRENGTH=Handheld Lighting Brightness
 option.FLOODFILL_BRIGHTNESS=Colored Lighting Brightness
 option.FLOODFILL_RADIUS=Colored Lighting Radius
 option.FLOODFILL_RADIUS.comment=Controls how far the light can spread.
+option.DOORS_BLOCK_LIGHT=Doors/Trapdoors Block Light
 option.VOXEL_VOLUME_SIZE=Voxel Volume Size
 option.VOXEL_VOLUME_SIZE.comment=Controls the voxelization distance for colored lighting. §c[-]§r Higher values greatly decrease performance.
 option.AO=Screen Space AO
