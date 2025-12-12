@@ -1,5 +1,5 @@
 else if (currentRenderedItemId >= 10035 && currentRenderedItemId <= 10040) {
-	float emissionFactor = 0.5 * lAlbedo * (0.1 + (1.0 - clamp(length(viewPos) * 0.25, 0.0, 1.0)));
+	float emissionFactor = 0.125 * lAlbedo * (0.1 + (1.0 - clamp(length(viewPos) * 0.25, 0.0, 1.0)));
     if (albedo.r + albedo.g + albedo.b < 2.9 && currentRenderedItemId != 10039) {
 		if (albedo.b > albedo.g || albedo.r > albedo.g) {
 			emission = emissionFactor * (1.0 - float(currentRenderedItemId == 10036) * 0.5);
