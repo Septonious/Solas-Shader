@@ -108,6 +108,10 @@ vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.
 
 #include "/lib/lighting/gbuffersLighting.glsl"
 
+#if defined GENERATED_EMISSION || defined GENERATED_SPECULAR
+#include "/lib/pbr/generatedPBR.glsl"
+#endif
+
 // Main //
 void main() {
     vec4 albedo = texture2D(texture, texCoord) * color;
@@ -118,8 +122,9 @@ void main() {
     vec3 viewPos = ToNDC(screenPos);
     vec3 worldPos = ToWorld(viewPos);
 
-	float subsurface = 0.0;
+    float subsurface = 0.0;
     float emission = 0.0;
+    float smoothness = 0.0, metalness = 0.0, parallaxShadow = 0.0;
 
 	float NoU = clamp(dot(newNormal, upVec), -1.0, 1.0);
     #if defined OVERWORLD
@@ -131,8 +136,12 @@ void main() {
     #endif
 	float NoE = clamp(dot(newNormal, eastVec), -1.0, 1.0);
 
+    #ifdef GENERATED_EMISSION
+    generateIPBR(albedo, worldPos, viewPos, lightmap, emission, smoothness, metalness, subsurface);
+    #endif
+
     vec3 shadow = vec3(0.0);
-    gbuffersLighting(albedo, screenPos, viewPos, worldPos, newNormal, shadow, lightmap, NoU, NoL, NoE, subsurface, emission, 0.0, 0.0);
+    gbuffersLighting(albedo, screenPos, viewPos, worldPos, newNormal, shadow, lightmap, NoU, NoL, NoE, subsurface, emission, smoothness, parallaxShadow);
 
     /* DRAWBUFFERS:0 */
     gl_FragData[0] = albedo;

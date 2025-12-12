@@ -118,9 +118,8 @@ void main() {
 	vec4 albedo = albedoTexture * color;
 		 albedo.a *= albedo.a;
 
-
-
     vec2 lightmap = clamp(lmCoord, vec2(0.0), vec2(1.0));
+         lightmap.x *= lightmap.x;
     vec3 newNormal = normal;
     vec3 screenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z);
     vec3 viewPos = ToNDC(screenPos);

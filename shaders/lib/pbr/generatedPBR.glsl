@@ -86,7 +86,9 @@ void generateIPBR(inout vec4 albedo, in vec3 worldPos, in vec3 viewPos, inout ve
 #ifdef GBUFFERS_ENTITIES
 void generateIPBR(inout vec4 albedo, in vec3 worldPos, in vec3 viewPos, inout vec2 lightmap, inout float emission, inout float smoothness, inout float metalness, inout float subsurface) {
     float lAlbedo = clamp(length(albedo.rgb), 0.0, 1.0);
+    float material = currentRenderedItemId - 10000.0;
 
+    //Entities
     #include "/lib/pbr/entities/creaking.glsl"
     #include "/lib/pbr/entities/drowned.glsl"
     #include "/lib/pbr/entities/end_crystal.glsl"
@@ -95,9 +97,30 @@ void generateIPBR(inout vec4 albedo, in vec3 worldPos, in vec3 viewPos, inout ve
     #include "/lib/pbr/entities/experience_orb.glsl"
     #include "/lib/pbr/entities/glow_squid.glsl"
     #include "/lib/pbr/entities/hoglin.glsl"
+    #include "/lib/pbr/entities/item_frame.glsl"
     #include "/lib/pbr/entities/magma_cube.glsl"
     #include "/lib/pbr/entities/witch.glsl"
     #include "/lib/pbr/entities/metals.glsl"
+
+    //Items in frames
+    #include "/lib/pbr/items/amethyst.glsl"
+    #include "/lib/pbr/items/brewing_stand.glsl"
+    #include "/lib/pbr/items/chorus.glsl"
+    #include "/lib/pbr/items/crying_obsidian.glsl"
+    #include "/lib/pbr/items/enchanting_table.glsl"
+    #include "/lib/pbr/items/flowers.glsl"
+    #include "/lib/pbr/items/froglights.glsl"
+    #include "/lib/pbr/items/full_emitters.glsl"
+    #include "/lib/pbr/items/glow_berries.glsl"
+    #include "/lib/pbr/items/glow_lichen_sea_pickle.glsl"
+    #include "/lib/pbr/items/jack_o_lantern.glsl"
+    #include "/lib/pbr/items/lava.glsl"
+    #include "/lib/pbr/items/magma_block_blaze_rod.glsl"
+    #include "/lib/pbr/items/nether_logs.glsl"
+    #include "/lib/pbr/items/ores.glsl"
+    #include "/lib/pbr/items/redstone.glsl"
+    #include "/lib/pbr/items/soul_emitters.glsl"
+    #include "/lib/pbr/items/torch_lantern.glsl"
 
     #ifdef EMISSIVE_ARMOR_TRIMS
     #include "/lib/pbr/entities/trims.glsl"
@@ -113,7 +136,25 @@ void generateIPBR(inout vec4 albedo, in vec3 worldPos, in vec3 viewPos, inout ve
 void generateIPBR(inout vec4 albedo, in vec3 worldPos, in vec3 viewPos, inout vec2 lightmap, inout float emission, inout float smoothness, inout float metalness, inout float subsurface) {
     float lAlbedo = clamp(length(albedo.rgb), 0.0, 1.0);
 
-    #include "/lib/pbr/hand/metals.glsl"
+    //#include "/lib/pbr/hand/metals.glsl"
+    #include "/lib/pbr/items/amethyst.glsl"
+    #include "/lib/pbr/items/brewing_stand.glsl"
+    #include "/lib/pbr/items/chorus.glsl"
+    #include "/lib/pbr/items/crying_obsidian.glsl"
+    #include "/lib/pbr/items/enchanting_table.glsl"
+    #include "/lib/pbr/items/flowers.glsl"
+    #include "/lib/pbr/items/froglights.glsl"
+    #include "/lib/pbr/items/full_emitters.glsl"
+    #include "/lib/pbr/items/glow_berries.glsl"
+    #include "/lib/pbr/items/glow_lichen_sea_pickle.glsl"
+    #include "/lib/pbr/items/jack_o_lantern.glsl"
+    #include "/lib/pbr/items/lava.glsl"
+    #include "/lib/pbr/items/magma_block_blaze_rod.glsl"
+    #include "/lib/pbr/items/nether_logs.glsl"
+    #include "/lib/pbr/items/ores.glsl"
+    #include "/lib/pbr/items/redstone.glsl"
+    #include "/lib/pbr/items/soul_emitters.glsl"
+    #include "/lib/pbr/items/torch_lantern.glsl"
 
     #ifdef GENERATED_SPECULAR
     metalness = smoothness;

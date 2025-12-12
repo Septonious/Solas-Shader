@@ -257,7 +257,7 @@ void main() {
 		float snellWindow = clamp(pow4(length(worldPos.xz) * 0.05), 0.05 + float(isEyeInWater == 0) * 0.95, 1.0);
 			  snellWindow = max(snellWindow, float(water < 0.5));
 		#else
-		snellWindow = 1.0;
+		float snellWindow = 1.0;
 		#endif
 
 		float fresnel = clamp(1.0 + dot(normalize(normal), nViewPos), 0.0, 1.0) * snellWindow;
