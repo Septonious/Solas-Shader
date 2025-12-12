@@ -210,6 +210,10 @@ void main() {
     drawSunMoon(skyColor, worldPos.xyz, nViewPos, VoU, VoS, VoM, caveFactor, occlusion);
     #endif
 
+	#if MC_VERSION >= 12104
+    VoU *= 1.0 - isPaleGarden;
+	#endif
+
     if (VoU > 0.0) {
         #ifdef AURORA
         drawAurora(skyColor, worldPos.xyz, VoU, caveFactor);
