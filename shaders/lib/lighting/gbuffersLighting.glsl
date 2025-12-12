@@ -290,7 +290,7 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
     albedo.rgb = mix(albedo.rgb, albedo.rgb * pow(vanillaAo, 1.0 + lightmap.y), aoMixer);
 
     albedo.rgb = pow(albedo.rgb, vec3(2.2));
-    albedo.rgb *= sceneLighting + blockLighting + emission + lightningFlash;
+    albedo.rgb *= sceneLighting + blockLighting + emission * EMISSION_STRENGTH + lightningFlash;
     albedo.rgb *= vanillaDiffuse;
     albedo.rgb = pow(albedo.rgb, vec3(1.0 / 2.2));
 }

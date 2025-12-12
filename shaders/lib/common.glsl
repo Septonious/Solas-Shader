@@ -169,7 +169,7 @@ const float sunPathRotation = 180.0;
 // PBR //
 #define TEXTURED_FIRE_LAVA
 #define GENERATED_EMISSION
-#define EMISSION_STRENGTH 5.0 //[1.0 2.0 3.0 4.0 5.0 6.0 7.0 8.0]
+#define EMISSION_STRENGTH 3.0 //[1.0 2.0 3.0 4.0 5.0 6.0 7.0 8.0]
 #define EMISSIVE_ORES
 #define EMISSIVE_EMERALD_ORE
 #define EMISSIVE_DIAMOND_ORE
