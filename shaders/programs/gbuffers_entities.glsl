@@ -83,6 +83,7 @@ vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.
 #endif
 
 // Includes //
+#include "/lib/util/encode.glsl"
 #include "/lib/util/bayerDithering.glsl"
 #include "/lib/util/transformMacros.glsl"
 #include "/lib/util/ToNDC.glsl"
@@ -124,28 +125,26 @@ void main() {
 	albedo.rgb = mix(albedo.rgb, entityColor.rgb * entityColor.rgb * 2.0, entityColor.a);
 
 	float lightningBolt = float(mat == 1);
+	float subsurface = 0.0;
+	float emission = 0.0, smoothness = 0.0, metalness = 0.0, porosity = 0.5, parallaxShadow = 0.0;
+
+	vec2 lightmap = clamp(lmCoord, vec2(0.0), vec2(1.0));
+	vec3 newNormal = normal;
+	vec3 screenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z);
+	vec3 viewPos = ToNDC(screenPos);
+	vec3 worldPos = ToWorld(viewPos);
+
+	float NoU = clamp(dot(newNormal, upVec), -1.0, 1.0);
+	#if defined OVERWORLD
+	float NoL = clamp(dot(newNormal, lightVec), 0.0, 1.0);
+	#elif defined END
+	float NoL = clamp(dot(newNormal, sunVec), 0.0, 1.0);
+	#else
+	float NoL = 0.0;
+	#endif
+	float NoE = clamp(dot(newNormal, eastVec), -1.0, 1.0);
 
 	if (lightningBolt < 0.5) {
-		vec2 lightmap = clamp(lmCoord, vec2(0.0), vec2(1.0));
-		vec3 newNormal = normal;
-		vec3 screenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z);
-		vec3 viewPos = ToNDC(screenPos);
-		vec3 worldPos = ToWorld(viewPos);
-
-		float subsurface = 0.0;
-		float emission = 0.0;
-		float smoothness = 0.0, metalness = 0.0, parallaxShadow = 0.0;
-
-		float NoU = clamp(dot(newNormal, upVec), -1.0, 1.0);
-		#if defined OVERWORLD
-		float NoL = clamp(dot(newNormal, lightVec), 0.0, 1.0);
-		#elif defined END
-		float NoL = clamp(dot(newNormal, sunVec), 0.0, 1.0);
-		#else
-		float NoL = 0.0;
-		#endif
-		float NoE = clamp(dot(newNormal, eastVec), -1.0, 1.0);
-
 		#ifdef GENERATED_EMISSION
 		generateIPBR(albedo, worldPos, viewPos, lightmap, emission, smoothness, metalness, subsurface);
 		#endif
@@ -156,7 +155,7 @@ void main() {
 
 	/* DRAWBUFFERS:03 */
 	gl_FragData[0] = albedo;
-	gl_FragData[1].a = 1.0;
+	gl_FragData[1] = vec4(encodeNormal(newNormal), lightmap.y * 0.5, clamp(mix(smoothness, 1.0, metalness * metalness), 0.0, 0.95));
 }
 
 #endif
