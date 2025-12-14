@@ -215,12 +215,12 @@ void main() {
 	#endif
 
     if (VoU > 0.0) {
-        #ifdef AURORA
-        drawAurora(skyColor, worldPos.xyz, VoU, caveFactor);
-        #endif
-
         #ifdef PLANAR_CLOUDS
         drawPlanarClouds(skyColor, atmosphereColor, worldPos.xyz, viewPos.xyz, VoU, caveFactor, vc.a, occlusion);
+        #endif
+
+        #ifdef AURORA
+        drawAurora(skyColor, worldPos.xyz, VoU, caveFactor, occlusion);
         #endif
 
         #ifdef MILKY_WAY

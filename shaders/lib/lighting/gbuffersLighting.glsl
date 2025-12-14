@@ -222,12 +222,20 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
 
     //Main color mixing
     #ifdef OVERWORLD
+    ambientCol *= 0.05 + lightmap.y * lightmap.y * 0.95;
+    ambientCol *= 1.0 - pow(VoL, 1.5) * (0.5 - wetness * 0.5) * sunVisibility;
+    lightCol *= 1.0 + specularHighlight * shadowFade * (0.5 + sunVisibility * 0.5);
+
+    float rainFactor = 1.0 - wetness * 0.5;
+
+    vec3 sceneLighting = mix(ambientCol, lightCol, shadow * rainFactor * shadowFade) * (0.25 + lightmap.y * 0.75);
+         sceneLighting *= 1.0 + sss * shadow * 2.0;
+
     #ifdef AURORA_LIGHTING_INFLUENCE
 	//The index of geomagnetic activity. Determines the brightness of Aurora, its widespreadness across the sky and tilt factor
     float kpIndex = abs(worldDay % 9 - worldDay % 4);
           kpIndex = kpIndex - int(kpIndex == 1) + int(kpIndex > 7 && worldDay % 10 == 0);
           kpIndex = min(max(kpIndex, 0), 9);
-          kpIndex = 9;
 
 	//Total visibility of aurora based on multiple factors
 	float auroraVisibility = pow6(moonVisibility) * (1.0 - wetness) * caveFactor * AURORA_BRIGHTNESS;
@@ -251,20 +259,8 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
     kpIndex *= 1.0 + longPulse * 0.5;
 	kpIndex /= 9.0;
 	auroraVisibility *= kpIndex;
-    lightCol *= vec3(0.5) + mix(vec3(0.4, 1.5, 0.6), vec3(3.4, 0.1, 1.5), min(kpIndex * kpIndex * 0.5, 0.5)) * auroraVisibility;
+    sceneLighting *= mix(vec3(0.4, 1.5, 0.6), vec3(3.4, 0.1, 1.5), min(kpIndex * kpIndex * 0.5, 0.5)) * auroraVisibility;
     #endif
-
-    ambientCol *= 0.05 + lightmap.y * lightmap.y * 0.95;
-    ambientCol *= 1.0 - pow(VoL, 1.5) * (0.5 - wetness * 0.5) * sunVisibility;
-    lightCol *= 1.0 + specularHighlight * shadowFade * (0.5 + sunVisibility * 0.5);
-
-    float rainFactor = 1.0 - wetness * 0.5;
-
-    vec3 sceneLighting = mix(ambientCol, lightCol, shadow * rainFactor * shadowFade) * (0.25 + lightmap.y * 0.75);
-         sceneLighting *= 1.0 + sss * shadow * 2.0;
-    //float bouncedLight = clamp(dot(newNormal, -lightVec), 0.0, 1.0) * lightmap.y;
-    //albedo.rgb *= 1.0 + bouncedLight * 0.25;
-    //albedo.rgb += lightCol * bouncedLight * 0.25;
     #elif defined END
     vec3 sceneLighting = mix(endAmbientCol, endLightCol * (1.0 + specularHighlight), shadow) * 0.25;
     #ifdef END_FLASHES
