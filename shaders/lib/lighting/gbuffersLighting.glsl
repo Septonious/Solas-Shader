@@ -245,7 +245,7 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
 	#endif
 
 	#ifdef AURORA_COLD_BIOME_VISIBILITY
-	kpIndex += isSnowy * 5;
+	kpIndex += isSnowy * 4;
 	#endif
 
     #ifdef AURORA_ALWAYS_VISIBLE
@@ -259,7 +259,7 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
     kpIndex *= 1.0 + longPulse * 0.5;
 	kpIndex /= 9.0;
 	auroraVisibility *= kpIndex;
-    sceneLighting *= mix(vec3(0.4, 1.5, 0.6), vec3(3.4, 0.1, 1.5), min(kpIndex * kpIndex * 0.5, 0.5)) * auroraVisibility;
+    sceneLighting *= (1.0 - auroraVisibility) + mix(vec3(0.4, 1.5, 0.6), vec3(3.4, 0.1, 1.5), min(kpIndex * kpIndex * 0.5, 0.5)) * auroraVisibility;
     #endif
     #elif defined END
     vec3 sceneLighting = mix(endAmbientCol, endLightCol * (1.0 + specularHighlight), shadow) * 0.25;

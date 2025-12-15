@@ -29,7 +29,7 @@ vec4 getWaterFog(inout vec3 colorMult, vec3 viewPos) {
 	}
 	#endif
 
-	waterFogColor *= 1.0 - pow(fog, 0.2) * (0.8 - float(isEyeInWater == 1) * 0.2);
+	waterFogColor *= 1.0 - min(pow(fog, 0.2), 1.0) * (0.75 - float(isEyeInWater == 1) * 0.25);
 	waterFogColor *= 1.0 - blindFactor;
 
 	#if MC_VERSION >= 11900

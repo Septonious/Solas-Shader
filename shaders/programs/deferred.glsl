@@ -220,7 +220,7 @@ void main() {
         #endif
 
         #ifdef AURORA
-        drawAurora(skyColor, worldPos.xyz, VoU, caveFactor, occlusion);
+        drawAurora(skyColor, worldPos.xyz, VoU, caveFactor, vc.a, occlusion - vc.a);
         #endif
 
         #ifdef MILKY_WAY
@@ -229,6 +229,10 @@ void main() {
 
         #ifdef STARS
         drawStars(skyColor, worldPos.xyz, VoU, VoS, caveFactor, nebulaFactor, occlusion, 0.7);
+
+		#ifdef SHOOTING_STARS
+		getShootingStars(skyColor, worldPos.xyz, VoU, VoS);
+		#endif
         #endif
 
         #ifdef RAINBOW

@@ -165,6 +165,7 @@ void main() {
     //Fog
     #if defined OVERWORLD
     vec3 atmosphereColor = getAtmosphere(viewPos);
+		 atmosphereColor *= 1.0 + Bayer8(gl_FragCoord.xy) / 64.0;
 	#elif defined NETHER
 	vec3 atmosphereColor = netherColSqrt.rgb * 0.25;
 	#elif defined END

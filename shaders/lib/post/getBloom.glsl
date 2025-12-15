@@ -6,7 +6,7 @@ vec3 getBloomTile(float lod, vec2 bloomCoord, vec2 offset) {
 	return bloom;
 }
 
-void getBloom(inout vec3 color, vec2 bloomCoord) {
+void getBloom(inout vec3 color, vec2 bloomCoord, in float z1) {
 	vec2 viewSize = vec2(1.0 / viewWidth, 1.0 / viewHeight);
 	vec3 blur1 = getBloomTile(1.0 + BLOOM_TILE_SIZE, bloomCoord, vec2(0.0   , 0.0 ) + vec2( 0.5, 0.0) * viewSize);
 	vec3 blur2 = getBloomTile(2.0 + BLOOM_TILE_SIZE, bloomCoord, vec2(0.50  , 0.0 ) + vec2( 4.5, 0.0) * viewSize);
@@ -17,7 +17,7 @@ void getBloom(inout vec3 color, vec2 bloomCoord) {
 	vec3 blur = (blur1 * 3.58 + blur2 * 3.35 + blur3 * 2.72 + blur4 * 1.87 + blur5) / 12.52;
 
     #if defined OVERWORLD
-    float bloomStrength = BLOOM_STRENGTH_OVERWORLD;
+    float bloomStrength = BLOOM_STRENGTH_OVERWORLD * (1.0 + float(z1 == 1.0) * moonVisibility);
 		  bloomStrength += float(isEyeInWater == 1);
     #elif defined NETHER
     float bloomStrength = BLOOM_STRENGTH_NETHER;

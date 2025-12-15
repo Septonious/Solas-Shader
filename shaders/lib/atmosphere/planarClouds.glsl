@@ -40,6 +40,6 @@ void drawPlanarClouds(inout vec3 color, in vec3 atmosphereColor, in vec3 worldPo
 			 cloudColor = pow(cloudColor, vec3(1.0 / 2.2));
 
 		color = mix(color, cloudColor * PLANAR_CLOUDS_BRIGHTNESS, pc * PLANAR_CLOUDS_OPACITY);
-		occlusion += sqrt(pc);
+		occlusion += min(pow3(pc) * 3.0, 1.0);
 	}
 }

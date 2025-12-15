@@ -185,7 +185,7 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z0, f
 			#endif
 
 			#ifdef AURORA_COLD_BIOME_VISIBILITY
-			kpIndex += isSnowy * 5;
+			kpIndex += isSnowy * 4;
 			#endif
 
 			#ifdef AURORA_ALWAYS_VISIBLE

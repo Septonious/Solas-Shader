@@ -10,7 +10,7 @@ in vec2 texCoord;
 // Uniforms //
 uniform int isEyeInWater;
 
-#ifdef LENS_FLARE
+#if defined LENS_FLARE || defined BLOOM
 #ifdef OVERWORLD
 uniform float shadowFade;
 #endif
@@ -60,7 +60,7 @@ uniform mat4 gbufferProjectionInverse;
 uniform mat4 gbufferProjection;
 #endif
 
-#ifdef LENS_FLARE
+#if defined LENS_FLARE || defined BLOOM
 uniform mat4 gbufferModelView;
 #endif
 
@@ -70,7 +70,7 @@ const bool colortex1MipmapEnabled = true;
 const bool colortex2Clear = false;
 
 // Global Variables //
-#ifdef LENS_FLARE
+#if defined LENS_FLARE || defined BLOOM
 #if defined OVERWORLD
 const vec2 sunRotationData = vec2(cos(sunPathRotation * 0.01745329251994), -sin(sunPathRotation * 0.01745329251994));
 float fractTimeAngle = fract(timeAngle - 0.25);
@@ -119,6 +119,7 @@ void main() {
 	#endif
 
 	float temporalData = 0.0;
+	float z1 = texture2D(depthtex1, texCoord).r;
 
 	//Lens Flare Parameters
 	#ifdef LENS_FLARE
@@ -129,13 +130,12 @@ void main() {
 
 	//Depth of Field & Tilt Shift
 	#ifdef DOF
-	float z1 = texture2D(depthtex1, texCoord).r;
 	color = getDepthOfField(color, texCoord, z1);
 	#endif
 
 	//Bloom
 	#ifdef BLOOM
-	getBloom(color, texCoord);
+	getBloom(color, texCoord, z1);
 	#endif
 
 	//Tonemap & Film Grain

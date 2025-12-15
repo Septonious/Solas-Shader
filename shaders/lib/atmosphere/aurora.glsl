@@ -1,18 +1,18 @@
-void drawAurora(inout vec3 color, in vec3 worldPos, in float VoU, in float caveFactor, in float occlusion) {
+void drawAurora(inout vec3 color, in vec3 worldPos, in float VoU, in float caveFactor, in float vc, in float pc) {
 	//The index of geomagnetic activity. Determines the brightness of Aurora, its widespreadness across the sky and tilt factor
     float kpIndex = abs(worldDay % 9 - worldDay % 4);
           kpIndex = kpIndex - int(kpIndex == 1) + int(kpIndex > 7 && worldDay % 10 == 0);
           kpIndex = min(max(kpIndex, 0), 9);
 
 	//Total visibility of aurora based on multiple factors
-	float visibility = pow6(moonVisibility) * (1.0 - wetness) * caveFactor * (1.0 - occlusion * occlusion) * AURORA_BRIGHTNESS;
+	float visibility = pow6(moonVisibility) * (1.0 - wetness) * caveFactor * (1.0 - pc * 0.75) * pow2(1.0 - vc) * AURORA_BRIGHTNESS;
 
 	#ifdef AURORA_FULL_MOON_VISIBILITY
 	kpIndex += float(moonPhase == 0) * 3;
 	#endif
 
 	#ifdef AURORA_COLD_BIOME_VISIBILITY
-	kpIndex += isSnowy * 5;
+	kpIndex += isSnowy * 4;
 	#endif
 
     #ifdef AURORA_ALWAYS_VISIBLE
@@ -78,9 +78,9 @@ void drawAurora(inout vec3 color, in vec3 worldPos, in float VoU, in float caveF
 				float colorMixer = clamp(texture2D(noisetex, coord * 0.00125).b * kpIndex * kpIndex * (0.25 + pulse * 0.75), 0.0, 1.0);
 
 				vec3 auroraColor1 = mix(vec3(0.6, 4.7 - pulse * 0.5, 0.2), vec3(3.4, 0.1, 1.5 + pulse * 0.5), pow(currentStep, 0.25));
-					 auroraColor1 *= exp2(-3.0 * i * sampleStep);
-				vec3 auroraColor2 = mix(vec3(0.7, 4.2, 0.1), vec3(1.9 + currentStep, 0.4, 3.7), sqrt(currentStep));
-					 auroraColor2 *= exp2(-4.5 * i * sampleStep);
+					 auroraColor1 *= exp2(-4.0 * i * sampleStep);
+				vec3 auroraColor2 = mix(vec3(0.7, 4.2, 0.1), vec3(1.9 + currentStep, 0.4, 6.7), sqrt(currentStep));
+					 auroraColor2 *= exp2(-5.5 * i * sampleStep);
 				vec3 auroraColor = mix(auroraColor2, auroraColor1, colorMixer) * (1.0 + pow8(1.0 - currentStep));
 				aurora += auroraColor * totalNoise * auroraDistanceFactor * sampleStep;
 			}

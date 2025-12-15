@@ -263,6 +263,15 @@ const float sunPathRotation = 180.0;
 #define STAR_BRIGHTNESS 1.0 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2.0]
 #define STAR_AMOUNT 1.00 //[0.75 0.80 0.85 0.90 0.95 1.00 1.05 1.10 1.15 1.20 1.25]
 
+// Shooting Stars //
+#define SHOOTING_STARS
+#define SHOOTING_STARS_SIZE 0.40 //[0.30 0.35 0.40 0.45 0.50 0.55 0.60 0.65 0.70 0.75]
+#define SHOOTING_STARS_SPEED 7.0 //[4.0 4.5 5.0 5.5 6.0 6.5 7.0 7.5 8.0 8.5 9.0 9.5 10.0 10.5 11.0 11.5 12.0 12.5 13.0 13.5 14.0 14.5 15.0]
+#define SHOOTING_STARS_CHANCE 0.2 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
+#define SHOOTING_STARS_COUNT 6 //[1 2 3 4 5 6 7 8 9 10]
+#define SHOOTING_STARS_LINE_THICKNESS 0.60 //[0.20 0.25 0.30 0.35 0.40 0.45 0.50 0.55 0.60 0.65 0.70 0.75 0.80 0.85 0.90 0.95 1.00]
+#define SHOOTING_STARS_TRAIL_LENGTH 0.60 //[0.30 0.35 0.40 0.45 0.50 0.55 0.60 0.65 0.70 0.75 0.80 0.85]
+
 // End Stars //
 #define END_STARS
 #define END_STAR_BRIGHTNESS 0.8 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2.0]
@@ -816,6 +825,10 @@ vec3 pow8(vec3 x) {return x*x*x*x*x*x*x*x;}
 
 #if defined END && !defined END_BLACK_HOLE
 #undef LENS_FLARE
+#endif
+
+#ifndef STARS
+#undef SHOOTING_STARS
 #endif
 
 #if MC_VERSION < 12109
