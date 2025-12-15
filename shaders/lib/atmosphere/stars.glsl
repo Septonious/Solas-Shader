@@ -112,7 +112,7 @@ float drawShootingStar(vec2 uv, vec2 startPos, vec2 direction) {
     float h = hash12(id);
     float worldDayFactor = abs(worldDay % 7 - worldDay % 5 * 0.5) / 6.0;
 
-    if (h >= pow(SHOOTING_STARS_CHANCE * 1 * 0.05, 1.5)) return 0.0;
+    if (h >= pow(SHOOTING_STARS_CHANCE * worldDayFactor * 0.05, 1.5)) return 0.0;
 
     vec2 gv = fract(uv * 0.5) * 2.0 - 1.0;
     float line = DrawLine(gv, startPos, startPos + direction * 0.9);
