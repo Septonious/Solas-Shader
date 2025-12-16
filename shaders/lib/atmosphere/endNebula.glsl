@@ -3,7 +3,7 @@ void sampleNebulaNoise(vec2 coord, inout float colorMixer, inout float noise) {
     noise = texture2D(noisetex, coord * 0.50).r;
     noise *= colorMixer;
     noise *= texture2D(noisetex, coord * 0.125).r;
-    noise *= 4.0;
+    noise *= 4.0 + noise * noise * 10.0;
 }
 
 float getSpiralWarping(vec2 coord){
@@ -40,7 +40,7 @@ vec4 getSupernovaAtPos(in vec3 flashPos, in vec3 worldPos) {
 void drawEndNebula(inout vec3 color, in vec3 worldPos, in float VoU, in float VoS) {
     #ifdef END_BLACK_HOLE
     //Prepare black hole parameters for warping the nebula
-    vec3 blackHoleColor = vec3(5.6, 2.2, 0.2) * endLightCol;
+    vec3 blackHoleColor = vec3(5.6, 2.8, 0.7) * endLightCol;
     float absVoU = abs(VoU);
     float sqrtabsVoU = sqrt(absVoU);
     float blackHoleSize = END_BLACK_HOLE_SIZE;

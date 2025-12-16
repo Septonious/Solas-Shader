@@ -163,7 +163,7 @@ void main() {
 	#elif defined NETHER
 	vec3 atmosphereColor = netherColSqrt.rgb * 0.25;
 	#elif defined END
-	vec3 atmosphereColor = endAmbientColSqrt * 0.25;
+	vec3 atmosphereColor = endAmbientColSqrt * 0.175;
 	#endif
 
 	#if defined OVERWORLD || defined END
@@ -210,7 +210,7 @@ void main() {
     drawSunMoon(skyColor, worldPos.xyz, nViewPos, VoU, VoS, VoM, caveFactor, occlusion);
     #endif
 
-	#if MC_VERSION >= 12104
+	#if MC_VERSION >= 12104 && defined OVERWORLD
     VoU *= 1.0 - isPaleGarden;
 	#endif
 

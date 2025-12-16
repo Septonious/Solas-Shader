@@ -121,7 +121,6 @@ vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.
 // Main //
 void main() {
     vec4 albedo = texture2D(texture, texCoord) * color;
-
     vec2 lightmap = clamp(lmCoord, vec2(0.0), vec2(1.0));
     vec3 newNormal = normal;
     vec3 screenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z + 0.38);
@@ -143,7 +142,7 @@ void main() {
 	float NoE = clamp(dot(newNormal, eastVec), -1.0, 1.0);
 
     #ifdef GENERATED_EMISSION
-    generateIPBR(albedo, worldPos, viewPos, lightmap, emission, smoothness, metalness, subsurface);
+    if (albedo.a > 0.5) generateIPBR(albedo, worldPos, viewPos, lightmap, emission, smoothness, metalness, subsurface);
     #endif
 
     vec3 shadow = vec3(0.0);
