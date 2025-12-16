@@ -45,7 +45,7 @@ void calculateVLParameters(inout float intensity, inout float distanceFactor, in
 	}
     float closedSpaceFactor = 1.0 - min(1.0, pow8(eBS) * 0.5 + averageDepth * (0.7 - eBS * eBS * 0.35));
 
-    intensity = (VoLClamped * VoLClamped * VL_STRENGTH_RATIO) * (1.0 - timeBrightness) + pow5(VoLPositive) * timeBrightness;
+    intensity = (VoLClamped * VoLClamped * VL_STRENGTH_RATIO) * (1.0 - timeBrightness) + VoLClamped * VoLClamped * timeBrightness;
     intensity *= timeIntensityFactor * (1.0 + closedSpaceFactor);
 
     #ifdef VC_SHADOWS
