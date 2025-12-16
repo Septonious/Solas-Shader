@@ -45,8 +45,8 @@ void calculateVLParameters(inout float intensity, inout float distanceFactor, in
 	}
     float closedSpaceFactor = 1.0 - min(1.0, pow8(eBS) * 0.5 + averageDepth * (0.7 - eBS * eBS * 0.35));
 
-    intensity = (sunVisibility * (1.0 - VL_STRENGTH_RATIO) + VoL * VL_STRENGTH_RATIO) * (1.0 - timeBrightness) + pow5(VoLPositive) * timeBrightness;
-    intensity = mix(intensity * timeIntensityFactor, timeIntensityFactor * 2.0, closedSpaceFactor);
+    intensity = (VoLClamped * VoLClamped * VL_STRENGTH_RATIO) * (1.0 - timeBrightness) + pow5(VoLPositive) * timeBrightness;
+    intensity *= timeIntensityFactor * (1.0 + closedSpaceFactor);
 
     #ifdef VC_SHADOWS
     intensity = mix(intensity, 1.0 + VoLPositive * VoLPositive * float(isEyeInWater == 1), clamp((cameraPosition.y - VC_HEIGHT) * 0.01, 0.0, 1.0));
