@@ -33,6 +33,10 @@ uniform float blindFactor, nightVision;
 uniform float darknessFactor;
 #endif
 
+#if MC_VERSION >= 12104
+uniform float isPaleGarden;
+#endif
+
 uniform ivec2 eyeBrightnessSmooth;
 
 uniform vec3 skyColor, cameraPosition;
