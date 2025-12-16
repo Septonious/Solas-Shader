@@ -176,26 +176,25 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z0, f
 
 			//Final color calculations
             #ifdef AURORA_LIGHTING_INFLUENCE
-			//The index of geomagnetic activity. Determines the brightness of Aurora, its widespreadness across the sky and tilt factor
-			float kpIndex = abs(worldDay % 9 - worldDay % 4);
-				  kpIndex = kpIndex - int(kpIndex == 1) + int(kpIndex > 7 && worldDay % 10 == 0);
-				  kpIndex = min(max(kpIndex, 0), 9);
+            //The index of geomagnetic activity. Determines the brightness of Aurora, its widespreadness across the sky and tilt factor
+            float kpIndex = abs(worldDay % 9 - worldDay % 4);
+                  kpIndex = kpIndex - int(kpIndex == 1) + int(kpIndex > 7 && worldDay % 10 == 0);
+                  kpIndex = min(max(kpIndex, 0), 9);
+
+            #ifdef AURORA_FULL_MOON_VISIBILITY
+                  kpIndex += float(moonPhase == 0) * 3;
+            #endif
+
+            #ifdef AURORA_COLD_BIOME_VISIBILITY
+                  kpIndex += isSnowy * 4;
+            #endif
+
+            #ifdef AURORA_ALWAYS_VISIBLE
+                  kpIndex = 9.0;
+            #endif
 
 			//Total visibility of aurora based on multiple factors
 			float auroraVisibility = pow6(moonVisibility) * (1.0 - wetness) * caveFactor * AURORA_BRIGHTNESS;
-
-			#ifdef AURORA_FULL_MOON_VISIBILITY
-			kpIndex += float(moonPhase == 0) * 3;
-			#endif
-
-			#ifdef AURORA_COLD_BIOME_VISIBILITY
-			kpIndex += isSnowy * 4;
-			#endif
-
-			#ifdef AURORA_ALWAYS_VISIBLE
-			auroraVisibility = 1.0;
-			kpIndex = 9.0;
-			#endif
 
 			//Aurora tends to get brighter and dimmer when plasma arrives or fades away
 			float longPulse = clamp(sin(cos(frameTimeCounter * 0.01) * 0.6 + frameTimeCounter * 0.04), -1.0, 1.0);

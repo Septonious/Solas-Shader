@@ -237,21 +237,20 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
           kpIndex = kpIndex - int(kpIndex == 1) + int(kpIndex > 7 && worldDay % 10 == 0);
           kpIndex = min(max(kpIndex, 0), 9);
 
-	//Total visibility of aurora based on multiple factors
-	float auroraVisibility = pow6(moonVisibility) * (1.0 - wetness) * caveFactor * AURORA_BRIGHTNESS;
-
 	#ifdef AURORA_FULL_MOON_VISIBILITY
-	kpIndex += float(moonPhase == 0) * 3;
+	      kpIndex += float(moonPhase == 0) * 3;
 	#endif
 
 	#ifdef AURORA_COLD_BIOME_VISIBILITY
-	kpIndex += isSnowy * 4;
+	      kpIndex += isSnowy * 4;
 	#endif
 
     #ifdef AURORA_ALWAYS_VISIBLE
-    auroraVisibility = 1.0;
-	kpIndex = 9.0;
+	      kpIndex = 9.0;
     #endif
+
+	//Total visibility of aurora based on multiple factors
+	float auroraVisibility = pow6(moonVisibility) * (1.0 - wetness) * caveFactor * AURORA_BRIGHTNESS;
 
     //Aurora tends to get brighter and dimmer when plasma arrives or fades away
     float longPulse = clamp(sin(cos(frameTimeCounter * 0.01) * 0.6 + frameTimeCounter * 0.04), -1.0, 1.0);

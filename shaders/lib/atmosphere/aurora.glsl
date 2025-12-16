@@ -4,21 +4,20 @@ void drawAurora(inout vec3 color, in vec3 worldPos, in float VoU, in float caveF
           kpIndex = kpIndex - int(kpIndex == 1) + int(kpIndex > 7 && worldDay % 10 == 0);
           kpIndex = min(max(kpIndex, 0), 9);
 
-	//Total visibility of aurora based on multiple factors
-	float visibility = pow6(moonVisibility) * (1.0 - wetness) * caveFactor * (1.0 - pc * 0.75) * pow2(1.0 - vc) * AURORA_BRIGHTNESS;
-
 	#ifdef AURORA_FULL_MOON_VISIBILITY
-	kpIndex += float(moonPhase == 0) * 3;
+	      kpIndex += float(moonPhase == 0) * 3;
 	#endif
 
 	#ifdef AURORA_COLD_BIOME_VISIBILITY
-	kpIndex += isSnowy * 4;
+	      kpIndex += isSnowy * 4;
 	#endif
 
     #ifdef AURORA_ALWAYS_VISIBLE
-    visibility = 1.0;
-	kpIndex = 9.0;
+	      kpIndex = 9.0;
     #endif
+
+	//Total visibility of aurora based on multiple factors
+	float visibility = pow6(moonVisibility) * (1.0 - wetness) * caveFactor * (1.0 - pc * 0.75) * pow2(1.0 - vc) * AURORA_BRIGHTNESS;
 
 	//Aurora tends to get brighter and dimmer when plasma arrives or fades away
 	float pulse = clamp(cos(sin(frameTimeCounter * 0.1) * 0.3 + frameTimeCounter * 0.07), 0.0, 1.0);
