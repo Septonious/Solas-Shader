@@ -22,7 +22,7 @@ void drawAurora(inout vec3 color, in vec3 worldPos, in float VoU, in float caveF
 	//Aurora tends to get brighter and dimmer when plasma arrives or fades away
     float time = (worldTime + int(5 + mod(worldDay, 100)) * 24000) * 0.05;
 	float pulse = clamp(cos(sin(time * 0.1) * 0.3 + time * 0.07), 0.0, 1.0);
-	float longPulse = clamp(sin(cos(time * 0.01) * 0.6 + time * 0.04), -1.0, 1.0);
+	float longPulse = clamp(sin(cos(time * 0.01) * 0.4 + time * 0.06), -1.0, 1.0);
 
 	kpIndex *= 1.0 + longPulse * 0.5;
 	kpIndex /= 9.0;
@@ -62,9 +62,10 @@ void drawAurora(inout vec3 color, in vec3 worldPos, in float VoU, in float caveF
 
 				vec3 planeCoord = worldPos * ((24.0 - kpIndex * 4.5 - pulse * longPulse * kpIndex * deformationNoise * 6.0 + currentStep * (10.0 - 7.5 * deformationNoise + kpIndex * 9.0) - altitudeFactor) / worldPos.y) * 0.025;
 				vec2 coord = planeCoord.xz + cameraPosition.xz * 0.0001;
-				float blobNoise = max(0.0, texture2D(noisetex, coord * 0.0075 + time * 0.0001).b - 0.25 - kpIndex * 0.1 + pulse * 0.1);
-				float baseNoise = texture2D(noisetex, coord * 0.005 - deformationNoise * 0.002 + time * 0.00006).b * 2.50;
+				float baseNoise = texture2D(noisetex, coord * 0.0025 - deformationNoise * 0.002 + time * 0.00006).b * 2.50;
+                float blobNoise = baseNoise * (0.5 - kpIndex * 0.25);
 					  baseNoise+= texture2D(noisetex, coord * 0.100 + deformationNoise * 0.001 - time * 0.00012).r * 2.75;
+
 				baseNoise = max(1.0 - 2.0 * abs(baseNoise - 3.0) - (1.0 - kpIndex * 0.5) * 0.5, 0.0);
 				baseNoise *= baseNoise;
 				float detailNoise = max(0.0, texture2D(noisetex, coord * (0.050 + kpIndex * 0.100 + pulse * 0.025) + deformationNoise * 0.003 + time * 0.00024).b - 0.2);
@@ -72,7 +73,7 @@ void drawAurora(inout vec3 color, in vec3 worldPos, in float VoU, in float caveF
 				//Add all noise iterations together
 				float totalNoise = baseNoise * pow(1.0 - currentStep, 1.0 + (3.0 + pulse * 4.0) * deformationNoise);
 					  totalNoise *= 0.5 + detailNoise * 0.5;
-					  totalNoise += blobNoise * (0.2 + pulse * 0.2);
+					  totalNoise += blobNoise * (0.25 + pulse * 0.25);
 
 				//Now let's add some colors! Based on low frequency noise, the aurora is either blue-green or red-yellow
 				float colorMixer = clamp(texture2D(noisetex, coord * 0.00125).b * kpIndex * kpIndex * (0.25 + pulse * 0.75), 0.0, 1.0);
