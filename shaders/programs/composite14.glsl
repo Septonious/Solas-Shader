@@ -38,7 +38,7 @@ float centerDepthSmooth = ((DOF_FOCUS - near) * far) / ((far - near) * DOF_FOCUS
 
 uniform ivec2 eyeBrightnessSmooth;
 
-#ifdef LENS_FLARE
+#if defined LENS_FLARE || defined BLOOM
 uniform vec3 cameraPosition, sunPosition;
 #endif
 

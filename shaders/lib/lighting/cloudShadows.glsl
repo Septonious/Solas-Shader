@@ -15,6 +15,10 @@ void getDynamicWeather(inout float speed, inout float amount, inout float freque
     density += waveFunction * sinDay05;
 	#endif
 
+	#if MC_VERSION >= 12104
+    amount -= isPaleGarden;
+	#endif
+
     amount = mix(amount, 10.0, wetness);
 }
 

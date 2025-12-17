@@ -32,8 +32,13 @@ uniform float darknessFactor;
 uniform float wetness;
 uniform float shadowFade;
 uniform float timeAngle, timeBrightness;
+
+#if MC_VERSION >= 12104
+uniform float isPaleGarden;
 #endif
 
+uniform vec3 skyColor;
+#endif
 uniform ivec2 eyeBrightnessSmooth;
 uniform vec3 cameraPosition;
 
