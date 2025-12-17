@@ -251,7 +251,7 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
     #endif
 
 	//Total visibility of aurora based on multiple factors
-	float auroraVisibility = pow6(moonVisibility) * (1.0 - wetness) * caveFactor * AURORA_BRIGHTNESS;
+	float auroraVisibility = pow6(moonVisibility) * (1.0 - wetness) * caveFactor;
 
     //Aurora tends to get brighter and dimmer when plasma arrives or fades away
 	float pulse = clamp(cos(sin(time * 0.1) * 0.3 + time * 0.07), 0.0, 1.0);
@@ -260,6 +260,7 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
     kpIndex *= 1.0 + longPulse * 0.5;
 	kpIndex /= 9.0;
 	auroraVisibility *= kpIndex;
+    auroraVisibility = min(auroraVisibility, 1.0) * AURORA_BRIGHTNESS;
     sceneLighting *= (1.0 - auroraVisibility) + mix(vec3(0.4, 1.5, 0.6), vec3(3.4, 0.1, 1.5), clamp(kpIndex * kpIndex * (0.25 + pulse * 0.75), 0.0, 1.0)) * max(auroraVisibility, 0.0);
     #endif
     #elif defined END

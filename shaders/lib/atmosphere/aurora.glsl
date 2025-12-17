@@ -17,7 +17,7 @@ void drawAurora(inout vec3 color, in vec3 worldPos, in float VoU, in float caveF
     #endif
 
 	//Total visibility of aurora based on multiple factors
-	float visibility = pow6(moonVisibility) * (1.0 - wetness) * caveFactor * (1.0 - pc * 0.75) * pow2(1.0 - vc) * AURORA_BRIGHTNESS;
+	float visibility = pow6(moonVisibility) * (1.0 - wetness) * caveFactor * (1.0 - pc * 0.75) * pow2(1.0 - vc);
 
 	//Aurora tends to get brighter and dimmer when plasma arrives or fades away
     float time = (worldTime + int(5 + mod(worldDay, 100)) * 24000) * 0.05;
@@ -27,6 +27,7 @@ void drawAurora(inout vec3 color, in vec3 worldPos, in float VoU, in float caveF
 	kpIndex *= 1.0 + longPulse * 0.5;
 	kpIndex /= 9.0;
 	visibility *= kpIndex;
+    visibility = min(visibility, 1.0) * AURORA_BRIGHTNESS;
 
 	if (visibility > 0.1) {
 		vec3 aurora = vec3(0.0);
@@ -63,7 +64,7 @@ void drawAurora(inout vec3 color, in vec3 worldPos, in float VoU, in float caveF
 				vec3 planeCoord = worldPos * ((24.0 - kpIndex * 4.5 - pulse * longPulse * kpIndex * deformationNoise * 6.0 + currentStep * (10.0 - 7.5 * deformationNoise + kpIndex * 9.0) - altitudeFactor) / worldPos.y) * 0.025;
 				vec2 coord = planeCoord.xz + cameraPosition.xz * 0.0001;
 				float baseNoise = texture2D(noisetex, coord * 0.0025 - deformationNoise * 0.002 + time * 0.00006).b * 2.50;
-                float blobNoise = baseNoise * (0.5 - kpIndex * 0.25);
+                float blobNoise = max(baseNoise * (0.5 - kpIndex * 0.25) - 0.15, 0.0);
 					  baseNoise+= texture2D(noisetex, coord * 0.100 + deformationNoise * 0.001 - time * 0.00012).r * 2.75;
 
 				baseNoise = max(1.0 - 2.0 * abs(baseNoise - 3.0) - (1.0 - kpIndex * 0.5) * 0.5, 0.0);
