@@ -195,7 +195,7 @@ void main() {
 			 noisePos.y *= 0.5;
 		float portalNoise = texture2D(noisetex, noisePos * 0.1 + 0.01 * vec2(sin(frameTimeCounter * 0.6) + frameTimeCounter * 0.4, frameTimeCounter * 0.5 - cos(frameTimeCounter * 0.7))).r;
 			  portalNoise *= portalNoise * portalNoise;
-		albedo.rgb = pow(vec3(NP_R, NP_G, NP_B), vec3(1.0 - portalNoise * 3.0 - pow4(lAlbedo) * 0.25)) * 3.0 * portalNoise * (0.8 + pow4(lAlbedo) * 0.6);
+		albedo.rgb = pow(vec3(NP_R, NP_G, NP_B), vec3(1.0 - portalNoise * 3.0 - pow4(lAlbedo) * 0.25)) * 3.0 * portalNoise * (0.7 + pow4(lAlbedo) * 0.6);
 	}
 
 	//Volumetric Clouds Blending
@@ -268,19 +268,21 @@ void main() {
 	#endif
 
 	//Specular Highlights
-	#if !defined DISTANT_HORIZONS && !defined NETHER
-    float vanillaDiffuse = (0.25 * NoU + 0.75) + (0.667 - abs(NoE)) * (1.0 - abs(NoU)) * 0.15;
-          vanillaDiffuse *= vanillaDiffuse;
+	#if !defined DISTANT_HORIZONS && !defined NETHER && defined SPECULAR_HIGHLIGHTS
+	if (emission < 0.1 && portal < 0.1) {
+		float vanillaDiffuse = (0.25 * NoU + 0.75) + (0.667 - abs(NoE)) * (1.0 - abs(NoU)) * 0.15;
+			  vanillaDiffuse *= vanillaDiffuse;
 
-	float smoothnessF = 0.6 + length(albedo.rgb) * 0.2 * float(ice > 0.5 || water > 0.5);
+		float smoothnessF = 0.6 + length(albedo.rgb) * 0.2 * float(ice > 0.5 || water > 0.5);
 
-	#ifdef OVERWORLD
-	vec3 specularHighlight = getSpecularHighlight(newNormal, viewPos, smoothnessF, vec3(1.00), lightColSqrt, shadow * vanillaDiffuse, color.a);
-	#else
-	vec3 specularHighlight = getSpecularHighlight(newNormal, viewPos, smoothnessF, vec3(1.00), endLightColSqrt, shadow * vanillaDiffuse, color.a);
-	#endif
+		#ifdef OVERWORLD
+		vec3 specularHighlight = getSpecularHighlight(newNormal, viewPos, smoothnessF, vec3(1.00), lightColSqrt, shadow * vanillaDiffuse, color.a);
+		#else
+		vec3 specularHighlight = getSpecularHighlight(newNormal, viewPos, smoothnessF, vec3(1.00), endLightColSqrt, shadow * vanillaDiffuse, color.a);
+		#endif
 
-	albedo.rgb += specularHighlight;
+		albedo.rgb += specularHighlight;
+	}
 	#endif
 
     //Fog
