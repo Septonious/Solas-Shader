@@ -142,7 +142,7 @@ void main() {
 	float NoE = clamp(dot(newNormal, eastVec), -1.0, 1.0);
 
     #ifdef GENERATED_EMISSION
-    if (albedo.a > 0.5) generateIPBR(albedo, worldPos, viewPos, lightmap, emission, smoothness, metalness, subsurface);
+    if (albedo.a > 0.1) generateIPBR(albedo, worldPos, viewPos, lightmap, emission, smoothness, metalness, subsurface);
     #endif
 
     vec3 shadow = vec3(0.0);
