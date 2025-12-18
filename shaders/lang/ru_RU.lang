@@ -84,6 +84,9 @@ option.END_DISK_HEIGHT=Высота
 option.END_DISK_OPACITY=Непрозрачность
 option.END_DISK_AMOUNT=Количество
 option.END_DISK_THICKNESS=Размер
+option.END_FLASHES=Вспышки в Энде (1.21.9+)
+option.END_FLASHES.comment=Включает вспышки сверхновых в Энде. Работают только на новейших версиях майнкрафта.
+option.END_FLASH_BRIGHTNESS=Яркость Вспышек
 
 #----------------------------------------------------------------------------------#
 
@@ -110,15 +113,27 @@ option.FOG_HEIGHT=Высота Тумана
 screen.SKY_CONFIG=Настройки Неба
 
 option.STARS=Звёзды
-option.STAR_BRIGHTNESS=Яркость Звёзд
-option.STAR_AMOUNT=Количество Звёзд
 option.END_STARS=Звёзды в Краю
+option.SHOOTING_STARS=Падающие Звезды / Метеоры
 option.MILKY_WAY=Млечный Путь
 option.MILKY_WAY_BRIGHTNESS=Яркость Млечного Пути
 option.END_NEBULA=Туманность в Краю
 option.END_NEBULA_BRIGHTNESS=Яркость Туманности
 option.RAINBOW=Радуга
 option.RAINBOW_BRIGHTNESS=Яркость Радуги
+
+#----------------------------------------------------------------------------------#
+
+screen.STARS_CONFIG=Настройки Звёзд
+
+option.STAR_BRIGHTNESS=Яркость Звёзд
+option.STAR_AMOUNT=Число Звёзд
+option.SHOOTING_STARS_SIZE=Размер Метеоров
+option.SHOOTING_STARS_SPEED=Скорость Метеоров
+option.SHOOTING_STARS_CHANCE=Шанс Метеоров
+option.SHOOTING_STARS_COUNT=Число Метеоров
+option.SHOOTING_STARS_LINE_THICKNESS=Толщина Следа Метеоров
+option.SHOOTING_STARS_TRAIL_LENGTH=Длина Следа Метеоров
 
 #----------------------------------------------------------------------------------#
 

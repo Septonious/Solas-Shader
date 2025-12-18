@@ -85,8 +85,8 @@ option.END_DISK_HEIGHT=Height
 option.END_DISK_OPACITY=Opacity
 option.END_DISK_AMOUNT=Amount
 option.END_DISK_THICKNESS=Thickness
-option.END_FLASHES=End Flashes
-option.END_FLASHES.comment=Enables End Flashes from 1.21. Work only on the newest versions of Minecraft!
+option.END_FLASHES=End Flashes (1.21.9+)
+option.END_FLASHES.comment=Enables End Flashes from 1.21. Work only on the newest versions of Minecraft.
 option.END_FLASH_BRIGHTNESS=Flash Brightness
 
 #----------------------------------------------------------------------------------#
@@ -116,15 +116,27 @@ option.FOG_HEIGHT=Ground Fog Height
 screen.SKY_CONFIG=Sky Config
 
 option.STARS=Stars
-option.STAR_BRIGHTNESS=Stars Brightness
-option.STAR_AMOUNT=Stars Amount
 option.END_STARS=Ender Stars
+option.SHOOTING_STARS=Shooting Stars / Meteors
 option.MILKY_WAY=Milky Way
 option.MILKY_WAY_BRIGHTNESS=Milky Way Brightness
 option.END_NEBULA=Ender Nebula
 option.END_NEBULA_BRIGHTNESS=Ender Nebula Brightness
 option.RAINBOW=Rainbow
 option.RAINBOW_BRIGHTNESS=Rainbow Brightness
+
+#----------------------------------------------------------------------------------#
+
+screen.STARS_CONFIG=Stars Config
+
+option.STAR_BRIGHTNESS=Stars Brightness
+option.STAR_AMOUNT=Stars Amount
+option.SHOOTING_STARS_SIZE=Meteors Size
+option.SHOOTING_STARS_SPEED=Meteros Speed
+option.SHOOTING_STARS_CHANCE=Meteors Chance
+option.SHOOTING_STARS_COUNT=Meteors Count
+option.SHOOTING_STARS_LINE_THICKNESS=Meteor Trail Thickness
+option.SHOOTING_STARS_TRAIL_LENGTH=Meteor Trail Length
 
 #----------------------------------------------------------------------------------#
 

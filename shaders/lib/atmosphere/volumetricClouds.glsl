@@ -200,7 +200,7 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z0, f
             float pulse = clamp(cos(sin(time * 0.1) * 0.3 + time * 0.07), 0.0, 1.0);
             float longPulse = clamp(sin(cos(time * 0.01) * 0.4 + time * 0.06), -1.0, 1.0);
 
-			kpIndex *= 1.0 + longPulse * 0.5;
+			kpIndex *= 1.0 + longPulse * 0.25;
 			kpIndex /= 9.0;
 			auroraVisibility *= kpIndex;
             auroraVisibility = min(auroraVisibility, 1.0) * AURORA_BRIGHTNESS;
