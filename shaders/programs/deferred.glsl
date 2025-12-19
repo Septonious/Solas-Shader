@@ -19,10 +19,7 @@ uniform int dhRenderDistance;
 #ifdef OVERWORLD
 uniform int worldDay;
 uniform int moonPhase;
-
-#ifdef VOLUMETRIC_CLOUDS
 uniform int worldTime;
-#endif
 
 uniform float shadowFade;
 uniform float rainStrength;

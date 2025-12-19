@@ -181,9 +181,9 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z0, f
 			//Total visibility of aurora based on multiple factors
 			float auroraVisibility = pow6(moonVisibility) * (1.0 - wetness) * caveFactor;
 
-            //Aurora tends to get brighter and dimmer when plasma arrives or fades away
-            float pulse = clamp(cos(sin(time * 0.1) * 0.3 + time * 0.07), 0.0, 1.0);
-            float longPulse = clamp(sin(cos(time * 0.01) * 0.4 + time * 0.06), -1.0, 1.0);
+			//Aurora tends to get brighter and dimmer when plasma arrives or fades away
+			float pulse = clamp(cos(sin(frameTimeCounter * 0.1) * 0.3 + frameTimeCounter * 0.07), 0.0, 1.0);
+			float longPulse = clamp(sin(cos(frameTimeCounter * 0.01) * 0.6 + frameTimeCounter * 0.04), -1.0, 1.0);
 
 			kpIndex *= 1.0 + longPulse * 0.25;
 			kpIndex /= 9.0;

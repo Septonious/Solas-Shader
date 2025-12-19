@@ -205,7 +205,7 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
     if (emission < 0.01) {
         #if defined GBUFFERS_TERRAIN && defined OVERWORLD
         float isMaterialSmooth = float(mat >= 20298 && mat <= 20322);
-        vec3 baseReflectance = vec3(max(6.0 - isMaterialSmooth * 5.0 - timeBrightness * 4.0, 1.0));
+        vec3 baseReflectance = vec3(max(5.0 - isMaterialSmooth * 4.0 - timeBrightness * 3.0, 1.0));
         #else
         vec3 baseReflectance = vec3(2.0);
         #endif
@@ -236,11 +236,17 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
 	//Total visibility of aurora based on multiple factors
 	float auroraVisibility = pow6(moonVisibility) * (1.0 - wetness) * caveFactor;
 
+<<<<<<< Updated upstream
     if (auroraVisibility > 0.0) {
         //The index of geomagnetic activity. Determines the brightness of Aurora, its widespreadness across the sky and tilt factor
         float kpIndex = abs(worldDay % 9 - worldDay % 4);
               kpIndex = kpIndex - int(kpIndex == 1) + int(kpIndex > 7 && worldDay % 10 == 0);
               kpIndex = min(max(kpIndex, 0) + isSnowy, 9);
+=======
+	//Aurora tends to get brighter and dimmer when plasma arrives or fades away
+	float pulse = clamp(cos(sin(frameTimeCounter * 0.1) * 0.3 + frameTimeCounter * 0.07), 0.0, 1.0);
+	float longPulse = clamp(sin(cos(frameTimeCounter * 0.01) * 0.6 + frameTimeCounter * 0.04), -1.0, 1.0);
+>>>>>>> Stashed changes
 
         //Aurora tends to get brighter and dimmer when plasma arrives or fades away
         float pulse = clamp(cos(sin(time * 0.1) * 0.3 + time * 0.07), 0.0, 1.0);
