@@ -233,14 +233,14 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
          sceneLighting *= 1.0 + sss * shadow * 2.0;
 
     #ifdef AURORA_LIGHTING_INFLUENCE
-	//Total visibility of aurora based on multiple factors
-	float auroraVisibility = pow6(moonVisibility) * (1.0 - wetness) * caveFactor;
+    //Total visibility of aurora based on multiple factors
+    float auroraVisibility = pow6(moonVisibility) * (1.0 - wetness) * caveFactor;
 
     if (auroraVisibility > 0.0) {
         //The index of geomagnetic activity. Determines the brightness of Aurora, its widespreadness across the sky and tilt factor
         float kpIndex = abs(worldDay % 9 - worldDay % 4);
-              kpIndex = kpIndex - int(kpIndex == 1) + int(kpIndex > 7 && worldDay % 10 == 0);
-              kpIndex = min(max(kpIndex, 0) + isSnowy, 9);
+            kpIndex = kpIndex - int(kpIndex == 1) + int(kpIndex > 7 && worldDay % 10 == 0);
+            kpIndex = min(max(kpIndex, 0) + isSnowy * 4, 9);
 
         //Aurora tends to get brighter and dimmer when plasma arrives or fades away
         float pulse = clamp(cos(sin(frameTimeCounter * 0.1) * 0.3 + frameTimeCounter * 0.07), 0.0, 1.0);
@@ -248,9 +248,9 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
 
         kpIndex *= 1.0 + longPulse * 0.25;
         kpIndex /= 9.0;
-	    auroraVisibility *= kpIndex * (1.0 + max(longPulse * 0.5, 0.0) + kpIndex * kpIndex);
-        auroraVisibility = min(auroraVisibility, 4.0) * AURORA_BRIGHTNESS;
-        sceneLighting *= (1.0 - auroraVisibility) + fmix(vec3(0.4, 1.5, 0.6), vec3(3.4, 0.1, 1.5), clamp(kpIndex * kpIndex * (0.25 + pulse * 0.75), 0.0, 1.0)) * auroraVisibility;
+        auroraVisibility *= kpIndex * (1.0 + max(longPulse * 0.5, 0.0) + kpIndex * kpIndex * 0.5);
+        auroraVisibility = min(auroraVisibility, 2.0) * AURORA_BRIGHTNESS * 0.25;
+        sceneLighting *= (1.0 - auroraVisibility) + auroraVisibility * fmix(vec3(0.4, 1.5, 0.6), vec3(3.4, 0.1, 1.5), clamp(kpIndex * kpIndex, 0.0, 1.0));
     }
     #endif
     #elif defined END

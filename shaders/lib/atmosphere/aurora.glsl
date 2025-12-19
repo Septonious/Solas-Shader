@@ -4,19 +4,17 @@ void drawAurora(inout vec3 color, in vec3 worldPos, in float VoU, in float caveF
           kpIndex = kpIndex - int(kpIndex == 1) + int(kpIndex > 7 && worldDay % 10 == 0);
           kpIndex = min(max(kpIndex, 0) + isSnowy * 4, 9);
 
-
 	//Total visibility of aurora based on multiple factors
 	float visibility = pow6(moonVisibility) * (1.0 - wetness) * caveFactor * (1.0 - pc * 0.75) * pow2(1.0 - vc);
 
 	//Aurora tends to get brighter and dimmer when plasma arrives or fades away
-    float time = (worldTime + int(5 + mod(worldDay, 100)) * 24000) * 0.05;
-	float pulse = clamp(cos(sin(time * 0.1) * 0.3 + time * 0.07), 0.0, 1.0);
-	float longPulse = clamp(sin(cos(time * 0.01) * 0.4 + time * 0.06), -1.0, 1.0);
+    float pulse = clamp(cos(sin(frameTimeCounter * 0.1) * 0.3 + frameTimeCounter * 0.07), 0.0, 1.0);
+    float longPulse = clamp(sin(cos(frameTimeCounter * 0.01) * 0.6 + frameTimeCounter * 0.04), -1.0, 1.0);
 
 	kpIndex *= 1.0 + longPulse * 0.25;
 	kpIndex /= 9.0;
-	visibility *= kpIndex * (1.0 + max(longPulse * 0.5, 0.0) + kpIndex * kpIndex);
-    visibility = min(visibility, 4.0) * AURORA_BRIGHTNESS;
+	visibility *= kpIndex * (1.0 + max(longPulse * 0.5, 0.0) + kpIndex * kpIndex * 0.5);
+    visibility = min(visibility, 2.0) * AURORA_BRIGHTNESS;
 
 	if (visibility > 0.1) {
 		vec3 aurora = vec3(0.0);
@@ -53,17 +51,17 @@ void drawAurora(inout vec3 color, in vec3 worldPos, in float VoU, in float caveF
 
 			if (auroraDistanceFactor > 0.0) {
                 coord.y *= northSouthStretching;
-                float baseOctaveA = texture2D(noisetex, coord * 0.002 + time * 0.00006).b;
+                float baseOctaveA = texture2D(noisetex, coord * 0.002 + frameTimeCounter * 0.00006).b;
                 coord.y /= northSouthStretching;
-                float baseOctaveB = texture2D(noisetex, coord * 0.100 - time * baseOctaveA * 0.00012).r;
-                float baseOctaveC_u = texture2D(noisetex, coord * 0.025 + time * baseOctaveA * 0.00008 + 0.5).r;
+                float baseOctaveB = texture2D(noisetex, coord * 0.100 - frameTimeCounter * baseOctaveA * 0.00012).r;
+                float baseOctaveC_u = texture2D(noisetex, coord * 0.025 + frameTimeCounter * baseOctaveA * 0.00008 + 0.5).r;
                 float baseOctaveC = max(baseOctaveC_u - 0.5, 0.0);
 				float arcNoise = baseOctaveA * 6.0;
 					  arcNoise*= baseOctaveB * 4.0;
 					  arcNoise = max(1.0 - abs(arcNoise - 3.5 - baseOctaveB * baseOctaveB * lineNoiseCoeff - baseOctaveC * whirlNoiseCoeff), 0.0);
 					  arcNoise *= arcNoise * 0.5;
                 float blobNoise = max(0.0, baseOctaveB * baseOctaveB * (0.33 + baseOctaveA * 0.67) - 0.125);
-                float detailNoise = texture2D(noisetex, coord * 0.150 - time * 0.0024).b;
+                float detailNoise = texture2D(noisetex, coord * 0.150 - frameTimeCounter * 0.0024).b;
                 float totalNoise = (arcNoise * (0.75 + detailNoise * 16.0 * baseOctaveC) + blobNoise * 0.75);
 
                 vec3 lowA = vec3(0.05, 1.55, 0.40);
@@ -76,7 +74,7 @@ void drawAurora(inout vec3 color, in vec3 worldPos, in float VoU, in float caveF
                 vec3 auroraB = fmix(lowB, upB, pow(currentStep, 0.45));
                      auroraB *= exp2(-(3.0 + baseOctaveC * 25.0) * i * sampleStep);
 
-                float colorMixer = min(max(baseOctaveC_u - 0.45 + kpIndex * 0.1, 0.0) * 16.0 * kpIndex * kpIndex, 1.0);
+                float colorMixer = min(max(baseOctaveC_u - 0.45 + kpIndex * 0.1, 0.0) * 16.0 * kpIndex * kpIndex, 1.0) * (0.25 + pulse * 0.75);
 
                 vec3 totalAurora = mix(auroraA, auroraB, colorMixer);
 
