@@ -32,13 +32,8 @@ vec3 getAtmosphere(vec3 viewPos) {
          daySky = fmix(daySky, scattering1 * (1.0 + timeBrightnessSqrt + timeBrightness), scattering1Mixer);
          daySky = fmix(daySky, pow(lightColSqrt, vec3(1.5 - timeBrightnessSqrt * 0.5)) * (2.0 + mieScattering), scattering2Mixer);
 
-<<<<<<< Updated upstream
-    vec3 nightSky = fmix(lightNight * 0.6, vec3(0.04, 0.11, 0.25), (0.125 * VoUClamped + 3.0 * pow3(VoUPositive) * pow2(1.0 - VoUPositive)) * (1.0 - wetness));
+    vec3 nightSky = fmix(lightNight * 0.6, vec3(0.01, 0.11, 0.25), 0.125 * VoUClamped + 3.0 * pow3(VoUPositive) * pow2(1.0 - VoUPositive));
     vec3 atmosphere = fmix(nightSky, daySky, sunVisibility);
-=======
-    vec3 nightSky = mix(lightNight * 0.6, vec3(0.01, 0.11, 0.25), 0.125 * VoUClamped + 3.0 * pow3(VoUPositive) * pow2(1.0 - VoUPositive));
-    vec3 atmosphere = mix(nightSky, daySky, sunVisibility);
->>>>>>> Stashed changes
          atmosphere *= 1.0 - wetness * 0.125;
          atmosphere *= skyDensity;
 
