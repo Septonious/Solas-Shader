@@ -187,8 +187,8 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z0, f
 
 			kpIndex *= 1.0 + longPulse * 0.25;
 			kpIndex /= 9.0;
-			auroraVisibility *= kpIndex;
-            auroraVisibility = min(auroraVisibility, 1.0) * AURORA_BRIGHTNESS;
+            auroraVisibility *= kpIndex * (1.0 + max(longPulse * 0.5, 0.0) + kpIndex * kpIndex);
+            auroraVisibility = min(auroraVisibility, 4.0) * AURORA_BRIGHTNESS;
             #endif
 
 			float VoS = clamp(dot(nViewPos, sunVec), 0.0, 1.0);

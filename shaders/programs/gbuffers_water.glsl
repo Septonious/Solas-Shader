@@ -168,7 +168,7 @@ void main() {
 	float ice = float(mat == 10000);
 	float water = float(mat == 10001);
 	float glass = float(mat >= 10201 && mat <= 10216);
-	float emission = pow8(lightmap.x) + portal * lAlbedo * lAlbedo * 2.0;
+	float emission =  portal * lAlbedo * lAlbedo * 2.0;
 
 	if (water > 0.5) {
 		#ifdef VANILLA_WATER

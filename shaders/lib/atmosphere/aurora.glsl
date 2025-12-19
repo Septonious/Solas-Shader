@@ -1,21 +1,22 @@
 void drawAurora(inout vec3 color, in vec3 worldPos, in float VoU, in float caveFactor, in float vc, in float pc) {
-    //The index of geomagnetic activity. Determines the brightness of Aurora, its widespreadness across the sky and tilt factor
+	//The index of geomagnetic activity. Determines the brightness of Aurora, its widespreadness across the sky and tilt factor
     float kpIndex = abs(worldDay % 9 - worldDay % 4);
           kpIndex = kpIndex - int(kpIndex == 1) + int(kpIndex > 7 && worldDay % 10 == 0);
-          kpIndex = min(max(kpIndex, 0) + isSnowy, 9);
+          kpIndex = min(max(kpIndex, 0) + isSnowy * 4, 9);
+
 
 	//Total visibility of aurora based on multiple factors
 	float visibility = pow6(moonVisibility) * (1.0 - wetness) * caveFactor * (1.0 - pc * 0.75) * pow2(1.0 - vc);
 
 	//Aurora tends to get brighter and dimmer when plasma arrives or fades away
-	float pulse = clamp(cos(sin(frameTimeCounter * 0.1) * 0.3 + frameTimeCounter * 0.07), 0.0, 1.0);
-	float longPulse = clamp(sin(cos(frameTimeCounter * 0.01) * 0.6 + frameTimeCounter * 0.04), -1.0, 1.0);
+    float time = (worldTime + int(5 + mod(worldDay, 100)) * 24000) * 0.05;
+	float pulse = clamp(cos(sin(time * 0.1) * 0.3 + time * 0.07), 0.0, 1.0);
+	float longPulse = clamp(sin(cos(time * 0.01) * 0.4 + time * 0.06), -1.0, 1.0);
 
 	kpIndex *= 1.0 + longPulse * 0.25;
-	kpIndex = 9;
 	kpIndex /= 9.0;
-	visibility *= kpIndex;
-    visibility = min(visibility, 1.0) * AURORA_BRIGHTNESS;
+	visibility *= kpIndex * (1.0 + max(longPulse * 0.5, 0.0) + kpIndex * kpIndex);
+    visibility = min(visibility, 4.0) * AURORA_BRIGHTNESS;
 
 	if (visibility > 0.1) {
 		vec3 aurora = vec3(0.0);
@@ -24,9 +25,6 @@ void drawAurora(inout vec3 color, in vec3 worldPos, in float VoU, in float caveF
         #ifdef TAA
         	  dither = fract(frameTimeCounter * 16.0 + dither);
         #endif
-
-		//Time
-	    float time = (worldTime + int(5 + mod(worldDay, 100)) * 24000) * 0.05;
 
 		//Determines the quality of aurora. Since it stretches a lot during strong geomagnetic storms, we need more samples
 		int samples = int(8 + kpIndex * 8);
@@ -40,52 +38,54 @@ void drawAurora(inout vec3 color, in vec3 worldPos, in float VoU, in float caveF
 		//Altitude factor. Makes the aurora closer to you when you're ascending
 		float altitudeFactor = clamp(cameraPosition.y * 0.004, 0.0, 9.0);
 
+        float accumulatedNoise = 0.0;
+        float northSouthStretching = 0.4 + pulse * 0.2;
+        float lineNoiseCoeff = 3.0 + pulse * 4.0; //[1.0 - 7.5]
+        float whirlNoiseCoeff = 25.0 + pulse * 25.0; //[20.0 - 100.0]
+
 		for (int i = 0; i < samples; i++) {
-			vec3 planeCoord = worldPos * ((24.0 - kpIndex * 8.0 + pulse * 8.0 + currentStep * (10.0 + kpIndex * 10.0) - altitudeFactor) / worldPos.y) * 0.025;
+			vec3 planeCoord = worldPos * ((20.0 + currentStep * (14.0 + accumulatedNoise * 9.0 + kpIndex * 5.0) - altitudeFactor) / worldPos.y) * 0.05;
+			vec2 coord = planeCoord.xz + cameraPosition.xz * 0.0001;
 
 			//We don't want the aurora to render infintely, we also want it to be closer to the north when Kp is low
-			float auroraNorthBias = clamp((-planeCoord.x * 0.5 - planeCoord.z * 1.5) * 0.25 * (10.0 - min(kpIndex, 1.0) * 9.0), pow5(kpIndex), 1.0);
-			float auroraDistanceFactor = clamp(1.0 - length(planeCoord.xz) * (0.1 - kpIndex * 0.05), 0.0, 1.0) * auroraNorthBias;
+			float auroraNorthBias = clamp((-planeCoord.x * 0.5 - planeCoord.z) * 0.25 * (10.0 - min(kpIndex, 1.0) * 9.0), pow5(kpIndex), 1.0);
+			float auroraDistanceFactor = clamp(1.0 - length(planeCoord.xz) * 0.075, 0.0, 1.0) * auroraNorthBias;
 
 			if (auroraDistanceFactor > 0.0) {
-				vec2 coord = planeCoord.xz + cameraPosition.xz * 0.0001;
-				float deformNoise = clamp(texture2D(noisetex, coord * 0.05 + time * 0.001).b - 0.35, 0.0, 1.0);
-				vec3 planeCoordDeformed = worldPos * ((24.0 - kpIndex * 8.0 + pulse * 4.0 + currentStep * (15.0 + 5.0 * deformNoise + kpIndex * 5.0) - altitudeFactor) / worldPos.y) * 0.025;
-				vec2 coordDeformed = planeCoordDeformed.xz + cameraPosition.xz * 0.0001;
-				float baseNoise = texture2D(noisetex, coordDeformed * 0.0025 + time * 0.00006).b * (3.0 + longPulse * 0.5 - pulse * 0.25);
-                float blobNoise = max(baseNoise * (0.5 - kpIndex * 0.25) - 0.2, 0.0) * (0.25 + pulse * 0.25);
-					  baseNoise+= texture2D(noisetex, coordDeformed * 0.100 - time * 0.00012).r * (2.25 - longPulse * 0.5 + pulse * 0.25);
-					  baseNoise = max(1.0 - 2.0 * abs(baseNoise - 3.0) - (1.0 - kpIndex * 0.5) * 0.5, 0.0);
-					  baseNoise *= baseNoise;
+                coord.y *= northSouthStretching;
+                float baseOctaveA = texture2D(noisetex, coord * 0.002 + time * 0.00006).b;
+                coord.y /= northSouthStretching;
+                float baseOctaveB = texture2D(noisetex, coord * 0.100 - time * baseOctaveA * 0.00012).r;
+                float baseOctaveC_u = texture2D(noisetex, coord * 0.025 + time * baseOctaveA * 0.00008 + 0.5).r;
+                float baseOctaveC = max(baseOctaveC_u - 0.5, 0.0);
+				float arcNoise = baseOctaveA * 6.0;
+					  arcNoise*= baseOctaveB * 4.0;
+					  arcNoise = max(1.0 - abs(arcNoise - 3.5 - baseOctaveB * baseOctaveB * lineNoiseCoeff - baseOctaveC * whirlNoiseCoeff), 0.0);
+					  arcNoise *= arcNoise * 0.5;
+                float blobNoise = max(0.0, baseOctaveB * baseOctaveB * (0.33 + baseOctaveA * 0.67) - 0.125);
+                float detailNoise = texture2D(noisetex, coord * 0.150 - time * 0.0024).b;
+                float totalNoise = (arcNoise * (0.75 + detailNoise * 16.0 * baseOctaveC) + blobNoise * 0.75);
 
-				//Add all noise iterations together
-				float octaveA = texture2D(noisetex, coordDeformed * 0.090 + frameTimeCounter * 0.0012).b;
-				float octaveB = texture2D(noisetex, coordDeformed * 0.180 - frameTimeCounter * 0.0024).b;
-				float totalNoise = baseNoise * (1.0 - currentStep);
-					  totalNoise*= octaveA * (0.5 - pulse * 0.1) + (0.5 + pulse * 0.1);
-					  totalNoise*= octaveB * (0.6 - pulse * 0.2) + (0.4 + pulse * 0.2);
+                vec3 lowA = vec3(0.05, 1.55, 0.40);
+                vec3 upA = vec3(0.65 - baseOctaveC * baseOctaveC * 0.20, 0.30, 1.05 + baseOctaveC * baseOctaveC * 0.20);
+                vec3 auroraA = fmix(lowA, upA, pow(currentStep, 0.66));
+                     auroraA *= exp2(-(3.0 + baseOctaveC * 25.0) * i * sampleStep);
 
-				//Now let's add some colors! Based on low frequency noise, the aurora is either blue-green or red-yellow
-				float colorMixerNoise = clamp(texture2D(noisetex, coord * 0.0025).b - 0.35, 0.0, 1.0);
-				float colorMixer = clamp((colorMixerNoise + kpIndex * 0.15) * kpIndex * kpIndex * 2.0, 0.0, 1.0);
+                vec3 lowB = vec3(0.40, 1.55, 0.05);
+                vec3 upB = vec3(1.25 + baseOctaveC * pulse * 0.5, 0.05, 0.70);
+                vec3 auroraB = fmix(lowB, upB, pow(currentStep, 0.45));
+                     auroraB *= exp2(-(3.0 + baseOctaveC * 25.0) * i * sampleStep);
 
-				vec3 lowerGreen = vec3(0.15 + pulse * 0.25, 1.45, 0.50);
-				vec3 upperPurple = vec3(0.65 + colorMixerNoise, 0.10, 1.25);
-				vec3 aurora1 = mix(lowerGreen, upperPurple, currentStep * 1.25) * totalNoise +
-								mix(lowerGreen, upperPurple, 0.25 + blobNoise * blobNoise * 0.5) * blobNoise * 0.;
-					 aurora1 *= exp2(-2.0 * i * sampleStep);
+                float colorMixer = min(max(baseOctaveC_u - 0.45 + kpIndex * 0.1, 0.0) * 16.0 * kpIndex * kpIndex, 1.0);
 
-				vec3 lowerGreen2 = vec3(0.65 + pulse * 0.25, 1.90, 0.35);
-				vec3 upperRed = vec3(1.8 - pulse * 0.2, 0.05, 0.75 + pulse * 0.2);
-				vec3 aurora2 = mix(lowerGreen2, upperRed, pow(currentStep, 0.33)) * totalNoise +
-								mix(lowerGreen2, upperRed, 0.35 + blobNoise * blobNoise * 0.4) * blobNoise * 0.;
-					 aurora2 *= exp2(-1.5 * i * sampleStep);
+                vec3 totalAurora = mix(auroraA, auroraB, colorMixer);
 
-				aurora += mix(aurora1, aurora2, colorMixer) * auroraDistanceFactor * sampleStep;
+				aurora += totalAurora * totalNoise * sqrt(auroraDistanceFactor);
+                accumulatedNoise += max(baseOctaveC * baseOctaveC * 25.0 - 0.075, 0.0);
 			}
 			currentStep += sampleStep;
 		}
 
-		color += aurora * visibility * 5;
+		color += aurora * visibility * sampleStep;
 	}
 }

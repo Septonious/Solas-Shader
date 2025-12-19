@@ -37,6 +37,7 @@ void generateIPBR(inout vec4 albedo, in vec3 worldPos, in vec3 viewPos, inout ve
     #include "/lib/pbr/blocks/nether_bricks.glsl"
     #include "/lib/pbr/blocks/nether_logs.glsl"
     #include "/lib/pbr/blocks/nether_plants.glsl"
+    #include "/lib/pbr/blocks/note_block.glsl"
     #include "/lib/pbr/blocks/obsidian.glsl"
     #include "/lib/pbr/blocks/planks.glsl"
     #include "/lib/pbr/blocks/polished_materials.glsl"
