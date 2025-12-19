@@ -59,7 +59,7 @@ void getNormalFog(inout vec3 color, in vec3 atmosphereColor, in vec3 viewPos, in
 
     vec3 nSkyColor = 0.75 * sqrt(normalize(skyColor + 0.000001)) * fmix(vec3(1.0), biomeColor, sunVisibility * isSpecificBiome);
 	vec3 fogCol = fmix(caveMinLightCol * (1.0 - isCaveBiome) + caveBiomeColor,
-                   fmix(pow(atmosphereColor, vec3(1.0 - sunVisibility * 0.5)), nSkyColor, sunVisibility * min((1.0 - wetness) * (1.0 - fog) + 0.4 * timeBrightnessSqrt, 1.0)),
+                   fmix(pow(atmosphereColor, vec3(1.0 - sunVisibility * 0.5)) * 0.75, nSkyColor, sunVisibility * min((1.0 - wetness) * (1.0 - fog) + 0.4 * timeBrightnessSqrt, 1.0)),
                    caveFactor);
 
 	//Distant Fade

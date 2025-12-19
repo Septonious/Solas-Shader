@@ -12,7 +12,7 @@ void drawSunMoon(inout vec3 color, in vec3 worldPos, in vec3 nViewPos, in float 
         // Moon phases and texture
         if (moon > 0.0) {
             if (moonPhase > 0) {
-                float phaseFactor = int(moonPhase != 4) * (1.0 - int(4 < moonPhase) * 2.0) * 0.003;
+                float phaseFactor = int(moonPhase != 4) * (-1.0 + int(4 < moonPhase) * 2.0) * 0.003;
 
                 const vec2 sunRotationData = vec2(cos(sunPathRotation * 0.01745329251994), -sin(sunPathRotation * 0.01745329251994));
                 float fractTimeAngle = fract(timeAngle - (0.25 + phaseFactor));
