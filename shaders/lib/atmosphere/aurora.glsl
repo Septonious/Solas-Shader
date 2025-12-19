@@ -69,14 +69,6 @@ void drawAurora(inout vec3 color, in vec3 worldPos, in float VoU, in float caveF
 				float colorMixerNoise = clamp(texture2D(noisetex, coord * 0.0025).b - 0.35, 0.0, 1.0);
 				float colorMixer = clamp((colorMixerNoise + kpIndex * 0.15) * kpIndex * kpIndex * 2.0, 0.0, 1.0);
 
-<<<<<<< Updated upstream
-				vec3 auroraColor1 = fmix(vec3(0.6, 4.7 - pulse * 0.5, 0.2), vec3(3.4, 0.1, 1.5 + pulse * 0.5), pow(currentStep, 0.25));
-					 auroraColor1 *= exp2(-4.0 * i * sampleStep);
-				vec3 auroraColor2 = fmix(vec3(0.7, 4.2, 0.1), vec3(1.9 + currentStep, 0.4, 6.7), sqrt(currentStep));
-					 auroraColor2 *= exp2(-5.5 * i * sampleStep);
-				vec3 auroraColor = fmix(auroraColor2, auroraColor1, colorMixer) * (1.0 + pow8(1.0 - currentStep));
-				aurora += auroraColor * totalNoise * auroraDistanceFactor * sampleStep;
-=======
 				vec3 lowerGreen = vec3(0.15 + pulse * 0.25, 1.45, 0.50);
 				vec3 upperPurple = vec3(0.65 + colorMixerNoise, 0.10, 1.25);
 				vec3 aurora1 = mix(lowerGreen, upperPurple, currentStep * 1.25) * totalNoise +
@@ -90,7 +82,6 @@ void drawAurora(inout vec3 color, in vec3 worldPos, in float VoU, in float caveF
 					 aurora2 *= exp2(-1.5 * i * sampleStep);
 
 				aurora += mix(aurora1, aurora2, colorMixer) * auroraDistanceFactor * sampleStep;
->>>>>>> Stashed changes
 			}
 			currentStep += sampleStep;
 		}
