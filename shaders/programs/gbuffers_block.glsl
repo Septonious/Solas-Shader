@@ -79,7 +79,7 @@ vec3 eastVec = normalize(gbufferModelView[0].xyz);
 
 #ifdef OVERWORLD
 float eBS = eyeBrightnessSmooth.y / 240.0;
-float caveFactor = mix(clamp((cameraPosition.y - 56.0) / 16.0, float(sign(isEyeInWater)), 1.0), 1.0, sqrt(eBS));
+float caveFactor = fmix(clamp((cameraPosition.y - 56.0) / 16.0, float(sign(isEyeInWater)), 1.0), 1.0, sqrt(eBS));
 float sunVisibility = clamp((dot( sunVec, upVec) + 0.15) * 3.0, 0.0, 1.0);
 float moonVisibility = clamp((dot(-sunVec, upVec) + 0.15) * 3.0, 0.0, 1.0);
 vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.0);
@@ -201,7 +201,7 @@ void main() {
                 sampleNebulaNoise(coord, nebulaColorMixer, nebulaNoise);
                       nebulaColorMixer = pow4(nebulaColorMixer) * 6.0;
 
-                vec3 nebula =  mix(vec3(5.6, 2.2, 0.2), vec3(0.1, 2.8, 1.1), nebulaColorMixer) * nebulaNoise * nebulaNoise;
+                vec3 nebula =  fmix(vec3(5.6, 2.2, 0.2), vec3(0.1, 2.8, 1.1), nebulaColorMixer) * nebulaNoise * nebulaNoise;
                      nebula *= length(nebula) * END_NEBULA_BRIGHTNESS;
 
                 albedo.rgb += nebula * colormult;

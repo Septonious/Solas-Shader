@@ -1,9 +1,3 @@
-float texture2DShadow(sampler2D shadowtex, vec3 shadowPos) {
-    float shadow = texture2D(shadowtex, shadowPos.xy).r;
-
-    return clamp((shadow - shadowPos.z) * 65536.0, 0.0, 1.0);
-}
-
 #ifdef VOLUMETRIC_CLOUDS
 void getDynamicWeather(inout float speed, inout float amount, inout float frequency, inout float thickness, inout float density, inout float detail, inout float height, inout float scale) {
 	#ifdef VC_DYNAMIC_WEATHER
@@ -25,7 +19,7 @@ void getDynamicWeather(inout float speed, inout float amount, inout float freque
     amount -= isPaleGarden;
 	#endif
 
-    amount = mix(amount, 10.0, wetness);
+    amount = fmix(amount, 10.0, wetness);
 }
 
 void getCloudSample(vec2 rayPos, vec2 wind, float attenuation, float amount, float frequency, float thickness, float density, float detail, inout float noise) {
@@ -38,12 +32,12 @@ void getCloudSample(vec2 rayPos, vec2 wind, float attenuation, float amount, flo
 	float detailZ = floor(attenuation * thickness) * 0.05;
 	float noiseDetailA = texture2D(noisetex, rayPos - wind + detailZ).b;
 	float noiseDetailB = texture2D(noisetex, rayPos - wind + detailZ + 0.05).b;
-	float noiseDetail = mix(noiseDetailA, noiseDetailB, fract(attenuation * thickness));
+	float noiseDetail = fmix(noiseDetailA, noiseDetailB, fract(attenuation * thickness));
 
 	float noiseCoverage = abs(attenuation - 0.125) * (attenuation > 0.125 ? 1.1 : 8.0);
 		  noiseCoverage *= noiseCoverage * (VC_ATTENUATION + wetness * 1.5);
 	
-	noise = mix(noiseBase, noiseDetail, detail * 0.05) * 22.0 - noiseCoverage;
+	noise = fmix(noiseBase, noiseDetail, detail * 0.05) * 22.0 - noiseCoverage;
 	noise = max(noise - amount, 0.0) * (density * 0.25);
 	noise /= sqrt(noise * noise + 0.25);
 }
@@ -121,7 +115,7 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z0, f
 			vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.0);
 			float VoU = dot(nViewPos, upVec);
 			float VoL = dot(nViewPos, lightVec);
-			float halfVoL = mix(abs(VoL), VoL, shadowFade) * 0.5 + 0.5;
+			float halfVoL = fmix(abs(VoL), VoL, shadowFade) * 0.5 + 0.5;
 			float halfVoLSqr = halfVoL * halfVoL;
 			float scattering = pow24(halfVoL);
 			float heightFactor = 1.0 - clamp(cameraPosition.y / cloudTop, 0.0, 1.0);
@@ -150,7 +144,7 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z0, f
 
 				//Indoor leak prevention
 				if (eyeBrightnessSmooth.y < 210.0 && cameraPosition.y > height - 50.0 && lWorldPos < shadowDistance) {
-					if (texture2DShadow(shadowtex1, ToShadow(worldPos)) <= 0.0) break;
+					if (shadow2D(shadowtex1, ToShadow(worldPos)).x <= 0.0) break;
 				}
 
 				float noise = 0.0;
@@ -159,14 +153,17 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z0, f
 				amount += max(0.0, heightFactor - lWorldPos * 0.0075);
 				getCloudSample(rayPos.xz / scale, wind, attenuation, amount, frequency, thickness, density, detail, noise);
 
-                float lightning = min(lightningFlashEffect(worldPos, lightningBoltPosition.xyz, 512.0) * lightningBoltPosition.w * 32.0, 1.0);
+                float lightning = 0.0;
+                if (lightningBoltPosition.w > 0) {
+                    lightning = lightningFlashEffect(lightningBoltPosition, worldPos, 1.0, 512.0) * 100.0;
+                }
                 float sampleLighting = 1.0 - pow(noise, 1.0 + attenuation * 7.0);
-                      sampleLighting = mix(sampleLighting, attenuation, 0.3 + 0.45 * (1.0 - halfVoLSqr));
+                      sampleLighting = fmix(sampleLighting, attenuation + lightning, 0.3 + 0.45 * (1.0 - halfVoLSqr));
 
-				cloudLighting = mix(cloudLighting, sampleLighting, noise * (1.0 - cloud * cloud));
-				cloud = mix(cloud, 1.0, noise);
-				noise *= pow6(smoothstep(mix(distance * 0.1, 300, wetness), 16.0, lWorldPos * fogDistance));
-				cloudAlpha = mix(cloudAlpha, 1.0, noise);
+				cloudLighting = fmix(cloudLighting, sampleLighting, noise * (1.0 - cloud * cloud));
+				cloud = fmix(cloud, 1.0, noise);
+				noise *= pow6(smoothstep(fmix(distance * 0.1, 300, wetness), 16.0, lWorldPos * fogDistance));
+				cloudAlpha = fmix(cloudAlpha, 1.0, noise);
 
 				//gbuffers_water cloud discard check
 				if (currentDepth == maxDepth && cloud > 0.5) {
@@ -179,19 +176,7 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z0, f
             //The index of geomagnetic activity. Determines the brightness of Aurora, its widespreadness across the sky and tilt factor
             float kpIndex = abs(worldDay % 9 - worldDay % 4);
                   kpIndex = kpIndex - int(kpIndex == 1) + int(kpIndex > 7 && worldDay % 10 == 0);
-                  kpIndex = min(max(kpIndex, 0), 9);
-
-            #ifdef AURORA_FULL_MOON_VISIBILITY
-                  kpIndex += float(moonPhase == 0) * 3;
-            #endif
-
-            #ifdef AURORA_COLD_BIOME_VISIBILITY
-                  kpIndex += isSnowy * 4;
-            #endif
-
-            #ifdef AURORA_ALWAYS_VISIBLE
-                  kpIndex = 9.0;
-            #endif
+                  kpIndex = min(max(kpIndex, 0) + isSnowy, 9);
 
 			//Total visibility of aurora based on multiple factors
 			float auroraVisibility = pow6(moonVisibility) * (1.0 - wetness) * caveFactor;
@@ -210,22 +195,22 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z0, f
 			cloudLighting = cloudLighting * shadowFade + pow8(1.0 - cloudLighting) * pow3(VoS) * (1.0 - shadowFade) * 0.75;
 
 			vec3 nSkyColor = normalize(skyColor + 0.0001);
-            vec3 cloudAmbientColor = mix(atmosphereColor * atmosphereColor * 0.5, 
-									 mix(ambientCol, atmosphereColor * nSkyColor * 0.5, 0.2 + timeBrightnessSqrt * 0.3 + isSpecificBiome * 0.4),
+            vec3 cloudAmbientColor = fmix(atmosphereColor * atmosphereColor * 0.5, 
+									 fmix(ambientCol, atmosphereColor * nSkyColor * 0.5, 0.2 + timeBrightnessSqrt * 0.3 + isSpecificBiome * 0.4),
 									 sunVisibility * (1.0 - wetness));
-            vec3 cloudLightColor = mix(lightCol, lightCol * nSkyColor * 2.0, timeBrightnessSqrt * (0.5 - wetness * 0.5));
+            vec3 cloudLightColor = fmix(lightCol, lightCol * nSkyColor * 2.0, timeBrightnessSqrt * (0.5 - wetness * 0.5));
 				 cloudLightColor *= 0.5 + timeBrightnessSqrt * 0.5 + moonVisibility * 0.5;
 				 cloudLightColor *= 1.0 + scattering * shadowFade * (1.0 + sunVisibility + scattering * moonVisibility * 2.0);
-			vec3 cloudColor = mix(cloudAmbientColor, cloudLightColor, cloudLighting) * mix(vec3(1.0), biomeColor, isSpecificBiome * sunVisibility);
-			     cloudColor = mix(cloudColor, atmosphereColor * length(cloudColor) * 0.5, wetness * 0.6);
+			vec3 cloudColor = fmix(cloudAmbientColor, cloudLightColor, cloudLighting) * fmix(vec3(1.0), biomeColor, isSpecificBiome * sunVisibility);
+			     cloudColor = fmix(cloudColor, atmosphereColor * length(cloudColor) * 0.5, wetness * 0.6);
                  #ifdef AURORA_LIGHTING_INFLUENCE
-                 cloudColor = mix(cloudColor, mix(vec3(0.4, 1.5, 0.6), vec3(3.4, 0.1, 1.5), kpIndex * kpIndex * (0.25 + pulse * 0.75)), clamp(auroraVisibility * cloudLighting * cloudLighting * 0.075, 0.0, 0.1));
+                 cloudColor = fmix(cloudColor, fmix(vec3(0.4, 1.5, 0.6), vec3(3.4, 0.1, 1.5), kpIndex * kpIndex * (0.25 + pulse * 0.75)), clamp(auroraVisibility * cloudLighting * cloudLighting * 0.075, 0.0, 0.1));
                  #endif
 
-			float opacity = clamp(mix(VC_OPACITY - wetness * 0.2, 1.0, (max(0.0, cameraPosition.y) / height)), 0.0, 1.0);
+			float opacity = clamp(fmix(VC_OPACITY - wetness * 0.2, 1.0, (max(0.0, cameraPosition.y) / height)), 0.0, 1.0);
 
 			#if MC_VERSION >= 12104
-			opacity = mix(opacity, opacity * 0.5, isPaleGarden);
+			opacity = fmix(opacity, opacity * 0.5, isPaleGarden);
 			#endif
 
 			vc = vec4(cloudColor, cloudAlpha * opacity) * visibility;
@@ -267,12 +252,12 @@ void getEndCloudSample(vec2 rayPos, vec2 wind, float attenuation, inout float no
 	float detailZ = floor(attenuation * END_DISK_THICKNESS) * 0.05;
 	float noiseDetailA = texture2D(noisetex, rayPos * 0.5 - wind + detailZ).b;
 	float noiseDetailB = texture2D(noisetex, rayPos * 0.5 - wind + detailZ + 0.05).b;
-	float noiseDetail = mix(noiseDetailA, noiseDetailB, fract(attenuation * END_DISK_THICKNESS));
+	float noiseDetail = fmix(noiseDetailA, noiseDetailB, fract(attenuation * END_DISK_THICKNESS));
 
 	float noiseCoverage = abs(attenuation - 0.125) * (attenuation > 0.125 ? 1.14 : 5.0);
 		  noiseCoverage *= noiseCoverage * 3.0;
 	
-	noise = mix(noiseBase, noiseDetail, 0.025 * int(0 < noiseBase)) * 22.0 - noiseCoverage;
+	noise = fmix(noiseBase, noiseDetail, 0.025 * int(0 < noiseBase)) * 22.0 - noiseCoverage;
 	noise = max(noise - END_DISK_AMOUNT - 1.0 + getProtoplanetaryDisk(rayPos), 0.0);
 	noise /= sqrt(noise * noise + 0.25);
 }
@@ -352,7 +337,7 @@ void computeEndVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z0
 
                 vec3 worldPos = rayPos - cameraPosition;
 
-				float shadow1 = clamp(texture2DShadow(shadowtex1, ToShadow(worldPos)), 0.0, 1.0);
+				float shadow1 = clamp(shadow2D(shadowtex1, ToShadow(worldPos)).x, 0.0, 1.0);
 
 				float noise = 0.0;
 				float lightingNoise = 0.0;
@@ -371,11 +356,11 @@ void computeEndVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z0
 					  sampleLighting *= 1.0 - noise * 0.75;
 					  sampleLighting = clamp(sampleLighting, 0.0, 1.0);
 
-				cloudLighting = mix(cloudLighting, sampleLighting, noise * (1.0 - cloud * cloud));
+				cloudLighting = fmix(cloudLighting, sampleLighting, noise * (1.0 - cloud * cloud));
 				if (rayDistance < shadowDistance * 0.1) noise *= shadow1;
-				cloud = mix(cloud, 1.0, noise);
+				cloud = fmix(cloud, 1.0, noise);
 				noise *= pow8(smoothstep(4000.0, 8.0, rayDistance)); //Fog
-				cloudAlpha = mix(cloudAlpha, 1.0, noise);
+				cloudAlpha = fmix(cloudAlpha, 1.0, noise);
 
 				//gbuffers_water cloud discard check
 				if (noise > minimalNoise && currentDepth == maxDepth) {
@@ -387,7 +372,7 @@ void computeEndVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z0
             vec3 cloudColor = vec3(0.95, 1.0, 0.5) * endLightCol;
             #if MC_VERSION >= 12100 && defined END_FLASHES
             float endFlashPoint = endFlashPosToPoint(endFlashPosition, worldPos);
-                 cloudColor = mix(cloudColor, endFlashCol * (1.0 + endFlashPoint * endFlashPoint * 2.0), endFlashPoint * endFlashIntensity * 0.5);
+                 cloudColor = fmix(cloudColor, endFlashCol * (1.0 + endFlashPoint * endFlashPoint * 2.0), endFlashPoint * endFlashIntensity * 0.5);
             #endif
 			     cloudColor *= cloudLighting * 0.35;
 

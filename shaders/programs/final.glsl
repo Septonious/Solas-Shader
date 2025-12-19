@@ -19,7 +19,7 @@ uniform sampler2D shadowtex0;
 #endif
 
 // Pipeline Options //
-const bool shadowHardwareFiltering = false;
+const bool shadowHardwareFiltering = true;
 const int noiseTextureResolution = 512;
 const float shadowDistanceRenderMul = 1.0;
 const float drynessHalflife = 300.0;
@@ -27,9 +27,9 @@ const float wetnessHalflife = 300.0;
 const float eyeBrightnessHalflife = 5.0;
 
 /*
-const int colortex0Format = R11F_G11F_B10F; //Main scene
-const int colortex1Format = RGB16F; //Final scene rgb8
-const int colortex3Format = RGBA16; //Final scene rgb8
+const int colortex0Format = R11F_G11F_B10F; //GB scene
+const int colortex1Format = RGB16F; //Final scene
+const int colortex3Format = RGBA16; //PBR data
 const int colortex4Format = RGB8; //Reflections
 */
 

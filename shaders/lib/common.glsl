@@ -8,6 +8,8 @@ const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 #define SHADOW_COLOR
 //#define SHADOW_ENTITIES
 #define REALTIME_SHADOWS
+#define VPS
+#define VPS_BLUR_STRENGTH 0.55 //[0.20 0.25 0.30 0.35 0.40 0.45 0.50 0.55 0.60 0.65 0.70 0.75 0.80]
 
 #define SUN_ANGLE_OVERWORLD -40 //[-180 -170 -160 -150 -140 -130 -120 -110 -100 -90 -80 -70 -60 -50 -40 -30 -20 -10 0 10 20 30 40 50 60 70 80 90 100 110 120 130 140 150 160 170 180]
 #define SUN_ANGLE_END -70 //[-180 -170 -160 -150 -140 -130 -120 -110 -100 -90 -80 -70 -60 -50 -40 -30 -20 -10 0 10 20 30 40 50 60 70 80 90 100 110 120 130 140 150 160 170 180]
@@ -169,7 +171,7 @@ const float sunPathRotation = 180.0;
 // PBR //
 #define TEXTURED_FIRE_LAVA
 #define GENERATED_EMISSION
-#define EMISSION_STRENGTH 3.0 //[1.0 2.0 3.0 4.0 5.0 6.0 7.0 8.0]
+#define EMISSION_STRENGTH 5.0 //[1.0 2.0 3.0 4.0 5.0 6.0 7.0 8.0 9.0 10.0]
 #define EMISSIVE_ORES
 #define EMISSIVE_EMERALD_ORE
 #define EMISSIVE_DIAMOND_ORE
@@ -280,8 +282,6 @@ const float sunPathRotation = 180.0;
 // Aurora //
 #define AURORA
 #define AURORA_BRIGHTNESS 0.5 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
-#define AURORA_COLD_BIOME_VISIBILITY
-//#define AURORA_FULL_MOON_VISIBILITY
 #define AURORA_LIGHTING_INFLUENCE
 
 // Milky Way //
@@ -721,6 +721,21 @@ const vec3 weatherCol = vec3(WEATHER_RR, WEATHER_RG, WEATHER_RB) / 255.0 * WEATH
 //**//**//**//**//**// F U N C T I O N S //**//**//**//**//**//
 float minOf(vec3 v) { return min(min(v.x, v.y), v.z); }
 float maxOf(vec3 v) { return max(max(v.x, v.y), v.z); }
+
+float fmix(float a, float b, float t) {
+    t = min(max(t, 0.0), 1.0);
+    return a + t * (b - a);
+}
+
+vec3 fmix(vec3 a, vec3 b, vec3 t) {
+    t = min(max(t, 0.0), 1.0);
+    return a + t * (b - a);
+}
+
+vec3 fmix(vec3 a, vec3 b, float t) {
+    t = min(max(t, 0.0), 1.0);
+    return a + t * (b - a);
+}
 
 float pow2(float x) {return x*x;}
 float pow3(float x) {return x*x*x;}

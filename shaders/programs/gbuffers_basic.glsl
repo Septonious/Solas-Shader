@@ -74,7 +74,7 @@ vec3 eastVec = normalize(gbufferModelView[0].xyz);
 
 #ifdef OVERWORLD
 float eBS = eyeBrightnessSmooth.y / 240.0;
-float caveFactor = mix(clamp((cameraPosition.y - 56.0) / 16.0, float(sign(isEyeInWater)), 1.0), 1.0, sqrt(eBS));
+float caveFactor = fmix(clamp((cameraPosition.y - 56.0) / 16.0, float(sign(isEyeInWater)), 1.0), 1.0, sqrt(eBS));
 float sunVisibility = clamp((dot( sunVec, upVec) + 0.15) * 3.0, 0.0, 1.0);
 float moonVisibility = clamp((dot(-sunVec, upVec) + 0.15) * 3.0, 0.0, 1.0);
 vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.0);
@@ -126,7 +126,7 @@ void main() {
     gbuffersLighting(albedo, screenPos, viewPos, worldPos, newNormal, shadow, lightmap, NoU, NoL, NoE, 0.0, 0.0, 0.0, 0.0);
 
 	/* DRAWBUFFERS:0 */
-	gl_FragData[0] = vec4(albedo.rgb, mix(1.0, albedo.a, float(length(albedo.rgb) > 0.0)));
+	gl_FragData[0] = vec4(albedo.rgb, fmix(1.0, albedo.a, float(length(albedo.rgb) > 0.0)));
 }
 
 #endif

@@ -25,13 +25,13 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
     //Vanilla Directional Lighting
     float vanillaDiffuse = (0.25 * NoU + 0.75) + (0.667 - abs(NoE)) * (1.0 - abs(NoU)) * 0.15;
           vanillaDiffuse *= vanillaDiffuse;
-          vanillaDiffuse = mix(1.0, vanillaDiffuse, lightmap.y);
+          vanillaDiffuse = fmix(1.0, vanillaDiffuse, lightmap.y);
 
     //Block Lighting
     float blockLightMap = pow6(lightmap.x * lightmap.x) * 2.0 + max(lightmap.x - 0.05, 0.0);
           blockLightMap *= blockLightMap * 0.5;
 
-    vec3 blockLighting = blockLightCol * blockLightMap * (1.0 - min(emission, 1.0));
+    vec3 blockLighting = blockLightCol * blockLightMap * (1.0 - emission);
 
     //Floodfill Lighting. Works only on Iris
     #if !defined GBUFFERS_BASIC && !defined GBUFFERS_WATER && !defined GBUFFERS_TEXTURED && !defined DH_TERRAIN && !defined DH_WATER && defined VX_SUPPORT
@@ -42,7 +42,7 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
 
     vec3 voxelLighting = vec3(0.0);
 
-    if (isInsideVoxelVolume(voxelPos) && emission == 0.0) {
+    if (floodfillFade > 0 && emission == 0.0) {
         vec3 voxelSamplePos = voxelPos + worldNormal;
              voxelSamplePos /= voxelVolumeSize;
              voxelSamplePos = clamp(voxelSamplePos, 0.0, 1.0);
@@ -62,7 +62,7 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
 
         float mixFactor = 1.0 - floodfillFade * floodfillFade;
 
-        blockLighting = mix(blockLighting, voxelLighting * FLOODFILL_BRIGHTNESS, mixFactor * 0.95);
+        blockLighting = fmix(blockLighting, voxelLighting * FLOODFILL_BRIGHTNESS, mixFactor * 0.95);
     }
     #endif
 
@@ -119,7 +119,7 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
 
         #ifdef GBUFFERS_TEXTURED
             vec3 centerWorldPos = floor(worldPos + cameraPosition) - cameraPosition + 0.5;
-            worldPosM = mix(centerWorldPos, worldPosM + vec3(0.0, 0.02, 0.0), lightmapS);
+            worldPosM = fmix(centerWorldPos, worldPosM + vec3(0.0, 0.02, 0.0), lightmapS);
         #else
             //Shadow bias without peter-panning
             float distanceBias = pow(dot(worldPos, worldPos), 0.75);
@@ -129,7 +129,7 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
             //Fix light leaking in caves
             if (lightmapS < 0.999) {
                 #ifdef GBUFFERS_HAND
-                    worldPosM = mix(vec3(0.0), worldPosM, 0.2 + 0.8 * lightmapS);
+                    worldPosM = fmix(vec3(0.0), worldPosM, 0.2 + 0.8 * lightmapS);
                 #else
                     vec3 edgeFactor = 0.2 * (0.5 - fract(worldPosM + cameraPosition + worldNormal * 0.01));
 
@@ -146,7 +146,7 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
         #endif
 
         vec3 shadowPos = ToShadow(worldPosM);
-        float offset = 0.00075 - shadowMapResolution * 0.0000001; 
+        float offset = 0.001;
               offset *= 1.0 + subsurface * (3.0 - 3.5 * fade);
 
         computeShadow(shadow, shadowPos, offset, subsurface, lightmap.y);
@@ -164,7 +164,7 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
     vec3 realShadow = shadow * NoL;
     vec3 fakeShadow = getFakeShadow(lightmap.y) * originalNoL;
 
-    shadow = mix(fakeShadow, realShadow, vec3(shadowVisibility));
+    shadow = fmix(fakeShadow, realShadow, vec3(shadowVisibility));
     #endif
 
     float time = (worldTime + int(5 + mod(worldDay, 100)) * 24000) * 0.05;
@@ -211,9 +211,9 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
         #endif
 
         float smoothnessF = 0.1 + lAlbedo * 0.25;
-              smoothnessF = mix(smoothnessF, 1.0, smoothness);
+              smoothnessF = fmix(smoothnessF, 1.0, smoothness);
 
-        specularHighlight = clamp(GGX(newNormal, normalize(viewPos), smoothnessF, baseReflectance, 0.04), vec3(0.0), vec3(4.0));
+        specularHighlight = GGX(newNormal, normalize(viewPos), smoothnessF, baseReflectance, 0.04);
 
         #ifdef DH_TERRAIN
         specularHighlight *= 4.0;
@@ -229,54 +229,49 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
 
     float rainFactor = 1.0 - wetness * 0.5;
 
-    vec3 sceneLighting = mix(ambientCol, lightCol, shadow * rainFactor * shadowFade) * (0.25 + lightmap.y * 0.75);
+    vec3 sceneLighting = fmix(ambientCol, lightCol, shadow * rainFactor * shadowFade) * (0.25 + lightmap.y * 0.75);
          sceneLighting *= 1.0 + sss * shadow * 2.0;
 
     #ifdef AURORA_LIGHTING_INFLUENCE
-	//The index of geomagnetic activity. Determines the brightness of Aurora, its widespreadness across the sky and tilt factor
-    float kpIndex = abs(worldDay % 9 - worldDay % 4);
-          kpIndex = kpIndex - int(kpIndex == 1) + int(kpIndex > 7 && worldDay % 10 == 0);
-          kpIndex = min(max(kpIndex, 0), 9);
-
-	#ifdef AURORA_FULL_MOON_VISIBILITY
-	      kpIndex += float(moonPhase == 0) * 3;
-	#endif
-
-	#ifdef AURORA_COLD_BIOME_VISIBILITY
-	      kpIndex += isSnowy * 4;
-	#endif
-
-    #ifdef AURORA_ALWAYS_VISIBLE
-	      kpIndex = 9.0;
-    #endif
-
 	//Total visibility of aurora based on multiple factors
 	float auroraVisibility = pow6(moonVisibility) * (1.0 - wetness) * caveFactor;
 
-    //Aurora tends to get brighter and dimmer when plasma arrives or fades away
-	float pulse = clamp(cos(sin(time * 0.1) * 0.3 + time * 0.07), 0.0, 1.0);
-	float longPulse = clamp(sin(cos(time * 0.01) * 0.4 + time * 0.06), -1.0, 1.0);
+    if (auroraVisibility > 0.0) {
+        //The index of geomagnetic activity. Determines the brightness of Aurora, its widespreadness across the sky and tilt factor
+        float kpIndex = abs(worldDay % 9 - worldDay % 4);
+              kpIndex = kpIndex - int(kpIndex == 1) + int(kpIndex > 7 && worldDay % 10 == 0);
+              kpIndex = min(max(kpIndex, 0) + isSnowy, 9);
 
-    kpIndex *= 1.0 + longPulse * 0.25;
-	kpIndex /= 9.0;
-	auroraVisibility *= kpIndex;
-    auroraVisibility = min(auroraVisibility, 1.0) * AURORA_BRIGHTNESS;
-    sceneLighting *= (1.0 - auroraVisibility) + mix(vec3(0.4, 1.5, 0.6), vec3(3.4, 0.1, 1.5), clamp(kpIndex * kpIndex * (0.25 + pulse * 0.75), 0.0, 1.0)) * max(auroraVisibility, 0.0);
+        //Aurora tends to get brighter and dimmer when plasma arrives or fades away
+        float pulse = clamp(cos(sin(time * 0.1) * 0.3 + time * 0.07), 0.0, 1.0);
+        float longPulse = clamp(sin(cos(time * 0.01) * 0.4 + time * 0.06), -1.0, 1.0);
+
+        kpIndex *= 1.0 + longPulse * 0.25;
+        kpIndex /= 9.0;
+        auroraVisibility *= kpIndex;
+        auroraVisibility = min(auroraVisibility, 1.0) * AURORA_BRIGHTNESS;
+        sceneLighting *= (1.0 - auroraVisibility) + fmix(vec3(0.4, 1.5, 0.6), vec3(3.4, 0.1, 1.5), clamp(kpIndex * kpIndex * (0.25 + pulse * 0.75), 0.0, 1.0)) * auroraVisibility;
+    }
     #endif
     #elif defined END
-    vec3 sceneLighting = mix(endAmbientCol, endLightCol * (1.0 + specularHighlight), shadow) * 0.25;
+    vec3 sceneLighting = fmix(endAmbientCol, endLightCol * (1.0 + specularHighlight), shadow) * 0.25;
     #ifdef END_FLASHES
     vec3 worldEndFlashPosition = mat3(gbufferModelViewInverse) * endFlashPosition;
     float endFlashDirection = clamp(dot(normalize(ToWorld(endFlashPosition * 100000000.0)), worldNormal), 0.0, 1.0);
-    sceneLighting = mix(sceneLighting, endFlashCol, 0.125 * endFlashDirection * endFlashDirection * endFlashIntensity);
+    sceneLighting = fmix(sceneLighting, endFlashCol, 0.125 * endFlashDirection * endFlashDirection * endFlashIntensity);
     #endif
     #elif defined NETHER
     vec3 sceneLighting = pow(netherColSqrt, vec3(0.75)) * 0.025;
     #endif
 
     //Lightning Flash
-    float lightning = min(lightningFlashEffect(worldPos, lightningBoltPosition.xyz, 256.0) * lightningBoltPosition.w * 4.0, 1.0);
-    vec3 lightningFlash = vec3(lightning) * (clamp(dot(lightningBoltPosition.xyz, worldNormal), 0.0, 1.0) * 0.9 + 0.1) * lightmap.y;
+    float lightningFlash = 0.0;
+
+    #ifdef IS_IRIS
+    if (lightningBoltPosition.w > 0) {
+        lightningFlash = lightningFlashEffect(lightningBoltPosition, worldPos, lightmap.y, 256.0);
+    }
+    #endif
 
     //Minimal Lighting
     #ifdef OVERWORLD
@@ -287,13 +282,13 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
     sceneLighting += nightVision * vec3(0.2, 0.3, 0.2);
 
     //Vanilla vanillaAo
-    float aoMixer = (1.0 - vanillaAo) * (1.0 - blockLightMap) * (1.0 - float(emission > 0.0)) * (1.0 - subsurface * 0.5);
+    float aoMixer = (1.0 - vanillaAo) * (1.0 - blockLightMap) * (1.0 - emission) * (1.0 - subsurface * 0.5);
 
     //#if defined OVERWORLD || defined END
     //aoMixer *= 1.0 - float(length(realShadow) > 0.0);
     //#endif
 
-    albedo.rgb = mix(albedo.rgb, albedo.rgb * pow(vanillaAo, 1.0 + lightmap.y), aoMixer);
+    albedo.rgb = fmix(albedo.rgb, albedo.rgb * pow(vanillaAo, 1.0 + lightmap.y), aoMixer);
 
     albedo.rgb = pow(albedo.rgb, vec3(2.2));
     albedo.rgb *= sceneLighting + blockLighting + emission * EMISSION_STRENGTH + lightningFlash;

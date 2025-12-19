@@ -26,7 +26,7 @@ void getDenseFog(inout vec3 color, float lViewPos) {
 	float fog = lViewPos * (0.15 + float(isEyeInWater == 3) * 0.5);
 		  fog = 1.0 - exp(-2.0 * fog * fog);
 
-	color = mix(color, densefogCol[isEyeInWater - 2], fog);
+	color = fmix(color, densefogCol[isEyeInWater - 2], fog);
 }
 
 //Normal Fog
@@ -46,7 +46,7 @@ void getNormalFog(inout vec3 color, in vec3 atmosphereColor, in vec3 viewPos, in
 	float distanceMult = max(256.0 / farPlane, 2.0) * (100.0 / distanceFactor);
 	float altitudeFactor = FOG_HEIGHT + noise * 10.0 + timeBrightness * 35.0 + moonVisibility * 20.0 - isJungle * 15.0;
 	float altitude = exp2(-max(worldPos.y + cameraPosition.y - altitudeFactor, 0.0) / exp2(FOG_HEIGHT_FALLOFF + moonVisibility + timeBrightness + wetness - isJungle - isSwamp));
-		  //altitude = mix(1.0, altitude, clamp((cameraPosition.y - altitude) / altitude, 0.0, 1.0));
+		  //altitude = fmix(1.0, altitude, clamp((cameraPosition.y - altitude) / altitude, 0.0, 1.0));
 	float density = FOG_DENSITY * (1.0 + (sunVisibility - timeBrightness) + moonVisibility * 0.25) * (0.5 + noise);
 		  density += isLushCaves * 0.25 + (isDesert * 0.15 + isSwamp * 0.20 + isJungle * 0.30);
 
@@ -57,9 +57,9 @@ void getNormalFog(inout vec3 color, in vec3 atmosphereColor, in vec3 viewPos, in
     float fog = 1.0 - exp(-0.005 * lViewPos * distanceMult);
 		  fog = clamp(fog * density * altitude, 0.0, 1.0);
 
-    vec3 nSkyColor = 0.75 * sqrt(normalize(skyColor + 0.000001)) * mix(vec3(1.0), biomeColor, sunVisibility * isSpecificBiome);
-	vec3 fogCol = mix(caveMinLightCol * (1.0 - isCaveBiome) + caveBiomeColor,
-                   mix(pow(atmosphereColor, vec3(1.0 - sunVisibility * 0.5)), nSkyColor, sunVisibility * min((1.0 - wetness) * (1.0 - fog) + 0.4 * timeBrightnessSqrt, 1.0)),
+    vec3 nSkyColor = 0.75 * sqrt(normalize(skyColor + 0.000001)) * fmix(vec3(1.0), biomeColor, sunVisibility * isSpecificBiome);
+	vec3 fogCol = fmix(caveMinLightCol * (1.0 - isCaveBiome) + caveBiomeColor,
+                   fmix(pow(atmosphereColor, vec3(1.0 - sunVisibility * 0.5)), nSkyColor, sunVisibility * min((1.0 - wetness) * (1.0 - fog) + 0.4 * timeBrightnessSqrt, 1.0)),
                    caveFactor);
 
 	//Distant Fade
@@ -82,9 +82,9 @@ void getNormalFog(inout vec3 color, in vec3 atmosphereColor, in vec3 viewPos, in
 	
 		if (0.0 < vanillaFog){
 			fogCol *= fog;
-			fog = mix(fog, 1.0, vanillaFog);
+			fog = fmix(fog, 1.0, vanillaFog);
 
-			if (0.0 < fog) fogCol = mix(fogCol, atmosphereColor, vanillaFog) / fog;
+			if (0.0 < fog) fogCol = fmix(fogCol, atmosphereColor, vanillaFog) / fog;
 		}
 	}
 	#endif
@@ -118,14 +118,14 @@ void getNormalFog(inout vec3 color, in vec3 atmosphereColor, in vec3 viewPos, in
     float zMixer = float(z0 < 1.0);
 
 	#if MC_VERSION >= 12104 && defined OVERWORLD
-		  zMixer = mix(zMixer, 1.0, isPaleGarden);
+		  zMixer = fmix(zMixer, 1.0, isPaleGarden);
 	#endif
 	      zMixer = clamp(zMixer, 0.0, 1.0);
 
 	fog *= zMixer;
 	#endif
 
-	color = mix(color, fogCol, fog);
+	color = fmix(color, fogCol, fog);
 }
 
 void Fog(inout vec3 color, in vec3 viewPos, in vec3 worldPos, in vec3 atmosphereColor, in float z0) {

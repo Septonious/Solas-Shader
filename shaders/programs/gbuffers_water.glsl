@@ -92,7 +92,7 @@ vec3 eastVec = normalize(gbufferModelView[0].xyz);
 
 #ifdef OVERWORLD
 float eBS = eyeBrightnessSmooth.y / 240.0;
-float caveFactor = mix(clamp((cameraPosition.y - 56.0) / 16.0, float(sign(isEyeInWater)), 1.0), 1.0, sqrt(eBS));
+float caveFactor = fmix(clamp((cameraPosition.y - 56.0) / 16.0, float(sign(isEyeInWater)), 1.0), 1.0, sqrt(eBS));
 float sunVisibility = clamp((dot( sunVec, upVec) + 0.15) * 3.0, 0.0, 1.0);
 float moonVisibility = clamp((dot(-sunVec, upVec) + 0.15) * 3.0, 0.0, 1.0);
 vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.0);
@@ -151,7 +151,7 @@ void main() {
 		vec4 overlayColor;
 
 		clrwl_computeFragment(albedoTexture, albedo, lmCoordColorwheel, ao, overlayColor);
-		albedo.rgb = mix(albedo.rgb, overlayColor.rgb, overlayColor.a);
+		albedo.rgb = fmix(albedo.rgb, overlayColor.rgb, overlayColor.a);
 		vec2 lightmap = clamp((lmCoordColorwheel - 1.0 / 32.0) * 32.0 / 30.0, vec2(0.0), vec2(1.0));
 	#endif
 
@@ -263,7 +263,7 @@ void main() {
 
 		float fresnel = clamp(1.0 + dot(normalize(normal), nViewPos), 0.0, 1.0) * snellWindow;
 		getReflection(albedo, viewPos, nViewPos, newNormal, fresnel, lightmap.y);
-		albedo.a = mix(albedo.a * snellWindow, 1.0, fresnel);
+		albedo.a = fmix(albedo.a * snellWindow, 1.0, fresnel);
 	}
 	#endif
 

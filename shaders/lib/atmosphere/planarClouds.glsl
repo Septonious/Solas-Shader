@@ -1,6 +1,6 @@
 float samplePlanarCloudNoise(in vec2 coord) {
     float noise = texture2D(noisetex, coord * 0.0625).r * 15.0;
-          noise = mix(noise, texture2D(noisetex, coord).r * 2.0, 0.33);
+          noise = fmix(noise, texture2D(noisetex, coord).r * 2.0, 0.33);
           noise = max(noise - PLANAR_CLOUDS_AMOUNT, 0.0);
           noise /= sqrt(noise * noise + 0.25);
           noise = clamp(noise, 0.0, 1.0);
@@ -30,16 +30,16 @@ void drawPlanarClouds(inout vec3 color, in vec3 atmosphereColor, in vec3 worldPo
 			  cloudLighting = clamp(cloudLighting * 0.5 + noise * 0.5, 0.0, 1.0);
 
 		vec3 nSkyColor = normalize(skyColor + 0.0001);
-		vec3 cloudAmbientColor = mix(atmosphereColor * atmosphereColor * 0.5, 
-									mix(ambientCol, atmosphereColor * nSkyColor * 0.3, 0.2 + timeBrightnessSqrt * 0.3 + isSpecificBiome * 0.4),
-									sunVisibility * (1.0 - wetness));
-		vec3 cloudLightColor = mix(lightCol, lightCol * nSkyColor * 2.0, timeBrightnessSqrt * (0.5 - wetness * 0.5));
+		vec3 cloudAmbientColor = fmix(atmosphereColor * atmosphereColor * 0.5, 
+								 fmix(ambientCol, atmosphereColor * nSkyColor * 0.3, 0.2 + timeBrightnessSqrt * 0.3 + isSpecificBiome * 0.4),
+									 sunVisibility * (1.0 - wetness));
+		vec3 cloudLightColor = fmix(lightCol, lightCol * nSkyColor * 2.0, timeBrightnessSqrt * (0.5 - wetness * 0.5));
 			 cloudLightColor *= 0.5 + timeBrightnessSqrt * 0.5 + moonVisibility * 0.5;
 
 		vec3 cloudColor = cloudLightColor * (0.2 + cloudLighting * 0.8) * noise;
 			 cloudColor = pow(cloudColor, vec3(1.0 / 2.2));
 
-		color = mix(color, cloudColor * PLANAR_CLOUDS_BRIGHTNESS, pc * PLANAR_CLOUDS_OPACITY);
+		color = fmix(color, cloudColor * PLANAR_CLOUDS_BRIGHTNESS, pc * PLANAR_CLOUDS_OPACITY);
 		occlusion += min(pow3(pc) * 3.0, 1.0);
 	}
 }

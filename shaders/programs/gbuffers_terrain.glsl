@@ -96,7 +96,7 @@ vec3 eastVec = normalize(gbufferModelView[0].xyz);
 
 #ifdef OVERWORLD
 float eBS = eyeBrightnessSmooth.y / 240.0;
-float caveFactor = mix(clamp((cameraPosition.y - 56.0) / 16.0, float(sign(isEyeInWater)), 1.0), 1.0, sqrt(eBS));
+float caveFactor = fmix(clamp((cameraPosition.y - 56.0) / 16.0, float(sign(isEyeInWater)), 1.0), 1.0, sqrt(eBS));
 float sunVisibility = clamp((dot( sunVec, upVec) + 0.15) * 3.0, 0.0, 1.0);
 float moonVisibility = clamp((dot(-sunVec, upVec) + 0.15) * 3.0, 0.0, 1.0);
 vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.0);
@@ -173,7 +173,7 @@ void main() {
 		vec4 overlayColor;
 
 		clrwl_computeFragment(albedoTexture, albedo, lmCoordColorwheel, ao, overlayColor);
-		albedo.rgb = mix(albedo.rgb, overlayColor.rgb, overlayColor.a);
+		albedo.rgb = fmix(albedo.rgb, overlayColor.rgb, overlayColor.a);
 		vec2 lightmap = clamp((lmCoordColorwheel - 1.0 / 32.0) * 32.0 / 30.0, vec2(0.0), vec2(1.0));
 	#endif
 
@@ -252,7 +252,7 @@ void main() {
 
 			vec3 puddleNormal = GetPuddleNormal(worldPos, viewPos, tbnMatrix);
 			newNormal = normalize(
-				mix(newNormal, puddleNormal, puddles * sqrt(1.0 - porosity) * wetness)
+				fmix(newNormal, puddleNormal, puddles * sqrt(1.0 - porosity) * wetness)
 			);
 		}
 	}
@@ -295,7 +295,7 @@ void main() {
 
 	/* DRAWBUFFERS:03 */
 	gl_FragData[0] = albedo;
-	gl_FragData[1] = vec4(encodeNormal(newNormal), lightmap.y * 0.5, clamp(mix(smoothness, 1.0, metalness * metalness), 0.0, 0.95));
+	gl_FragData[1] = vec4(encodeNormal(newNormal), lightmap.y * 0.5, clamp(fmix(smoothness, 1.0, metalness * metalness), 0.0, 0.95));
 }
 
 #endif

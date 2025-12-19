@@ -74,7 +74,7 @@ void drawEndNebula(inout vec3 color, in vec3 worldPos, in float VoU, in float Vo
           nebulaVisibility = (0.175 - pow3(VoS) * 0.175) + pow20(VoS) * 0.425;
     #endif
 
-    vec3 nebula = mix(endNebulaColFirst,
+    vec3 nebula = fmix(endNebulaColFirst,
                       endNebulaColSecond,
                       nebulaColorMixer) * nebulaNoise * nebulaNoise * nebulaVisibility;
     #ifdef END_BLACK_HOLE
@@ -89,7 +89,7 @@ void drawEndNebula(inout vec3 color, in vec3 worldPos, in float VoU, in float Vo
     #if MC_VERSION >= 12100 && defined END_FLASHES
     vec4 supernova = getSupernovaAtPos(mat3(gbufferModelViewInverse) * endFlashPosition, worldPos);
 
-    vec3 supernovaNebula = mix(normalize(endFlashCol), normalize(vec3(1.0, 1.8, 3.2)), supernova.y) * 4.0 * supernova.x * supernova.x * supernova.z;
+    vec3 supernovaNebula = fmix(normalize(endFlashCol), normalize(vec3(1.0, 1.8, 3.2)), supernova.y) * 4.0 * supernova.x * supernova.x * supernova.z;
          supernovaNebula *= length(supernovaNebula);
     color += pow32(supernova.a * supernova.a) * endLightColSqrt * endFlashIntensity * 4.0;
     color += supernovaNebula * endFlashIntensitySqrt * END_FLASH_BRIGHTNESS;
@@ -106,9 +106,9 @@ void drawEndNebula(inout vec3 color, in vec3 worldPos, in float VoU, in float Vo
           torus = pow(pow(torus * torus, 1.0 + (180.0 + sunPathRotation) / 8.0 * (0.5 + 0.5 * sqrtabsVoU)), blackHoleSize * 1.25);
     float torusNoise = texture2D(noisetex, vec2(blackHoleCoord.x * 4.0 + frameTimeCounter * 0.05, blackHoleCoord.y)).r;
 
-    color += mix(blackHoleColor, vec3(4.0), hole * hole) * hole * hole * 2.0;
+    color += fmix(blackHoleColor, vec3(4.0), hole * hole) * hole * hole * 2.0;
     color *= 1.0 - hole;
     color += vec3(innerRing);
-    color += mix(blackHoleColor, vec3(2.0), sqrt(torus)) * clamp(torus * 4.0, 0.0, 1.0)  * torusNoise;
+    color += fmix(blackHoleColor, vec3(2.0), sqrt(torus)) * clamp(torus * 4.0, 0.0, 1.0)  * torusNoise;
     #endif
 }

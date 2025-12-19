@@ -82,7 +82,7 @@ vec3 eastVec = normalize(gbufferModelView[0].xyz);
 
 #ifdef OVERWORLD
 float eBS = eyeBrightnessSmooth.y / 240.0;
-float caveFactor = mix(clamp((cameraPosition.y - 56.0) / 16.0, float(sign(isEyeInWater)), 1.0), 1.0, sqrt(eBS));
+float caveFactor = fmix(clamp((cameraPosition.y - 56.0) / 16.0, float(sign(isEyeInWater)), 1.0), 1.0, sqrt(eBS));
 float sunVisibility = clamp((dot( sunVec, upVec) + 0.15) * 3.0, 0.0, 1.0);
 float moonVisibility = clamp((dot(-sunVec, upVec) + 0.15) * 3.0, 0.0, 1.0);
 vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.0);
@@ -128,7 +128,7 @@ void main() {
 	vec4 albedo = texture2D(texture, texCoord);
 	if (albedo.a < 0.00001) discard;
 	albedo *= color;
-	albedo.rgb = mix(albedo.rgb, entityColor.rgb * entityColor.rgb * 2.0, entityColor.a);
+	albedo.rgb = fmix(albedo.rgb, entityColor.rgb * entityColor.rgb * 2.0, entityColor.a);
 
 	float lightningBolt = float(mat == 1);
 	float subsurface = 0.0;
@@ -161,7 +161,7 @@ void main() {
 
 	/* DRAWBUFFERS:03 */
 	gl_FragData[0] = albedo;
-	//gl_FragData[1] = vec4(encodeNormal(newNormal), lightmap.y * 0.5, clamp(mix(smoothness, 1.0, metalness * metalness), 0.0, 0.95));
+	//gl_FragData[1] = vec4(encodeNormal(newNormal), lightmap.y * 0.5, clamp(fmix(smoothness, 1.0, metalness * metalness), 0.0, 0.95));
 	gl_FragData[1] = vec4(0.0, 0.0, 0.0, 1.0);
 }
 

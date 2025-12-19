@@ -14,7 +14,7 @@ void drawMilkyWay(inout vec3 color, in vec3 worldPos, in float VoU, in float cav
 		#else
 		vec4 milkyWay = texture2D(gaux4, planeCoord * 0.5 + 0.6);
 		#endif
-             milkyWay.rgb = mix(lightNight, vec3(1.0), 0.25) * milkyWay.rgb * pow6(milkyWay.a) * length(milkyWay.rgb) * visibility;
+             milkyWay.rgb = (lightNight * 0.75 + vec3(0.25)) * milkyWay.rgb * pow6(milkyWay.a) * length(milkyWay.rgb) * visibility;
 		nebulaFactor = length(milkyWay.rgb) * 8.0;
         #ifdef GBUFFERS_WATER
              milkyWay.rgb *= 3.0; //brightness compensation for water reflections

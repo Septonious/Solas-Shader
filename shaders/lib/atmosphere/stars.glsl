@@ -43,7 +43,7 @@ void drawStars(inout vec3 color, in vec3 worldPos, in float VoU, in float VoS, i
 		stars *= 1.0 - hole;
 		#endif
 
-		color = mix(color, color * (4.0 + pow4(stars)) * visibility * STAR_BRIGHTNESS, min(1.0, stars));
+		color = fmix(color, color * (4.0 + pow4(stars)) * visibility * STAR_BRIGHTNESS, min(1.0, stars));
 		#endif
 	}
 }

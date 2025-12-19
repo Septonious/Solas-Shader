@@ -49,7 +49,7 @@ void main() {
 		vec4 overlayColor;
 
 		clrwl_computeFragment(albedoTexture, albedo, lmCoordColorwheel, ao, overlayColor);
-		albedo.rgb = mix(albedo.rgb, overlayColor.rgb, overlayColor.a);
+		albedo.rgb = fmix(albedo.rgb, overlayColor.rgb, overlayColor.a);
 		float skyLightMap = clamp((lmCoordColorwheel - 1.0 / 32.0) * 32.0 / 30.0, vec2(0.0), vec2(1.0)).y;
 	#endif
 
@@ -58,7 +58,7 @@ void main() {
 	if (albedo.a < 0.01) discard;
 
     #ifdef SHADOW_COLOR
-	albedo.rgb = mix(vec3(1.0), albedo.rgb, albedo.a);
+	albedo.rgb = fmix(vec3(1.0), albedo.rgb, albedo.a);
 	albedo.rgb *= albedo.rgb;
 	albedo.rgb *= 1.0 - pow32(albedo.a);
 

@@ -77,7 +77,7 @@ uniform sampler2D depthtex2;
 #endif
 
 #if defined VOLUMETRIC_CLOUDS || defined END_DISK
-uniform sampler2D shadowtex1;
+uniform sampler2DShadow shadowtex1;
 
 uniform mat4 shadowModelView, shadowProjection;
 #endif
@@ -112,7 +112,7 @@ vec3 eastVec = normalize(gbufferModelView[0].xyz);
 
 #ifdef OVERWORLD
 float eBS = eyeBrightnessSmooth.y / 240.0;
-float caveFactor = mix(clamp((cameraPosition.y - 56.0) / 16.0, float(sign(isEyeInWater)), 1.0), 1.0, sqrt(eBS));
+float caveFactor = fmix(clamp((cameraPosition.y - 56.0) / 16.0, float(sign(isEyeInWater)), 1.0), 1.0, sqrt(eBS));
 float sunVisibility = clamp((dot( sunVec, upVec) + 0.15) * 3.0, 0.0, 1.0);
 float moonVisibility = clamp((dot(-sunVec, upVec) + 0.15) * 3.0, 0.0, 1.0);
 vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.0);
@@ -185,9 +185,8 @@ void main() {
 
 	#if defined VOLUMETRIC_CLOUDS || defined END_DISK
 	float blueNoiseDither = texture2D(noisetex, gl_FragCoord.xy / 512.0).b;
-
 	#ifdef TAA
-	blueNoiseDither = fract(blueNoiseDither + 1.61803398875 * mod(float(frameCounter), 3600.0));
+	      blueNoiseDither = fract(blueNoiseDither + 1.61803398875 * mod(float(frameCounter), 3600.0));
 	#endif
 	#endif
 	
@@ -285,7 +284,7 @@ void main() {
 	cloudDepth /= (2.0 * far);
 	#endif
 
-	color = mix(color, vc.rgb, vc.a);
+	color = fmix(color, vc.rgb, vc.a);
 	#endif
 
     /* DRAWBUFFERS:045 */

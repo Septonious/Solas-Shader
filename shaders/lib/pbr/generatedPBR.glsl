@@ -72,7 +72,7 @@ void generateIPBR(inout vec4 albedo, in vec3 worldPos, in vec3 viewPos, inout ve
     #endif
 
     #ifdef GENERATED_EMISSION
-    emission = clamp(emission * EMISSION_STRENGTH, 0.0, 8.0);
+    emission = clamp(emission, 0.0, 1.0);
     #else
     emission = 0.0;
     #endif
@@ -129,6 +129,12 @@ void generateIPBR(inout vec4 albedo, in vec3 worldPos, in vec3 viewPos, inout ve
     #ifdef GENERATED_SPECULAR
     metalness = smoothness;
     #endif
+
+    #ifdef GENERATED_EMISSION
+    emission = clamp(emission, 0.0, 1.0);
+    #else
+    emission = 0.0;
+    #endif
 }
 #endif
 
@@ -158,6 +164,12 @@ void generateIPBR(inout vec4 albedo, in vec3 worldPos, in vec3 viewPos, inout ve
 
     #ifdef GENERATED_SPECULAR
     metalness = smoothness;
+    #endif
+
+    #ifdef GENERATED_EMISSION
+    emission = clamp(emission, 0.0, 1.0);
+    #else
+    emission = 0.0;
     #endif
 }
 #endif

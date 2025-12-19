@@ -54,7 +54,7 @@ uniform sampler3D floodfillSampler, floodfillSamplerCopy;
 
 uniform sampler2D noisetex;
 uniform sampler2D shadowcolor0;
-uniform sampler2D shadowtex0, shadowtex1;
+uniform sampler2DShadow shadowtex0, shadowtex1;
 uniform sampler2D depthtex0, depthtex1;
 
 #ifdef DISTANT_HORIZONS

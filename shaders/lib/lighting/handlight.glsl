@@ -10,7 +10,7 @@ vec3 getHandLightColor(inout vec3 blockLighting, in vec3 pos) {
         vec3 color1 = getBlocklightColor(heldItemId);
         vec3 color2 = getBlocklightColor(heldItemId2);
 
-        lighting = mix(color1, color2, vec3(0.5)) * pow3(handlight) * DYNAMIC_HANDLIGHT_STRENGTH;
+        lighting = fmix(color1, color2, vec3(0.5)) * pow3(handlight) * DYNAMIC_HANDLIGHT_STRENGTH;
 
         #ifdef GBUFFERS_HAND
         lighting *= 2.0;
