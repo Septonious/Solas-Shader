@@ -27,7 +27,7 @@ vec3 SampleShadow(vec3 shadowPos) {
         }
     }
 
-    return shadowColor * doShadowColor * (1.0 - shadow0) * (1.0 - wetness) + shadow0;
+    return shadowColor * doShadowColor * (1.0 - shadow0) + shadow0;
 }
 
 void computeShadow(inout vec3 shadow, vec3 shadowPos, float offset, float subsurface, float skyLightMap) {
