@@ -13,7 +13,7 @@ void drawAurora(inout vec3 color, in vec3 worldPos, in float VoU, in float caveF
 
 	kpIndex *= 1.0 + longPulse * 0.25;
 	kpIndex /= 9.0;
-	kpIndex =1;
+	kpIndex = 1;
 	visibility *= kpIndex * (1.0 + max(longPulse * 0.5, 0.0) + kpIndex * kpIndex * 0.5);
     visibility = min(visibility, 2.0) * AURORA_BRIGHTNESS;
 
@@ -35,12 +35,10 @@ void drawAurora(inout vec3 color, in vec3 worldPos, in float VoU, in float caveF
 		worldPos.xz += worldPos.y * vec2(tiltFactor, tiltFactor * 2.);
 
 		//Altitude factor. Makes the aurora closer to you when you're ascending
-		float altitudeFactor = clamp(cameraPosition.y * 0.004, 0.0, 9.0);
+		float altitudeFactor = clamp(cameraPosition.y * 0.005, 0.0, 24.0);
 
         float accumulatedNoise = 0.0;
         float northSouthStretching = 0.5;
-        float lineNoiseCoeff = 3.0; //[1.0 - 7.5]
-        float whirlNoiseCoeff = 2.0; //[20.0 - 100.0]
 
 		for (int i = 0; i < samples; i++) {
 			vec3 planeCoord = worldPos * ((24.0 + currentStep * (14.0 + kpIndex * 5.0) - altitudeFactor) / worldPos.y) * 0.05;
@@ -73,7 +71,7 @@ void drawAurora(inout vec3 color, in vec3 worldPos, in float VoU, in float caveF
                 float totalNoise = arcNoise + blobNoise;
 
                 vec3 lowA = vec3(0.05, 1.55, 0.40);
-                vec3 upA = vec3(0.65, 0.30, 1.05);
+                vec3 upA = vec3(0.65 + midOctaveM * 5.0 * (1.0 + kpIndex * 2.0), 0.30, 1.05);
                 vec3 auroraA = fmix(lowA, upA, pow(currentStep, 0.66));
 
                 vec3 lowB = vec3(0.40, 1.55, 0.05);
