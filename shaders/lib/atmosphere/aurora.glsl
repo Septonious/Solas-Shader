@@ -71,17 +71,9 @@ void drawAurora(inout vec3 color, in vec3 worldPos, in float VoU, in float caveF
 
                 vec3 lowA = vec3(0.05, 1.55, 0.40);
                 vec3 upA = vec3(0.65 + midOctaveM * 5.0 * (1.0 + kpIndex * 2.0), 0.30, 1.05);
-                vec3 auroraA = fmix(lowA, upA, pow(currentStep, 0.66));
+                vec3 auroraA = fmix(lowA, upA, pow(currentStep, 0.66)) * exp2(-4.0 * i * sampleStep);
 
-                vec3 lowB = vec3(0.40, 1.55, 0.05);
-                vec3 upB = vec3(1.25, 0.05, 0.70);
-                vec3 auroraB = fmix(lowB, upB, pow(currentStep, 0.45));
-
-                float colorMixer = 0.0;
-
-                vec3 totalAurora = mix(auroraA, auroraB, colorMixer) * exp2(-4.0 * i * sampleStep);
-
-				aurora += totalAurora * totalNoise * sqrt(auroraDistanceFactor);
+				aurora += auroraA * totalNoise * sqrt(auroraDistanceFactor);
 			}
 			currentStep += sampleStep;
 		}

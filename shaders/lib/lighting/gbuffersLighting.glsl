@@ -248,9 +248,8 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
 
         kpIndex *= 1.0 + longPulse * 0.25;
         kpIndex /= 9.0;
-        auroraVisibility *= kpIndex * (1.0 + max(longPulse * 0.5, 0.0) + kpIndex * kpIndex * 0.5);
-        auroraVisibility = min(auroraVisibility, 2.0) * AURORA_BRIGHTNESS * 0.25;
-        sceneLighting *= (1.0 - auroraVisibility) + auroraVisibility * fmix(vec3(0.4, 1.5, 0.6), vec3(3.4, 0.1, 1.5), clamp(kpIndex * kpIndex, 0.0, 1.0));
+        auroraVisibility *= kpIndex * 0.125;
+        sceneLighting *= (1.0 - auroraVisibility) + auroraVisibility * vec3(0.05, 1.55, 0.40);
     }
     #endif
     #elif defined END
