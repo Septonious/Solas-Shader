@@ -10,7 +10,7 @@ float samplePlanarCloudNoise(in vec2 coord) {
 void drawPlanarClouds(inout vec3 color, in vec3 atmosphereColor, in vec3 worldPos, in vec3 viewPos, in float VoU, in float caveFactor, in float volumetricClouds, inout float occlusion) {
     vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.0);
 
-    float cloudHeightFactor = pow2(max(1.0 - 0.00025 * cameraPosition.y, 0.0));
+    float cloudHeightFactor = pow2(max(1.0 - 0.0005 * cameraPosition.y, 0.0));
 
     //Sampling
 	vec3 planeCoord = worldPos * (cloudHeightFactor / worldPos.y) * PLANAR_CLOUDS_HEIGHT * 0.001;
