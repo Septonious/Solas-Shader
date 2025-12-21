@@ -277,6 +277,12 @@ void computeEndVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z0
 		vec3 nViewPos = normalize(viewPos);
         vec3 worldPos = ToWorld(viewPos);
 		vec3 nWorldPos = normalize(worldPos);
+        nWorldPos.y += nWorldPos.x * END_ANGLE;
+        #ifdef END_67
+        if (frameCounter < 500) {
+            nWorldPos.y += nWorldPos.x * 0.5 * sin(frameTimeCounter * 8);
+        }
+        #endif
 		vec3 worldSunVec = ToWorld(normalize(sunVec * 10000.0));
 			 worldSunVec.xz *= 32.0;
 

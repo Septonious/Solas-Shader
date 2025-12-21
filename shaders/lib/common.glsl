@@ -298,7 +298,8 @@ const float sunPathRotation = 180.0;
 
 // End Black Hole //
 #define END_BLACK_HOLE
-#define END_BLACK_HOLE_SIZE 1.5 //[3.0 2.5 2.0 1.5 1.0]
+#define END_BLACK_HOLE_SIZE 1.0 //[3.0 2.5 2.0 1.5 1.0 0.5 0.25]
+#define END_ANGLE 0.0 //[0.0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0] //god forbid you ever change this setting
 
 // End Cloudy Fog //
 #define END_DISK

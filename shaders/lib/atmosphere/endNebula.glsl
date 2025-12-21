@@ -59,6 +59,12 @@ void drawEndNebula(inout vec3 color, in vec3 worldPos, in float VoU, in float Vo
     vec3 wSunVec = mat3(gbufferModelViewInverse) * sunVec;
     vec2 sunCoord = wSunVec.xz / (wSunVec.y + length(wSunVec));
     vec2 blackHoleCoord = worldPos.xz / (length(worldPos) + worldPos.y) - sunCoord;
+    blackHoleCoord.y -= blackHoleCoord.x * END_ANGLE;
+    #ifdef END_67
+    if (frameCounter < 500) {
+        blackHoleCoord.y -= blackHoleCoord.x * 0.5 * sin(frameTimeCounter * 8);
+    }
+    #endif
     float warping = getSpiralWarping(blackHoleCoord);
          blackHoleCoord.x *= 0.75 - absVoU * 0.25;
          blackHoleCoord.y *= 5.0;
@@ -110,7 +116,7 @@ void drawEndNebula(inout vec3 color, in vec3 worldPos, in float VoU, in float Vo
           hole = clamp(hole * 8.0, 0.0, 1.0);
 
     float torus = 1.0 - clamp(length(blackHoleCoord), 0.0, 1.0);
-          torus = pow(pow(torus * torus, 1.0 + (180.0 - abs(sunPathRotation)) / 8.0 * (0.5 + 0.5 * sqrtabsVoU)), blackHoleSize * 1.25);
+          torus = pow(pow(torus * torus, 1.0 + (180.0 - abs(sunPathRotation)) / 8.0 * (0.5 + 0.5 * sqrtabsVoU)), sqrt(blackHoleSize) * 1.5);
 
     vec2 noiseCoord = blackHoleCoord - hole * hole;
          noiseCoord = rotate2D(noiseCoord, PI);
