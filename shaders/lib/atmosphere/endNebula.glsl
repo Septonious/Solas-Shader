@@ -110,7 +110,7 @@ void drawEndNebula(inout vec3 color, in vec3 worldPos, in float VoU, in float Vo
           hole = clamp(hole * 8.0, 0.0, 1.0);
 
     float torus = 1.0 - clamp(length(blackHoleCoord), 0.0, 1.0);
-          torus = pow(pow(torus * torus, 1.0 + (180.0 + sunPathRotation) / 8.0 * (0.5 + 0.5 * sqrtabsVoU)), blackHoleSize * 1.25);
+          torus = pow(pow(torus * torus, 1.0 + (180.0 - abs(sunPathRotation)) / 8.0 * (0.5 + 0.5 * sqrtabsVoU)), blackHoleSize * 1.25);
 
     vec2 noiseCoord = blackHoleCoord - hole * hole;
          noiseCoord = rotate2D(noiseCoord, PI);
