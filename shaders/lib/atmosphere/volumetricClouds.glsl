@@ -276,8 +276,15 @@ void computeEndVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z0
 		vec3 viewPos = ToView(vec3(texCoord, z0));
 		vec3 nViewPos = normalize(viewPos);
         vec3 worldPos = ToWorld(viewPos);
+
+		float VoU = dot(nViewPos, upVec);
+		float VoS = clamp(dot(nViewPos, sunVec), 0.0, 1.0);
 		vec3 nWorldPos = normalize(worldPos);
+
+        //float blackHoleDistortion = (pow8(VoS) * 0.5 + pow(VoS, 1.0 + VoS * 32.0) * 0.25) * min(length(nWorldPos.xz * 0.25), 64.0);
+        float blackHoleDistortion = 0.0;
         nWorldPos.y += nWorldPos.x * END_ANGLE;
+        nWorldPos.y -= blackHoleDistortion;
         #ifdef END_67
         if (frameCounter < 500) {
             nWorldPos.y += nWorldPos.x * 0.5 * sin(frameTimeCounter * 8);
@@ -298,14 +305,14 @@ void computeEndVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z0
 		#endif
 
 		//Setting the ray marcher
-		float cloudTop = END_DISK_HEIGHT + END_DISK_THICKNESS * 10.0;
+		float cloudTop = END_DISK_HEIGHT + (END_DISK_THICKNESS + blackHoleDistortion * 5.0) * 10.0;
 		float lowerPlane = (END_DISK_HEIGHT - cameraPosition.y) / nWorldPos.y;
 		float upperPlane = (cloudTop - cameraPosition.y) / nWorldPos.y;
 		float minDist = max(min(lowerPlane, upperPlane), 0.0);
 		float maxDist = max(lowerPlane, upperPlane);
 
 		float planeDifference = maxDist - minDist;
-		float rayLength = END_DISK_THICKNESS * 8.0;
+		float rayLength = (END_DISK_THICKNESS + blackHoleDistortion * 5.0) * 8.0;
 			  rayLength /= nWorldPos.y * nWorldPos.y * 8.0 + 1.0;
 		vec3 startPos = cameraPosition + minDist * nWorldPos;
 		vec3 sampleStep = nWorldPos * rayLength;
@@ -317,9 +324,6 @@ void computeEndVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z0
 			float cloudLighting = 0.0;
 
 			//Scattering variables
-			float VoU = dot(nViewPos, upVec);
-			float VoS = dot(nViewPos, sunVec);
-
 			float halfVoLSqrt = VoS * 0.5 + 0.5;
 			float halfVoL = halfVoLSqrt * halfVoLSqrt;
 			float scattering = pow8(halfVoLSqrt);
