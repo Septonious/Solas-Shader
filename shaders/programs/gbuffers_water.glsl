@@ -187,7 +187,7 @@ void main() {
 
 		albedo.rgb = waterFog.rgb * 3.0;
 		albedo.g *= 1.0 + (1.0 - waterFog.a * 0.6); //Correciton
-		albedo.a = min(0.1 + 3.0 * WATER_A * waterFog.a * (0.75 - float(isEyeInWater == 1) * 0.25), 1.0);
+		albedo.a = min(0.1 + 3.0 * WATER_A * waterFog.a * (0.75 - float(isEyeInWater == 1) * 0.25), 0.8);
 		#endif
 	} else if (portal > 0.5) {
 		vec2 noisePos = worldPos.xy + cameraPosition.xy;
@@ -276,9 +276,9 @@ void main() {
 		float smoothnessF = 0.6 + length(albedo.rgb) * 0.2 * float(ice > 0.5 || water > 0.5);
 
 		#ifdef OVERWORLD
-		vec3 specularHighlight = getSpecularHighlight(newNormal, viewPos, smoothnessF, vec3(1.00), lightColSqrt, shadow * vanillaDiffuse, color.a);
+		vec3 specularHighlight = getSpecularHighlight(newNormal, viewPos, smoothnessF, vec3(0.80), lightColSqrt, shadow * vanillaDiffuse, color.a);
 		#else
-		vec3 specularHighlight = getSpecularHighlight(newNormal, viewPos, smoothnessF, vec3(1.00), endLightColSqrt, shadow * vanillaDiffuse, color.a);
+		vec3 specularHighlight = getSpecularHighlight(newNormal, viewPos, smoothnessF, vec3(0.40), endLightCol * 0.5, shadow * vanillaDiffuse, color.a);
 		#endif
 
 		albedo.rgb += specularHighlight;

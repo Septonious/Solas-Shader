@@ -103,12 +103,13 @@ void generateIPBR(inout vec4 albedo, in vec3 worldPos, in vec3 viewPos, inout ve
     #include "/lib/pbr/entities/witch.glsl"
     #include "/lib/pbr/entities/metals.glsl"
 
-    //Items in frames
+    //Items
     #include "/lib/pbr/items/amethyst.glsl"
     #include "/lib/pbr/items/brewing_stand.glsl"
     #include "/lib/pbr/items/chorus.glsl"
     #include "/lib/pbr/items/crying_obsidian.glsl"
     #include "/lib/pbr/items/enchanting_table.glsl"
+    #include "/lib/pbr/items/ender_pearl_eye.glsl"
     #include "/lib/pbr/items/flowers.glsl"
     #include "/lib/pbr/items/froglights.glsl"
     #include "/lib/pbr/items/full_emitters.glsl"
@@ -149,6 +150,7 @@ void generateIPBR(inout vec4 albedo, in vec3 worldPos, in vec3 viewPos, inout ve
     #include "/lib/pbr/items/chorus.glsl"
     #include "/lib/pbr/items/crying_obsidian.glsl"
     #include "/lib/pbr/items/enchanting_table.glsl"
+    #include "/lib/pbr/items/ender_pearl_eye.glsl"
     #include "/lib/pbr/items/flowers.glsl"
     #include "/lib/pbr/items/froglights.glsl"
     #include "/lib/pbr/items/full_emitters.glsl"

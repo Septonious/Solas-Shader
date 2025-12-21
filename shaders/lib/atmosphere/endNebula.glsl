@@ -3,7 +3,7 @@ void sampleNebulaNoise(vec2 coord, inout float colorMixer, inout float noise) {
     noise = texture2D(noisetex, coord * 0.50).r;
     noise *= colorMixer;
     noise *= texture2D(noisetex, coord * 0.125).r;
-    noise *= 4.0 + noise * noise * 10.0;
+    noise *= 1.0 + noise * 21.0;
 }
 
 float getSpiralWarping(vec2 coord){
@@ -36,6 +36,13 @@ vec4 getSupernovaAtPos(in vec3 flashPos, in vec3 worldPos) {
     return vec4(nebulaNoise, nebulaColorMixer, visibility, endFlashPoint);
 }
 #endif
+
+vec2 rotate2D(vec2 p, float angle) {
+    float s = sin(angle);
+    float c = cos(angle);
+    return mat2(c, -s,
+                s,  c) * p;
+}
 
 void drawEndNebula(inout vec3 color, in vec3 worldPos, in float VoU, in float VoS) {
     #ifdef END_BLACK_HOLE
@@ -104,11 +111,18 @@ void drawEndNebula(inout vec3 color, in vec3 worldPos, in float VoU, in float Vo
 
     float torus = 1.0 - clamp(length(blackHoleCoord), 0.0, 1.0);
           torus = pow(pow(torus * torus, 1.0 + (180.0 + sunPathRotation) / 8.0 * (0.5 + 0.5 * sqrtabsVoU)), blackHoleSize * 1.25);
-    float torusNoise = texture2D(noisetex, vec2(blackHoleCoord.x * 4.0 + frameTimeCounter * 0.05, blackHoleCoord.y)).r;
 
-    color += fmix(blackHoleColor, vec3(4.0), hole * hole) * hole * hole * 2.0;
+    vec2 noiseCoord = blackHoleCoord - hole * hole;
+         noiseCoord = rotate2D(noiseCoord, PI);
+         noiseCoord -= vec2(frameTimeCounter * 0.025, 0.0);
+         noiseCoord.y *= 0.33;
+         noiseCoord *= 2.0;
+
+    float blackHoleNoise = texture2D(noisetex, noiseCoord).r;
+
+    color += fmix(blackHoleColor, vec3(4.0), hole * hole) * hole * hole * 3.0 * blackHoleNoise;
     color *= 1.0 - hole;
     color += vec3(innerRing);
-    color += fmix(blackHoleColor, vec3(2.0), sqrt(torus)) * clamp(torus * 4.0, 0.0, 1.0)  * torusNoise;
+    color += fmix(blackHoleColor, vec3(2.0), sqrt(torus)) * torus * (1.0 - torus * 0.66) * blackHoleNoise * 3.0;
     #endif
 }

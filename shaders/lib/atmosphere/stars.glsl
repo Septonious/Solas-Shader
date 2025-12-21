@@ -37,10 +37,9 @@ void drawStars(inout vec3 color, in vec3 worldPos, in float VoU, in float VoS, i
 		color += (stars + pow2(max(starNoise - 0.95, 0.0)) * 2048.0) * lightNight * visibility * STAR_BRIGHTNESS;
 		#else
 		#ifdef END_BLACK_HOLE
-		float hole = pow(pow4(pow32(VoS)), END_BLACK_HOLE_SIZE);
-		hole *= hole;
+		float hole = pow(pow32(VoS), END_BLACK_HOLE_SIZE);
 
-		stars *= 1.0 - hole;
+		stars *= 1.0 - hole * hole;
 		#endif
 
 		color = fmix(color, color * (4.0 + pow4(stars)) * visibility * STAR_BRIGHTNESS, min(1.0, stars));
