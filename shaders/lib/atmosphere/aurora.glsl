@@ -10,7 +10,7 @@ void drawAurora(inout vec3 color, in vec3 worldPos, in float VoU, in float caveF
 	//Aurora tends to get brighter and dimmer when plasma arrives or fades away
     float pulse = clamp(cos(sin(frameTimeCounter * 0.1) * 0.3 + frameTimeCounter * 0.07), 0.0, 1.0);
     float longPulse = clamp(sin(cos(frameTimeCounter * 0.01) * 0.6 + frameTimeCounter * 0.04), -1.0, 1.0);
-    kpIndex = 8;
+
 	kpIndex *= 1.0 + longPulse * 0.25;
 	kpIndex /= 9.0;
 	visibility *= kpIndex * (1.0 + max(longPulse * 0.5, 0.0) + kpIndex * kpIndex * 0.5);
