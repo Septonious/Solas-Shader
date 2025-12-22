@@ -96,8 +96,8 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z0, f
 		vec3 startPos = cameraPosition + minDist * nWorldPos;
 
         #ifndef DISTANT_HORIZONS
-		float rayLength = thickness * 3.0;
-			  rayLength /= nWorldPos.y * nWorldPos.y * 3.0 + 1.0;
+		float rayLength = thickness * 4.0;
+			  rayLength /= nWorldPos.y * nWorldPos.y * 4.0 + 1.0;
         #else
 		float rayLength = thickness * 6.0;
 			  rayLength /= nWorldPos.y * nWorldPos.y * 6.0 + 1.0;
