@@ -172,7 +172,7 @@ void main() {
 		waterFog = getWaterFog(colorMult, viewPos - oViewPos);
 
 		albedo.rgb = waterFog.rgb * 3.0;
-		albedo.g *= 1.0 + (1.0 - waterFog.a * 0.4); //Correciton
+		albedo.g *= 1.0 + (0.5 - waterFog.a * 0.35); //Correciton
 		albedo.a = min(0.1 + 3.0 * WATER_A * waterFog.a * (0.9 - float(isEyeInWater == 1) * 0.7), 1.0);
 		#endif
 	}

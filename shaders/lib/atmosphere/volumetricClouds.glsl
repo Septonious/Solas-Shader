@@ -150,7 +150,7 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z0, f
 				float noise = 0.0;
 				float attenuation = smoothstep(height, cloudTop, rayPos.y);
 
-				amount += max(0.0, heightFactor - lWorldPos * 0.0075);
+				//amount += max(0.0, heightFactor - lWorldPos * 0.0075);
 				getCloudSample(rayPos.xz / scale, wind, attenuation, amount, frequency, thickness, density, detail, noise);
 
                 float lightning = 0.0;
