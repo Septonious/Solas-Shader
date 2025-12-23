@@ -203,16 +203,18 @@ void main() {
 	float cloudBlendOpacity = 1.0;
 
 	#ifdef VOLUMETRIC_CLOUDS
-	#ifndef DISTANT_HORIZONS
-    float farPlane = far + vxRenderDistance * 32.0;
-	float cloudDepth = texture2D(gaux2, screenPos.xy).r * (farPlane * 2.0);
-	#else
-	float cloudDepth = texture2D(gaux2, screenPos.xy).r * dhFarPlane;
-	#endif
-	cloudBlendOpacity = step(length(viewPos), cloudDepth);
+	if (water > 0.5) {
+		#ifndef DISTANT_HORIZONS
+		float farPlane = far + vxRenderDistance * 32.0;
+		float cloudDepth = texture2D(gaux2, screenPos.xy).r * (farPlane * 2.0);
+		#else
+		float cloudDepth = texture2D(gaux2, screenPos.xy).r * dhFarPlane;
+		#endif
+		cloudBlendOpacity = step(length(viewPos), cloudDepth);
 
-	if (cloudBlendOpacity == 0) {
-		discard;
+		if (cloudBlendOpacity == 0 && water < 0.1) {
+			discard;
+		}
 	}
 	#endif
 
