@@ -204,7 +204,7 @@ void main() {
 
 	#ifdef VOLUMETRIC_CLOUDS
 	#ifndef DISTANT_HORIZONS
-    float farPlane = far + vxRenderDistance * 100.0;
+    float farPlane = far + vxRenderDistance * 32.0;
 	float cloudDepth = texture2D(gaux2, screenPos.xy).r * (farPlane * 2.0);
 	#else
 	float cloudDepth = texture2D(gaux2, screenPos.xy).r * dhFarPlane;
