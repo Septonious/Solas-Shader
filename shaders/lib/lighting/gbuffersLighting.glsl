@@ -205,7 +205,7 @@ void gbuffersLighting(in vec4 color, inout vec4 albedo, in vec3 screenPos, in ve
     //Specular Highlight
     vec3 specularHighlight = vec3(0.0);
 
-    #if (defined GBUFFERS_TERRAIN || defined GBUFFERS_ENTITIES || defined GBUFFERS_BLOCK) && !defined NETHER && defined SPECULAR_HIGHLIGHTS
+    #if (defined GBUFFERS_TERRAIN || defined GBUFFERS_ENTITIES || defined GBUFFERS_BLOCK || defined VOXY_OPAQUE) && !defined NETHER && defined SPECULAR_HIGHLIGHTS
     if (emission < 0.01) {
         #if defined GBUFFERS_TERRAIN && defined OVERWORLD
         float isMaterialSmooth = float(mat >= 20298 && mat <= 20322);
@@ -219,7 +219,7 @@ void gbuffersLighting(in vec4 color, inout vec4 albedo, in vec3 screenPos, in ve
 
         specularHighlight = GGX(newNormal, normalize(viewPos), smoothnessF, baseReflectance, 0.04);
 
-        #ifdef DH_TERRAIN
+        #if defined DH_TERRAIN
         specularHighlight *= 4.0;
         #endif
     }
