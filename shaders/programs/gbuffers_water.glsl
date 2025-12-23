@@ -17,6 +17,7 @@ in float viewDistance;
 flat in int mat;
 
 // Uniforms //
+uniform int vxRenderDistance;
 uniform int isEyeInWater;
 uniform int frameCounter;
 
@@ -240,7 +241,7 @@ void main() {
 	float NoE = clamp(dot(newNormal, eastVec), -1.0, 1.0);
 
     vec3 shadow = vec3(0.0);
-    gbuffersLighting(albedo, screenPos, viewPos, worldPos, newNormal, shadow, lightmap, NoU, NoL, NoE, 0.0, emission, 0.6, 0.0);
+    gbuffersLighting(color, albedo, screenPos, viewPos, worldPos, newNormal, shadow, lightmap, NoU, NoL, NoE, 0.0, emission, 0.6, 0.0);
 
     #if defined OVERWORLD
     vec3 atmosphereColor = getAtmosphere(viewPos);

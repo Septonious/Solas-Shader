@@ -9,6 +9,7 @@
 in vec2 texCoord;
 
 // Uniforms //
+uniform int vxRenderDistance;
 uniform int isEyeInWater;
 uniform int frameCounter;
 

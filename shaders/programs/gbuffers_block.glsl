@@ -211,7 +211,7 @@ void main() {
         }
     } else {
         vec3 shadow = vec3(0.0);
-        gbuffersLighting(albedo, screenPos, viewPos, worldPos, newNormal, shadow, lightmap, NoU, NoL, NoE, subsurface, emission, 0.0, 0.0);
+        gbuffersLighting(color, albedo, screenPos, viewPos, worldPos, newNormal, shadow, lightmap, NoU, NoL, NoE, subsurface, emission, 0.0, 0.0);
     }
 
 	/* DRAWBUFFERS:03 */

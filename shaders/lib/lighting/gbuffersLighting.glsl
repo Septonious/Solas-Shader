@@ -12,7 +12,7 @@ float endFlashPosToPoint(vec3 flashPosition, vec3 worldPos) {
 }
 #endif
 
-void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in vec3 worldPos, in vec3 newNormal, inout vec3 shadow, in vec2 lightmap, 
+void gbuffersLighting(in vec4 color, inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in vec3 worldPos, in vec3 newNormal, inout vec3 shadow, in vec2 lightmap, 
                       in float NoU, in float NoL, in float NoE,
                       in float subsurface, in float emission, in float smoothness, in float parallaxShadow) {
     //Variables
@@ -163,6 +163,10 @@ void gbuffersLighting(inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in 
 
     vec3 realShadow = shadow * NoL;
     vec3 fakeShadow = getFakeShadow(lightmap.y) * originalNoL;
+
+    #ifdef VOXY_OPAQUE
+    fakeShadow *= 8.0;
+    #endif
 
     shadow = fmix(fakeShadow, realShadow, vec3(shadowVisibility));
     #endif

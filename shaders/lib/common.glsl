@@ -880,3 +880,11 @@ vec3 pow8(vec3 x) {return x*x*x*x*x*x*x*x;}
 #ifdef VANILLA_WATER
 #undef REFRACTION
 #endif
+
+#ifdef VOXY_OPAQUE
+#undef DYNAMIC_HANDLIGHT
+#undef VX_SUPPORT
+#undef GENERATED_EMISSION
+#undef GENERATED_NORMALS
+#undef GENERATED_SPECULAR
+#endif
