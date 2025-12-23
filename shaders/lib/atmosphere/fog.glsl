@@ -34,7 +34,10 @@ void getNormalFog(inout vec3 color, in vec3 atmosphereColor, in vec3 viewPos, in
     #if defined DISTANT_HORIZONS && (defined DEFERRED || defined DH_WATER || defined GBUFFERS_WATER)
     float farPlane = dhRenderDistance * 0.6;
     #else
-	float farPlane = far + vxRenderDistance;
+	float farPlane = far;
+    #ifdef OVERWORLD
+    farPlane += vxRenderDistance;
+    #endif
     #endif
 
 	//Overworld Fog

@@ -1,0 +1,104 @@
+{
+  "version": 1,
+  "opaqueDrawBuffers": [0],
+  "translucentDrawBuffers": [0, 1],
+  "blending": {
+    -1: "off",
+    0: "SRC_ALPHA ONE_MINUS_SRC_ALPHA ONE ONE_MINUS_SRC_ALPHA"
+  },
+  "uniforms": [
+    "gbufferModelView",
+    "gbufferModelViewInverse",
+    "gbufferProjection", 
+    "gbufferProjectionInverse",
+    "shadowProjection",
+    "shadowProjectionInverse",
+    "shadowModelView",
+    "shadowModelViewInverse",
+    "shadowFade",
+    "sunAngle",
+    "near", 
+    "far", 
+    "frameCounter",
+    "frameTimeCounter", 
+    "skyColor",
+    "cameraPosition",
+    "cameraPositionInt",
+    "cameraPositionFract",
+    "relativeEyePosition",
+    "eyeBrightnessSmooth",
+    "eyeAltitude", 
+    "isEyeInWater",
+    "worldTime",
+    "worldDay",
+    "timeAngle", 
+    "timeBrightness", 
+    "wetness",
+    "heldItemId",
+    "heldItemId2",
+    "currentRenderedItemId",
+    "isSnowy", 
+    "isDesert", 
+    "isCherryGrove", 
+    "isSwamp", 
+    "isMushroom", 
+    "isJungle", 
+    "isLushCaves", 
+    "isDeepDark",
+    "isPaleGarden",
+    "lightningBoltPosition", 
+    "nightVision",
+    "blindFactor",
+    "darknessFactor",
+    "viewWidth",
+    "viewHeight",
+    "vxViewProj",
+    "vxViewProjInv",
+    "vxViewProjPrev",
+    "vxModelView",
+    "vxModelViewInv",
+    "vxModelViewPrev",
+    "vxProj",
+    "vxProjInv",
+    "vxProjPrev",
+    "vxRenderDistance",
+    "aspectRatio",
+    "framemod8"
+    ],
+    "samplers": {
+        "gaux1":"sampler2D",
+        "gaux2":"sampler2D",
+        "noisetex":"sampler2D", 
+        "shadowtex0":"sampler2D", 
+        "shadowcolor0":"sampler2D", 
+        "shadowtex1":"sampler2D", 
+        "vxDepthTexTrans":"sampler2D", 
+        "vxDepthTexOpaque":"sampler2D"
+    },
+	"taaOffset": "{
+		#ifdef TAA
+		vec2 view = 1.0 / vec2(viewWidth, viewHeight);
+
+        vec2 jitterOffsets8[8] = vec2[8](
+                                    vec2( 0.125,-0.375),
+                                    vec2(-0.125, 0.375),
+                                    vec2( 0.625, 0.125),
+                                    vec2( 0.375,-0.625),
+                                    vec2(-0.625, 0.625),
+                                    vec2(-0.875,-0.125),
+                                    vec2( 0.375,-0.875),
+                                    vec2( 0.875, 0.875)
+                                );
+		return jitterOffsets8[int(framemod8)] * view;
+        #else
+		return vec2(0.0);
+        #endif
+	}",
+    "opaquePatchData":"
+        #include "/programs/voxyOpaque.glsl"
+    ",
+    "translucentPatchData":"
+        #include "/programs/voxyTranslucent.glsl"
+    ",
+    "excludeLodsFromVanillaDepth": false
+}
