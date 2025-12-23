@@ -237,7 +237,7 @@ void main() {
 	float NoE = clamp(dot(newNormal, eastVec), -1.0, 1.0);
 
 	#if defined GENERATED_EMISSION || defined GENERATED_SPECULAR
-	generateIPBR(albedo, worldPos, viewPos, lightmap, NoU, emission, smoothness, metalness, subsurface);
+	generateIPBR(albedo, worldPos, viewPos, lightmap, NoU, emission, smoothness, metalness, subsurface, mat);
 	#endif
 
 	#if defined RAIN_PUDDLES && (defined GENERATED_SPECULAR || defined PBR)

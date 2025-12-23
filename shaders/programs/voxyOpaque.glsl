@@ -43,6 +43,10 @@ vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.
 
 #include "/lib/lighting/gbuffersLighting.glsl"
 
+#if defined GENERATED_EMISSION || defined GENERATED_SPECULAR
+#include "/lib/pbr/generatedPBR.glsl"
+#endif
+
 layout(location = 0) out vec4 out0;
 
 // Main //
@@ -55,7 +59,6 @@ void voxy_emitFragment(VoxyFragmentParameters parameters) {
     vec3 screenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z);
     vec3 viewPos = ToNDC(screenPos);
     vec3 worldPos = ToWorld(viewPos);
-
     vec3 normal = vec3(0.0);
 
     switch (uint(parameters.face) >> 1u) {
@@ -75,6 +78,15 @@ void voxy_emitFragment(VoxyFragmentParameters parameters) {
 
     vec3 newNormal = normal;
 
+    int mat = int(parameters.customId);
+	float leaves = float(mat == 10314);
+	float saplings = float(mat == 10317);
+	float foliage = float(mat >= 10304 && mat <= 10319 || mat >= 10035 && mat <= 10040) * (1.0 - leaves) * (1.0 - saplings);
+	float subsurface = leaves + foliage * 0.6 + saplings * 0.4;
+    float emission = 0.0;
+    float smoothness = 0.0;
+    float metalness = 0.0;
+
 	float NoU = clamp(dot(newNormal, upVec), -1.0, 1.0);
     #if defined OVERWORLD
 	float NoL = clamp(dot(newNormal, lightVec), 0.0, 1.0);
@@ -85,14 +97,9 @@ void voxy_emitFragment(VoxyFragmentParameters parameters) {
     #endif
 	float NoE = clamp(dot(newNormal, eastVec), -1.0, 1.0);
     
-    int mat = int(parameters.customId);
-	float leaves = float(mat == 10314);
-	float saplings = float(mat == 10317);
-	float foliage = float(mat >= 10304 && mat <= 10319 || mat >= 10035 && mat <= 10040) * (1.0 - leaves) * (1.0 - saplings);
-	float subsurface = leaves + foliage * 0.6 + saplings * 0.4;
-    float emission = 0.0;
-    float smoothness = 0.0;
-    float metalness = 0.0;
+	#if defined GENERATED_EMISSION || defined GENERATED_SPECULAR
+	generateIPBR(albedo, worldPos, viewPos, lightmap, NoU, emission, smoothness, metalness, subsurface, mat);
+	#endif
 
     float parallaxShadow = 1.0;
     vec3 shadow = vec3(0.0);
