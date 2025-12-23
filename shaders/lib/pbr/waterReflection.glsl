@@ -10,17 +10,23 @@ void getReflection(inout vec4 albedo, in vec3 viewPos, in vec3 nViewPos, in vec3
     float dist = 0.0;
     vec2 cdist = vec2(0.0);
 
-    #ifndef DH_WATER
+    #if !defined DH_WATER && !defined VOXY_TRANSLUCENT
         #if WATER_NORMALS > 0
         vec3 reflectPos = Raytrace(depthtex1, viewPos, normal, dither, fresnel, 6, 1.0, 0.1, 1.6, 10, border, lRfragPos, dist, cdist);
         #else
         vec3 reflectPos = Raytrace(depthtex1, viewPos, normal, dither, fresnel, 6, 1.0, 0.4, 1.4, 30, border, lRfragPos, dist, cdist);
         #endif
-    #else
+    #elif defined DH_WATER
         #if WATER_NORMALS > 0
         vec3 reflectPos = Raytrace(dhDepthTex1, viewPos, normal, dither, fresnel, 6, 1.0, 0.1, 1.6, 10, border, lRfragPos, dist, cdist);
         #else
         vec3 reflectPos = Raytrace(dhDepthTex1, viewPos, normal, dither, fresnel, 6, 1.0, 0.4, 1.4, 30, border, lRfragPos, dist, cdist);
+        #endif
+    #elif defined VOXY_TRANSLUCENT
+        #if WATER_NORMALS > 0
+        vec3 reflectPos = Raytrace(vxDepthTexTrans, viewPos, normal, dither, fresnel, 6, 1.0, 0.1, 1.6, 10, border, lRfragPos, dist, cdist);
+        #else
+        vec3 reflectPos = Raytrace(vxDepthTexTrans, viewPos, normal, dither, fresnel, 6, 1.0, 0.4, 1.4, 30, border, lRfragPos, dist, cdist);
         #endif
     #endif
 

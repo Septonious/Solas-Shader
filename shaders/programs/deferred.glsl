@@ -257,21 +257,6 @@ void main() {
 	if (dhZ == 1.0 && z0 == 1.0) color = skyColor;
 	#endif
 
-	//Apply fog before the clouds in Overworld
-	#ifdef DISTANT_HORIZONS
-	if (z0 != 1.0) {
-		Fog(color, viewPos.xyz, worldPos.xyz, atmosphereColor, z0);
-	} else if (dhZ != 1.0) {
-		vec4 dhScreenPos = vec4(texCoord, dhZ, 1.0);
-		vec4 dhViewPos = dhProjectionInverse * (dhScreenPos * 2.0 - 1.0);
-			 dhViewPos /= dhViewPos.w;
-
-        Fog(color, dhViewPos.xyz, ToWorld(dhViewPos.xyz), atmosphereColor, z0);
-	}
-	#else
-	Fog(color, viewPos.xyz, worldPos.xyz, atmosphereColor, z0);
-    #endif
-
 	//Volumetric Clouds
 	#if defined VOLUMETRIC_CLOUDS || defined END_DISK
 	vc.rgb = pow(vc.rgb, vec3(1.0 / 2.2));
@@ -279,7 +264,7 @@ void main() {
 	#ifdef DISTANT_HORIZONS
 	cloudDepth /= (2.0 * dhFarPlane);
 	#else
-	float farPlane = far + vxRenderDistance * 32.0;
+	float farPlane = far + vxRenderDistance * 16.0;
 	cloudDepth /= (2.0 * farPlane);
 	#endif
 

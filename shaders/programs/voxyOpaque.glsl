@@ -50,19 +50,30 @@ void voxy_emitFragment(VoxyFragmentParameters parameters) {
     vec4 albedoTexture = parameters.sampledColour;
     vec4 voxyColor = parameters.tinting;
     vec4 albedo = albedoTexture * voxyColor;
-    vec2 lightmap = parameters.lightMap;
+    vec2 lightmap = clamp((parameters.lightMap - 0.03125) * 1.06667, vec2(0.0), vec2(0.9333, 1.0));
 
     vec3 screenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z);
     vec3 viewPos = ToNDC(screenPos);
     vec3 worldPos = ToWorld(viewPos);
 
-    vec3 normal = vec3(
-        uint((parameters.face >> 1) == 2), 
-        uint((parameters.face >> 1) == 0), 
-        uint((parameters.face >> 1) == 1)
-    ) * (float(int(parameters.face) & 1) * 2.0 - 1.0);
+    vec3 normal = vec3(0.0);
 
-    vec3 newNormal = normalize((vxModelView * vec4(normal, 0.0)).xyz);
+    switch (uint(parameters.face) >> 1u) {
+        case 0u:
+        normal = vxModelView[1].xyz;
+        break;
+        case 1u:
+        normal = vxModelView[2].xyz;
+        break;
+        case 2u:
+        normal = vxModelView[0].xyz;
+        break;
+    }
+    if ((parameters.face & 1) == 0) {
+        normal = -normal;
+    }
+
+    vec3 newNormal = normal;
 
 	float NoU = clamp(dot(newNormal, upVec), -1.0, 1.0);
     #if defined OVERWORLD

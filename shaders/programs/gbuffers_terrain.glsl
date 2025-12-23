@@ -19,6 +19,7 @@ in vec4 vTexCoord, vTexCoordAM;
 #endif
 
 // Uniforms //
+uniform int vxRenderDistance;
 uniform int isEyeInWater;
 uniform int frameCounter;
 

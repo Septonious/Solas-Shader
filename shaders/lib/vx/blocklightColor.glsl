@@ -66,7 +66,7 @@ vec3 getBlocklightColor(int id) {
 	#endif
 
     //Lit Redstone Ore & Redstone Torch
-    else if(id == 29) color = vec3(1.00, 0.05, 0.00);
+    else if(id == 29) color = vec3(1.00, 0.05, 0.00) * 0.5;
     //Powered Rails & Shot Target
     else if(id == 30) color = vec3(1.00, 0.05, 0.00) * 0.5;
     //Nether Portal

@@ -205,7 +205,7 @@ void main() {
 	#ifdef VOLUMETRIC_CLOUDS
 	if (water > 0.5) {
 		#ifndef DISTANT_HORIZONS
-		float farPlane = far + vxRenderDistance * 32.0;
+		float farPlane = far + vxRenderDistance * 16.0;
 		float cloudDepth = texture2D(gaux2, screenPos.xy).r * (farPlane * 2.0);
 		#else
 		float cloudDepth = texture2D(gaux2, screenPos.xy).r * dhFarPlane;
@@ -289,8 +289,7 @@ void main() {
 	}
 	#endif
 
-    //Fog
-    Fog(albedo.rgb, viewPos, worldPos, atmosphereColor, 0.0);
+
 	albedo.a *= cloudBlendOpacity;
 
 	/* DRAWBUFFERS:013 */

@@ -63,17 +63,12 @@
     "samplers": {
         "gaux1":"sampler2D",
         "gaux2":"sampler2D",
-        "depthtex1":"sampler2D",
         "noisetex":"sampler2D", 
         "shadowtex0":"sampler2D", 
         "shadowcolor0":"sampler2D", 
         "shadowtex1":"sampler2D", 
         "vxDepthTexTrans":"sampler2D", 
-        "vxDepthTexOpaque":"sampler2D",
-        "floodfillSampler": "sampler3D",
-        "floodfillSamplerCopy": "sampler3D",
-        "specular": "sampler2D",
-        "normals": "sampler2D"
+        "vxDepthTexOpaque":"sampler2D"
     },
     "opaquePatchData":"
         #include "/programs/voxyOpaque.glsl"

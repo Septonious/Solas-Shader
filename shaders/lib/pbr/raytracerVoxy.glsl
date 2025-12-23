@@ -16,11 +16,11 @@ vec3 Raytrace(sampler2D depthtex, vec3 viewPos, vec3 normal, float dither, float
     int refinedSamples = 0;
 
     for (int i = 0; i < sampleCount; i++) {
-        pos = nvec3(gbufferProjection * vec4(viewPos, 1.0)) * 0.5 + 0.5;
+        pos = nvec3(vxProj * vec4(viewPos, 1.0)) * 0.5 + 0.5;
 		if (abs(pos.x - 0.5) > 0.6 || abs(pos.y - 0.5) > 0.55) break;
 
 		rfragpos = vec3(pos.xy, texture2D(depthtex, pos.xy).r);
-        rfragpos = nvec3(gbufferProjectionInverse * vec4(rfragpos * 2.0 - 1.0, 1.0));
+        rfragpos = nvec3(vxProjInv * vec4(rfragpos * 2.0 - 1.0, 1.0));
 		dist = length(start - rfragpos);
 
         float err = length(viewPos - rfragpos);
@@ -36,9 +36,11 @@ vec3 Raytrace(sampler2D depthtex, vec3 viewPos, vec3 normal, float dither, float
 		viewPos = start + rayDir;
     }
 
-    lRfragPos = length(rfragpos);
-    cdist = abs(pos.xy - 0.5) / vec2(0.6, 0.55);
-    border = clamp(1.0 - pow2(pow32(max(cdist.x, cdist.y))), 0.0, 1.0);
+    if (pos.z < 0.99997) {
+        lRfragPos = length(rfragpos);
+        cdist = abs(pos.xy - 0.5) / vec2(0.6, 0.55);
+        border = clamp(1.0 - pow2(pow32(max(cdist.x, cdist.y))), 0.0, 1.0);
+    }
 
 	return pos;
 }

@@ -11,6 +11,7 @@ in vec2 texCoord, lmCoord;
 flat in int mat;
 
 // Uniforms //
+uniform int vxRenderDistance;
 uniform int currentRenderedItemId;
 uniform int isEyeInWater;
 uniform int frameCounter;

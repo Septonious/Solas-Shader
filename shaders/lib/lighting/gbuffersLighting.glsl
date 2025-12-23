@@ -104,7 +104,11 @@ void gbuffersLighting(in vec4 color, inout vec4 albedo, in vec3 screenPos, in ve
         sss *= 1.0 - wetness * 0.5;
         #endif
 
-        NoL += subsurface * shadowVisibility * (0.3 + sss * 0.7);
+        if (vxRenderDistance < 1) {
+            NoL += subsurface * shadowVisibility * (0.3 + sss * 0.7);
+        } else {
+            NoL += subsurface * (0.3 + sss * 0.7);
+        }
     }
     #endif
 
@@ -162,11 +166,7 @@ void gbuffersLighting(in vec4 color, inout vec4 albedo, in vec3 screenPos, in ve
     #endif
 
     vec3 realShadow = shadow * NoL;
-    vec3 fakeShadow = getFakeShadow(lightmap.y) * originalNoL;
-
-    #if defined VOXY_OPAQUE || defined VOXY_TRANSLUCENT
-    fakeShadow *= 8.0;
-    #endif
+    vec3 fakeShadow = getFakeShadow(lightmap.y) * NoL;
 
     shadow = fmix(fakeShadow, realShadow, vec3(shadowVisibility));
     #endif
