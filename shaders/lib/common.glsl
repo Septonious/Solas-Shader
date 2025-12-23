@@ -887,4 +887,5 @@ vec3 pow8(vec3 x) {return x*x*x*x*x*x*x*x;}
 #undef GENERATED_EMISSION
 #undef GENERATED_NORMALS
 #undef GENERATED_SPECULAR
+#undef REALTIME_SHADOWS
 #endif
