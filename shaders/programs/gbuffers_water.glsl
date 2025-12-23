@@ -289,7 +289,8 @@ void main() {
 	}
 	#endif
 
-
+    //Fog
+    Fog(albedo.rgb, viewPos, worldPos, atmosphereColor, 0.0);
 	albedo.a *= cloudBlendOpacity;
 
 	/* DRAWBUFFERS:013 */

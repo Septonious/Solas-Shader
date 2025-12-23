@@ -49,7 +49,7 @@ layout(location = 0) out vec4 out0;
 void voxy_emitFragment(VoxyFragmentParameters parameters) {
     vec4 albedoTexture = parameters.sampledColour;
     vec4 voxyColor = parameters.tinting;
-    vec4 albedo = albedoTexture * voxyColor;
+    vec4 albedo = albedoTexture * vec4(voxyColor.rgb, 1.0);
     vec2 lightmap = clamp((parameters.lightMap - 0.03125) * 1.06667, vec2(0.0), vec2(0.9333, 1.0));
 
     vec3 screenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z);
@@ -89,7 +89,7 @@ void voxy_emitFragment(VoxyFragmentParameters parameters) {
 	float leaves = float(mat == 10314);
 	float saplings = float(mat == 10317);
 	float foliage = float(mat >= 10304 && mat <= 10319 || mat >= 10035 && mat <= 10040) * (1.0 - leaves) * (1.0 - saplings);
-	float subsurface = leaves * 2.5 + foliage * 0.6 + saplings * 0.4;
+	float subsurface = leaves + foliage * 0.6 + saplings * 0.4;
     float emission = 0.0;
     float smoothness = 0.0;
     float metalness = 0.0;

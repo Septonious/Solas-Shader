@@ -52,8 +52,6 @@ vec3 binormal = vxModelView[2].xyz;
 #include "/lib/atmosphere/sky.glsl"
 #endif
 
-#include "/lib/atmosphere/fog.glsl"
-
 #if WATER_NORMALS > 0
 #include "/lib/water/waterNormals.glsl"
 #endif
@@ -170,15 +168,6 @@ void voxy_emitFragment(VoxyFragmentParameters parameters) {
     vec3 shadow = vec3(0.0);
     gbuffersLighting(voxyColor, albedo, screenPos, viewPos, worldPos, newNormal, shadow, lightmap, NoU, NoL, NoE, subsurface, emission, smoothness, parallaxShadow);
 
-    #if defined OVERWORLD
-    vec3 atmosphereColor = getAtmosphere(viewPos);
-		 atmosphereColor *= 1.0 + Bayer8(gl_FragCoord.xy) / 64.0;
-	#elif defined NETHER
-	vec3 atmosphereColor = netherColSqrt.rgb * 0.25;
-	#elif defined END
-	vec3 atmosphereColor = endAmbientColSqrt * 0.175;
-	#endif
-
 	//Reflections
 	#ifdef WATER_REFLECTIONS
 	if (water > 0.5 || glass > 0.5) {
@@ -212,7 +201,6 @@ void voxy_emitFragment(VoxyFragmentParameters parameters) {
 		albedo.rgb += specularHighlight;
 	}
 	#endif
-
 
 	albedo.a *= cloudBlendOpacity;
 

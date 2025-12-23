@@ -2,6 +2,10 @@
   "version": 1,
   "opaqueDrawBuffers": [0],
   "translucentDrawBuffers": [0, 1],
+  "blending": {
+    -1: "off",
+    0: "SRC_ALPHA ONE_MINUS_SRC_ALPHA ONE ONE_MINUS_SRC_ALPHA"
+  },
   "uniforms": [
     "gbufferModelView",
     "gbufferModelViewInverse",
@@ -58,7 +62,8 @@
     "vxProjInv",
     "vxProjPrev",
     "vxRenderDistance",
-    "aspectRatio"
+    "aspectRatio",
+    "framemod8"
     ],
     "samplers": {
         "gaux1":"sampler2D",
@@ -70,11 +75,30 @@
         "vxDepthTexTrans":"sampler2D", 
         "vxDepthTexOpaque":"sampler2D"
     },
+	"taaOffset": "{
+		#ifdef TAA
+		vec2 view = 1.0 / vec2(viewWidth, viewHeight);
+
+        vec2 jitterOffsets8[8] = vec2[8](
+                                    vec2( 0.125,-0.375),
+                                    vec2(-0.125, 0.375),
+                                    vec2( 0.625, 0.125),
+                                    vec2( 0.375,-0.625),
+                                    vec2(-0.625, 0.625),
+                                    vec2(-0.875,-0.125),
+                                    vec2( 0.375,-0.875),
+                                    vec2( 0.875, 0.875)
+                                );
+		return jitterOffsets8[int(framemod8)] * view;
+        #else
+		return vec2(0.0);
+        #endif
+	}",
     "opaquePatchData":"
         #include "/programs/voxyOpaque.glsl"
     ",
     "translucentPatchData":"
         #include "/programs/voxyTranslucent.glsl"
     ",
-    "excludeLodsFromVanillaDepth": "false"
+    "excludeLodsFromVanillaDepth": false
 }

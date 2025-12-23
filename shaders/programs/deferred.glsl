@@ -68,6 +68,9 @@ uniform sampler2D depthtex0;
 #ifdef DISTANT_HORIZONS
 uniform sampler2D dhDepthTex0;
 #endif
+#ifdef VOXY
+uniform sampler2D vxDepthTexTrans;
+#endif
 uniform sampler2D noisetex;
 
 #ifdef MILKY_WAY
@@ -86,6 +89,10 @@ uniform mat4 gbufferProjectionInverse;
 
 #ifdef DISTANT_HORIZONS
 uniform mat4 dhProjectionInverse;
+#endif
+
+#ifdef VOXY
+uniform mat4 vxProjInv, vxModelViewInv;
 #endif
 
 // Pipeline Options //
@@ -114,6 +121,12 @@ float caveFactor = fmix(clamp((cameraPosition.y - 56.0) / 16.0, float(sign(isEye
 float sunVisibility = clamp((dot( sunVec, upVec) + 0.15) * 3.0, 0.0, 1.0);
 float moonVisibility = clamp((dot(-sunVec, upVec) + 0.15) * 3.0, 0.0, 1.0);
 vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.0);
+#endif
+
+#ifdef VOXY
+vec3 ToWorldVoxy(vec3 viewPos) {
+    return mat3(vxModelViewInv) * viewPos + vxModelViewInv[3].xyz;
+}
 #endif
 
 // Includes //
@@ -148,6 +161,9 @@ void main() {
 	#ifdef DISTANT_HORIZONS
 	float dhZ = texture2D(dhDepthTex0, texCoord).r;
 	#endif
+    #ifdef VOXY
+    float vxZ = texture2D(vxDepthTexTrans, texCoord).r;
+    #endif
 
 	vec4 screenPos = vec4(texCoord, z0, 1.0);
 	vec4 viewPos = gbufferProjectionInverse * (screenPos * 2.0 - 1.0);
@@ -256,6 +272,31 @@ void main() {
 	#else
 	if (dhZ == 1.0 && z0 == 1.0) color = skyColor;
 	#endif
+
+	//Apply fog before the clouds in Overworld
+	#if defined DISTANT_HORIZONS
+	if (z0 != 1.0) {
+		Fog(color, viewPos.xyz, worldPos.xyz, atmosphereColor, z0);
+	} else if (dhZ != 1.0) {
+		vec4 dhScreenPos = vec4(texCoord, dhZ, 1.0);
+		vec4 dhViewPos = dhProjectionInverse * (dhScreenPos * 2.0 - 1.0);
+			 dhViewPos /= dhViewPos.w;
+
+        Fog(color, dhViewPos.xyz, ToWorld(dhViewPos.xyz), atmosphereColor, z0);
+	}
+	#elif defined VOXY
+	if (z0 != 1.0) {
+		Fog(color, viewPos.xyz, worldPos.xyz, atmosphereColor, z0);
+	} else if (vxZ != 1.0) {
+		vec4 vxScreenPos = vec4(texCoord, vxZ, 1.0);
+		vec4 vxViewPos = vxProjInv * (vxScreenPos * 2.0 - 1.0);
+			 vxViewPos /= vxViewPos.w;
+
+        Fog(color, vxViewPos.xyz, ToWorldVoxy(vxViewPos.xyz), atmosphereColor, z0);
+	}
+    #else
+	Fog(color, viewPos.xyz, worldPos.xyz, atmosphereColor, z0);
+    #endif
 
 	//Volumetric Clouds
 	#if defined VOLUMETRIC_CLOUDS || defined END_DISK
