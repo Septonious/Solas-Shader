@@ -16,7 +16,7 @@ vec3 ambientCol = ambientColSqrt * ambientColSqrt;
 
 //Per-biome weather
 //Every biome specified here has a corresponding uniform in the /shaders/shaders.properties file
-#ifndef VOXY_OPAQUE
+#if !defined VOXY_OPAQUE && !defined VOXY_TRANSLUCENT
 uniform float isSnowy, isDesert, isCherryGrove, isSwamp, isMushroom, isJungle, isLushCaves, isDeepDark;
 #endif
 

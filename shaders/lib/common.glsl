@@ -881,7 +881,7 @@ vec3 pow8(vec3 x) {return x*x*x*x*x*x*x*x;}
 #undef REFRACTION
 #endif
 
-#ifdef VOXY_OPAQUE
+#if defined VOXY_OPAQUE || defined VOXY_TRANSLUCENT
 #undef DYNAMIC_HANDLIGHT
 #undef VX_SUPPORT
 #undef GENERATED_EMISSION

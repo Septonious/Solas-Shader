@@ -1,7 +1,7 @@
 {
   "version": 1,
   "opaqueDrawBuffers": [0],
-  "translucentDrawBuffers": [1],
+  "translucentDrawBuffers": [0, 1],
   "uniforms": [
     "gbufferModelView",
     "gbufferModelViewInverse",
@@ -17,6 +17,7 @@
     "far", 
     "frameCounter",
     "frameTimeCounter", 
+    "skyColor",
     "cameraPosition",
     "cameraPositionInt",
     "cameraPositionFract",
@@ -43,6 +44,8 @@
     "isPaleGarden",
     "lightningBoltPosition", 
     "nightVision",
+    "blindFactor",
+    "darknessFactor",
     "viewWidth",
     "viewHeight",
     "vxViewProj",
@@ -58,6 +61,9 @@
     "aspectRatio"
     ],
     "samplers": {
+        "gaux1":"sampler2D",
+        "gaux2":"sampler2D",
+        "depthtex1":"sampler2D",
         "noisetex":"sampler2D", 
         "shadowtex0":"sampler2D", 
         "shadowcolor0":"sampler2D", 

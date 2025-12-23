@@ -169,7 +169,7 @@ void main() {
 	float ice = float(mat == 10000);
 	float water = float(mat == 10001);
 	float glass = float(mat >= 10201 && mat <= 10216);
-	float emission =  portal * lAlbedo * lAlbedo * 2.0;
+	float emission = portal * lAlbedo * lAlbedo * 2.0;
 
 	if (water > 0.5) {
 		#ifdef VANILLA_WATER
@@ -204,7 +204,8 @@ void main() {
 
 	#ifdef VOLUMETRIC_CLOUDS
 	#ifndef DISTANT_HORIZONS
-	float cloudDepth = texture2D(gaux2, screenPos.xy).r * (far * 2.0);
+    float farPlane = far + vxRenderDistance * 100.0;
+	float cloudDepth = texture2D(gaux2, screenPos.xy).r * (farPlane * 2.0);
 	#else
 	float cloudDepth = texture2D(gaux2, screenPos.xy).r * dhFarPlane;
 	#endif
@@ -220,7 +221,7 @@ void main() {
 
 	#if WATER_NORMALS > 0
 	if (water > 0.5) {
-		getWaterNormal(newNormal, worldPos, fresnel);
+		getWaterNormal(newNormal, worldPos, viewVector, viewDistance, fresnel, normal, binormal, tangent);
 	}
 	#endif
 

@@ -43,12 +43,13 @@ vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.
 
 #include "/lib/lighting/gbuffersLighting.glsl"
 
-layout(location = 0) out vec4 out1;
+layout(location = 0) out vec4 out0;
 
 // Main //
 void voxy_emitFragment(VoxyFragmentParameters parameters) {
-    vec4 albedo = parameters.sampledColour * parameters.tinting;
-    vec4 voxyColor = parameters.sampledColour;
+    vec4 albedoTexture = parameters.sampledColour;
+    vec4 voxyColor = parameters.tinting;
+    vec4 albedo = albedoTexture * voxyColor;
     vec2 lightmap = parameters.lightMap;
 
     vec3 screenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z);
@@ -74,15 +75,18 @@ void voxy_emitFragment(VoxyFragmentParameters parameters) {
 	float NoE = clamp(dot(newNormal, eastVec), -1.0, 1.0);
     
     int mat = int(parameters.customId);
+	float leaves = float(mat == 10314);
+	float saplings = float(mat == 10317);
+	float foliage = float(mat >= 10304 && mat <= 10319 || mat >= 10035 && mat <= 10040) * (1.0 - leaves) * (1.0 - saplings);
+	float subsurface = leaves * 2.5 + foliage * 0.6 + saplings * 0.4;
     float emission = 0.0;
     float smoothness = 0.0;
     float metalness = 0.0;
-    float subsurface = 0.0;
 
     float parallaxShadow = 1.0;
     vec3 shadow = vec3(0.0);
     gbuffersLighting(voxyColor, albedo, screenPos, viewPos, worldPos, newNormal, shadow, lightmap, NoU, NoL, NoE, subsurface, emission, smoothness, parallaxShadow);
 
-    out1 = albedo;
+    out0 = albedo;
 }
 #undef VOXY_OPAQUE

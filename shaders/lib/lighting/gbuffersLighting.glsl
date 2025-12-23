@@ -164,7 +164,7 @@ void gbuffersLighting(in vec4 color, inout vec4 albedo, in vec3 screenPos, in ve
     vec3 realShadow = shadow * NoL;
     vec3 fakeShadow = getFakeShadow(lightmap.y) * originalNoL;
 
-    #ifdef VOXY_OPAQUE
+    #if defined VOXY_OPAQUE || defined VOXY_TRANSLUCENT
     fakeShadow *= 8.0;
     #endif
 

@@ -279,7 +279,8 @@ void main() {
 	#ifdef DISTANT_HORIZONS
 	cloudDepth /= (2.0 * dhFarPlane);
 	#else
-	cloudDepth /= (2.0 * far);
+	float farPlane = far + vxRenderDistance * 100.0;
+	cloudDepth /= (2.0 * farPlane);
 	#endif
 
 	color = fmix(color, vc.rgb, vc.a);

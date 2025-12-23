@@ -26,7 +26,7 @@ float getWaterHeightMap(vec3 worldPos, vec2 offset) {
 	#endif
 }
 
-vec3 getParallaxWaves(vec3 waterPos) {
+vec3 getParallaxWaves(vec3 waterPos, vec3 viewVector, float viewDistance) {
 	vec3 parallaxPos = waterPos;
 	
 	for(int i = 0; i < 4; i++) {
@@ -37,8 +37,8 @@ vec3 getParallaxWaves(vec3 waterPos) {
 	return parallaxPos;
 }
 
-void getWaterNormal(inout vec3 newNormal, vec3 worldPos, in float fresnel) {
-	vec3 waterPos = getParallaxWaves(worldPos + cameraPosition);
+void getWaterNormal(inout vec3 newNormal, vec3 worldPos, vec3 viewVector, float viewDistance, in float fresnel, vec3 normal, vec3 binormal, vec3 tangent) {
+	vec3 waterPos = getParallaxWaves(worldPos + cameraPosition, viewVector, viewDistance);
 
 	float h0 = getWaterHeightMap(waterPos, vec2( WATER_NORMAL_OFFSET, 0.0));
 	float h1 = getWaterHeightMap(waterPos, vec2(-WATER_NORMAL_OFFSET, 0.0));
@@ -50,11 +50,11 @@ void getWaterNormal(inout vec3 newNormal, vec3 worldPos, in float fresnel) {
 
 	vec3 normalMap = vec3(xDelta, yDelta, 1.0 - (xDelta * xDelta + yDelta * yDelta));
 
-	mat3 tbnMatrix = mat3(tangent.x, binormal.x, normal.x,
-							tangent.y, binormal.y, normal.y,
-							tangent.z, binormal.z, normal.z);
-
 	float normalStrength = 0.35 * (1.0 - pow8(fresnel));
+
+	mat3 tbnMatrix = mat3(tangent.x, binormal.x, normal.x,
+						  tangent.y, binormal.y, normal.y,
+						  tangent.z, binormal.z, normal.z);
 
 	newNormal = normalMap * normalStrength + vec3(0.0, 0.0, 1.0 - normalStrength);
 	newNormal = clamp(normalize(normalMap * tbnMatrix), vec3(-1.0), vec3(1.0));
