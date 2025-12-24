@@ -19,7 +19,7 @@ void getDynamicWeather(inout float speed, inout float amount, inout float freque
     amount -= isPaleGarden;
 	#endif
 
-    amount = fmix(amount, 10.0, wetness);
+    amount = fmix(amount, 10.25, wetness);
 }
 
 void getCloudShadow(vec2 rayPos, vec2 wind, float amount, float frequency, float density, inout float noise) {

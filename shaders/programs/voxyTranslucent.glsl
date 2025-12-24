@@ -136,6 +136,13 @@ void voxy_emitFragment(VoxyFragmentParameters parameters) {
 		albedo.g *= 1.0 + (0.5 - waterFog.a * 0.35); //Correciton
 		albedo.a = min(0.1 + 3.0 * WATER_A * waterFog.a * (0.75 - float(isEyeInWater == 1) * 0.25), 0.8);
 		#endif
+	} else if (portal > 0.5) {
+		vec2 noisePos = worldPos.xy + cameraPosition.xy;
+			 noisePos += worldPos.zy + cameraPosition.zy;
+			 noisePos.y *= 0.5;
+		float portalNoise = texture2D(noisetex, noisePos * 0.1 + 0.01 * vec2(sin(frameTimeCounter * 0.6) + frameTimeCounter * 0.4, frameTimeCounter * 0.5 - cos(frameTimeCounter * 0.7))).r;
+			  portalNoise *= portalNoise * portalNoise;
+		albedo.rgb = pow(vec3(NP_R, NP_G, NP_B), vec3(1.0 - portalNoise * 3.0 - pow4(lAlbedo) * 0.25)) * 2.0 * portalNoise * (0.7 + pow4(lAlbedo) * 0.6);
 	}
 
 	//Volumetric Clouds Blending

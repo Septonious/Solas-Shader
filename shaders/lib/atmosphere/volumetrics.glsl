@@ -114,7 +114,7 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
     #endif
 
     //LPV Fog Variables
-    float lpvFogIntensity = LPV_FOG_STRENGTH * (3.0 - float(isEyeInWater == 1) * 2.0);
+    float lpvFogIntensity = LPV_FOG_STRENGTH * (2.0 - float(isEyeInWater == 1) * 1.0);
     #ifdef OVERWORLD
           lpvFogIntensity *= (2.0 - eBS * timeBrightnessSqrt - caveFactor);
     #elif defined NETHER

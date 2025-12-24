@@ -96,7 +96,7 @@ void gbuffersLighting(in vec4 color, inout vec4 albedo, in vec3 screenPos, in ve
     float sss = 0.0;
 
     #if defined OVERWORLD || defined END
-    if (subsurface > 0.0) {
+    if (subsurface > 0.01) {
         sss = pow6(VoL);
 
         #ifdef OVERWORLD
@@ -104,11 +104,7 @@ void gbuffersLighting(in vec4 color, inout vec4 albedo, in vec3 screenPos, in ve
         sss *= 1.0 - wetness * 0.5;
         #endif
 
-        if (vxRenderDistance < 1) {
-            NoL += subsurface * shadowVisibility * (0.3 + sss * 0.7);
-        } else {
-            NoL += subsurface * (0.3 + sss * 0.7);
-        }
+        NoL += subsurface * shadowVisibility * (0.5 + sss * 0.5);
     }
     #endif
 
@@ -127,7 +123,7 @@ void gbuffersLighting(in vec4 color, inout vec4 albedo, in vec3 screenPos, in ve
         #else
             //Shadow bias without peter-panning
             float distanceBias = pow(dot(worldPos, worldPos), 0.75);
-                  distanceBias = 0.1 + 0.0004 * distanceBias * (1.0 - float(subsurface > 0.0));
+                  distanceBias = 0.1 + 0.0004 * distanceBias * (1.0 - float(subsurface > 0.01));
             vec3 bias = worldNormal * distanceBias;
 
             //Fix light leaking in caves
@@ -151,7 +147,6 @@ void gbuffersLighting(in vec4 color, inout vec4 albedo, in vec3 screenPos, in ve
 
         vec3 shadowPos = ToShadow(worldPosM);
         float offset = 0.001;
-              offset *= 1.0 + subsurface * (3.0 - 3.5 * fade);
 
         computeShadow(shadow, shadowPos, offset, subsurface, lightmap.y);
     }
@@ -285,7 +280,7 @@ void gbuffersLighting(in vec4 color, inout vec4 albedo, in vec3 screenPos, in ve
     sceneLighting += nightVision * vec3(0.2, 0.3, 0.2);
 
     //Vanilla vanillaAo
-    float aoMixer = (1.0 - vanillaAo) * (1.0 - blockLightMap) * (1.0 - emission) * (1.0 - subsurface * 0.5);
+    float aoMixer = (1.0 - vanillaAo) * (1.0 - blockLightMap) * (1.0 - emission);
 
     //#if defined OVERWORLD || defined END
     //aoMixer *= 1.0 - float(length(realShadow) > 0.0);

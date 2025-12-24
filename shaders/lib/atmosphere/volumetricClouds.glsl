@@ -19,7 +19,7 @@ void getDynamicWeather(inout float speed, inout float amount, inout float freque
     amount -= isPaleGarden;
 	#endif
 
-    amount = fmix(amount, 10.0, wetness);
+    amount = fmix(amount, 10.25, wetness);
 }
 
 void getCloudSample(vec2 rayPos, vec2 wind, float attenuation, float amount, float frequency, float thickness, float density, float detail, inout float noise) {
@@ -104,7 +104,7 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z0, f
         #endif
 
 		vec3 rayIncrement = nWorldPos * rayLength;
-		int sampleCount = min(int(planeDifference / rayLength + 1), 6 + VC_DISTANCE / 1000);
+		int sampleCount = min(int(planeDifference / rayLength + 1), 6 + int(VC_DISTANCE) / 1000);
 
 		if (maxDist > 0 && sampleCount > 0) {
 			float cloud = 0.0;
