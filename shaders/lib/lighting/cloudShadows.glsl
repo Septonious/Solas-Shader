@@ -22,17 +22,48 @@ void getDynamicWeather(inout float speed, inout float amount, inout float freque
     amount = fmix(amount, 10.25, wetness);
 }
 
-void getCloudShadow(vec2 rayPos, vec2 wind, float amount, float frequency, float density, inout float noise) {
-	rayPos *= 0.0035 * frequency;
+float CloudSampleBaseWorley(vec2 coord) {
+	float noiseBase = texture2D(noisetex, coord).g;
+	noiseBase = pow(1.0 - noiseBase, 2.0) * 0.5 + 0.25;
 
-	float worleyNoise = (1.0 - texture2D(noisetex, rayPos.xy + wind * 0.5).g) * 0.4 + 0.25;
-	float perlinNoise = texture2D(noisetex, rayPos.xy + wind * 0.5).r;
-	float noiseBase = perlinNoise * 0.6 + worleyNoise * 0.4;
+	return noiseBase;
+}
 
-	noise = noiseBase * 21.25;
-	noise = max(noise - amount, 0.0) * (density * 0.25);
-	noise /= sqrt(noise * noise + 0.25);
-    noise = clamp(exp(-0.5 * noise), 0.0, 1.0);
-	noise *= noise * noise;
+float CloudCoverageDefault(float sampleAltitude, float amount) {
+	float noiseCoverage = abs(sampleAltitude - 0.125);
+
+	noiseCoverage *= sampleAltitude > 0.125 ? (2.14 - amount * 0.1) : 8.0;
+	noiseCoverage = noiseCoverage * noiseCoverage * 4.0;
+
+	return noiseCoverage;
+}
+
+float CloudApplyDensity(float noise, float density) {
+	noise *= density * 0.125;
+	noise *= (1.0 - 0.75 * wetness);
+	noise = noise / sqrt(noise * noise + 0.5);
+
+	return noise;
+}
+
+float CloudCombineDefault(float noiseBase, float noiseDetail, float noiseCoverage, float amount, float density) {
+	float noise = fmix(noiseBase, noiseDetail, 0.0476 * VC_DETAIL) * 21.0;
+
+	noise = fmix(noise - noiseCoverage, 21.0 - noiseCoverage * 2.5, 0.33 * wetness);
+	noise = max(noise - amount, 0.0);
+
+	noise = CloudApplyDensity(noise, density);
+
+	return noise;
+}
+
+void getCloudShadow(vec2 coord, vec2 wind, float amount, float frequency, float density, inout float noise) {
+	coord *= 0.004 * frequency;
+
+	vec2 baseCoord = coord * 0.5 + wind * 2.0;
+	float noiseBase = CloudSampleBaseWorley(baseCoord);
+
+	noise = CloudCombineDefault(noiseBase, 0.0, 0.5, amount, density);
+	noise = clamp(exp(-2.5 * noise), 0.0, 1.0);
     noise = fmix(1.0, noise, shadowFade);
 }

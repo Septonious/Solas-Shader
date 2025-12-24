@@ -192,7 +192,7 @@ void gbuffersLighting(in vec4 color, inout vec4 albedo, in vec3 screenPos, in ve
         float noise = 0.0;
         getCloudShadow(cloudShadowPos.xz / scale, wind, amount, frequency, density, noise);
 
-        cloudShadow = noise * VC_OPACITY;
+        cloudShadow = noise;
     }
     shadow *= cloudShadow;
     #endif
