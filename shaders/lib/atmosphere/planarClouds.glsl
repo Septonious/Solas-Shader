@@ -1,6 +1,6 @@
 float samplePlanarCloudNoise(in vec2 coord) {
     float noise = texture2D(noisetex, coord * 0.0625).r * 15.0;
-          noise = fmix(noise, texture2D(noisetex, coord).r * 2.0, 0.45);
+          noise = mix(noise, texture2D(noisetex, coord).r * 2.0, 0.33);
           noise = max(noise - PLANAR_CLOUDS_AMOUNT, 0.0);
           noise /= sqrt(noise * noise + 0.25);
           noise = clamp(noise, 0.0, 1.0);
@@ -24,24 +24,25 @@ void drawPlanarClouds(inout vec3 color, in vec3 atmosphereColor, in vec3 worldPo
 		float lightingNoise = samplePlanarCloudNoise(coord + worldLightVec.xz * 0.025);
 
 		//Lighting and coloring
-		float pc = noise * (1.0 - wetness) * pow2(1.0 - volumetricClouds) * caveFactor;
-		pc *= VoU;
+		float pc = noise * (1.0 - wetness) * pow2(1.0 - volumetricClouds) * caveFactor * VoU;
 
         float noiseDiff = clamp(noise - lightingNoise * 0.9, 0.0, 1.0);
-		float cloudLighting = noiseDiff * shadowFade * 4.0;
+		float cloudLighting = noiseDiff * shadowFade * 6.0;
 			  cloudLighting = clamp(cloudLighting * 0.5 + noise * 0.5, 0.0, 1.0);
 
+		float VoL = dot(normalize(viewPos), lightVec);
+
+		float halfVoL = fmix(abs(VoL) * 0.8, VoL, shadowFade) * 0.5 + 0.5;
+		float scattering = pow12(halfVoL);
+
 		vec3 nSkyColor = normalize(skyColor + 0.0001);
-		vec3 cloudAmbientColor = fmix(atmosphereColor * atmosphereColor * 0.5, 
-								 fmix(ambientCol, atmosphereColor * nSkyColor * 0.3, 0.2 + timeBrightnessSqrt * 0.3 + isSpecificBiome * 0.4),
-									 sunVisibility * (1.0 - wetness));
 		vec3 cloudLightColor = fmix(lightCol, lightCol * nSkyColor * 2.0, timeBrightnessSqrt * (0.5 - wetness * 0.5));
-			 cloudLightColor *= 0.5 + timeBrightnessSqrt * 0.5 + moonVisibility * 0.5;
+			 cloudLightColor *= 0.5 + timeBrightnessSqrt * 0.5 + moonVisibility * 0.5 + 2.0 * scattering;
 
 		vec3 cloudColor = cloudLightColor * (0.2 + cloudLighting * 0.8) * noise;
 			 cloudColor = pow(cloudColor, vec3(1.0 / 2.2));
 
 		color = fmix(color, cloudColor * PLANAR_CLOUDS_BRIGHTNESS, pc * PLANAR_CLOUDS_OPACITY);
-		occlusion += min(pow3(pc) * 3.0, 1.0);
+		occlusion += min(pow3(pc) * 6.0, 1.0);
 	}
 }

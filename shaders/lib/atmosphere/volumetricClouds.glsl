@@ -184,7 +184,7 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z, fl
             float xzNormalizeFactor = 10.0 / max(abs(height - 72.0), 56.0);
 
 			vec3 worldLightVec = normalize(ToWorld(lightVec * 100000000.0));
-                 worldLightVec.xz *= 3.0;
+                 worldLightVec.xz *= 2.0;
 
             for (int i = 0; i < sampleCount; i++, rayPos += rayIncrement, sampleTotalLength += rayLength) {
                 if (cloud > 0.99 || (viewLengthSoftMax < sampleTotalLength && z < 1.0) || sampleTotalLength > distance * 32.0) break;

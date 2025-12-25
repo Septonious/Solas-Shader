@@ -195,8 +195,9 @@ void main() {
 			 noisePos += worldPos.zy + cameraPosition.zy;
 			 noisePos.y *= 0.5;
 		float portalNoise = texture2D(noisetex, noisePos * 0.1 + 0.01 * vec2(sin(frameTimeCounter * 0.6) + frameTimeCounter * 0.4, frameTimeCounter * 0.5 - cos(frameTimeCounter * 0.7))).r;
-              portalNoise = clamp(portalNoise * portalNoise, 0.0, 1.0);
-		albedo.rgb = pow(vec3(NP_R, NP_G, NP_B), clamp(vec3(1.0 - portalNoise - pow4(lAlbedo) * 0.25), 0.01, 5.0)) * portalNoise * (0.7 + pow4(lAlbedo) * 0.6);
+			  portalNoise *= portalNoise * portalNoise;
+			  portalNoise = clamp(portalNoise, 0.0, 1.0);
+		albedo.rgb = pow(vec3(NP_R, NP_G, NP_B), max(vec3(1.0 - portalNoise * 3.0 - pow4(lAlbedo) * 0.25), vec3(0.1))) * 3.0 * portalNoise * (0.8 + pow4(lAlbedo) * 0.6);
 	}
 
 	//Volumetric Clouds Blending
