@@ -5,7 +5,7 @@ void drawAurora(inout vec3 color, in vec3 worldPos, in float VoU, in float caveF
           kpIndex = min(max(kpIndex, 0) + isSnowy * 4, 9);
 
 	//Total visibility of aurora based on multiple factors
-	float visibility = pow6(moonVisibility) * (1.0 - wetness) * caveFactor * (1.0 - pc * 0.5) * pow2(1.0 - vc);
+	float visibility = pow6(moonVisibility) * (1.0 - wetness) * caveFactor * (1.0 - pc * 0.5) * (1.0 - vc);
 
 	//Aurora tends to get brighter and dimmer when plasma arrives or fades away
     float pulse = clamp(cos(sin(frameTimeCounter * 0.1) * 0.3 + frameTimeCounter * 0.07), 0.0, 1.0);
