@@ -4,7 +4,7 @@ float getNoise(vec2 pos) {
 
 void drawStars(inout vec3 color, in vec3 worldPos, in float VoU, in float VoS, in float caveFactor, in float nebulaFactor, in float occlusion, in float size) {
 	#ifdef OVERWORLD
-	float visibility = moonVisibility * (1.0 - wetness) * pow(VoU, 0.5) * caveFactor;
+	float visibility = moonVisibility * moonVisibility * (1.0 - wetness) * pow(VoU, 0.5) * caveFactor;
 	#else
 	float visibility = 1.0;
 	#endif
@@ -127,7 +127,7 @@ float drawShootingStar(vec2 uv, vec2 startPos, vec2 direction) {
 
 void getShootingStars(inout vec3 color, in vec3 worldPos, float VoU, float VoS) {
     float burnTime = max(cos(sin(frameTimeCounter * 0.35) * 4.0 + frameTimeCounter * 0.25), 0.0) * 10.0;
-	float visibility = moonVisibility * (1.0 - wetness) * VoU * caveFactor * burnTime;
+	float visibility = moonVisibility * moonVisibility * (1.0 - wetness) * VoU * caveFactor * burnTime;
 
     if (visibility > 0.01) {
         vec2 planeCoord = worldPos.xz / (length(worldPos.y) + length(worldPos.xz) * 0.25);

@@ -18,8 +18,6 @@ void getDynamicWeather(inout float speed, inout float amount, inout float freque
 	#if MC_VERSION >= 12104
     amount -= isPaleGarden;
 	#endif
-
-    amount = fmix(amount, 10.25, wetness);
 }
 
 float cloudSampleBasePerlinWorley(vec2 coord) {
@@ -53,7 +51,7 @@ float CloudCoverageDefault(float sampleAltitude, float amount) {
 
 float CloudApplyDensity(float noise, float density) {
 	noise *= density * 0.125;
-	noise *= (1.0 - 0.75 * wetness);
+	noise *= (1.0 - 0.25 * wetness);
 	noise = noise / sqrt(noise * noise + 0.5);
 
 	return noise;
@@ -62,7 +60,7 @@ float CloudApplyDensity(float noise, float density) {
 float CloudCombineDefault(float noiseBase, float noiseDetail, float noiseCoverage, float amount, float density) {
 	float noise = fmix(noiseBase, noiseDetail, 0.0476 * VC_DETAIL) * 21.0;
 
-	noise = fmix(noise - noiseCoverage, 21.0 - noiseCoverage * 2.5, 0.33 * wetness);
+	noise = fmix(noise - noiseCoverage, 21.0 - noiseCoverage * 2.5, 0.25 * wetness);
 	noise = max(noise - amount, 0.0);
 
 	noise = CloudApplyDensity(noise, density);
@@ -205,8 +203,8 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z, fl
 
                 float noiseDiff = clamp(noise - lightingNoise * 0.9, 0.0, 1.0);
 
-                float sampleLighting = 0.125 + pow(sampleAltitude, 1.5) * 0.875;
-                      sampleLighting *= 1.0 - exp(-2.0 * noiseDiff);
+                float sampleLighting = 0.125 + pow(sampleAltitude, 1.5 + scattering * 0.75) * 0.875;
+                      sampleLighting *= 1.0 - exp(-(2.0 - scattering) * noiseDiff);
                       sampleLighting *= 2.0;
 
                 float sampleFade = InvLerp(xzNormalizedDistance, fadeEnd, fadeStart);
@@ -254,14 +252,14 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z, fl
 									 sunVisibility * (1.0 - wetness));
             vec3 cloudLightColor = fmix(lightCol, lightCol * nSkyColor * 2.0, timeBrightnessSqrt * (0.5 - wetness * 0.5));
 				 cloudLightColor *= 0.5 + timeBrightnessSqrt * 0.5 + moonVisibility * 0.5;
-				 cloudLightColor *= 1.0 + scattering * shadowFade * (1.0 + scattering * moonVisibility);
+				 cloudLightColor *= 1.0 + scattering * shadowFade * (1.0 + scattering * moonVisibility) * 2.0;
 			vec3 cloudColor = fmix(cloudAmbientColor, cloudLightColor, cloudLighting) * fmix(vec3(1.0), biomeColor, isSpecificBiome * sunVisibility);
 			     cloudColor = fmix(cloudColor, atmosphereColor * length(cloudColor) * 0.5, wetness * 0.6);
                  #ifdef AURORA_LIGHTING_INFLUENCE
                  cloudColor = fmix(cloudColor, vec3(0.05, 1.55, 0.40), clamp(auroraVisibility * cloudLighting * cloudLighting, 0.0, 0.1));
                  #endif
 
-            float opacity = clamp(fmix(VC_OPACITY - wetness * 0.2, 1.0, (max(0.0, cameraPosition.y) / height)), 0.0, 1.0);
+            float opacity = clamp(fmix(VC_OPACITY, 1.0, (max(0.0, cameraPosition.y) / height)), 0.0, 1.0);
 
             #if MC_VERSION >= 12104
             opacity = fmix(opacity, opacity * 0.5, isPaleGarden);
