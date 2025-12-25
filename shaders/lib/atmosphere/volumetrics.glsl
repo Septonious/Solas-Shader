@@ -138,7 +138,7 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
 
         float cloudTop = height + thickness * scale - 50.0;
         float time = (worldTime + int(5 + mod(worldDay, 100)) * 24000) * 0.05;
-        vec2 wind = vec2(time * speed * 0.005, sin(time * speed * 0.1) * 0.01) * 0.1;
+        vec2 wind = vec2(time * speed * 0.005, sin(time * speed * 0.1) * 0.01) * speed * 0.05;
         #endif
 
         //Nether Smoke Animation

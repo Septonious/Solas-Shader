@@ -10,7 +10,7 @@ void drawAurora(inout vec3 color, in vec3 worldPos, in float VoU, in float caveF
 	//Aurora tends to get brighter and dimmer when plasma arrives or fades away
     float pulse = clamp(cos(sin(frameTimeCounter * 0.1) * 0.3 + frameTimeCounter * 0.07), 0.0, 1.0);
     float longPulse = clamp(sin(cos(frameTimeCounter * 0.01) * 0.6 + frameTimeCounter * 0.04), -1.0, 1.0);
-
+			kpIndex = 9;
 	kpIndex *= 1.0 + longPulse * 0.25;
 	kpIndex /= 9.0;
 	visibility *= kpIndex * (1.0 + max(longPulse * 0.5, 0.0) + kpIndex * kpIndex * 0.5);
@@ -47,7 +47,7 @@ void drawAurora(inout vec3 color, in vec3 worldPos, in float VoU, in float caveF
 			vec2 coord = planeCoord.xz + cameraPosition.xz * 0.0001;
 
 			//We don't want the aurora to render infintely, we also want it to be closer to the north when Kp is low
-			float auroraNorthBias = clamp((-planeCoord.x * 0.5 - planeCoord.z) * 0.25 * (10.0 - min(kpIndex, 1.0) * 9.0), pow5(kpIndex), 1.0);
+			float auroraNorthBias = clamp((-planeCoord.x * 0.5 - planeCoord.z) * 0.25 * (10.0 - min(kpIndex, 1.0) * 9.0) + pow3(kpIndex), 0.0, 1.0);
 			float auroraDistanceFactor = clamp(1.0 - length(planeCoord.xz) * 0.1, 0.0, 1.0) * auroraNorthBias;
 
 			if (auroraDistanceFactor > 0.0) {

@@ -18,12 +18,14 @@ void getDynamicWeather(inout float speed, inout float amount, inout float freque
 	#if MC_VERSION >= 12104
     amount -= isPaleGarden;
 	#endif
+
+	amount += 1.0;
 }
 
 float cloudSampleBasePerlinWorley(vec2 coord) {
 	float noiseBase = texture2D(noisetex, coord).g;
-	      noiseBase = pow(1.0 - noiseBase, 1.5) * 0.45 + 0.15;
-		  noiseBase += texture2D(noisetex, coord * 2.0).r * 0.25;
+	      noiseBase = pow(1.0 - noiseBase, 1.5) * 0.5 + 0.1;
+		  noiseBase += texture2D(noisetex, coord * 2.0).r * 0.4;
 
 	return noiseBase;
 }
@@ -49,7 +51,7 @@ float CloudCombineDefault(float noiseBase, float noiseDetail, float noiseCoverag
 	float noise = noiseBase * 21.0;
 
 	noise = fmix(noise - noiseCoverage, 21.0 - noiseCoverage * 2.5, 0.25 * wetness);
-	noise = max(noise - amount - 0.05, 0.0);
+	noise = max(noise - amount, 0.0);
 
 	noise = CloudApplyDensity(noise, density);
 

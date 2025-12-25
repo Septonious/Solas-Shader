@@ -206,7 +206,7 @@ void voxy_emitFragment(VoxyFragmentParameters parameters) {
 		vec3 specularHighlight = getSpecularHighlight(newNormal, viewPos, smoothnessF, vec3(0.40), endLightCol * 0.5, shadow * vanillaDiffuse, voxyColor.a);
 		#endif
 
-		albedo.rgb += specularHighlight;
+		albedo.rgb += specularHighlight * 0.5;
 	}
 	#endif
 

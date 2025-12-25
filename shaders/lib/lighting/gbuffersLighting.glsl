@@ -185,7 +185,8 @@ void gbuffersLighting(in vec4 color, inout vec4 albedo, in vec3 screenPos, in ve
     float cloudTop = height + thickness * scale;
 
     if (worldPos.y + cameraPosition.y < cloudTop) {
-        vec2 wind = vec2(time * speed * 0.005, sin(time * speed * 0.1) * 0.01) * speed * 0.1;
+        vec2 wind = vec2(time * speed * 0.005, sin(time * speed * 0.1) * 0.01) * speed * 0.05;
+
         vec3 worldSunVec = mat3(gbufferModelViewInverse) * lightVec;
         vec3 cloudShadowPos = worldPos + cameraPosition + (worldSunVec / max(abs(worldSunVec.y), 0.0)) * max(cloudTop - worldPos.y - cameraPosition.y, 0.0);
 
@@ -238,16 +239,16 @@ void gbuffersLighting(in vec4 color, inout vec4 albedo, in vec3 screenPos, in ve
     if (auroraVisibility > 0.0) {
         //The index of geomagnetic activity. Determines the brightness of Aurora, its widespreadness across the sky and tilt factor
         float kpIndex = abs(worldDay % 9 - worldDay % 4);
-            kpIndex = kpIndex - int(kpIndex == 1) + int(kpIndex > 7 && worldDay % 10 == 0);
-            kpIndex = min(max(kpIndex, 0) + isSnowy * 4, 9);
+              kpIndex = kpIndex - int(kpIndex == 1) + int(kpIndex > 7 && worldDay % 10 == 0);
+              kpIndex = min(max(kpIndex, 0) + isSnowy * 4, 9);
 
         //Aurora tends to get brighter and dimmer when plasma arrives or fades away
         float pulse = clamp(cos(sin(frameTimeCounter * 0.1) * 0.3 + frameTimeCounter * 0.07), 0.0, 1.0);
         float longPulse = clamp(sin(cos(frameTimeCounter * 0.01) * 0.6 + frameTimeCounter * 0.04), -1.0, 1.0);
-
+			kpIndex = 9;
         kpIndex *= 1.0 + longPulse * 0.25;
         kpIndex /= 9.0;
-        auroraVisibility *= kpIndex * 0.125;
+        auroraVisibility *= kpIndex * 0.25;
         sceneLighting *= (1.0 - auroraVisibility) + auroraVisibility * vec3(0.05, 1.55, 0.40);
     }
     #endif
