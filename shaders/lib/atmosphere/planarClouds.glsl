@@ -1,6 +1,6 @@
 float samplePlanarCloudNoise(in vec2 coord) {
     float noise = texture2D(noisetex, coord * 0.0625).r * 15.0;
-          noise = fmix(noise, texture2D(noisetex, coord).r * 2.0, 0.33);
+          noise = fmix(noise, texture2D(noisetex, coord).r * 2.0, 0.45);
           noise = max(noise - PLANAR_CLOUDS_AMOUNT, 0.0);
           noise /= sqrt(noise * noise + 0.25);
           noise = clamp(noise, 0.0, 1.0);
@@ -20,13 +20,14 @@ void drawPlanarClouds(inout vec3 color, in vec3 atmosphereColor, in vec3 worldPo
          planeCoord.z *= 0.75;
 		vec2 coord = cameraPosition.xz * 0.0002 + planeCoord.xz + frameTimeCounter * 0.002;
 		float noise = samplePlanarCloudNoise(coord);
-		float noiseL = samplePlanarCloudNoise(coord - normalize(ToWorld(lightVec * 1000000.0)).xz * 0.01);
+		float lightingNoise = samplePlanarCloudNoise(coord - normalize(ToWorld(lightVec * 1000000.0)).xz * 0.025);
 
 		//Lighting and coloring
 		float pc = noise * (1.0 - wetness) * pow2(1.0 - volumetricClouds) * caveFactor;
 		pc *= VoU;
 
-		float cloudLighting = (noiseL - noise) * shadowFade * 8.0;
+        float noiseDiff = clamp(noise - lightingNoise * 0.9, 0.0, 1.0);
+		float cloudLighting = exp(-16.0 * noiseDiff) * shadowFade * 8.0;
 			  cloudLighting = clamp(cloudLighting * 0.5 + noise * 0.5, 0.0, 1.0);
 
 		vec3 nSkyColor = normalize(skyColor + 0.0001);

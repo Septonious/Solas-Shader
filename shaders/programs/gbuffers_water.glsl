@@ -195,8 +195,8 @@ void main() {
 			 noisePos += worldPos.zy + cameraPosition.zy;
 			 noisePos.y *= 0.5;
 		float portalNoise = texture2D(noisetex, noisePos * 0.1 + 0.01 * vec2(sin(frameTimeCounter * 0.6) + frameTimeCounter * 0.4, frameTimeCounter * 0.5 - cos(frameTimeCounter * 0.7))).r;
-			  portalNoise *= portalNoise * portalNoise;
-		albedo.rgb = pow(vec3(NP_R, NP_G, NP_B), vec3(1.0 - portalNoise * 3.0 - pow4(lAlbedo) * 0.25)) * 2.0 * portalNoise * (0.7 + pow4(lAlbedo) * 0.6);
+              portalNoise = clamp(portalNoise * portalNoise, 0.0, 1.0);
+		albedo.rgb = pow(vec3(NP_R, NP_G, NP_B), clamp(vec3(1.0 - portalNoise - pow4(lAlbedo) * 0.25), 0.01, 5.0)) * portalNoise * (0.7 + pow4(lAlbedo) * 0.6);
 	}
 
 	//Volumetric Clouds Blending
@@ -285,7 +285,7 @@ void main() {
 		vec3 specularHighlight = getSpecularHighlight(newNormal, viewPos, smoothnessF, vec3(0.40), endLightCol * 0.5, shadow * vanillaDiffuse, color.a);
 		#endif
 
-		albedo.rgb += specularHighlight;
+		albedo.rgb += specularHighlight * 0.5;
 	}
 	#endif
 

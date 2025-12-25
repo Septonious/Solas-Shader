@@ -42,7 +42,7 @@ void calculateVLParameters(inout float intensity, inout float distanceFactor, in
 
     #ifdef VC_SHADOWS
     intensity = fmix(intensity, 1.0 + VoLPositive * VoLPositive * float(isEyeInWater == 1), clamp((cameraPosition.y - VC_HEIGHT) * 0.01, 0.0, 1.0));
-    intensity = intensity * (1.0 - float(isEyeInWater == 1)) + float(isEyeInWater == 1) * (1.0 + VoLClamped * VoLClamped * 2.0) * (0.25 + sunVisibility * 1.75);
+    intensity = intensity * (1.0 - float(isEyeInWater == 1)) + float(isEyeInWater == 1) * (1.0 + VoLClamped * VoLClamped * 2.0) * 0.25;
     #else
     intensity *= max(pow4(1.0 - VoUClamped), float(isEyeInWater == 1));
     #endif

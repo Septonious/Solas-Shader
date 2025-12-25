@@ -24,7 +24,7 @@ void getDynamicWeather(inout float speed, inout float amount, inout float freque
 
 float CloudSampleBaseWorley(vec2 coord) {
 	float noiseBase = texture2D(noisetex, coord).g;
-	noiseBase = pow(1.0 - noiseBase, 2.0) * 0.5 + 0.25;
+	      noiseBase = pow(1.0 - noiseBase, 1.5) * 0.5 + 0.2;
 
 	return noiseBase;
 }
@@ -64,6 +64,6 @@ void getCloudShadow(vec2 coord, vec2 wind, float amount, float frequency, float 
 	float noiseBase = CloudSampleBaseWorley(baseCoord);
 
 	noise = CloudCombineDefault(noiseBase, 0.0, 0.5, amount, density);
-	noise = clamp(exp(-2.5 * noise), 0.0, 1.0);
+	noise = clamp(exp(-3.5 * noise), 0.0, 1.0);
     noise = fmix(1.0, noise, shadowFade);
 }
