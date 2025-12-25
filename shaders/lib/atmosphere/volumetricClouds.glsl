@@ -191,6 +191,14 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z, fl
             for (int i = 0; i < sampleCount; i++, rayPos += rayIncrement, sampleTotalLength += rayLength) {
                 if (cloud > 0.99 || (viewLengthSoftMax < sampleTotalLength && z < 1.0) || sampleTotalLength > distance * 32.0) break;
 
+                vec3 worldPos = rayPos - cameraPosition;
+				float lWorldPos = length(worldPos.xz);
+
+				//Indoor leak prevention
+				if (eyeBrightnessSmooth.y < 210.0 && cameraPosition.y > height - 50.0 && lWorldPos < shadowDistance) {
+					if (shadow2D(shadowtex1, ToShadow(worldPos)).x <= 0.0) break;
+				}
+
                 float sampleAltitude = InvLerp(rayPos.y, cloudBottom, cloudTop);
                 float xzNormalizedDistance = length(rayPos.xz - cameraPosition.xz) * xzNormalizeFactor;
                 vec2 cloudCoord = rayPos.xz / scale;
