@@ -49,7 +49,7 @@ float CloudCombineDefault(float noiseBase, float noiseDetail, float noiseCoverag
 	float noise = noiseBase * 21.0;
 
 	noise = fmix(noise - noiseCoverage, 21.0 - noiseCoverage * 2.5, 0.25 * wetness);
-	noise = max(noise - amount, 0.0);
+	noise = max(noise - amount - 0.05, 0.0);
 
 	noise = CloudApplyDensity(noise, density);
 

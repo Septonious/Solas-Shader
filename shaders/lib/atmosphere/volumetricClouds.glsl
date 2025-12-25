@@ -205,7 +205,7 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z, fl
 
                 float sampleLighting = 0.125 + pow(sampleAltitude, 1.5 + scattering * 0.75) * 0.875;
                       sampleLighting *= 1.0 - exp(-(2.0 - scattering) * noiseDiff);
-                      sampleLighting *= 2.0;
+                      sampleLighting *= 2.0 - noise * noise * 0.5;
 
                 float sampleFade = InvLerp(xzNormalizedDistance, fadeEnd, fadeStart);
                 distanceFade *= fmix(1.0, sampleFade, noise * (1.0 - cloud));
@@ -242,9 +242,6 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z, fl
             kpIndex /= 9.0;
             auroraVisibility *= kpIndex * 0.075;
             #endif
-
-			float VoSClamped = clamp(VoS, 0.0, 1.0);
-			cloudLighting = cloudLighting * shadowFade + pow8(1.0 - cloudLighting) * pow3(VoSClamped) * (1.0 - shadowFade) * 0.75;
 
 			vec3 nSkyColor = normalize(skyColor + 0.0001);
             vec3 cloudAmbientColor = fmix(atmosphereColor * atmosphereColor * 0.5, 
