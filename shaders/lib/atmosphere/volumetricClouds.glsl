@@ -22,9 +22,10 @@ void getDynamicWeather(inout float speed, inout float amount, inout float freque
     amount = fmix(amount, 10.25, wetness);
 }
 
-float CloudSampleBaseWorley(vec2 coord) {
+float cloudSampleBasePerlinWorley(vec2 coord) {
 	float noiseBase = texture2D(noisetex, coord).g;
-	      noiseBase = pow(1.0 - noiseBase, 1.5) * 0.5 + 0.2;
+	      noiseBase = pow(1.0 - noiseBase, 1.5) * 0.45 + 0.15;
+		  noiseBase += texture2D(noisetex, coord * 2.0).r * 0.25;
 
 	return noiseBase;
 }
@@ -75,7 +76,7 @@ float CloudSample(vec2 coord, vec2 wind, float sampleAltitude, float thickness, 
 	vec2 baseCoord = coord * 0.5 + wind * 2.0;
 	vec2 detailCoord = coord.xy - wind * 2.0;
 
-	float noiseBase = CloudSampleBaseWorley(baseCoord);
+	float noiseBase = cloudSampleBasePerlinWorley(baseCoord);
 	float noiseDetail = CloudSampleDetail(detailCoord, sampleAltitude, thickness);
 	float noiseCoverage = CloudCoverageDefault(sampleAltitude, amount);
 
@@ -89,7 +90,7 @@ float CloudSampleLowDetail(vec2 coord, vec2 wind, float sampleAltitude, float th
 
 	vec2 baseCoord = coord * 0.5 + wind * 2.0;
 
-	float noiseBase = CloudSampleBaseWorley(baseCoord);
+	float noiseBase = cloudSampleBasePerlinWorley(baseCoord);
 	float noiseCoverage = CloudCoverageDefault(sampleAltitude, amount);
 
 	float noise = CloudCombineDefault(noiseBase, 0.0, noiseCoverage, amount, density);
@@ -130,7 +131,7 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z, fl
 
 		getDynamicWeather(speed, amount, frequency, thickness, density, detail, height, scale);
 
-        int maxsampleCount = 24;
+        int maxsampleCount = 16;
 
         float cloudBottom = height;
         float cloudTop = cloudBottom + thickness * scale;
@@ -153,7 +154,7 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z, fl
                   rayLength /= (4.0 * nWorldPos.y * nWorldPos.y) * lengthScaling + 1.0;
 
             vec3 rayIncrement = nWorldPos * rayLength;
-            int sampleCount = int(min(planeDifference / rayLength, maxsampleCount) + 5);
+            int sampleCount = int(min(planeDifference / rayLength, maxsampleCount) + 4);
             
             vec3 startPos = cameraPosition + nearestPlane * nWorldPos;
             vec3 rayPos = startPos + rayIncrement * dither;
@@ -184,8 +185,8 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z, fl
 
             float xzNormalizeFactor = 10.0 / max(abs(height - 72.0), 56.0);
 
-            vec3 worldSunVec = mat3(gbufferModelViewInverse) * normalize(lightVec * 10000.0) + gbufferModelViewInverse[3].xyz;
-                 worldSunVec.xz *= 3.0;
+			vec3 worldLightVec = normalize(ToWorld(lightVec * 100000000.0));
+                 worldLightVec.xz *= 3.0;
 
             for (int i = 0; i < sampleCount; i++, rayPos += rayIncrement, sampleTotalLength += rayLength) {
                 if (cloud > 0.99 || (viewLengthSoftMax < sampleTotalLength && z < 1.0) || sampleTotalLength > distance * 32.0) break;
@@ -199,7 +200,7 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z, fl
                 float noise = CloudSample(cloudCoord, wind, sampleAltitude, thickness, frequency, amount, density);
                       noise *= attenuation;
 
-                float lightingNoise = CloudSampleLowDetail(cloudCoord + worldSunVec.xz, wind, sampleAltitude, thickness, frequency, amount, density);
+                float lightingNoise = CloudSampleLowDetail(cloudCoord + worldLightVec.xz, wind, sampleAltitude, thickness, frequency, amount, density);
                       lightingNoise *= attenuation;
 
                 float noiseDiff = clamp(noise - lightingNoise * 0.9, 0.0, 1.0);
@@ -345,8 +346,8 @@ void computeEndVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z,
             nWorldPos.y += nWorldPos.x * 0.5 * sin(frameTimeCounter * 8);
         }
         #endif
-		vec3 worldSunVec = ToWorld(normalize(sunVec * 10000.0));
-			 worldSunVec.xz *= 32.0;
+		vec3 worldLightVec = ToWorld(normalize(sunVec * 10000.0));
+			 worldLightVec.xz *= 32.0;
 
 		#if MC_VERSION >= 12100 && defined END_FLASHES
 		vec3 worldEndFlashPosition = ToWorld(normalize(endFlashPosition * 10000.0)) * 24.0;
@@ -411,9 +412,9 @@ void computeEndVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z,
 				getEndCloudSample(rayPos.xz, wind, attenuation, noise);
 
 				#ifdef END_FLASHES
-				getEndCloudSample(rayPos.xz + worldSunVec.xz + worldEndFlashPosition.xz * endFlashIntensity, wind, attenuation + worldSunVec.y * 0.15, lightingNoise);
+				getEndCloudSample(rayPos.xz + worldLightVec.xz + worldEndFlashPosition.xz * endFlashIntensity, wind, attenuation + worldLightVec.y * 0.15, lightingNoise);
 				#else
-				getEndCloudSample(rayPos.xz + worldSunVec.xz, wind, attenuation + worldSunVec.y * 0.15, lightingNoise);
+				getEndCloudSample(rayPos.xz + worldLightVec.xz, wind, attenuation + worldLightVec.y * 0.15, lightingNoise);
 				#endif
 
 				float sampleLighting = 0.05 + clamp(noise - lightingNoise * (0.9 - scattering * 0.15), 0.0, 0.95) * (1.5 + scattering);

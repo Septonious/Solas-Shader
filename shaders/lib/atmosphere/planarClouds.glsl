@@ -18,16 +18,17 @@ void drawPlanarClouds(inout vec3 color, in vec3 atmosphereColor, in vec3 worldPo
 	if (length(planeCoord.xz) < 6.0) {
 		 planeCoord.x *= 2.00;
          planeCoord.z *= 0.75;
-		vec2 coord = cameraPosition.xz * 0.0002 + planeCoord.xz + frameTimeCounter * 0.002;
+		vec2 coord = cameraPosition.xz * 0.00025 + planeCoord.xz * 1.5 + frameTimeCounter * 0.002;
+		vec3 worldLightVec = normalize(ToWorld(lightVec * 100000000.0));
 		float noise = samplePlanarCloudNoise(coord);
-		float lightingNoise = samplePlanarCloudNoise(coord - normalize(ToWorld(lightVec * 1000000.0)).xz * 0.025);
+		float lightingNoise = samplePlanarCloudNoise(coord + worldLightVec.xz * 0.05);
 
 		//Lighting and coloring
 		float pc = noise * (1.0 - wetness) * pow2(1.0 - volumetricClouds) * caveFactor;
 		pc *= VoU;
 
         float noiseDiff = clamp(noise - lightingNoise * 0.9, 0.0, 1.0);
-		float cloudLighting = exp(-16.0 * noiseDiff) * shadowFade * 8.0;
+		float cloudLighting = noiseDiff * shadowFade * 8.0;
 			  cloudLighting = clamp(cloudLighting * 0.5 + noise * 0.5, 0.0, 1.0);
 
 		vec3 nSkyColor = normalize(skyColor + 0.0001);
