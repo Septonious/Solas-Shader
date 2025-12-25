@@ -184,7 +184,7 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z, fl
             float xzNormalizeFactor = 10.0 / max(abs(height - 72.0), 56.0);
 
 			vec3 worldLightVec = normalize(ToWorld(lightVec * 100000000.0));
-                 worldLightVec.xz *= 2.0;
+                 worldLightVec.xz *= 2.0 * shadowFade;
 
             for (int i = 0; i < sampleCount; i++, rayPos += rayIncrement, sampleTotalLength += rayLength) {
                 if (cloud > 0.99 || (viewLengthSoftMax < sampleTotalLength && z < 1.0) || sampleTotalLength > distance * 32.0) break;
@@ -249,7 +249,7 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z, fl
 									 sunVisibility * (1.0 - wetness));
             vec3 cloudLightColor = fmix(lightCol, lightCol * nSkyColor * 2.0, timeBrightnessSqrt * (0.5 - wetness * 0.5));
 				 cloudLightColor *= 0.5 + timeBrightnessSqrt * 0.5 + moonVisibility * 0.5;
-				 cloudLightColor *= 1.0 + scattering * shadowFade * (1.0 + scattering * moonVisibility) * 2.0;
+				 cloudLightColor *= 1.0 + scattering * shadowFade * 2.0;
 			vec3 cloudColor = fmix(cloudAmbientColor, cloudLightColor, cloudLighting) * fmix(vec3(1.0), biomeColor, isSpecificBiome * sunVisibility);
 			     cloudColor = fmix(cloudColor, atmosphereColor * length(cloudColor) * 0.5, wetness * 0.6);
                  #ifdef AURORA_LIGHTING_INFLUENCE
