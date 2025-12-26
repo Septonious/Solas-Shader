@@ -75,12 +75,12 @@ void drawAurora(inout vec3 color, in vec3 worldPos, in float VoU, in float caveF
 			vec2 coord = planeCoord.xz + cameraPosition.xz * 0.0001;
 
 			//We don't want the aurora to render infintely, we also want it to be closer to the north when Kp is low
-			float auroraNorthBias = clamp((-planeCoord.x * 0.5 - planeCoord.z) * 0.25 * (10.0 - min(kpIndex, 1.0) * 9.0), pow5(kpIndex), 1.0);
+			float auroraNorthBias = clamp((-planeCoord.x * 0.5 - planeCoord.z) * 0.25 + pow4(kpIndex) * 2.0, 0.0, 1.0);
 			float auroraDistanceFactor = clamp(1.0 - length(planeCoord.xz) * 0.1, 0.0, 1.0) * auroraNorthBias;
 
 			if (auroraDistanceFactor > 0.0) {
                 coord.y *= 0.5;
-                float totalNoise = auroraDistortedNoise(coord * 0.025, frameTimeCounter * 0.01, 0.5, northSouthStretching, eastWestStretching);
+                float totalNoise = auroraDistortedNoise(coord * 0.025, frameTimeCounter * 0.01, 0.2 + kpIndex * 0.4, northSouthStretching, eastWestStretching);
                 coord.y /= 2.0;
 
                 vec3 lowA = vec3(0.05, 1.55, 0.40);

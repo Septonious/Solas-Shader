@@ -189,7 +189,7 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z, fl
                  worldLightVec.xz *= 4.0 * shadowFade;
 
             for (int i = 0; i < sampleCount; i++, rayPos += rayIncrement, sampleTotalLength += rayLength) {
-                if (cloud > 0.99 || (viewLengthSoftMax < sampleTotalLength && z < 1.0) || sampleTotalLength > distance * 32.0) break;
+                if (cloud > 0.99 || (lViewPos < sampleTotalLength && z < 1.0) || sampleTotalLength > distance * 32.0) break;
 
                 vec3 worldPos = rayPos - cameraPosition;
 				float lWorldPos = length(worldPos.xz);
@@ -248,13 +248,12 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z, fl
             //Aurora tends to get brighter and dimmer when plasma arrives or fades away
 			float pulse = clamp(cos(sin(frameTimeCounter * 0.12) * 0.4 + frameTimeCounter * 0.11), 0.0, 1.0);
 			float longPulse = clamp(sin(cos(frameTimeCounter * 0.04) * 0.6 + frameTimeCounter * 0.06), -1.0, 1.0);
-
-			vec3 planeCoord = worldPos0 * (20.0 / worldPos0.y) * 0.05;
-			float auroraNorthBias = clamp((-planeCoord.x * 0.5 - planeCoord.z) * 0.25 * (10.0 - min(kpIndex, 1.0) * 9.0) + pow3(kpIndex), 0.0, 1.0);
-
             kpIndex *= 1.0 + longPulse * 0.25;
             kpIndex /= 9.0;
-            auroraVisibility *= auroraNorthBias * 0.66;
+
+			vec3 planeCoord = worldPos0 * (20.0 / worldPos0.y) * 0.05;
+			float auroraNorthBias = clamp((-planeCoord.x * 0.5 - planeCoord.z) * 0.25 + pow4(kpIndex) * 2.0, 0.0, 1.0);
+            auroraVisibility *= auroraNorthBias;
             #endif
 
 			vec3 nSkyColor = normalize(skyColor + 0.0001);
