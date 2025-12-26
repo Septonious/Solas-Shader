@@ -60,7 +60,8 @@ void drawPlanarClouds(inout vec3 color, in vec3 atmosphereColor, in vec3 worldPo
 
 		kpIndex *= 1.0 + longPulse * 0.25;
 		kpIndex /= 9.0;
-		auroraVisibility *= kpIndex * auroraNorthBias * 0.33;
+		auroraVisibility *= auroraNorthBias * 0.33;
+		cloudColor.r *= 1.0 + (1.0 + pulse) * pow3(kpIndex) * auroraVisibility;
 		cloudColor.g *= 1.0 + kpIndex * auroraVisibility;
 		#endif
 
