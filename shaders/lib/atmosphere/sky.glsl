@@ -24,7 +24,7 @@ vec3 getAtmosphere(vec3 viewPos) {
          scattering1 *= 1.0 - timeBrightnessSqrt;
 
     float scatteringMixer = pow2(1.0 - VoUcm) * (0.6 + VoUPositive * 0.6);
-    float scattering1Mixer = scatteringMixer * pow(length(scattering1), 0.33) * (1.0 - wetness * 0.75);
+    float scattering1Mixer = scatteringMixer * pow(length(scattering1), 0.33) * (1.0 - wetness * 0.5);
     float scattering2Mixer = 0.15 * pow2(1.0 - abs(VoU)) * timeBrightness + sunVisibility * VoSPositive * pow3(scatteringMixer) * (0.35 - timeBrightness * 0.35);
 
     vec3 nSkyColor = normalize(skyColor + 0.000001) * fmix(vec3(1.0), biomeColor, isSpecificBiome);
