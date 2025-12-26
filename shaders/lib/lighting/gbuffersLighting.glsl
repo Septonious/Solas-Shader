@@ -243,8 +243,8 @@ void gbuffersLighting(in vec4 color, inout vec4 albedo, in vec3 screenPos, in ve
               kpIndex = min(max(kpIndex, 0) + isSnowy * 4, 9);
 
         //Aurora tends to get brighter and dimmer when plasma arrives or fades away
-        float pulse = clamp(cos(sin(frameTimeCounter * 0.1) * 0.3 + frameTimeCounter * 0.07), 0.0, 1.0);
-        float longPulse = clamp(sin(cos(frameTimeCounter * 0.01) * 0.6 + frameTimeCounter * 0.04), -1.0, 1.0);
+    float pulse = clamp(cos(sin(frameTimeCounter * 0.12) * 0.4 + frameTimeCounter * 0.11), 0.0, 1.0);
+    float longPulse = clamp(sin(cos(frameTimeCounter * 0.04) * 0.6 + frameTimeCounter * 0.06), -1.0, 1.0);
 			kpIndex = 9;
         kpIndex *= 1.0 + longPulse * 0.25;
         kpIndex /= 9.0;

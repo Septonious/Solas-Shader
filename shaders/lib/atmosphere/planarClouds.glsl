@@ -42,7 +42,29 @@ void drawPlanarClouds(inout vec3 color, in vec3 atmosphereColor, in vec3 worldPo
 		vec3 cloudColor = cloudLightColor * (0.2 + cloudLighting * 0.8) * noise;
 			 cloudColor = pow(cloudColor, vec3(1.0 / 2.2));
 
+		#ifdef AURORA_LIGHTING_INFLUENCE
+		//The index of geomagnetic activity. Determines the brightness of Aurora, its widespreadness across the sky and tilt factor
+		float kpIndex = abs(worldDay % 9 - worldDay % 4);
+			  kpIndex = kpIndex - int(kpIndex == 1) + int(kpIndex > 7 && worldDay % 10 == 0);
+			  kpIndex = min(max(kpIndex, 0) + isSnowy, 9);
+
+		//Total visibility of aurora based on multiple factors
+		float auroraVisibility = pow6(moonVisibility) * (1.0 - wetness) * caveFactor;
+
+		//Aurora tends to get brighter and dimmer when plasma arrives or fades away
+		float pulse = clamp(cos(sin(frameTimeCounter * 0.12) * 0.4 + frameTimeCounter * 0.11), 0.0, 1.0);
+		float longPulse = clamp(sin(cos(frameTimeCounter * 0.04) * 0.6 + frameTimeCounter * 0.06), -1.0, 1.0);
+
+		kpIndex = 9;
+		float auroraNorthBias = clamp((-planeCoord.x * 0.5 - planeCoord.z) * 0.25 * (10.0 - min(kpIndex, 1.0) * 9.0) + pow3(kpIndex), 0.0, 1.0);
+
+		kpIndex *= 1.0 + longPulse * 0.25;
+		kpIndex /= 9.0;
+		auroraVisibility *= kpIndex * auroraNorthBias * 0.33;
+		cloudColor.g *= 1.0 + kpIndex * auroraVisibility;
+		#endif
+
 		color = fmix(color, cloudColor * PLANAR_CLOUDS_BRIGHTNESS, pc * PLANAR_CLOUDS_OPACITY);
-		occlusion += min(pow3(pc) * 6.0, 1.0);
+		occlusion += min(pc * pc * 2.0, 1.0);
 	}
 }

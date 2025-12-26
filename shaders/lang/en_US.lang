@@ -280,6 +280,7 @@ option.NORMAL_THRESHOLD=Generation Threshold
 screen.RPPBR=Resourcepack PBR
 
 option.SPECULAR_HIGHLIGHTS=Specular Highlights (Sun/Moon Reflection)
+option.TEXTURED_FIRE_LAVA=Lava/Fire Realistic Texture
 option.PBR=Resourcepack PBR
 option.PBR.comment=Enables the use of specular and normal mapping which allows for more detail on various things. §e[*]§rThis option requires a resource pack which contains specular and/or normal maps, disable if none is currently used. §e[*]§rOptions which requires advanced materials are indicated by *, changing these options won't affect the visuals or performance while advanced materials is disabled.
 option.MATERIAL_FORMAT=Material Format*

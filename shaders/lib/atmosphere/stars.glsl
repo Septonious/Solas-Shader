@@ -9,7 +9,7 @@ void drawStars(inout vec3 color, in vec3 worldPos, in float VoU, in float VoS, i
 	float visibility = 1.0;
 	#endif
 
-	visibility *= 1.0 - occlusion;
+	visibility *= pow2(1.0 - occlusion);
 
 	if (0 < visibility) {
 		vec2 planeCoord = worldPos.xz / (length(worldPos.y) + length(worldPos.xyz));
