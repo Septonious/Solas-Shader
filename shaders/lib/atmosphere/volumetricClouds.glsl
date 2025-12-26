@@ -250,10 +250,7 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z, fl
 			float longPulse = clamp(sin(cos(frameTimeCounter * 0.04) * 0.6 + frameTimeCounter * 0.06), -1.0, 1.0);
             kpIndex *= 1.0 + longPulse * 0.25;
             kpIndex /= 9.0;
-
-			vec3 planeCoord = worldPos0 * (20.0 / worldPos0.y) * 0.05;
-			float auroraNorthBias = clamp((-planeCoord.x * 0.5 - planeCoord.z) * 0.25 + pow4(kpIndex) * 2.0, 0.0, 1.0);
-            auroraVisibility *= auroraNorthBias;
+			auroraVisibility *= kpIndex;
             #endif
 
 			vec3 nSkyColor = normalize(skyColor + 0.0001);

@@ -80,7 +80,7 @@ void drawAurora(inout vec3 color, in vec3 worldPos, in float VoU, in float caveF
 
 			if (auroraDistanceFactor > 0.0) {
                 coord.y *= 0.5;
-                float totalNoise = auroraDistortedNoise(coord * 0.025, frameTimeCounter * 0.01, 0.2 + kpIndex * 0.4, northSouthStretching, eastWestStretching);
+                float totalNoise = auroraDistortedNoise(coord * 0.025, frameTimeCounter * 0.01, 0.25 + kpIndex * 0.5, northSouthStretching, eastWestStretching);
                 coord.y /= 2.0;
 
                 vec3 lowA = vec3(0.05, 1.55, 0.40);
