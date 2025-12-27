@@ -109,7 +109,7 @@ void drawAurora(inout vec3 color, in vec3 worldPos, in float VoU, in float caveF
                 float totalNoise = auroraDistortedNoise(coord * 0.025, pulse, longPulse);
 
                 vec3 lowA = vec3(0.45, 1.55, 0.0);
-                vec3 upA = vec3(0.95, 0.10, 1.05);
+                vec3 upA = vec3(0.95 + pow3(kpIndex) * pulse, 0.10, 1.05);
                 vec3 auroraA = fmix(lowA, upA, pow(currentStep, 0.65)) * exp2(-4.0 * i * sampleStep);
 
 				aurora += auroraA * totalNoise * sqrt(auroraDistanceFactor);
