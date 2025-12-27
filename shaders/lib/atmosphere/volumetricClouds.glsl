@@ -234,7 +234,9 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z, fl
             }
 
             cloudFaded *= distanceFade;
-
+			if (cloudFaded < dither) {
+				currentDepth = maxDist;
+			}
             //Final color calculations
             #ifdef AURORA_LIGHTING_INFLUENCE
             //The index of geomagnetic activity. Determines the brightness of Aurora, its widespreadness across the sky and tilt factor
