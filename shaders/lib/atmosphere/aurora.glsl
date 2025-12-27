@@ -1,5 +1,5 @@
 
-float auroraDistortedNoise(vec2 coord, float pulse, float longPulse) {
+float auroraDistortedNoise(vec2 coord, float pulse, float longPulse, float kpIndex) {
     // Low frequency noise
     vec2 flowUV = coord * 0.1;
     flowUV += vec2(
@@ -45,8 +45,8 @@ float auroraDistortedNoise(vec2 coord, float pulse, float longPulse) {
     float rays = texture2D(noisetex, rayCoord).r;
     	  rays = pow8(rays);
 
-    float aurora = sheet * arc * (50.0 * pulse + rays * 10000.0);
-		  aurora *= max(pow(1.0 - abs(coord.x * 4.0), 4.0 - longPulse * 3.0), 0.0);
+    float aurora = sheet * arc * (20.0 + 30.0 * pulse + 40.0 * pulse * longPulse + rays * 10000.0);
+		  aurora *= max(pow(1.0 - abs(coord.x * 4.0), 4.0 - longPulse * 2.0 - kpIndex), 0.0);
 
     return aurora;
 }
@@ -97,7 +97,7 @@ void drawAurora(inout vec3 color, in vec3 worldPos, in float VoU, in float caveF
 		float eastWestStretching = 1.0;
 
 		for (int i = 0; i < samples; i++) {
-			vec3 planeCoord = worldPos * ((10.0 + pow(clamp(VoU, 0.0, 1.0), 0.25) * 15.0 + currentStep * (10.0 + kpIndex * 5.0) - altitudeFactor) / worldPos.y) * 0.05;
+			vec3 planeCoord = worldPos * ((10.0 + pow(clamp(VoU, 0.0, 1.0), 0.25) * 15.0 - pulse * 5.0 + currentStep * (10.0 + kpIndex * 5.0) - altitudeFactor) / worldPos.y) * 0.05;
 			vec2 coord = planeCoord.xz + cameraPosition.xz * 0.0001;
 
 			//We don'frameTimeCounter want the aurora to render infintely, we also want it to be closer to the north when Kp is low
@@ -106,7 +106,7 @@ void drawAurora(inout vec3 color, in vec3 worldPos, in float VoU, in float caveF
 
 			if (auroraDistanceFactor > 0.0) {
 				coord.y *= 0.35;
-                float totalNoise = auroraDistortedNoise(coord * 0.025, pulse, longPulse);
+                float totalNoise = auroraDistortedNoise(coord * 0.025, pulse, longPulse, kpIndex);
 
                 vec3 lowA = vec3(0.45, 1.55, 0.0);
                 vec3 upA = vec3(0.95 + pow3(kpIndex) * pulse, 0.10, 1.05);

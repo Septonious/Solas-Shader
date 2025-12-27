@@ -277,7 +277,7 @@ const float sunPathRotation = 180.0;
 
 // Aurora //
 #define AURORA
-#define AURORA_BRIGHTNESS 2.00 //[0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00]
+#define AURORA_BRIGHTNESS 1.50 //[0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00]
 #define AURORA_LIGHTING_INFLUENCE
 
 // Milky Way //
