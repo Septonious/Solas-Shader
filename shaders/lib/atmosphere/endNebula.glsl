@@ -6,15 +6,15 @@ void sampleNebulaNoise(vec2 coord, inout float colorMixer, inout float noise) {
     noise *= 2.0 + noise * 20.0;
 }
 
-float getSpiralWarping(vec2 coord){
-	float whirl = -10.0;
+float getSpiralWarping(vec2 coord, float gravityLens){
+	float whirl = -15.0;
 	float arms = 10.0;
 
     coord = vec2(atan(coord.y, coord.x) + frameTimeCounter * 0.1, sqrt(coord.x * coord.x + coord.y * coord.y));
     float center = pow8(1.0 - coord.y) * 2.0;
     float spiral = sin((coord.x + sqrt(coord.y) * whirl) * arms) + center - coord.y;
 
-    return clamp(spiral * 0.1, 0.0, 1.0);
+    return clamp(spiral * 0.075, 0.0, 1.0);
 }
 
 #if MC_VERSION >= 12100
@@ -65,7 +65,7 @@ void drawEndNebula(inout vec3 color, in vec3 worldPos, in float VoU, in float Vo
         blackHoleCoord.y -= blackHoleCoord.x * 0.5 * sin(frameTimeCounter * 8);
     }
     #endif
-    float warping = getSpiralWarping(blackHoleCoord);
+    float warping = getSpiralWarping(blackHoleCoord, gravityLens);
          blackHoleCoord.x *= 0.75 - absVoU * 0.25;
          blackHoleCoord.y *= 5.0;
          blackHoleCoord.y += pow2(blackHoleCoord.x * 2.25) * sqrtabsVoU;
