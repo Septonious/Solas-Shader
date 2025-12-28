@@ -251,7 +251,7 @@ void gbuffersLighting(in vec4 color, inout vec4 albedo, in vec3 screenPos, in ve
 
         kpIndex *= 1.0 + longPulse * 0.25;
         kpIndex /= 9.0;
-        auroraVisibility *= kpIndex * 0.25;
+        auroraVisibility *= kpIndex * 0.5;
         sceneLighting *= (1.0 - auroraVisibility) + auroraVisibility * vec3(0.05 + (1.0 + pulse) * pow3(kpIndex), 1.55, 0.40);
     }
     #endif
