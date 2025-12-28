@@ -277,7 +277,7 @@ const float sunPathRotation = 180.0;
 
 // Aurora //
 #define AURORA
-#define AURORA_BRIGHTNESS 1.50 //[0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00]
+#define AURORA_BRIGHTNESS 2.00 //[0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00]
 #define AURORA_LIGHTING_INFLUENCE
 
 // Milky Way //
@@ -296,6 +296,8 @@ const float sunPathRotation = 180.0;
 #define END_BLACK_HOLE
 #define END_BLACK_HOLE_SIZE 1.0 //[3.0 2.5 2.0 1.5 1.0 0.5 0.25]
 #define END_ANGLE 0.0 //[0.0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0] //god forbid you ever change this setting
+//#define END_TIME_TILT
+//#define END_67
 
 // End Cloudy Fog //
 #define END_DISK

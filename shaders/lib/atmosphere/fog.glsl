@@ -107,16 +107,20 @@ void getNormalFog(inout vec3 color, in vec3 atmosphereColor, in vec3 viewPos, in
 	//End fog
 	#ifdef END
     vec3 wpos = ToWorld(viewPos);
-    vec3 nwpos = normalize(wpos);
-    nwpos.y += nwpos.x * END_ANGLE;
+    vec3 nWorldPos = normalize(wpos);
+    nWorldPos.y += nWorldPos.x * END_ANGLE;
 
     #ifdef END_67
     if (frameCounter < 500) {
-        nwpos.y += nwpos.x * 0.5 * sin(frameTimeCounter * 8);
+        nWorldPos.y += nWorldPos.x * 0.5 * sin(frameTimeCounter * 8);
     }
     #endif
 
-	float density = pow4(1.0 - abs(nwpos.y));
+	#ifdef END_TIME_TILT
+		nWorldPos.y += nWorldPos.x * min(0.025 * frameTimeCounter, 1.0);
+	#endif
+
+	float density = pow4(1.0 - abs(nWorldPos.y));
 		  density *= 1.0 - clamp((cameraPosition.y - 100.0) * 0.01, 0.0, 1.0);
 
 	float fog = 1.0 - exp(-0.0001 * length(wpos));

@@ -167,8 +167,8 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z, fl
             vec3 rayPos = startPos + rayIncrement * dither;
             float sampleTotalLength = nearestPlane + rayLength * dither;
 
-            float time = (worldTime + int(5 + mod(worldDay, 100)) * 24000) * 0.05;
-            vec2 wind = vec2(time * speed * 0.005, sin(time * speed * 0.1) * 0.01) * speed * 0.05;
+            float frameTimeCounter = (worldTime + int(5 + mod(worldDay, 100)) * 24000) * 0.05;
+            vec2 wind = vec2(frameTimeCounter * speed * 0.005, sin(frameTimeCounter * speed * 0.1) * 0.01) * speed * 0.05;
 
             float cloud = 0.0;
             float cloudFaded = 0.0;
@@ -265,7 +265,7 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z, fl
 
 			float longPulse = sin(frameTimeCounter * 0.025 + sin(frameTimeCounter * 0.004) * 0.8);
 				  longPulse = longPulse * (1.0 - 0.15 * abs(longPulse));
-
+			kpIndex = 9;
             kpIndex *= 1.0 + longPulse * 0.25;
             kpIndex /= 9.0;
 			auroraVisibility *= kpIndex;
@@ -361,8 +361,13 @@ void computeEndVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z,
 		float VoS = clamp(dot(nViewPos, sunVec), 0.0, 1.0);
 		vec3 nWorldPos = normalize(worldPos);
 
-        //float blackHoleDistortion = (pow8(VoS) * 0.5 + pow(VoS, 1.0 + VoS * 32.0) * 0.25) * min(length(nWorldPos.xz * 0.25), 64.0);
-        float blackHoleDistortion = 0.0;
+        float blackHoleDistortion = (pow8(VoS) * 0.5 + pow(VoS, 1.0 + VoS * 32.0) * 0.25) * min(length(nWorldPos.xz * 0.25), 64.0) * 0.75;
+        //float blackHoleDistortion = 0.0;
+		#ifdef END_TIME_TILT
+			float time = min(0.025 * frameTimeCounter, 1.0);
+			nWorldPos.y += nWorldPos.x * time;
+			blackHoleDistortion *= time;
+		#endif
         nWorldPos.y += nWorldPos.x * END_ANGLE;
         nWorldPos.y -= blackHoleDistortion;
         #ifdef END_67

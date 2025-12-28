@@ -65,6 +65,9 @@ void drawEndNebula(inout vec3 color, in vec3 worldPos, in float VoU, in float Vo
         blackHoleCoord.y -= blackHoleCoord.x * 0.5 * sin(frameTimeCounter * 8);
     }
     #endif
+    #ifdef END_TIME_TILT
+          blackHoleCoord.y -= blackHoleCoord.x * min(0.025 * frameTimeCounter, 1.0);
+    #endif
     float warping = getSpiralWarping(blackHoleCoord, gravityLens);
          blackHoleCoord.x *= 0.75 - absVoU * 0.25;
          blackHoleCoord.y *= 5.0;
