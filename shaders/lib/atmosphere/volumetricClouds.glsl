@@ -117,6 +117,14 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z, fl
 		vec3 nWorldPos = normalize(worldPos0);
         float lViewPos = length(viewPos);
 
+		#ifdef DISTANT_HORIZONS
+		float dhZ = texture2D(dhDepthTex0, texCoord).r;
+		vec4 dhScreenPos = vec4(texCoord, dhZ, 1.0);
+		vec4 dhViewPos = dhProjectionInverse * (dhScreenPos * 2.0 - 1.0);
+			 dhViewPos /= dhViewPos.w;
+		float lDhViewPos = length(dhViewPos.xyz);
+		#endif
+
 		//Cloud parameters
 		float speed = VC_SPEED;
 		float amount = VC_AMOUNT;
@@ -190,6 +198,10 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z, fl
 
             for (int i = 0; i < sampleCount; i++, rayPos += rayIncrement, sampleTotalLength += rayLength) {
                 if (cloud > 0.99 || (lViewPos < sampleTotalLength && z < 1.0) || sampleTotalLength > distance * 32.0) break;
+
+				#ifdef DISTANT_HORIZONS
+				if ((lDhViewPos < sampleTotalLength && dhZ < 1.0)) break;
+				#endif
 
                 vec3 worldPos = rayPos - cameraPosition;
 				float lWorldPos = length(worldPos.xz);
@@ -322,7 +334,7 @@ void getEndCloudSample(vec2 rayPos, vec2 wind, float attenuation, inout float no
 	float noiseDetail = fmix(noiseDetailA, noiseDetailB, fract(attenuation * END_DISK_THICKNESS));
 
 	float noiseCoverage = abs(attenuation - 0.125) * (attenuation > 0.125 ? 1.14 : 5.0);
-		  noiseCoverage *= noiseCoverage * 3.0;
+		  noiseCoverage *= noiseCoverage * 4.0;
 	
 	noise = fmix(noiseBase, noiseDetail, 0.025 * int(0 < noiseBase)) * 22.0 - noiseCoverage;
 	noise = max(noise - END_DISK_AMOUNT - 1.0 + getProtoplanetaryDisk(rayPos), 0.0);

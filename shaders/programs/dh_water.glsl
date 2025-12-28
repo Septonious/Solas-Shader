@@ -201,7 +201,7 @@ void main() {
 
 	#if WATER_NORMALS > 0
 	if (water > 0.5) {
-		getWaterNormal(newNormal, worldPos, fresnel);
+		getWaterNormal(newNormal, worldPos, viewVector, viewDistance, fresnel, normal, binormal, tangent);
 	}
 	#endif
 
@@ -222,7 +222,7 @@ void main() {
 	float NoE = clamp(dot(newNormal, eastVec), -1.0, 1.0);
 
     vec3 shadow = vec3(0.0);
-    gbuffersLighting(albedo, screenPos, viewPos, worldPos, newNormal, shadow, lightmap, NoU, NoL, NoE, 0.0, emission, 0.6, 0.0);
+    gbuffersLighting(color, albedo, screenPos, viewPos, worldPos, newNormal, shadow, lightmap, NoU, NoL, NoE, 0.0, emission, 0.6, 0.0);
 
     #if defined OVERWORLD
     vec3 atmosphereColor = getAtmosphere(viewPos);

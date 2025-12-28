@@ -3,7 +3,7 @@ void sampleNebulaNoise(vec2 coord, inout float colorMixer, inout float noise) {
     noise = texture2D(noisetex, coord * 0.50).r;
     noise *= colorMixer;
     noise *= texture2D(noisetex, coord * 0.125).r;
-    noise *= 1.0 + noise * 21.0;
+    noise *= 2.0 + noise * 20.0;
 }
 
 float getSpiralWarping(vec2 coord){
@@ -76,11 +76,12 @@ void drawEndNebula(inout vec3 color, in vec3 worldPos, in float VoU, in float Vo
     #ifdef END_BLACK_HOLE
          nebulaCoord += warping * gravityLens;
     #endif
+         nebulaCoord += cameraPosition.xz * 0.0001;
 
     float nebulaNoise = 0.0;
     float nebulaColorMixer = 0.0;
     sampleNebulaNoise(nebulaCoord, nebulaColorMixer, nebulaNoise);
-          nebulaColorMixer = pow4(nebulaColorMixer) * 6.0;
+          nebulaColorMixer = pow3(nebulaColorMixer) * 4.5;
 
     float nebulaVisibility = 1.0;
     #ifdef END_BLACK_HOLE

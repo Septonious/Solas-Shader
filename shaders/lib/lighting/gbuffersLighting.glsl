@@ -214,9 +214,10 @@ void gbuffersLighting(in vec4 color, inout vec4 albedo, in vec3 screenPos, in ve
               smoothnessF = fmix(smoothnessF, 1.0, smoothness);
 
         specularHighlight = GGX(newNormal, normalize(viewPos), smoothnessF, baseReflectance, 0.04);
+        specularHighlight = max(specularHighlight, 0.0);
 
         #if defined DH_TERRAIN
-        specularHighlight *= 4.0;
+        specularHighlight *= 1.5;
         #endif
     }
     #endif
