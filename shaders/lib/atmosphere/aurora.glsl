@@ -1,9 +1,6 @@
 float auroraDistortedNoise(vec2 coord, float VoU, float kpIndex, float pulse, float longPulse) {
     float t = frameTimeCounter * 0.125;
 
-    // =================================================
-    // 1. BASE DOMAIN (NO ANISOTROPIC DISTORTION YET)
-    // =================================================
     vec2 distortedCoord = coord;
 
     // Soft global rotation (breaks axis lock)
@@ -12,9 +9,7 @@ float auroraDistortedNoise(vec2 coord, float VoU, float kpIndex, float pulse, fl
                         sin(baseAngle),  cos(baseAngle));
     distortedCoord = baseRot * distortedCoord;
 
-    // =================================================
-    // 2. LOW-FREQ FLOW (Perlin R)
-    // =================================================
+    //Low freq distort
     vec2 flowUV = distortedCoord * 0.35;
     flowUV += vec2(
         sin(t * 0.0012),
@@ -23,36 +18,33 @@ float auroraDistortedNoise(vec2 coord, float VoU, float kpIndex, float pulse, fl
 
     float f = texture2D(noisetex, flowUV).r * 2.0 - 1.0;
 
-    // =================================================
-    // 3. CURL-LIKE WARP (NO SHEAR)
-    // =================================================
-    // Perpendicular motion = curl approximation
+    //Perpendicular motion = curl approximation
     vec2 curlDir = normalize(vec2(
         cos(f * 6.283 + t * 0.12),
         sin(f * 6.283 + t * 0.12)
     ));
 
-    float curlStrength = 0.125;
+    const float curlStrength = 0.125;
 	vec2 warping = curlDir * f;
     distortedCoord += warping * curlStrength;
 
-    // Now apply vertical stretch AFTER distortion
+    //Now apply vertical stretch AFTER distortion
     distortedCoord.y *= 0.75;
 	distortedCoord.x *= 1.5;
 
-    // Arc centered near zenith, very wide and persistent
+    //Arc centered near zenith, very wide and persistent with a slight north bias
     float zenithDist = abs(coord.y + 1.0);
     float arc = exp(-3.0 * zenithDist * zenithDist);
 
-    // Slight waviness so it’s not perfectly straight
+    //Slight waviness so it’s not perfectly straight
     arc *= 0.65 + 0.35 * f;
 
-    // Blurry background noise (aka folds)
+    //Blurry background noise (aka folds)
     float sheet = texture2D(noisetex, vec2(distortedCoord.x * 1.25, distortedCoord.y * 0.5 + frameTimeCounter * 0.0025)).r;
 
     sheet *= sheet * sheet * 2.0;
 
-    // High frequency noise (aka rays)
+    //High frequency noise (aka rays)
     float rays = texture2D(noisetex, vec2(distortedCoord.x * 5.0, distortedCoord.y * 2.0) + vec2(-frameTimeCounter * 0.0015, frameTimeCounter * 0.0025)).r;
     float flashTime = sin(frameTimeCounter + distortedCoord.x * 64.0 + warping.x * 32.0);
           flashTime = smoothstep(0.4, 1.0, flashTime);
@@ -60,7 +52,6 @@ float auroraDistortedNoise(vec2 coord, float VoU, float kpIndex, float pulse, fl
 
     return aurora;
 }
-
 
 void drawAurora(inout vec3 color, in vec3 worldPos, in float VoU, in float caveFactor, in float vc, in float pc) {
 	//The index of geomagnetic activity. Determines the brightness of Aurora, its widespreadness across the sky and tilt factor
@@ -79,7 +70,7 @@ void drawAurora(inout vec3 color, in vec3 worldPos, in float VoU, in float caveF
 		  longPulse = longPulse * (1.0 - 0.15 * abs(longPulse));
 
 	kpIndex *= 1.0 + longPulse * 0.25;
-	kpIndex = 9;
+
 	kpIndex /= 9.0;
 	visibility *= kpIndex * (1.0 + max(longPulse * 0.5, 0.0));
     visibility = min(visibility, 2.0) * AURORA_BRIGHTNESS;
