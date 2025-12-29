@@ -167,8 +167,8 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z, fl
             vec3 rayPos = startPos + rayIncrement * dither;
             float sampleTotalLength = nearestPlane + rayLength * dither;
 
-            float frameTimeCounter = (worldTime + int(5 + mod(worldDay, 100)) * 24000) * 0.05;
-            vec2 wind = vec2(frameTimeCounter * speed * 0.005, sin(frameTimeCounter * speed * 0.1) * 0.01) * speed * 0.05;
+            float time = (worldTime + int(5 + mod(worldDay, 100)) * 24000) * 0.05;
+            vec2 wind = vec2(time * speed * 0.005, sin(time * speed * 0.1) * 0.01) * speed * 0.05;
 
             float cloud = 0.0;
             float cloudFaded = 0.0;
@@ -267,6 +267,7 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z, fl
                   longPulse = longPulse * (1.0 - 0.15 * abs(longPulse));
 
             kpIndex *= 1.0 + longPulse * 0.25;
+			kpIndex = 9;
             kpIndex /= 9.0;
 			auroraVisibility *= kpIndex;
             #endif
@@ -279,7 +280,7 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z, fl
 				 cloudLightColor *= 0.125 + cloudLighting * 0.875;
 				 cloudLightColor *= 1.0 + scattering * shadowFade;
                  #ifdef AURORA_LIGHTING_INFLUENCE
-				 cloudLightColor.r *= 1.0 + 2.0 * pulse * pow3(kpIndex) * auroraVisibility;
+				 cloudLightColor.r *= 1.0 + 2.0 * pow3(kpIndex) * pulse * auroraVisibility;
 				 cloudLightColor.g *= 1.0 + kpIndex * auroraVisibility;
                  #endif
 			vec3 cloudColor = fmix(cloudAmbientColor, cloudLightColor, ambientLighting) * fmix(vec3(1.0), biomeColor, isSpecificBiome * sunVisibility);

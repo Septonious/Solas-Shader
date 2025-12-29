@@ -1,37 +1,66 @@
-vec2 auroraDistortedNoiseG45(vec2 coord, float kpIndex, float pulse, float longPulse) {
-    //Distortion/folding
-    float flow = texture2D(noisetex, coord * 0.125 + 0.4).r * 2.0 - 1.0;
-          flow *= 2.0;
+float auroraDistortedNoise(vec2 coord, float VoU, float kpIndex, float pulse, float longPulse) {
+    float t = frameTimeCounter * 0.125;
 
-    //Directional bending (sheet curls, not turbulence)
-    vec2 warp = vec2(flow * 0.15, -flow * 0.4);
+    // =================================================
+    // 1. BASE DOMAIN (NO ANISOTROPIC DISTORTION YET)
+    // =================================================
+    vec2 distortedCoord = coord;
 
-    vec2 distortedCoord = coord + warp + frameTimeCounter * vec2(0.00003, 0.0012);
+    // Soft global rotation (breaks axis lock)
+    float baseAngle = (t * 0.0004) * 0.3;
+    mat2 baseRot = mat2(cos(baseAngle), -sin(baseAngle),
+                        sin(baseAngle),  cos(baseAngle));
+    distortedCoord = baseRot * distortedCoord;
 
-    //Arc centered near zenith, very wide and persistent
-    float zenithDist = abs(coord.y - 1.0);
-    float arc = exp(-4.0 * zenithDist * zenithDist);
-          arc *= 0.65 + 0.35 * flow;
+    // =================================================
+    // 2. LOW-FREQ FLOW (Perlin R)
+    // =================================================
+    vec2 flowUV = distortedCoord * 0.35;
+    flowUV += vec2(
+        sin(t * 0.0012),
+        cos(t * 0.0010)
+    );
 
-    //Blurry background noise (aka folds)
-    float sheet = texture2D(noisetex, vec2(distortedCoord.x * 1.25, distortedCoord.y * 0.5)).r;
-          sheet *= sheet * sheet * 2.0;
+    float f = texture2D(noisetex, flowUV).r * 2.0 - 1.0;
 
-    //High frequency noise (aka rays)
-    float rays = texture2D(noisetex, vec2(distortedCoord.x * 5.0, distortedCoord.y * 2.0) ).r;
+    // =================================================
+    // 3. CURL-LIKE WARP (NO SHEAR)
+    // =================================================
+    // Perpendicular motion = curl approximation
+    vec2 curlDir = normalize(vec2(
+        cos(f * 6.283 + t * 0.12),
+        sin(f * 6.283 + t * 0.12)
+    ));
 
-    float WEhorizon = clamp(pow(1.0 - abs(coord.x * 4.0), 2.0 - kpIndex + longPulse * 2.0), 0.0, 1.0);
+    float curlStrength = 0.125;
+	vec2 warping = curlDir * f;
+    distortedCoord += warping * curlStrength;
 
-    float flashTime = sin(frameTimeCounter * 2.0 + distortedCoord.x * 64.0 + flow * 16.0);
+    // Now apply vertical stretch AFTER distortion
+    distortedCoord.y *= 0.75;
+	distortedCoord.x *= 1.5;
+
+    // Arc centered near zenith, very wide and persistent
+    float zenithDist = abs(coord.y + 1.0);
+    float arc = exp(-3.0 * zenithDist * zenithDist);
+
+    // Slight waviness so it’s not perfectly straight
+    arc *= 0.65 + 0.35 * f;
+
+    // Blurry background noise (aka folds)
+    float sheet = texture2D(noisetex, vec2(distortedCoord.x * 1.25, distortedCoord.y * 0.5 + frameTimeCounter * 0.0025)).r;
+
+    sheet *= sheet * sheet * 2.0;
+
+    // High frequency noise (aka rays)
+    float rays = texture2D(noisetex, vec2(distortedCoord.x * 5.0, distortedCoord.y * 2.0) + vec2(-frameTimeCounter * 0.0015, frameTimeCounter * 0.0025)).r;
+    float flashTime = sin(frameTimeCounter + distortedCoord.x * 64.0 + warping.x * 32.0);
           flashTime = smoothstep(0.4, 1.0, flashTime);
-    float flashes = pow14(rays) * flashTime;
+    float aurora = sheet * arc * (50.0 + pow8(rays) * 7500.0 + pow12(rays) * flashTime * 100000.0);
 
-    float aurora = sheet * arc * (35.0 + longPulse * 25.0 + pow8(rays) * (5000.0 + pulse * 5000.0) + flashes * 100000.0);
-    //Decrease visibility at East/West horizons
-		  aurora *= WEhorizon;
-
-    return vec2(aurora, rays);
+    return aurora;
 }
+
 
 void drawAurora(inout vec3 color, in vec3 worldPos, in float VoU, in float caveFactor, in float vc, in float pc) {
 	//The index of geomagnetic activity. Determines the brightness of Aurora, its widespreadness across the sky and tilt factor
@@ -50,6 +79,7 @@ void drawAurora(inout vec3 color, in vec3 worldPos, in float VoU, in float caveF
 		  longPulse = longPulse * (1.0 - 0.15 * abs(longPulse));
 
 	kpIndex *= 1.0 + longPulse * 0.25;
+	kpIndex = 9;
 	kpIndex /= 9.0;
 	visibility *= kpIndex * (1.0 + max(longPulse * 0.5, 0.0));
     visibility = min(visibility, 2.0) * AURORA_BRIGHTNESS;
@@ -69,7 +99,7 @@ void drawAurora(inout vec3 color, in vec3 worldPos, in float VoU, in float caveF
 
 		//Tilt factor. The stronger the geomagnetic storm, the less Aurora tilts towards the North
 		float tiltFactor = 0.15 + kpIndex * 0.15;
-		worldPos.xz += worldPos.y * vec2(tiltFactor * (0.75 + pulse * 0.25), tiltFactor * (2.0 - longPulse));
+		worldPos.xz -= worldPos.y * vec2(tiltFactor, tiltFactor * 2.0);
 		//Altitude factor. Makes the aurora closer to you when you're ascending
 		float altitudeFactor = clamp(cameraPosition.y * 0.005, 0.0, 24.0);
 
@@ -77,21 +107,22 @@ void drawAurora(inout vec3 color, in vec3 worldPos, in float VoU, in float caveF
 		float eastWestStretching = 1.0;
 
 		for (int i = 0; i < samples; i++) {
-			vec3 planeCoord = worldPos * ((10.0 + pow(clamp(VoU, 0.0, 1.0), 0.25) * 20.0 + currentStep * (10.0 + kpIndex * 5.0) - altitudeFactor) / worldPos.y) * 0.05;
-			vec2 coord = planeCoord.xz + cameraPosition.xz * 0.0001;
+			vec3 planeCoord = worldPos * ((10.0 + pow(clamp(VoU, 0.0, 1.0), 0.25) * 15.0 + currentStep * (10.0 + kpIndex * 5.0) - altitudeFactor) / worldPos.y) * 0.05;
+			vec2 coord = planeCoord.xz + cameraPosition.xz * 0.0005;
 
 			//We don'frameTimeCounter want the aurora to render infintely, we also want it to be closer to the north when Kp is low
+    		float WEhorizon = clamp(pow(1.0 - abs(planeCoord.x * 0.1), 4.0), 0.0, 1.0);
 			float auroraNorthBias = clamp((-planeCoord.x * 0.5 - planeCoord.z) * 0.25 + pow4(kpIndex) * 2.0, 0.0, 1.0);
-			float auroraDistanceFactor = clamp(1.0 - length(planeCoord.xz) * 0.1, 0.0, 1.0) * auroraNorthBias;
+			float auroraDistanceFactor = clamp(1.0 - length(planeCoord.xz) * 0.1, 0.0, 1.0) * auroraNorthBias * WEhorizon;
 
 			if (auroraDistanceFactor > 0.0) {
-                vec2 auroraSample = auroraDistortedNoiseG45(coord * 0.025, kpIndex, pulse, longPulse);
+                float auroraSample = auroraDistortedNoise(coord * 0.025, VoU, kpIndex, pulse, longPulse);
 
                 vec3 lowA = vec3(0.45, 1.55, 0.0);
                 vec3 upA = vec3(0.95 + pow3(kpIndex) * pulse, 0.10, 1.05);
-                vec3 auroraA = fmix(lowA, upA, pow(currentStep, 0.65 + pulse * 0.1)) * exp2(-(2.0 + pulse * 2.0) * i * sampleStep);
+                vec3 auroraA = fmix(lowA, upA, pow(currentStep, 0.65 + pow3(kpIndex) * pulse * 0.1)) * exp2(-4.0 * i * sampleStep);
 
-				aurora += auroraA * auroraSample.x * sqrt(auroraDistanceFactor);
+				aurora += auroraA * auroraSample * sqrt(auroraDistanceFactor);
 			}
 			currentStep += sampleStep;
 		}

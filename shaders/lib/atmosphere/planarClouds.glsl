@@ -24,7 +24,8 @@ void drawPlanarClouds(inout vec3 color, in vec3 atmosphereColor, in vec3 worldPo
 		float lightingNoise = samplePlanarCloudNoise(coord + worldLightVec.xz * 0.025);
 
 		//Lighting and coloring
-		float pc = noise * (1.0 - wetness) * pow2(1.0 - volumetricClouds) * caveFactor * VoU;
+		float cloudSample = noise * (1.0 - wetness);
+		float pc = cloudSample * pow2(1.0 - volumetricClouds) * caveFactor * VoU;
 
         float noiseDiff = clamp(noise - lightingNoise * 0.9, 0.0, 1.0);
 		float cloudLighting = noiseDiff * shadowFade * 6.0;
@@ -59,13 +60,14 @@ void drawPlanarClouds(inout vec3 color, in vec3 atmosphereColor, in vec3 worldPo
               longPulse = longPulse * (1.0 - 0.15 * abs(longPulse));
 
 		kpIndex *= 1.0 + longPulse * 0.25;
+		kpIndex = 9;
 		kpIndex /= 9.0;
 		auroraVisibility *= kpIndex * 0.33;
-        cloudColor.r *= 1.0 + 2.0 * pulse * pow3(kpIndex) * auroraVisibility;
+        cloudColor.r *= 1.0 + 2.0 * pow3(kpIndex) * pulse * auroraVisibility;
         cloudColor.g *= 1.0 + kpIndex * auroraVisibility;
 		#endif
 
 		color = fmix(color, cloudColor * PLANAR_CLOUDS_BRIGHTNESS, pc * PLANAR_CLOUDS_OPACITY);
-		occlusion += min(pc * pc * 1.5, 1.0);
+		occlusion += min(cloudSample * cloudSample, 1.0);
 	}
 }
