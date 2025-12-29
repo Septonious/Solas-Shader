@@ -267,7 +267,6 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z, fl
                   longPulse = longPulse * (1.0 - 0.15 * abs(longPulse));
 
             kpIndex *= 1.0 + longPulse * 0.25;
-
             kpIndex /= 9.0;
 			auroraVisibility *= kpIndex;
             #endif
