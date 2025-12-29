@@ -37,7 +37,7 @@ void calculateVLParameters(inout float intensity, inout float distanceFactor, in
 	}
     float closedSpaceFactor = 1.0 - min(1.0, pow8(eBS) * 0.5 + averageDepth * (0.7 - eBS * eBS * 0.35));
 
-    intensity = (VoLClamped * VoLClamped * VL_STRENGTH_RATIO) * (1.0 - timeBrightness) + VoLClamped * VoLClamped * timeBrightness;
+    intensity = (VoLClamped * VoLClamped * VL_STRENGTH_RATIO) * (1.0 - timeBrightness) + pow(VoLClamped, 1.5) * timeBrightness;
     intensity *= timeIntensityFactor * (1.0 + closedSpaceFactor);
 
     #ifdef VC_SHADOWS
@@ -214,7 +214,7 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
 
                     float noise = 0.0;
                     getCloudShadow(cloudShadowPos.xz / scale, wind, amount, frequency, density, noise);
-                    vlSample *= noise;
+                    vlSample *= noise * noise;
                 }
                 vlSample *= 1.0 - min((rayPos.y - thickness) * (1.0 / cloudTop), 1.0);
                 #endif
