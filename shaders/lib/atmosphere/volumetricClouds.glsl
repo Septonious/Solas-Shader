@@ -252,9 +252,9 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z, fl
             //Final color calculations
             #ifdef AURORA_LIGHTING_INFLUENCE
             //The index of geomagnetic activity. Determines the brightness of Aurora, its widespreadness across the sky and tilt factor
-            float kpIndex = abs(worldDay % 9 - worldDay % 4);
-                  kpIndex = kpIndex - int(kpIndex == 1) + int(kpIndex > 7 && worldDay % 10 == 0);
-                  kpIndex = min(max(kpIndex, 0) + isSnowy, 9);
+			float kpIndex = abs(worldDay % 9 - worldDay % 4);
+				  kpIndex = kpIndex - int(kpIndex == 1) + int(kpIndex > 7 && worldDay % 10 == 0);
+				  kpIndex = min(max(kpIndex, 0) + isSnowy * 4, 9);
 
             //Total visibility of aurora based on multiple factors
             float auroraVisibility = pow6(moonVisibility) * (1.0 - wetness) * caveFactor;
