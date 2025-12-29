@@ -50,7 +50,7 @@ float auroraDistortedNoise(vec2 coord, float VoU, float kpIndex, float pulse, fl
           flashTime = smoothstep(0.4, 1.0, flashTime);
     float aurora = sheet * arc * (50.0 + pow8(rays) * 7500.0 + pow12(rays) * flashTime * 100000.0);
 
-    return aurora;
+    return max(aurora, 0.0);
 }
 
 void drawAurora(inout vec3 color, in vec3 worldPos, in float VoU, in float caveFactor, in float vc, in float pc) {
