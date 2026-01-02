@@ -9,13 +9,9 @@
 in vec2 texCoord;
 
 // Uniforms //
-uniform int vxRenderDistance;
+uniform int vxRenderDistance, dhRenderDistance;
 uniform int isEyeInWater;
 uniform int frameCounter;
-
-#ifdef DISTANT_HORIZONS
-uniform int dhRenderDistance;
-#endif
 
 #ifdef OVERWORLD
 uniform int worldDay;

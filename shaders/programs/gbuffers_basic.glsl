@@ -10,7 +10,6 @@ in vec3 normal;
 in vec2 lmCoord;
 
 // Uniforms //
-uniform int vxRenderDistance;
 uniform int isEyeInWater;
 uniform int frameCounter;
 

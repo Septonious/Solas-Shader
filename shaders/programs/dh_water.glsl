@@ -18,14 +18,13 @@ in float viewDistance;
 flat in int mat;
 
 // Uniforms //
+uniform int vxRenderDistance, dhRenderDistance;
 uniform int isEyeInWater;
 uniform int frameCounter;
 
 #ifdef AURORA_LIGHTING_INFLUENCE
 uniform int moonPhase;
 #endif
-
-uniform int dhRenderDistance;
 
 uniform int worldDay, worldTime;
 
