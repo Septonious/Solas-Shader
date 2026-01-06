@@ -48,7 +48,7 @@ float auroraDistortedNoise(vec2 coord, float VoU, float kpIndex, float pulse, fl
     float rays = texture2D(noisetex, vec2(distortedCoord.x * 5.0, distortedCoord.y * 2.0) + vec2(-frameTimeCounter * 0.0015, frameTimeCounter * 0.0025)).r;
     float flashTime = sin(frameTimeCounter + distortedCoord.x * 64.0 + warping.x * 32.0);
           flashTime = smoothstep(0.4, 1.0, flashTime);
-    float aurora = sheet * arc * (50.0 + pow8(rays) * 7500.0 + pow12(rays) * flashTime * 100000.0);
+    float aurora = sheet * arc * ((25.0 + longPulse * 25.0) + pow8(rays) * 7500.0 + pow12(rays) * flashTime * 100000.0);
 
     return max(aurora, 0.0);
 }

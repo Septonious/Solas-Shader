@@ -138,6 +138,29 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z, fl
 
 		getDynamicWeather(speed, amount, frequency, thickness, density, detail, height, scale);
 
+		#ifdef AURORA
+		//The index of geomagnetic activity. Determines the brightness of Aurora, its widespreadness across the sky and tilt factor
+		float kpIndex = abs(worldDay % 9 - worldDay % 4);
+			  kpIndex = kpIndex - int(kpIndex == 1) + int(kpIndex > 7 && worldDay % 10 == 0);
+			  kpIndex = min(max(kpIndex, 0) + isSnowy * 4, 9);
+
+		//Aurora tends to get brighter and dimmer when plasma arrives or fades away
+		float pulse = 0.5 + 0.5 * sin(frameTimeCounter * 0.08 + sin(frameTimeCounter * 0.013) * 0.6);
+			  pulse = smoothstep(0.15, 0.85, pulse);
+
+		float longPulse = sin(frameTimeCounter * 0.025 + sin(frameTimeCounter * 0.004) * 0.8);
+			  longPulse = longPulse * (1.0 - 0.15 * abs(longPulse));
+
+		kpIndex *= 1.0 + longPulse * 0.25;
+		kpIndex /= 9.0;
+
+		//Total visibility of aurora based on multiple factors
+		float auroraVisibility = pow6(moonVisibility) * (1.0 - wetness) * caveFactor * kpIndex;
+
+		amount += auroraVisibility;
+		#endif
+
+		//Ray marcher peramters
         int maxsampleCount = 16;
 
         float cloudBottom = height;
@@ -249,28 +272,8 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z, fl
 			if (cloudFaded < dither) {
 				currentDepth = maxDist;
 			}
+
             //Final color calculations
-            #ifdef AURORA_LIGHTING_INFLUENCE
-            //The index of geomagnetic activity. Determines the brightness of Aurora, its widespreadness across the sky and tilt factor
-			float kpIndex = abs(worldDay % 9 - worldDay % 4);
-				  kpIndex = kpIndex - int(kpIndex == 1) + int(kpIndex > 7 && worldDay % 10 == 0);
-				  kpIndex = min(max(kpIndex, 0) + isSnowy * 4, 9);
-
-            //Total visibility of aurora based on multiple factors
-            float auroraVisibility = pow6(moonVisibility) * (1.0 - wetness) * caveFactor;
-
-            //Aurora tends to get brighter and dimmer when plasma arrives or fades away
-            float pulse = 0.5 + 0.5 * sin(frameTimeCounter * 0.08 + sin(frameTimeCounter * 0.013) * 0.6);
-                  pulse = smoothstep(0.15, 0.85, pulse);
-
-            float longPulse = sin(frameTimeCounter * 0.025 + sin(frameTimeCounter * 0.004) * 0.8);
-                  longPulse = longPulse * (1.0 - 0.15 * abs(longPulse));
-
-            kpIndex *= 1.0 + longPulse * 0.25;
-            kpIndex /= 9.0;
-			auroraVisibility *= kpIndex;
-            #endif
-
 			vec3 nSkyColor = normalize(skyColor + 0.0001);
             vec3 cloudAmbientColor = fmix(atmosphereColor * atmosphereColor * 0.5, 
 									 fmix(ambientCol, atmosphereColor * nSkyColor * 0.5, 0.2 + timeBrightness * 0.3 + isSpecificBiome * 0.4),
