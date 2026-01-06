@@ -59,7 +59,8 @@ void getReflection(inout vec4 color, in vec3 viewPos, in vec3 normal, in float f
 		if (skyLightMap > 0.95) {
 			#ifdef OVERWORLD
 			vec3 viewPosRef = reflect(normalize(viewPos), normal);
-			vec3 reflectedAtmosphere = getAtmosphere(viewPosRef);
+			vec3 worldPosRef = reflect(normalize(ToWorld(viewPos)), normal);
+			vec3 reflectedAtmosphere = getAtmosphere(viewPosRef.xyz, worldPosRef.xyz);
 			reflectedAtmosphere = pow(reflectedAtmosphere, vec3(2.2));
 			falloff = mix(falloff, reflectedAtmosphere, skyLightMap);
 			#endif

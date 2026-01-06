@@ -6,6 +6,7 @@ const float shadowDistance = 192.0; //[96.0 128.0 192.0 256.0 384.0 512.0 768.0 
 const float entityShadowDistanceMul = 0.05; //[0.05 0.10 0.15 0.20 0.25 0.30 0.35 0.40 0.45 0.50 0.55 0.60 0.65 0.70 0.75 0.80 0.85 0.90 0.95 1.0]
 const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
 #define SHADOW_COLOR
+#define SHADOW_PIXEL 0 //[0 16 32 64 128]
 //#define SHADOW_ENTITIES
 #define REALTIME_SHADOWS
 #define SUN_ANGLE_OVERWORLD -40 //[-180 -170 -160 -150 -140 -130 -120 -110 -100 -90 -80 -70 -60 -50 -40 -30 -20 -10 0 10 20 30 40 50 60 70 80 90 100 110 120 130 140 150 160 170 180]

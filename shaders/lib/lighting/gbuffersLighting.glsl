@@ -145,6 +145,10 @@ void gbuffersLighting(in vec4 color, inout vec4 albedo, in vec3 screenPos, in ve
             worldPosM += bias;
         #endif
 
+        #if SHADOW_PIXEL > 0
+        worldPosM = (floor((worldPosM + cameraPosition) * SHADOW_PIXEL + 0.01) + 0.5) / SHADOW_PIXEL - cameraPosition;
+        #endif
+
         vec3 shadowPos = ToShadow(worldPosM);
         float offset = 0.001;
 

@@ -248,7 +248,7 @@ void main() {
     gbuffersLighting(color, albedo, screenPos, viewPos, worldPos, newNormal, shadow, lightmap, NoU, NoL, NoE, 0.0, emission, 0.6, 0.0);
 
     #if defined OVERWORLD
-    vec3 atmosphereColor = getAtmosphere(viewPos);
+    vec3 atmosphereColor = getAtmosphere(viewPos.xyz, worldPos.xyz);
 		 atmosphereColor *= 1.0 + Bayer8(gl_FragCoord.xy) / 64.0;
 	#elif defined NETHER
 	vec3 atmosphereColor = netherColSqrt.rgb * 0.25;
@@ -267,7 +267,7 @@ void main() {
 		#endif
 
 		float fresnel = clamp(1.0 + dot(normalize(normal), nViewPos), 0.0, 1.0) * snellWindow;
-		getReflection(albedo, viewPos, nViewPos, newNormal, fresnel, lightmap.y);
+		getReflection(albedo, viewPos, worldPos, nViewPos, newNormal, fresnel, lightmap.y);
 		albedo.a = fmix(albedo.a * snellWindow, 1.0, fresnel);
 	}
 	#endif

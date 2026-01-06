@@ -168,7 +168,7 @@ void main() {
 		 worldPos.xyz /= worldPos.w;
 
     #if defined OVERWORLD
-    vec3 atmosphereColor = getAtmosphere(viewPos.xyz);
+    vec3 atmosphereColor = getAtmosphere(viewPos.xyz, worldPos.xyz);
 		 atmosphereColor *= 1.0 + Bayer8(gl_FragCoord.xy) / 64.0;
 	#elif defined NETHER
 	vec3 atmosphereColor = netherColSqrt.rgb * 0.25;

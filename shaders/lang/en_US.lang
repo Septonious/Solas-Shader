@@ -224,6 +224,8 @@ option.entityShadowDistanceMul=Entity Shadow Distance
 option.SUN_ANGLE_OVERWORLD=Sun Angle (Overworld)
 option.SUN_ANGLE_END=Black Hole Angle (The End)
 option.SHADOW_COLOR=Colored Shadows
+option.SHADOW_PIXEL=Pixelated Shadows
+option.SHADOW_PIXEL.comment=Enables pixelated shadows like in Vibrant Visuals. Greater values give shadows more pixels.
 option.SHADOW_ENTITIES=Entity Shadows
 option.REALTIME_SHADOWS=Realtime Shadows
 
