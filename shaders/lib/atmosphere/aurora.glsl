@@ -68,7 +68,7 @@ void drawAurora(inout vec3 color, in vec3 worldPos, in float VoU, in float caveF
 
 	float longPulse = sin(frameTimeCounter * 0.025 + sin(frameTimeCounter * 0.004) * 0.8);
 		  longPulse = longPulse * (1.0 - 0.15 * abs(longPulse));
-
+    kpIndex = 5;
 	kpIndex *= 1.0 + longPulse * 0.25;
 	kpIndex /= 9.0;
 	visibility *= kpIndex * (1.0 + max(longPulse * 0.5, 0.0));
