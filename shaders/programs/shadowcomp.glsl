@@ -39,7 +39,7 @@ ivec3[6] offsets = ivec3[6](
 );
 
 vec3 getFloodfill(sampler3D image, ivec3 previousPos) {
-	vec3 light = texelFetch(image, previousPos, 0).rgb;;
+	vec3 light = texelFetch(image, previousPos, 0).rgb;
 		 light += texelFetch(image, clamp(previousPos + offsets[0], 0, VOXEL_VOLUME_SIZE - 1), 0).rgb;
 		 light += texelFetch(image, clamp(previousPos + offsets[1], 0, VOXEL_VOLUME_SIZE - 1), 0).rgb;
 		 light += texelFetch(image, clamp(previousPos + offsets[2], 0, VOXEL_VOLUME_SIZE - 1), 0).rgb;
