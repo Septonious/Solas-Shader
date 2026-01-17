@@ -191,8 +191,8 @@ void gbuffersLighting(in vec4 color, inout vec4 albedo, in vec3 screenPos, in ve
     if (worldPos.y + cameraPosition.y < cloudTop) {
         vec2 wind = vec2(time * speed * 0.005, sin(time * speed * 0.1) * 0.01) * speed * 0.05;
 
-        vec3 worldSunVec = mat3(gbufferModelViewInverse) * lightVec;
-        vec3 cloudShadowPos = worldPos + cameraPosition + (worldSunVec / max(abs(worldSunVec.y), 0.0)) * max(cloudTop - worldPos.y - cameraPosition.y, 0.0);
+        vec3 worldLightVec = mat3(gbufferModelViewInverse) * lightVec;
+        vec3 cloudShadowPos = worldPos + cameraPosition + (worldLightVec / max(abs(worldLightVec.y), 0.0)) * max(cloudTop - worldPos.y - cameraPosition.y, 0.0);
 
         float noise = 0.0;
         getCloudShadow(cloudShadowPos.xz / scale, wind, amount, frequency, density, noise);

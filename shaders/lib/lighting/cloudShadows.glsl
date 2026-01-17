@@ -30,15 +30,6 @@ float cloudSampleBasePerlinWorley(vec2 coord) {
 	return noiseBase;
 }
 
-float CloudCoverageDefault(float sampleAltitude, float amount) {
-	float noiseCoverage = abs(sampleAltitude - 0.125);
-
-	noiseCoverage *= sampleAltitude > 0.125 ? (2.14 - amount * 0.1) : 8.0;
-	noiseCoverage = noiseCoverage * noiseCoverage * 4.0;
-
-	return noiseCoverage;
-}
-
 float CloudApplyDensity(float noise, float density) {
 	noise *= density * 0.125;
 	noise *= (1.0 - 0.25 * wetness);
@@ -47,10 +38,10 @@ float CloudApplyDensity(float noise, float density) {
 	return noise;
 }
 
-float CloudCombineDefault(float noiseBase, float noiseDetail, float noiseCoverage, float amount, float density) {
-	float noise = noiseBase * 21.0;
+float CloudCombineDefault(float noiseBase, float noiseDetail, float amount, float density) {
+	float noise = noiseBase * 20.0;
 
-	noise = fmix(noise - noiseCoverage, 21.0 - noiseCoverage * 2.5, 0.25 * wetness);
+	noise = fmix(noise, 21.0, 0.25 * wetness);
 	noise = max(noise - amount, 0.0);
 
 	noise = CloudApplyDensity(noise, density);
@@ -64,7 +55,7 @@ void getCloudShadow(vec2 coord, vec2 wind, float amount, float frequency, float 
 	vec2 baseCoord = coord * 0.5 + wind * 2.0;
 	float noiseBase = cloudSampleBasePerlinWorley(baseCoord);
 
-	noise = CloudCombineDefault(noiseBase, 0.0, 0.5, amount, density);
+	noise = CloudCombineDefault(noiseBase, 0.0, amount, density);
 	noise = clamp(exp(-3.5 * noise), 0.0, 1.0);
     noise = fmix(1.0, noise, shadowFade);
 }

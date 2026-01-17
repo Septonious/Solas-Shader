@@ -81,7 +81,7 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
 
     #ifndef NETHER_SMOKE
     #ifdef VC_SHADOWS
-	vec3 wSunVec = mat3(gbufferModelViewInverse) * lightVec;
+	vec3 worldLightVec = mat3(gbufferModelViewInverse) * lightVec;
     #endif
 
     float VoL = dot(nViewPos, lightVec);
@@ -126,17 +126,18 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
     if (totalVisibility > 0.0) {
         //Crepuscular rays parameters
         #if defined VC_SHADOWS && defined VL
-		float speed = VC_SPEED;
-		float amount = VC_AMOUNT;
-		float frequency = VC_FREQUENCY;
-		float thickness = VC_THICKNESS;
-		float density = VC_DENSITY;
-		float height = VC_HEIGHT;
+        float speed = VC_SPEED;
+        float amount = VC_AMOUNT;
+        float frequency = VC_FREQUENCY;
+        float thickness = VC_THICKNESS;
+        float density = VC_DENSITY;
+        float height = VC_HEIGHT;
         float scale = VC_SCALE;
 
         getDynamicWeather(speed, amount, frequency, thickness, density, height, scale);
 
-        float cloudTop = height + thickness * scale - 50.0;
+        float cloudTop = height + thickness * scale;
+
         float time = (worldTime + int(5 + mod(worldDay, 100)) * 24000) * 0.05;
         vec2 wind = vec2(time * speed * 0.005, sin(time * speed * 0.1) * 0.01) * speed * 0.05;
         #endif
@@ -210,11 +211,11 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
                 //Crepuscular rays
                 #ifdef VC_SHADOWS
                 if (rayPos.y < cloudTop) {
-                    vec3 cloudShadowPos = rayPos + (wSunVec / max(abs(wSunVec.y), 0.0)) * max(cloudTop - rayPos.y, 0.0);
+                     vec3 cloudShadowPos = rayPos + (worldLightVec / max(abs(worldLightVec.y), 0.0)) * max(cloudTop - rayPos.y, 0.0);
 
                     float noise = 0.0;
                     getCloudShadow(cloudShadowPos.xz / scale, wind, amount, frequency, density, noise);
-                    vlSample *= noise * noise;
+                    vlSample *= noise;
                 }
                 vlSample *= 1.0 - min((rayPos.y - thickness) * (1.0 / cloudTop), 1.0);
                 #endif
