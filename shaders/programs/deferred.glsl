@@ -167,8 +167,10 @@ void main() {
 	vec4 worldPos = gbufferModelViewInverse * vec4(viewPos.xyz, 1.0);
 		 worldPos.xyz /= worldPos.w;
 
+    float atmosphereHardMixFactor = 0.0;
+
     #if defined OVERWORLD
-    vec3 atmosphereColor = getAtmosphere(viewPos.xyz, worldPos.xyz);
+    vec3 atmosphereColor = getAtmosphere(viewPos.xyz, worldPos.xyz, atmosphereHardMixFactor);
 		 atmosphereColor *= 1.0 + Bayer8(gl_FragCoord.xy) / 64.0;
 	#elif defined NETHER
 	vec3 atmosphereColor = netherColSqrt.rgb * 0.25;
@@ -223,31 +225,29 @@ void main() {
     VoU *= 1.0 - isPaleGarden;
 	#endif
 
-    if (VoU > 0.0) {
-        #ifdef PLANAR_CLOUDS
-        drawPlanarClouds(skyColor, atmosphereColor, worldPos.xyz, viewPos.xyz, VoU, caveFactor, vc.a, occlusion);
-        #endif
+    #ifdef PLANAR_CLOUDS
+    drawPlanarClouds(skyColor, atmosphereColor, worldPos.xyz, viewPos.xyz, VoU, caveFactor, vc.a, occlusion);
+    #endif
 
-        #ifdef AURORA
-        drawAurora(skyColor, worldPos.xyz, VoU, caveFactor, vc.a, occlusion - vc.a);
-        #endif
+    #ifdef AURORA
+    drawAurora(skyColor, worldPos.xyz, caveFactor, vc.a, occlusion - vc.a);
+    #endif
 
-        #ifdef MILKY_WAY
-        drawMilkyWay(skyColor, worldPos.xyz, VoU, caveFactor, nebulaFactor, occlusion);
-        #endif
+    #ifdef MILKY_WAY
+    drawMilkyWay(skyColor, worldPos.xyz, VoU, caveFactor, nebulaFactor, occlusion + atmosphereHardMixFactor);
+    #endif
 
-        #ifdef STARS
-        drawStars(skyColor, worldPos.xyz, VoU, VoS, caveFactor, nebulaFactor, occlusion, 0.7);
+    #ifdef STARS
+    drawStars(skyColor, worldPos.xyz, VoU, VoS, caveFactor, nebulaFactor, occlusion + atmosphereHardMixFactor, 0.7);
 
-		#ifdef SHOOTING_STARS
-		getShootingStars(skyColor, worldPos.xyz, VoU, VoS);
-		#endif
-        #endif
+    #ifdef SHOOTING_STARS
+    getShootingStars(skyColor, worldPos.xyz, VoU, VoS);
+    #endif
+    #endif
 
-        #ifdef RAINBOW
-        getRainbow(skyColor, worldPos.xyz, VoU, 1.75, 0.05, caveFactor);
-        #endif
-    }
+    #ifdef RAINBOW
+    getRainbow(skyColor, worldPos.xyz, VoU, 1.75, 0.05, caveFactor);
+    #endif
 
     #ifdef END_NEBULA
     drawEndNebula(skyColor, worldPos.xyz, VoU, VoS);

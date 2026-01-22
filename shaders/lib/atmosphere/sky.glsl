@@ -1,41 +1,33 @@
-vec3 getAtmosphere(vec3 viewPos, vec3 worldPos) {
+vec3 getAtmosphere(vec3 viewPos, vec3 worldPos, out float atmosphereHardMixFactor) {
+    vec3 daySkyColor = normalize(skyColor + 0.000001) * fmix(vec3(1.0), biomeColor, isSpecificBiome);
+             daySkyColor.r *= 1.25 - timeBrightnessSqrt * 0.25;
+    vec3 atmosphere = fmix(daySkyColor, lightNight * 0.5, moonVisibility);
+    float altitudeFactor = min(max(cameraPosition.y, 0.0) / KARMAN_LINE, 1.0);
+    float altitudeFactor10k = min(max(cameraPosition.y, 0.0) * 0.0001, 1.0);
+
+    vec3 nWorldPos = normalize(worldPos);
     vec3 nViewPos = normalize(viewPos);
+    float heightPositive = max(nWorldPos.y * (1.0 - altitudeFactor * 0.5) + altitudeFactor * 0.5, 0.0);
+    float density = clamp((1.0 - heightPositive * (0.65 + altitudeFactor * altitudeFactor * 3.0)) * (1.0 + pow4(altitudeFactor) * 9.0), 0.0, 1.0);
+
+    atmosphereHardMixFactor = altitudeFactor * density;
+    atmosphere *= density;
 
     float VoS = dot(nViewPos, sunVec);
-    float VoM = dot(nViewPos, -sunVec);
-    float VoL = VoS * sunVisibility + VoM * moonVisibility;
-    float VoU = dot(nViewPos, upVec);
     float VoSPositive = VoS * 0.5 + 0.5;
-    float VoUPositive = VoU * 0.5 + 0.5;
     float VoSClamped = clamp(VoS, 0.0, 1.0);
-    float VoUClamped = clamp(VoU, 0.0, 1.0);
 
-    float skyDensity = exp(-(1.0 - pow(1.0 - max(VoU, 0.0), 2.0 - sunVisibility * 0.5 - VoL * 0.75)) / 1.50);
+    float heightClamped = clamp(nWorldPos.y + altitudeFactor * 0.55, 0.0, 1.0);
+    float colorMixer = pow(heightClamped + 0.15, 0.4 + timeBrightnessSqrt * 0.15);
+    vec3 scatteringColor = fmix(vec3(8.8 - timeBrightnessSqrt * 5.0, 1.2 + timeBrightnessSqrt * 3.0, 0.0) * (1.0 + timeBrightnessSqrt), vec3(4.0, 5.8 - sunVisibility, 0.2), colorMixer);
+         scatteringColor = fmix(scatteringColor, lightColSqrt * 4.0, heightPositive * heightPositive * 0.5 + timeBrightness * 0.5);
+         scatteringColor *= 2.0 * (heightClamped + 0.15 + VoSClamped * VoSClamped * 0.15) * clamp(pow(1.0 - (heightClamped + 0.15), 3.0 - VoSClamped), 0.0, 1.0);
+         scatteringColor *= 1.0 - timeBrightnessSqrt;
+         scatteringColor = mix(scatteringColor, lightColSqrt * 0.75, timeBrightnessSqrt * 0.75);
+    float scattering = pow2(1.0 - (heightClamped + 0.15)) * (0.75 + heightPositive * 0.75) * (1.0 - VoSClamped * VoSClamped * 0.25) * pow(length(scatteringColor), 0.33) * sunVisibility * mix(1.0, atmosphereHardMixFactor * 0.75, altitudeFactor);
 
-    //Fake light scattering
-    float miePhase = pow8(VoSClamped) * 4.0;
-
-    float VoUcm = max(VoUClamped + 0.15, 0.0);
-    float colorMixer = pow(VoUcm, 0.4 + timeBrightnessSqrt * 0.15);
-    vec3 scattering1 = fmix(vec3(8.8 - timeBrightnessSqrt * 5.0, 1.2 + timeBrightnessSqrt * 3.0, 0.0) * (1.0 + timeBrightnessSqrt), vec3(4.0, 5.8 - sunVisibility, 0.2), colorMixer);
-         scattering1 = fmix(scattering1, lightColSqrt * 4.0, VoUPositive * VoUPositive * 0.5 + timeBrightness * 0.5);
-         scattering1 *= VoUcm * clamp(pow(1.0 - VoUcm, 3.0 - VoSClamped), 0.0, 1.0);
-         scattering1 = pow(scattering1, vec3(1.0 + VoSPositive * 0.4)) * (1.0 + VoSPositive * (1.0 - timeBrightnessSqrt) * 0.5);
-         scattering1 *= 1.0 - timeBrightnessSqrt;
-
-    float scatteringMixer = pow2(1.0 - VoUcm) * (0.6 + VoUPositive * 0.6);
-    float scattering1Mixer = scatteringMixer * pow(length(scattering1), 0.33) * (1.0 - wetness * 0.5);
-    float scattering2Mixer = 0.15 * pow2(1.0 - abs(VoU)) * timeBrightness + sunVisibility * VoSPositive * pow3(scatteringMixer) * (0.35 - timeBrightness * 0.35);
-
-    vec3 nSkyColor = normalize(skyColor + 0.000001) * fmix(vec3(1.0), biomeColor, isSpecificBiome);
-    vec3 daySky = fmix(nSkyColor, vec3(0.67, 0.48, 0.85), 0.7 - sunVisibility * 0.4 - timeBrightnessSqrt * 0.3);
-         daySky = fmix(daySky, scattering1 * (1.0 + timeBrightnessSqrt + timeBrightness), scattering1Mixer);
-         daySky = fmix(daySky, pow(lightColSqrt, vec3(1.5 - timeBrightnessSqrt * 0.5)) * (2.0 + miePhase), scattering2Mixer);
-
-    vec3 nightSky = fmix(lightNight * 0.6, vec3(0.01, 0.11, 0.25), 0.125 * VoUClamped + 3.0 * pow3(VoUPositive) * pow2(1.0 - VoUPositive));
-    vec3 atmosphere = fmix(nightSky, daySky, sunVisibility);
-         atmosphere *= 1.0 - wetness * 0.125;
-         atmosphere *= skyDensity;
+    atmosphere = fmix(atmosphere, scatteringColor, scattering);
+    atmosphere *= 1.0 - wetness * 0.25 * (1.0 - altitudeFactor10k);
 
     //Fade atmosphere to dark gray underground
     atmosphere = fmix(caveMinLightCol * (1.0 - isCaveBiome) + caveBiomeColor, atmosphere, caveFactor);

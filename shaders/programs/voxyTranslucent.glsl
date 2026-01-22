@@ -1,4 +1,3 @@
-#define OVERWORLD
 #define VOXY_TRANSLUCENT
 
 #include "/lib/common.glsl"

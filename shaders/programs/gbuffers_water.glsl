@@ -248,7 +248,8 @@ void main() {
     gbuffersLighting(color, albedo, screenPos, viewPos, worldPos, newNormal, shadow, lightmap, NoU, NoL, NoE, 0.0, emission, 0.6, 0.0);
 
     #if defined OVERWORLD
-    vec3 atmosphereColor = getAtmosphere(viewPos.xyz, worldPos.xyz);
+    float atmosphereHardMixFactor = 0.0;
+    vec3 atmosphereColor = getAtmosphere(viewPos.xyz, worldPos.xyz, atmosphereHardMixFactor);
 		 atmosphereColor *= 1.0 + Bayer8(gl_FragCoord.xy) / 64.0;
 	#elif defined NETHER
 	vec3 atmosphereColor = netherColSqrt.rgb * 0.25;

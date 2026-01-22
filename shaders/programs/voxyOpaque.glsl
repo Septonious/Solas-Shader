@@ -1,4 +1,3 @@
-#define OVERWORLD
 #define VOXY_OPAQUE
 
 #include "/lib/common.glsl"

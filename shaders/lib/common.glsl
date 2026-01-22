@@ -228,7 +228,7 @@ const float sunPathRotation = 180.0;
 #define PLANAR_CLOUDS
 #define PLANAR_CLOUDS_BRIGHTNESS 1.3 //[0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5]
 #define PLANAR_CLOUDS_OPACITY 0.5 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
-#define PLANAR_CLOUDS_AMOUNT 5.00 //[5.00 4.75 4.50 4.25 4.00 3.75 3.50]
+#define PLANAR_CLOUDS_AMOUNT 5.25 //[6.00 5.75 5.50 5.25 5.00]
 #define PLANAR_CLOUDS_HEIGHT 700 //[500 500 600 700 800 900 1000 1100 1200 1300 1400 1500]
 
 // Volumetric Clouds //
@@ -248,7 +248,7 @@ const float sunPathRotation = 180.0;
 
 // Volumetric Light //
 #define VL
-#define VL_STRENGTH 3.00 //[1.00 1.50 2.00 2.50 3.00 3.50 4.00 4.50 5.00 5.50 6.00 6.50 7.00 7.50 8.00]
+#define VL_STRENGTH 2.00 //[1.00 1.50 2.00 2.50 3.00 3.50 4.00 4.50 5.00 5.50 6.00 6.50 7.00 7.50 8.00]
 #define VL_SAMPLES 8 //[5 6 7 8 9 10 11 12 13 14 15 16]
 #define VL_STRENGTH_RATIO 0.70 //[0.05 0.10 0.15 0.20 0.25 0.30 0.35 0.40 0.45 0.50 0.55 0.60 0.65 0.70 0.75 0.80 0.85 0.90 0.95 1.00]
 #define VL_NIGHT 2.00 //[0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00]
@@ -257,6 +257,7 @@ const float sunPathRotation = 180.0;
 
 // Sky //
 #define ROUND_SUN_MOON
+#define KARMAN_LINE 100000 //[50000 60000 70000 80000 90000 100000 110000 120000 130000 140000 150000 200000 250000 300000 400000 500000 1000000]
 
 // Stars //
 #define STARS
@@ -304,7 +305,7 @@ const float sunPathRotation = 180.0;
 #define END_DISK
 #define END_DISK_HEIGHT -20.0 //[-20.0 -10.0 0.0 10.0 20.0 30.0 40.0]
 #define END_DISK_AMOUNT 9.0 //[7.5 8.0 8.5 9.0 9.5 10.0]
-#define END_DISK_THICKNESS 10.0 //[4.0 6.0 8.0 10.0 12.0 14.0 16.0 18.0 20.0]
+#define END_DISK_THICKNESS 14.0 //[4.0 6.0 8.0 10.0 12.0 14.0 16.0 18.0 20.0]
 #define END_DISK_OPACITY 1.0 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
 
 // Nether Smoke //
@@ -798,6 +799,7 @@ vec3 pow8(vec3 x) {return x*x*x*x*x*x*x*x;}
 #undef END_NEBULA
 #undef END_DISK
 #undef END_FLASHES
+#undef END_BLACK_HOLE
 #endif
 
 #ifdef NETHER

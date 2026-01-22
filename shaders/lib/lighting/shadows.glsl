@@ -61,7 +61,7 @@ void computeShadow(inout vec3 shadow, vec3 shadowPos, float offset, float subsur
             float dist = (i + blueNoiseDither) / 12.0;
 
             vec2 offset2D = vec2(cos(rot), sin(rot)) * dist;
-            float offsetZ = -(dist * dist + 0.05);
+            float offsetZ = -(dist * dist + 0.025) * 0.25;
 
             vec3 offset = vec3(offset2D, offsetZ) * offsetScale;
 

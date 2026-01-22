@@ -321,25 +321,25 @@ float getProtoplanetaryDisk(vec2 coord){
     float center = pow4(1.0 - coord.y) * 1.0;
     float spiral = sin((coord.x + sqrt(coord.y) * whirl) * arms) + center - coord.y;
 
-    return min(spiral, 1);
+    return min(spiral * 1.75, 1.5);
 }
 
 void getEndCloudSample(vec2 rayPos, vec2 wind, float attenuation, inout float noise) {
-	rayPos *= 0.00035;
+	rayPos *= 0.00025;
 
-	float worleyNoise = (1.0 - texture2D(noisetex, rayPos.xy + wind * 0.5).g) * 0.4 + 0.25;
+	float worleyNoise = (1.0 - texture2D(noisetex, rayPos.xy + wind * 0.5).g) * 0.5 + 0.25;
 	float perlinNoise = texture2D(noisetex, rayPos.xy + wind * 0.5).r;
-	float noiseBase = perlinNoise * 0.6 + worleyNoise * 0.4;
+	float noiseBase = perlinNoise * 0.5 + worleyNoise * 0.5;
 
 	float detailZ = floor(attenuation * END_DISK_THICKNESS) * 0.05;
-	float noiseDetailA = texture2D(noisetex, rayPos * 0.5 - wind + detailZ).b;
-	float noiseDetailB = texture2D(noisetex, rayPos * 0.5 - wind + detailZ + 0.05).b;
-	float noiseDetail = fmix(noiseDetailA, noiseDetailB, fract(attenuation * END_DISK_THICKNESS));
+	float noiseDetailA = texture2D(noisetex, rayPos  - wind + detailZ).b;
+	float noiseDetailB = texture2D(noisetex, rayPos  - wind + detailZ + 0.05).b;
+	float noiseDetail = mix(noiseDetailA, noiseDetailB, fract(attenuation * END_DISK_THICKNESS));
 
 	float noiseCoverage = abs(attenuation - 0.125) * (attenuation > 0.125 ? 1.14 : 5.0);
-		  noiseCoverage *= noiseCoverage * 4.0;
+		  noiseCoverage *= noiseCoverage * 5.0;
 	
-	noise = fmix(noiseBase, noiseDetail, 0.025 * int(0 < noiseBase)) * 22.0 - noiseCoverage;
+	noise = mix(noiseBase, noiseDetail, 0.025 * int(0 < noiseBase)) * 22.0 - noiseCoverage;
 	noise = max(noise - END_DISK_AMOUNT - 1.0 + getProtoplanetaryDisk(rayPos), 0.0);
 	noise /= sqrt(noise * noise + 0.25);
 }
@@ -364,8 +364,8 @@ void computeEndVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z,
 		float VoS = clamp(dot(nViewPos, sunVec), 0.0, 1.0);
 		vec3 nWorldPos = normalize(worldPos);
 
-        float blackHoleDistortion = (pow8(VoS) * 0.5 + pow(VoS, 1.0 + VoS * 32.0) * 0.25) * min(length(nWorldPos.xz * 0.25), 64.0) * 0.75;
-        //float blackHoleDistortion = 0.0;
+        //float blackHoleDistortion = (pow8(VoS) * 0.5 + pow(VoS, 1.0 + VoS * 32.0) * 0.25) * min(length(nWorldPos.xz * 0.25), 64.0) * 0.75;
+        float blackHoleDistortion = 0.0;
 		#ifdef END_TIME_TILT
 			float time = min(0.025 * frameTimeCounter, 1.0);
 			nWorldPos.y += nWorldPos.x * time;
@@ -400,8 +400,8 @@ void computeEndVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z,
 		float maxDist = max(lowerPlane, upperPlane);
 
 		float planeDifference = maxDist - minDist;
-		float rayLength = (END_DISK_THICKNESS + blackHoleDistortion * 5.0) * 8.0;
-			  rayLength /= nWorldPos.y * nWorldPos.y * 8.0 + 1.0;
+		float rayLength = (END_DISK_THICKNESS + blackHoleDistortion * 5.0) * 6.0;
+			  rayLength /= nWorldPos.y * nWorldPos.y * 6.0 + 1.0;
 		vec3 startPos = cameraPosition + minDist * nWorldPos;
 		vec3 sampleStep = nWorldPos * rayLength;
 		int sampleCount = int(min(planeDifference / rayLength, 64) + dither);

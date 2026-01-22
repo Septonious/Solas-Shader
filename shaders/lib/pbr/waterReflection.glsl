@@ -52,7 +52,8 @@ void getReflection(inout vec4 albedo, in vec3 viewPos, in vec3 worldPos, in vec3
 			#ifdef OVERWORLD
 			vec3 viewPosRef = reflect(normalize(viewPos), normal);
 			vec3 worldPosRef = reflect(normalize(worldPos), normal);
-			vec3 reflectedAtmosphere = getAtmosphere(viewPosRef.xyz, worldPosRef.xyz);
+            float atmosphereHardMixFactor = 0.0;
+			vec3 reflectedAtmosphere = getAtmosphere(viewPosRef.xyz, worldPosRef.xyz, atmosphereHardMixFactor);
 			falloff = mix(falloff, reflectedAtmosphere, skyLightMap);
 			#endif
 		}

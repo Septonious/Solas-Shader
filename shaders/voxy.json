@@ -95,10 +95,10 @@
         #endif
 	}",
     "opaquePatchData":"
-        #include "/programs/voxyOpaque.glsl"
+        #include "/voxy_opaque.glsl"
     ",
     "translucentPatchData":"
-        #include "/programs/voxyTranslucent.glsl"
+        #include "/voxy_translucent.glsl"
     ",
     "excludeLodsFromVanillaDepth": false
 }
