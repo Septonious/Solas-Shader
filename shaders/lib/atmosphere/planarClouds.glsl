@@ -21,18 +21,18 @@ void drawPlanarClouds(inout vec3 color, in vec3 atmosphereColor, in vec3 worldPo
 
     float altitudeFactor = min(max(cameraPosition.y, 0.0) / KARMAN_LINE, 1.0);
     float altitudeFactor10k = min(max(cameraPosition.y, 0.0) * 0.0001, 1.0);
-    float cloudHeightFactor = 0.125 + pow2(clamp(1.0 - 0.001 * cameraPosition.y * (0.5 - altitudeFactor * 1.25), 0.0, 3.5));
+    float cloudHeightFactor = 0.125 + pow2(clamp(1.0 - 0.001 * cameraPosition.y * (0.5 - altitudeFactor), 0.0, 3.5));
 
     //Sampling
 	vec3 planeCoord = worldPos * (cloudHeightFactor / worldPos.y) * PLANAR_CLOUDS_HEIGHT * 0.001;
     float coordLength = length(planeCoord.xz);
-    float distanceFactor = clamp(1.0 - coordLength * (0.15 - altitudeFactor * 0.085 - altitudeFactor10k * (1.0 - altitudeFactor)  * 0.3), 0.0, 1.0);
+    float distanceFactor = clamp(1.0 - coordLength * max(0.15 - altitudeFactor * 0.085 - altitudeFactor10k * (1.0 - altitudeFactor)  * 0.25, 0.005), 0.0, 1.0);
     planeCoord *= 2.0 - distanceFactor;
 
 	if (distanceFactor > 0.0) {
         vec2 warp;
-        warp.x = sin(planeCoord.z * 0.5 - frameTimeCounter * 0.01);
-        warp.y = cos(planeCoord.x * 0.3 - frameTimeCounter * 0.02);
+        warp.x = sin(planeCoord.z * 0.5 - frameTimeCounter * 0.001);
+        warp.y = cos(planeCoord.x * 0.3 - frameTimeCounter * 0.002);
 
         planeCoord.xz += warp * 0.5;
 
