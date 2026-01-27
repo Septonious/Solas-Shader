@@ -1,18 +1,15 @@
-float samplePlanarCloudNoise(vec2 coord)
-{
+float samplePlanarCloudNoise(vec2 coord) {
     float n1 = texture2D(noisetex, coord * 0.0625).r;
     float n2 = texture2D(noisetex, coord).r;
 
     float noise = fmix(n1 * 15.0, n2 * 2.0, 0.33);
 
-    // Smooth threshold instead of hard cut
     noise = smoothstep(
         PLANAR_CLOUDS_AMOUNT,
         PLANAR_CLOUDS_AMOUNT + 0.75,
         noise
     );
 
-    // Gentle contrast curve
     noise = noise * noise * (3.0 - 2.0 * noise);
 
     return clamp(noise, 0.0, 1.0);
@@ -79,10 +76,10 @@ void drawPlanarClouds(inout vec3 color, in vec3 atmosphereColor, in vec3 worldPo
 
 		//Aurora tends to get brighter and dimmer when plasma arrives or fades away
         float pulse = 0.5 + 0.5 * sin(frameTimeCounter * 0.08 + sin(frameTimeCounter * 0.013) * 0.6);
-              pulse = smoothstep(0.15, 0.85, pulse);
+                pulse = smoothstep(0.15, 0.85, pulse);
 
         float longPulse = sin(frameTimeCounter * 0.025 + sin(frameTimeCounter * 0.004) * 0.8);
-              longPulse = longPulse * (1.0 - 0.15 * abs(longPulse));
+                longPulse = longPulse * (1.0 - 0.15 * abs(longPulse));
 
 		kpIndex *= 1.0 + longPulse * 0.25;
 		kpIndex /= 9.0;

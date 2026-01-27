@@ -74,17 +74,17 @@ void drawAurora(inout vec3 color, in vec3 worldPos, in float caveFactor, in floa
 
 	//Aurora tends to get brighter and dimmer when plasma arrives or fades away
 	float pulse = 0.5 + 0.5 * sin(frameTimeCounter * 0.08 + sin(frameTimeCounter * 0.013) * 0.6);
-		  pulse = smoothstep(0.15, 0.85, pulse);
+		    pulse = smoothstep(0.15, 0.85, pulse);
 
 	float longPulse = sin(frameTimeCounter * 0.025 + sin(frameTimeCounter * 0.004) * 0.8);
-		  longPulse = longPulse * (1.0 - 0.15 * abs(longPulse));
+		    longPulse = longPulse * (1.0 - 0.15 * abs(longPulse));
 
 	kpIndex *= 1.0 + longPulse * 0.25;
 	kpIndex /= 9.0;
 	visibility *= kpIndex * (1.0 + max(longPulse * 0.5, 0.0));
     visibility = min(visibility, 2.0) * AURORA_BRIGHTNESS;
 
-	if (visibility > 0.1) {
+	if (visibility > 0.05) {
 		vec3 aurora = vec3(0.0);
 
         float dither = Bayer8(gl_FragCoord.xy);
@@ -105,7 +105,7 @@ void drawAurora(inout vec3 color, in vec3 worldPos, in float caveFactor, in floa
 		float eastWestStretching = 1.0;
 
 		for (int i = 0; i < samples; i++) {
-			vec3 planeCoord = worldPos * ((20.0 + altitudeFactor * 20.0 + pow(clamp(nWorldPos.y, 0.0, 1.0), 0.25) * 15.0 + currentStep * (10.0 + kpIndex * 5.0) - altitudeFactor) / worldPos.y) * 0.05;
+			vec3 planeCoord = worldPos * ((20.0 - kpIndex * 10.0 + altitudeFactor * 20.0 + pow(clamp(nWorldPos.y, 0.0, 1.0), 0.25) * 15.0 + currentStep * (10.0 + kpIndex * 5.0) - altitudeFactor) / worldPos.y) * 0.05;
 			vec2 coord = planeCoord.xz + cameraPosition.xz * 0.0005;
 
 			//We don'frameTimeCounter want the aurora to render infintely, we also want it to be closer to the north when Kp is low

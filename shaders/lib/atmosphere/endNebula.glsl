@@ -8,13 +8,13 @@ void sampleNebulaNoise(vec2 coord, inout float colorMixer, inout float noise) {
 
 float getSpiralWarping(vec2 coord, float gravityLens){
 	float whirl = -15.0;
-	float arms = 10.0;
+	float arms = 15.0;
 
     coord = vec2(atan(coord.y, coord.x) + frameTimeCounter * 0.1, sqrt(coord.x * coord.x + coord.y * coord.y));
-    float center = pow8(1.0 - coord.y) * 2.0;
+    float center = pow8(1.0 - coord.y) * 24.0;
     float spiral = sin((coord.x + sqrt(coord.y) * whirl) * arms) + center - coord.y;
 
-    return clamp(spiral * 0.075, 0.0, 1.0);
+    return clamp(spiral * 0.025, 0.0, 1.0);
 }
 
 #if MC_VERSION >= 12100
@@ -47,7 +47,7 @@ vec2 rotate2D(vec2 p, float angle) {
 void drawEndNebula(inout vec3 color, in vec3 worldPos, in float VoU, in float VoS) {
     #ifdef END_BLACK_HOLE
     //Prepare black hole parameters for warping the nebula
-    vec3 blackHoleColor = vec3(5.6, 2.8, 0.7) * endLightCol;
+    vec3 blackHoleColor = vec3(5.6, 3.2, 0.7) * endLightCol;
     float absVoU = abs(VoU);
     float sqrtabsVoU = sqrt(absVoU);
     float blackHoleSize = END_BLACK_HOLE_SIZE;
@@ -114,25 +114,25 @@ void drawEndNebula(inout vec3 color, in vec3 worldPos, in float VoU, in float Vo
 
     //Black Hole
     #ifdef END_BLACK_HOLE
-    float innerRing = pow2(hole * 3.0);
-          innerRing *= float(innerRing > 0.2) * (1.0 - 6.0 * hole) * 64.0;
-          innerRing = max(innerRing, 0.0);
+    float photonRing = pow2(hole * 3.0);
+            photonRing *= float(photonRing > 0.2) * (1.0 - 6.0 * hole) * 64.0;
+            photonRing = max(photonRing, 0.0);
           hole = clamp(hole * 8.0, 0.0, 1.0);
 
     float torus = 1.0 - clamp(length(blackHoleCoord), 0.0, 1.0);
-          torus = pow(pow(torus * torus, 1.0 + (180.0 - abs(sunPathRotation)) / 8.0 * (0.5 + 0.5 * sqrtabsVoU)), sqrt(blackHoleSize) * 1.5);
+            torus = pow(pow(torus * torus, 1.0 + (180.0 - abs(sunPathRotation)) / 8.0 * (0.5 + 0.5 * sqrtabsVoU)), sqrt(blackHoleSize) * 1.5);
 
     vec2 noiseCoord = blackHoleCoord - hole * hole;
-         noiseCoord = rotate2D(noiseCoord, PI);
-         noiseCoord -= vec2(frameTimeCounter * 0.025, 0.0);
-         noiseCoord.y *= 0.33;
-         noiseCoord *= 2.0;
+            noiseCoord = rotate2D(noiseCoord, PI);
+            noiseCoord -= vec2(frameTimeCounter * 0.025, 0.0);
+            noiseCoord.y *= 0.33;
+            noiseCoord *= 2.0;
 
     float blackHoleNoise = texture2D(noisetex, noiseCoord).r;
 
-    color += fmix(blackHoleColor, vec3(4.0), hole * hole) * hole * hole * 3.0 * blackHoleNoise;
+    color += fmix(blackHoleColor, vec3(4.0 + hole * hole * 2.0), hole * hole) * hole * hole * 3.0 * blackHoleNoise;
     color *= 1.0 - hole;
-    color += vec3(innerRing);
-    color += fmix(blackHoleColor, vec3(2.0), sqrt(torus)) * torus * (1.0 - torus * 0.66) * blackHoleNoise * 3.0;
+    color += vec3(photonRing);
+    color += fmix(blackHoleColor, vec3(2.0 + torus * 6.0), pow(torus, 0.33)) * torus * pow2(1.0 - torus * 0.65) * blackHoleNoise * 3.0;
     #endif
 }

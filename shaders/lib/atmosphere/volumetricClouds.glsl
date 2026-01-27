@@ -146,16 +146,16 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z, fl
 
 		//Aurora tends to get brighter and dimmer when plasma arrives or fades away
 		float pulse = 0.5 + 0.5 * sin(frameTimeCounter * 0.08 + sin(frameTimeCounter * 0.013) * 0.6);
-			  pulse = smoothstep(0.15, 0.85, pulse);
+			    pulse = smoothstep(0.15, 0.85, pulse);
 
 		float longPulse = sin(frameTimeCounter * 0.025 + sin(frameTimeCounter * 0.004) * 0.8);
-			  longPulse = longPulse * (1.0 - 0.15 * abs(longPulse));
+			    longPulse = longPulse * (1.0 - 0.15 * abs(longPulse));
 
 		kpIndex *= 1.0 + longPulse * 0.25;
 		kpIndex /= 9.0;
 
 		//Total visibility of aurora based on multiple factors
-		float auroraVisibility = pow6(moonVisibility) * (1.0 - wetness) * caveFactor * kpIndex;
+		float auroraVisibility = pow6(moonVisibility) * (1.0 - wetness) * caveFactor * kpIndex * 2.0;
 
 		amount += auroraVisibility;
 		#endif
@@ -283,7 +283,7 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z, fl
 				 cloudLightColor *= 1.0 + scattering * shadowFade;
                  #ifdef AURORA_LIGHTING_INFLUENCE
 				 cloudLightColor.r *= 1.0 + 2.0 * pow3(kpIndex) * pulse * auroraVisibility;
-				 cloudLightColor.g *= 1.0 + kpIndex * auroraVisibility;
+				 cloudLightColor.g *= 1.0 + auroraVisibility;
                  #endif
 			vec3 cloudColor = fmix(cloudAmbientColor, cloudLightColor, ambientLighting) * fmix(vec3(1.0), biomeColor, isSpecificBiome * sunVisibility);
 			     cloudColor = fmix(cloudColor, atmosphereColor * length(cloudColor) * 0.5, wetness * 0.6);

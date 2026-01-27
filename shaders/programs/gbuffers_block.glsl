@@ -202,7 +202,7 @@ void main() {
                       nebulaColorMixer = pow4(nebulaColorMixer) * 6.0;
 
                 vec3 nebula =  fmix(endNebulaColFirst, endNebulaColSecond, nebulaColorMixer) * nebulaNoise * nebulaNoise;
-                     nebula *= length(nebula) * END_NEBULA_BRIGHTNESS;
+                        nebula *= length(nebula) * END_NEBULA_BRIGHTNESS;
 
                 albedo.rgb += nebula * colormult;
             }
