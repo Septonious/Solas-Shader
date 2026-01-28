@@ -26,12 +26,14 @@ vec3 SampleShadow(vec3 shadowPos) {
     #endif
 
     vec3 shadowColor = vec3(0.0);
+    #ifdef SHADOW_COLOR
     if (shadow0 < 1.0 && doShadowColor > 0.9) {
         float shadow1 = texture2DShadow(shadowtex1, shadowPos);
         if (shadow1 > 0.9999) {
             shadowColor = texture2D(shadowcolor0, shadowPos.st).rgb * shadow1;
         }
     }
+    #endif
 
     return shadowColor * doShadowColor * (1.0 - shadow0) + shadow0;
 }

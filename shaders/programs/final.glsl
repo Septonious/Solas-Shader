@@ -30,7 +30,7 @@ const float eyeBrightnessHalflife = 5.0;
 const int colortex0Format = R11F_G11F_B10F; //GB scene
 const int colortex1Format = RGB16F; //Final scene
 const int colortex3Format = RGBA16; //PBR data
-const int colortex4Format = RGB8; //Reflections
+const int colortex4Format = RGB16F; //Reflections
 */
 
 // Includes //
