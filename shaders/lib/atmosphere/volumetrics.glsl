@@ -43,12 +43,14 @@ void calculateVLParameters(inout float intensity, inout float distanceFactor, in
 	}
     float closedSpaceFactor = 1.0 - min(1.0, pow8(eBS) * 0.5 + averageDepth * (0.7 - eBS * eBS * 0.35));
 
-    intensity = (VoLClamped * VoLClamped * VL_STRENGTH_RATIO) * (1.0 - timeBrightness) + pow(VoLClamped, 1.5) * timeBrightness;
+    intensity = (VoLClamped * VoLClamped * VL_STRENGTH_RATIO + (1.0 - VL_STRENGTH_RATIO)) * (1.0 - timeBrightness);
+    intensity += pow(VoLClamped, 1.5) * timeBrightness;
+    intensity *= 1.0 + pow8(VoLClamped) * (1.0 + sunVisibility * (3.0 - timeBrightness * 2.0));
     intensity *= timeIntensityFactor * (1.0 + closedSpaceFactor);
 
     #ifdef VC_SHADOWS
-    intensity = fmix(intensity, 1.0 + VoLPositive * VoLPositive * float(isEyeInWater == 1), clamp((cameraPosition.y - VC_HEIGHT) * 0.01, 0.0, 1.0));
-    intensity = intensity * (1.0 - float(isEyeInWater == 1)) + float(isEyeInWater == 1) * (1.0 + VoLClamped * VoLClamped * 2.0) * 0.25;
+    intensity = fmix(intensity, 1.0, clamp((cameraPosition.y - VC_HEIGHT) * 0.01, 0.0, 1.0));
+    intensity = intensity * float(isEyeInWater == 0) + float(isEyeInWater == 1) * (1.0 + VoLClamped * VoLClamped * 2.0) * (0.25 + sunVisibility * 2.75);
     #else
     intensity *= max(pow4(1.0 - VoUClamped), float(isEyeInWater == 1));
     #endif
@@ -155,10 +157,13 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
 
         //Ray marcher parameters
         int sampleCount = VL_SAMPLES;
+        #ifdef OVERWORLD
+            sampleCount += int(sunVisibility * (4 - dfade * 3));
+        #endif
 
         float maxDist = shadowDistance;
         #ifdef VC_SHADOWS
-            maxDist += 128.0;
+            maxDist += 128.0 + sunVisibility * (256.0 - dfade * 256.0);
         #endif
 
         #ifdef VL
@@ -210,8 +215,8 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
                         }
                     }
                     #endif
-                    float lShadowCol = min(1.0, length(shadowCol * shadowCol * shadowCol * shadowCol));
-                    vlSample = clamp(shadow1 * (1.0 - shadow0) * doShadowColor * shadowCol * shadowCol * fmix(vec3(0.025), pow(waterColor, vec3(1.0 - lShadowCol * 0.5)) * lShadowCol, float(isEyeInWater == 1)) + shadow0 * vlCol * float(isEyeInWater == 0), 0.0, 1.0);
+                    float lShadowCol = min(1.0, length(shadowCol * shadowCol));
+                    vlSample = clamp(shadow1 * (1.0 - shadow0) * doShadowColor * shadowCol * shadowCol * mix(vec3(0.1), waterColor * lShadowCol, float(isEyeInWater == 1)) + shadow0 * vlCol * float(isEyeInWater == 0), 0.0, 1.0);
                 }
 
                 //Crepuscular rays

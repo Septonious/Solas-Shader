@@ -124,6 +124,15 @@ option.END_NEBULA=Ender Nebula
 option.END_NEBULA_BRIGHTNESS=Ender Nebula Brightness
 option.RAINBOW=Rainbow
 option.RAINBOW_BRIGHTNESS=Rainbow Brightness
+option.ROUND_SUN_MOON=Round Sun & Moon
+
+#----------------------------------------------------------------------------------#
+
+screen.OVERWORLD_ATMOSPHERE_CONFIG=Overworld Atmosphere Config
+
+option.KARMAN_LINE=Karman Line Altitude
+option.KARMAN_LINE.comment=Where space begins! Ascending to this altitude will make the atmosphere slowly turn into a planet below you.
+option.SUNRISE_SUNSET_INTENSITY=Sunrise/Sunset Saturation
 
 #----------------------------------------------------------------------------------#
 

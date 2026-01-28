@@ -104,7 +104,7 @@ void gbuffersLighting(in vec4 color, inout vec4 albedo, in vec3 screenPos, in ve
         sss *= 1.0 - wetness * 0.5;
         #endif
 
-        NoL += subsurface * shadowVisibility * (0.3 + sss * 0.7);
+        NoL = fmix(NoL, 1.0, subsurface * shadowVisibility * (0.3 + sss * 0.7) * 0.75);
     }
     #endif
 
