@@ -237,7 +237,7 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z, fl
 
 				//Indoor leak prevention
 				if (eyeBrightnessSmooth.y < 210.0 && cameraPosition.y > height - 50.0 && lWorldPos < shadowDistance) {
-					if (texture2DShadow(shadowtex1, ToShadow(worldPos)).x <= 0.0) break;
+					if (texture2DShadow(shadowtex1, ToShadow(worldPos)) <= 0.0) break;
 				}
 
                 float sampleAltitude = InvLerp(rayPos.y, cloudBottom, cloudTop);
@@ -440,7 +440,7 @@ void computeEndVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z,
 
                 vec3 worldPos = rayPos - cameraPosition;
 
-				float shadow1 = clamp(texture2DShadow(shadowtex1, ToShadow(worldPos)).x, 0.0, 1.0);
+				float shadow1 = clamp(texture2DShadow(shadowtex1, ToShadow(worldPos)), 0.0, 1.0);
 
 				float noise = 0.0;
 				float lightingNoise = 0.0;
