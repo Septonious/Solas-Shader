@@ -45,37 +45,16 @@ void computeShadow(inout vec3 shadow, vec3 shadowPos, float offset, float subsur
          blueNoiseDither = fract(blueNoiseDither + 1.61803398875 * mod(float(frameCounter), 3600.0));
     #endif
 
-    if (subsurface < 0.01) {
-        int shadowSamples = 2;
+    int shadowSamples = 2;
 
-        for (int i = 0; i < shadowSamples; i++) {
-            vec2 shadowOffset = offsetDist(blueNoiseDither + i, shadowSamples) * offset;
-            shadow += SampleShadow(vec3(shadowPos.st + shadowOffset, shadowPos.z));
-            shadow += SampleShadow(vec3(shadowPos.st - shadowOffset, shadowPos.z));
-        }
-
-        shadow /= shadowSamples * 2.0;
-    } else {
-        float distb = sqrt(dot(shadowPos.xy, shadowPos.xy));
-        float distortFactor = distb * shadowMapBias + (1.0 - shadowMapBias);
-
-        vec3 offsetScale = vec3(0.002 / distortFactor, 0.002 / distortFactor, 0.001) * (subsurface * 0.75 + 0.25);
-
-        for(int i = 0; i < 12; i++) {
-            blueNoiseDither = fract(blueNoiseDither + 1.618);
-            float rot = blueNoiseDither * 6.283;
-            float dist = (i + blueNoiseDither) / 12.0;
-
-            vec2 offset2D = vec2(cos(rot), sin(rot)) * dist;
-            float offsetZ = -(dist * dist + 0.025) * 0.25;
-
-            vec3 offset = vec3(offset2D, offsetZ) * offsetScale;
-
-            vec3 samplePos = shadowPos + offset;
-            shadow += SampleShadow(samplePos);
-        }
-        shadow /= 12.0;
+    for (int i = 0; i < shadowSamples; i++) {
+        vec2 shadowOffset = offsetDist(blueNoiseDither + i, shadowSamples) * offset;
+        shadow += SampleShadow(vec3(shadowPos.st + shadowOffset, shadowPos.z));
+        shadow += SampleShadow(vec3(shadowPos.st - shadowOffset, shadowPos.z));
     }
+
+    shadow /= shadowSamples * 2.0;
+
 }
 #endif
 

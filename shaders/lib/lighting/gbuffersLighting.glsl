@@ -97,14 +97,14 @@ void gbuffersLighting(in vec4 color, inout vec4 albedo, in vec3 screenPos, in ve
 
     #if defined OVERWORLD || defined END
     if (subsurface > 0.0) {
-        sss = pow12(VoL);
+        sss = pow6(VoL);
 
         #ifdef OVERWORLD
         sss *= shadowFade;
         sss *= 1.0 - wetness * 0.5;
         #endif
 
-        NoL += subsurface * shadowVisibility * (1.0 + sss);
+        NoL += subsurface * shadowVisibility * (0.3 + sss * 0.7);
     }
     #endif
 

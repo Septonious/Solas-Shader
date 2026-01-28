@@ -249,6 +249,7 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
                     }
 
                     lpvFogSample = pow(lightVolume.rgb, vec3(1.0 / FLOODFILL_RADIUS)) * (1.0 - floodfillFade * floodfillFade);
+                    lpvFogSample *= length(lpvFogSample) * 4.0;
 
                     #ifdef LPV_CLOUDY_FOG
                     vec3 noisePos = rayPos * 3.0;
