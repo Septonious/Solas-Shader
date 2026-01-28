@@ -18,7 +18,7 @@ vec2 offsetDist(float x, int s) {
 }
 
 vec3 SampleShadow(vec3 shadowPos) {
-    float shadow0 = texture2DShadow(shadowtex0, shadowPos).x;
+    float shadow0 = texture2DShadow(shadowtex0, shadowPos);
 
     float doShadowColor = 1.0;
     #ifdef OVERWORLD
@@ -27,7 +27,7 @@ vec3 SampleShadow(vec3 shadowPos) {
 
     vec3 shadowColor = vec3(0.0);
     if (shadow0 < 1.0 && doShadowColor > 0.9) {
-        float shadow1 = texture2DShadow(shadowtex1, shadowPos).x;
+        float shadow1 = texture2DShadow(shadowtex1, shadowPos);
         if (shadow1 > 0.9999) {
             shadowColor = texture2D(shadowcolor0, shadowPos.st).rgb * shadow1;
         }

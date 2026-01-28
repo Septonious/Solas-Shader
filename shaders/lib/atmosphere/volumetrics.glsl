@@ -200,11 +200,11 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
 
                 vec3 sampleShadowPos = ToShadow(sampleWorldPos);
                 if (length(sampleShadowPos.xy * 2.0 - 1.0) < 1.0) {
-                    shadow0 = texture2DShadow(shadowtex0, sampleShadowPos).x;
+                    shadow0 = texture2DShadow(shadowtex0, sampleShadowPos);
 
                     #ifdef SHADOW_COLOR
                     if (shadow0 < 1.0 && doShadowColor > 0.9) {
-                        shadow1 = texture2DShadow(shadowtex1, sampleShadowPos).x;
+                        shadow1 = texture2DShadow(shadowtex1, sampleShadowPos);
                         if (shadow1 > 0.0) {
                             shadowCol = texture2D(shadowcolor0, sampleShadowPos.xy).rgb;
                         }
