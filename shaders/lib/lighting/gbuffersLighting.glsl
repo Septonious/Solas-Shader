@@ -96,15 +96,15 @@ void gbuffersLighting(in vec4 color, inout vec4 albedo, in vec3 screenPos, in ve
     float sss = 0.0;
 
     #if defined OVERWORLD || defined END
-    if (subsurface > 0.01) {
-        sss = pow8(VoL);
+    if (subsurface > 0.0) {
+        sss = pow12(VoL);
 
         #ifdef OVERWORLD
         sss *= shadowFade;
         sss *= 1.0 - wetness * 0.5;
         #endif
 
-        NoL += subsurface * shadowVisibility * 0.25;
+        NoL += subsurface * shadowVisibility * (1.0 + sss);
     }
     #endif
 
@@ -123,7 +123,7 @@ void gbuffersLighting(in vec4 color, inout vec4 albedo, in vec3 screenPos, in ve
         #else
             //Shadow bias without peter-panning
             float distanceBias = pow(dot(worldPos, worldPos), 0.75);
-                  distanceBias = 0.1 + 0.0004 * distanceBias * (1.0 - float(subsurface > 0.01));
+                    distanceBias = 0.1 + 0.0004 * distanceBias * (1.0 - float(subsurface > 0.01));
             vec3 bias = worldNormal * distanceBias;
 
             //Fix light leaking in caves

@@ -1,3 +1,9 @@
+float texture2DShadow(sampler2D shadowtex, vec3 shadowPos) {
+    float shadow = texture2D(shadowtex, shadowPos.xy).r;
+
+    return clamp((shadow - shadowPos.z) * 65536.0, 0.0, 1.0);
+}
+
 #ifdef VOLUMETRIC_CLOUDS
 void getDynamicWeather(inout float speed, inout float amount, inout float frequency, inout float thickness, inout float density, inout float detail, inout float height, inout float scale) {
 	#ifdef VC_DYNAMIC_WEATHER
@@ -231,7 +237,7 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z, fl
 
 				//Indoor leak prevention
 				if (eyeBrightnessSmooth.y < 210.0 && cameraPosition.y > height - 50.0 && lWorldPos < shadowDistance) {
-					if (shadow2D(shadowtex1, ToShadow(worldPos)).x <= 0.0) break;
+					if (texture2DShadow(shadowtex1, ToShadow(worldPos)).x <= 0.0) break;
 				}
 
                 float sampleAltitude = InvLerp(rayPos.y, cloudBottom, cloudTop);
@@ -434,7 +440,7 @@ void computeEndVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z,
 
                 vec3 worldPos = rayPos - cameraPosition;
 
-				float shadow1 = clamp(shadow2D(shadowtex1, ToShadow(worldPos)).x, 0.0, 1.0);
+				float shadow1 = clamp(texture2DShadow(shadowtex1, ToShadow(worldPos)).x, 0.0, 1.0);
 
 				float noise = 0.0;
 				float lightingNoise = 0.0;

@@ -19,7 +19,7 @@ uniform sampler2D shadowtex0;
 #endif
 
 // Pipeline Options //
-const bool shadowHardwareFiltering = true;
+const bool shadowHardwareFiltering = false;
 const int noiseTextureResolution = 512;
 const float shadowDistanceRenderMul = 1.0;
 const float drynessHalflife = 300.0;

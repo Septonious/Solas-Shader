@@ -114,7 +114,7 @@ vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.
 
 #include "/lib/lighting/gbuffersLighting.glsl"
 
-#if defined GENERATED_EMISSION || defined GENERATED_SPECULAR
+#if (defined GENERATED_EMISSION || defined GENERATED_SPECULAR) && defined IS_IRIS
 #include "/lib/pbr/generatedPBR.glsl"
 #endif
 
@@ -141,7 +141,7 @@ void main() {
     #endif
 	float NoE = clamp(dot(newNormal, eastVec), -1.0, 1.0);
 
-    #ifdef GENERATED_EMISSION
+    #if (defined GENERATED_EMISSION || defined GENERATED_SPECULAR) && defined IS_IRIS
     if (albedo.a > 0.1) generateIPBR(albedo, worldPos, viewPos, lightmap, emission, smoothness, metalness, subsurface);
     #endif
 

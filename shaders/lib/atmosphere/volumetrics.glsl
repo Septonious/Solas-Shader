@@ -21,6 +21,12 @@ bool isRayMarcherHit(float currentDist, float maxDist, float linearZ0, float lin
 }
 
 #ifdef VL
+float texture2DShadow(sampler2D shadowtex, vec3 shadowPos) {
+    float shadow = texture2D(shadowtex, shadowPos.xy).r;
+
+    return clamp((shadow - shadowPos.z) * 65536.0, 0.0, 1.0);
+}
+
 void calculateVLParameters(inout float intensity, inout float distanceFactor, inout float samplePersistence, in float VoU, in float VoL) {
     float VoLPositive = VoL * 0.5 + 0.5;
     float VoUPositive = VoU * 0.5 + 0.5;
@@ -194,11 +200,11 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
 
                 vec3 sampleShadowPos = ToShadow(sampleWorldPos);
                 if (length(sampleShadowPos.xy * 2.0 - 1.0) < 1.0) {
-                    shadow0 = shadow2D(shadowtex0, sampleShadowPos).x;
+                    shadow0 = texture2DShadow(shadowtex0, sampleShadowPos).x;
 
                     #ifdef SHADOW_COLOR
                     if (shadow0 < 1.0 && doShadowColor > 0.9) {
-                        shadow1 = shadow2D(shadowtex1, sampleShadowPos).x;
+                        shadow1 = texture2DShadow(shadowtex1, sampleShadowPos).x;
                         if (shadow1 > 0.0) {
                             shadowCol = texture2D(shadowcolor0, sampleShadowPos.xy).rgb;
                         }

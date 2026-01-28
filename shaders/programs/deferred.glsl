@@ -74,7 +74,7 @@ uniform sampler2D depthtex2;
 #endif
 
 #if defined VOLUMETRIC_CLOUDS || defined END_DISK
-uniform sampler2DShadow shadowtex1;
+uniform sampler2D shadowtex1;
 
 uniform mat4 shadowModelView, shadowProjection;
 #endif
