@@ -1,5 +1,6 @@
 {
   "version": 1,
+  "excludeLodsFromVanillaDepth": true,
   "opaqueDrawBuffers": [0],
   "translucentDrawBuffers": [0, 1],
   "blending": {
@@ -22,6 +23,7 @@
     "frameCounter",
     "frameTimeCounter", 
     "skyColor",
+    "fogColor",
     "cameraPosition",
     "cameraPositionInt",
     "cameraPositionFract",
@@ -95,10 +97,9 @@
         #endif
 	}",
     "opaquePatchData":"
-        #include "/voxy_opaque.glsl"
+        #include "/world-1/voxy_opaque.glsl"
     ",
     "translucentPatchData":"
-        #include "/voxy_translucent.glsl"
-    ",
-    "excludeLodsFromVanillaDepth": false
+        #include "/world-1/voxy_translucent.glsl"
+    "
 }

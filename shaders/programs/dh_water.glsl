@@ -18,7 +18,7 @@ in float viewDistance;
 flat in int mat;
 
 // Uniforms //
-uniform int vxRenderDistance, dhRenderDistance;
+uniform int dhRenderDistance, vxRenderDistance;
 uniform int isEyeInWater;
 uniform int frameCounter;
 
@@ -172,7 +172,7 @@ void main() {
 
 		albedo.rgb = waterFog.rgb * 3.0;
 		albedo.g *= 1.0 + (0.5 - waterFog.a * 0.35); //Correciton
-		albedo.a = min(0.1 + 3.0 * WATER_A * waterFog.a * (0.9 - float(isEyeInWater == 1) * 0.7), 1.0);
+		albedo.a = min(0.1 + 3.0 * WATER_A * waterFog.a * (0.75 - float(isEyeInWater == 1) * 0.25), 0.8);
 		#endif
 	}
 
@@ -224,7 +224,9 @@ void main() {
     gbuffersLighting(color, albedo, screenPos, viewPos, worldPos, newNormal, shadow, lightmap, NoU, NoL, NoE, 0.0, emission, 0.6, 0.0);
 
     #if defined OVERWORLD
-    vec3 atmosphereColor = getAtmosphere(viewPos);
+    float atmosphereHardMixFactor = 0.0;
+    vec3 atmosphereColor = getAtmosphere(viewPos.xyz, worldPos.xyz, atmosphereHardMixFactor);
+		    atmosphereColor *= 1.0 + Bayer8(gl_FragCoord.xy) / 64.0;
 	#elif defined NETHER
 	vec3 atmosphereColor = netherColSqrt.rgb * 0.25;
 	#elif defined END
@@ -234,16 +236,21 @@ void main() {
 	//Reflections
 	#ifdef WATER_REFLECTIONS
 	if (water > 0.5 || glass > 0.5) {
+		#if WATER_NORMALS > 0
 		float snellWindow = clamp(pow4(length(worldPos.xz) * 0.05), 0.05 + float(isEyeInWater == 0) * 0.95, 1.0);
 			  snellWindow = max(snellWindow, float(water < 0.5));
+		#else
+		float snellWindow = 1.0;
+		#endif
+
 		float fresnel = clamp(1.0 + dot(normalize(normal), nViewPos), 0.0, 1.0) * snellWindow;
-		getReflection(albedo, viewPos, nViewPos, newNormal, fresnel, lightmap.y);
+		getReflection(albedo, viewPos, worldPos, nViewPos, newNormal, fresnel, lightmap.y);
 		albedo.a = fmix(albedo.a * snellWindow, 1.0, fresnel);
 	}
 	#endif
 
     //Fog
-    Fog(albedo.rgb, viewPos, worldPos, atmosphereColor, 0.0);
+    Fog(albedo.rgb, viewPos, atmosphereColor, 0.0);
 	albedo.a *= cloudBlendOpacity;
 
 	/* DRAWBUFFERS:013 */

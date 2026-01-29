@@ -17,16 +17,12 @@ in float viewDistance;
 flat in int mat;
 
 // Uniforms //
-uniform int vxRenderDistance;
+uniform int dhRenderDistance, vxRenderDistance;
 uniform int isEyeInWater;
 uniform int frameCounter;
 
 #ifdef AURORA_LIGHTING_INFLUENCE
 uniform int moonPhase;
-#endif
-
-#ifdef DISTANT_HORIZONS
-uniform int dhRenderDistance;
 #endif
 
 uniform int worldDay, worldTime;
@@ -250,7 +246,7 @@ void main() {
     #if defined OVERWORLD
     float atmosphereHardMixFactor = 0.0;
     vec3 atmosphereColor = getAtmosphere(viewPos.xyz, worldPos.xyz, atmosphereHardMixFactor);
-		 atmosphereColor *= 1.0 + Bayer8(gl_FragCoord.xy) / 64.0;
+		    atmosphereColor *= 1.0 + Bayer8(gl_FragCoord.xy) / 64.0;
 	#elif defined NETHER
 	vec3 atmosphereColor = netherColSqrt.rgb * 0.25;
 	#elif defined END
@@ -292,7 +288,7 @@ void main() {
 	#endif
 
     //Fog
-    Fog(albedo.rgb, viewPos, worldPos, atmosphereColor, 0.0);
+    Fog(albedo.rgb, viewPos, atmosphereColor, 0.0);
 	albedo.a *= cloudBlendOpacity;
 
 	/* DRAWBUFFERS:013 */

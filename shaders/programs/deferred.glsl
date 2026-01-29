@@ -9,7 +9,7 @@
 in vec2 texCoord;
 
 // Uniforms //
-uniform int vxRenderDistance, dhRenderDistance;
+uniform int dhRenderDistance, vxRenderDistance;
 uniform int isEyeInWater;
 uniform int frameCounter;
 
@@ -65,7 +65,7 @@ uniform sampler2D depthtex0;
 uniform sampler2D dhDepthTex0;
 #endif
 #ifdef VOXY
-uniform sampler2D vxDepthTexTrans;
+uniform sampler2D vxDepthTexOpaque;
 #endif
 uniform sampler2D noisetex;
 
@@ -158,20 +158,20 @@ void main() {
 	float dhZ = texture2D(dhDepthTex0, texCoord).r;
 	#endif
     #ifdef VOXY
-    float vxZ = texture2D(vxDepthTexTrans, texCoord).r;
+    float vxZ = texture2D(vxDepthTexOpaque, texCoord).r;
     #endif
 
 	vec4 screenPos = vec4(texCoord, z0, 1.0);
 	vec4 viewPos = gbufferProjectionInverse * (screenPos * 2.0 - 1.0);
-		 viewPos /= viewPos.w;
+		    viewPos /= viewPos.w;
 	vec4 worldPos = gbufferModelViewInverse * vec4(viewPos.xyz, 1.0);
-		 worldPos.xyz /= worldPos.w;
+		    worldPos.xyz /= worldPos.w;
 
     float atmosphereHardMixFactor = 0.0;
 
     #if defined OVERWORLD
     vec3 atmosphereColor = getAtmosphere(viewPos.xyz, worldPos.xyz, atmosphereHardMixFactor);
-		 atmosphereColor *= 1.0 + Bayer8(gl_FragCoord.xy) / 64.0;
+		    atmosphereColor *= 1.0 + Bayer8(gl_FragCoord.xy) / 64.0;
 	#elif defined NETHER
 	vec3 atmosphereColor = netherColSqrt.rgb * 0.25;
 	#elif defined END
@@ -263,35 +263,37 @@ void main() {
     skyColor *= 1.0 - darknessFactor;
     #endif
 
-	#ifndef DISTANT_HORIZONS
-	if (z0 == 1.0) color = skyColor;
-	#else
-	if (dhZ == 1.0 && z0 == 1.0) color = skyColor;
-	#endif
+    #if defined DISTANT_HORIZONS
+    if (dhZ == 1.0 && z0 == 1.0) color = skyColor;
+    #elif defined VOXY
+    if (vxZ == 1.0 && z0 == 1.0) color = skyColor;
+    #else
+    if (z0 == 1.0) color = skyColor;
+    #endif
 
 	//Apply fog before the clouds in Overworld
 	#if defined DISTANT_HORIZONS
 	if (z0 != 1.0) {
-		Fog(color, viewPos.xyz, worldPos.xyz, atmosphereColor, z0);
+		Fog(color, viewPos.xyz, atmosphereColor, z0);
 	} else if (dhZ != 1.0) {
 		vec4 dhScreenPos = vec4(texCoord, dhZ, 1.0);
 		vec4 dhViewPos = dhProjectionInverse * (dhScreenPos * 2.0 - 1.0);
 			 dhViewPos /= dhViewPos.w;
 
-        Fog(color, dhViewPos.xyz, ToWorld(dhViewPos.xyz), atmosphereColor, z0);
+        Fog(color, dhViewPos.xyz, atmosphereColor, z0);
 	}
 	#elif defined VOXY
-	if (z0 != 1.0) {
-		Fog(color, viewPos.xyz, worldPos.xyz, atmosphereColor, z0);
-	} else if (vxZ != 1.0) {
-		vec4 vxScreenPos = vec4(texCoord, vxZ, 1.0);
-		vec4 vxViewPos = vxProjInv * (vxScreenPos * 2.0 - 1.0);
-			 vxViewPos /= vxViewPos.w;
+    if (z0 < 1.0) {
+        Fog(color, viewPos.xyz, atmosphereColor, z0);
+    } else if (vxZ < 1.0) {
+        vec4 vxScreenPos = vec4(texCoord, vxZ, 1.0);
+        vec4 vxViewPos = vxProjInv * (vxScreenPos * 2.0 - 1.0);
+                vxViewPos /= vxViewPos.w;
 
-        Fog(color, vxViewPos.xyz, ToWorldVoxy(vxViewPos.xyz), atmosphereColor, z0);
-	}
+        Fog(color, vxViewPos.xyz, atmosphereColor, vxZ);
+    }
     #else
-	Fog(color, viewPos.xyz, worldPos.xyz, atmosphereColor, z0);
+	Fog(color, viewPos.xyz, atmosphereColor, z0);
     #endif
 
 	//Volumetric Clouds

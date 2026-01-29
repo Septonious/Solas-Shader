@@ -31,22 +31,21 @@ void getDenseFog(inout vec3 color, float lViewPos) {
 
 //Normal Fog
 void getNormalFog(inout vec3 color, in vec3 atmosphereColor, in vec3 viewPos, in vec3 worldPos, in float lViewPos, in float lWorldPos, in float z0) {
-    #if defined DISTANT_HORIZONS && (defined DEFERRED || defined DH_WATER || defined GBUFFERS_WATER)
-    float farPlane = dhRenderDistance * 0.6;
-    #else
-	float farPlane = far;
-    #ifdef NETHER
-            farPlane += vxRenderDistance;
-    #else
-            farPlane += vxRenderDistance * 1.9;
+    float farPlane = far;
+
+    #ifdef VOXY
+            farPlane = max(farPlane, vxRenderDistance * 16.0);
     #endif
+
+    #ifdef DISTANT_HORIZONS
+            farPlane = max(farPlane, float(dhRenderDistance));
     #endif
 
 	//Overworld Fog
 	#ifdef OVERWORLD
 	vec3 fogPos = worldPos + cameraPosition;
 	float noise = texture2D(noisetex, (fogPos.xz + fogPos.y) * 0.0005 + frameCounter * 0.00001).r;
-          noise *= noise;
+            noise *= noise;
     float distanceFactor = 50.0 * (0.5 + timeBrightness * 0.75) + FOG_DISTANCE * (0.75 + caveFactor * 0.25) - wetness * 25.0;
 	float distanceMult = max(256.0 / farPlane, 2.0) * (100.0 / distanceFactor);
 	float altitudeFactor = FOG_HEIGHT + noise * 10.0 + timeBrightness * 25.0 - isJungle * 15.0;
@@ -82,10 +81,15 @@ void getNormalFog(inout vec3 color, in vec3 atmosphereColor, in vec3 viewPos, in
 		float fogFactor = lViewPos;
 		#endif
 
-		float vanillaFog = 1.0 - (farPlane - (fogFactor + fogOffset)) * 16.0 / (8.0 * farPlane);
-			  vanillaFog = clamp(vanillaFog * vanillaFog * vanillaFog, 0.0, 1.0) * caveFactor;
+        float distancePow = 4.0;
+        #if defined DISTANT_HORIZONS || defined VOXY
+                distancePow -= 3.0;
+        #endif
+
+		float vanillaFog = 1.0 - (farPlane - (fogFactor + fogOffset)) / farPlane;
+		        vanillaFog = clamp(pow(vanillaFog, distancePow), 0.0, 1.0) * caveFactor;
 	
-		if (0.0 < vanillaFog){
+		if (vanillaFog > 0.0){
 			fogCol *= fog;
 			fog = fmix(fog, 1.0, vanillaFog);
 
@@ -146,12 +150,15 @@ void getNormalFog(inout vec3 color, in vec3 atmosphereColor, in vec3 viewPos, in
 	color = fmix(color, fogCol, fog);
 }
 
-void Fog(inout vec3 color, in vec3 viewPos, in vec3 worldPos, in vec3 atmosphereColor, in float z0) {
+void Fog(inout vec3 color, in vec3 viewPos, in vec3 atmosphereColor, in float z0) {
+	vec4 worldPos = gbufferModelViewInverse * vec4(viewPos, 1.0);
+	        worldPos.xyz /= worldPos.w;
+
     float lViewPos = length(viewPos.xz);
     float lWorldPos = length(worldPos.xz);
 
 	if (isEyeInWater < 1) {
-        getNormalFog(color, atmosphereColor, viewPos, worldPos, lViewPos, lWorldPos, z0);
+        getNormalFog(color, atmosphereColor, viewPos, worldPos.xyz, lViewPos, lWorldPos, z0);
     } else if (isEyeInWater > 1) {
         getDenseFog(color, lViewPos);
     }

@@ -1,5 +1,6 @@
 {
   "version": 1,
+  "excludeLodsFromVanillaDepth": true,
   "opaqueDrawBuffers": [0],
   "translucentDrawBuffers": [0, 1],
   "blending": {
@@ -100,6 +101,5 @@
     ",
     "translucentPatchData":"
         #include "/world-1/voxy_translucent.glsl"
-    ",
-    "excludeLodsFromVanillaDepth": false
+    "
 }

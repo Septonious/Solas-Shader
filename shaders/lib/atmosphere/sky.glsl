@@ -5,13 +5,8 @@ vec3 getAtmosphere(vec3 viewPos, vec3 worldPos, out float atmosphereHardMixFacto
     float altitudeFactor = min(max(cameraPosition.y, 0.0) / KARMAN_LINE, 1.0);
     float altitudeFactor10k = min(max(cameraPosition.y, 0.0) * 0.0001, 1.0);
 
-    #if defined GBUFFERS_WATER || defined COMPOSITE_3
-    vec3 nWorldPos = worldPos;
-    vec3 nViewPos = viewPos;
-    #else
     vec3 nWorldPos = normalize(worldPos);
     vec3 nViewPos = normalize(viewPos);
-    #endif
 
     float heightPositive = max(nWorldPos.y * (1.0 - altitudeFactor * 0.5) + altitudeFactor * 0.5, 0.0);
     float density = clamp((1.0 - heightPositive * (0.65 + altitudeFactor * altitudeFactor * 3.0)) * (1.0 + pow4(altitudeFactor) * 9.0), 0.0, 1.0);
