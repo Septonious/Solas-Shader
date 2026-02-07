@@ -123,12 +123,18 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z, fl
 		vec3 nWorldPos = normalize(worldPos0);
         float lViewPos = length(viewPos);
 
-		#ifdef DISTANT_HORIZONS
+		#if defined DISTANT_HORIZONS
 		float dhZ = texture2D(dhDepthTex0, texCoord).r;
 		vec4 dhScreenPos = vec4(texCoord, dhZ, 1.0);
 		vec4 dhViewPos = dhProjectionInverse * (dhScreenPos * 2.0 - 1.0);
 			 dhViewPos /= dhViewPos.w;
 		float lDhViewPos = length(dhViewPos.xyz);
+		#elif defined VOXY
+		float vxZ = texture2D(vxDepthTexOpaque, texCoord).r;
+		vec4 vxScreenPos = vec4(texCoord, vxZ, 1.0);
+		vec4 vxViewPos = vxProjInv * (vxScreenPos * 2.0 - 1.0);
+		     vxViewPos /= vxViewPos.w;
+		float lVxViewPos = length(vxViewPos.xyz);
 		#endif
 
 		//Cloud parameters
@@ -228,8 +234,10 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z, fl
             for (int i = 0; i < sampleCount; i++, rayPos += rayIncrement, sampleTotalLength += rayLength) {
                 if (cloud > 0.99 || (lViewPos < sampleTotalLength && z < 1.0) || sampleTotalLength > distance * 32.0) break;
 
-				#ifdef DISTANT_HORIZONS
+				#if defined DISTANT_HORIZONS
 				if ((lDhViewPos < sampleTotalLength && dhZ < 1.0)) break;
+				#elif defined VOXY
+				if ((lVxViewPos < sampleTotalLength && vxZ < 1.0)) break;
 				#endif
 
                 vec3 worldPos = rayPos - cameraPosition;
@@ -391,11 +399,18 @@ void computeEndVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z,
 		vec3 worldEndFlashPosition = ToWorld(normalize(endFlashPosition * 10000.0)) * 24.0;
 		#endif
 
-		#ifdef DISTANT_HORIZONS
+		#if defined DISTANT_HORIZONS
 		float dhZ = texture2D(dhDepthTex0, texCoord).r;
 		vec4 dhScreenPos = vec4(texCoord, dhZ, 1.0);
 		vec4 dhViewPos = dhProjectionInverse * (dhScreenPos * 2.0 - 1.0);
 			 dhViewPos /= dhViewPos.w;
+		float lDhViewPos = length(dhViewPos.xyz);
+		#elif defined VOXY
+		float vxZ = texture2D(vxDepthTexOpaque, texCoord).r;
+		vec4 vxScreenPos = vec4(texCoord, vxZ, 1.0);
+		vec4 vxViewPos = vxProjInv * (vxScreenPos * 2.0 - 1.0);
+		     vxViewPos /= vxViewPos.w;
+		float lVxViewPos = length(vxViewPos.xyz);
 		#endif
 
 		//Setting the ray marcher
@@ -435,7 +450,10 @@ void computeEndVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z,
 				if (0.99 < cloudAlpha || (length(viewPos) < sampleTotalLength && z < 1.0)) break;
 
 				#ifdef DISTANT_HORIZONS
-				if ((length(dhViewPos.xyz) < sampleTotalLength && dhZ < 1.0)) break;
+				if ((lDhViewPos < sampleTotalLength && dhZ < 1.0)) break;
+				#endif
+				#ifdef VOXY
+				if ((lVxViewPos < sampleTotalLength && vxZ < 1.0)) break;
 				#endif
 
                 vec3 worldPos = rayPos - cameraPosition;
