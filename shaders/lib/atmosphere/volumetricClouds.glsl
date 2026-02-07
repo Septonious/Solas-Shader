@@ -85,7 +85,7 @@ float CloudSample(vec2 coord, vec2 wind, float sampleAltitude, float thickness, 
 	float noiseCoverage = CloudCoverageDefault(sampleAltitude, amount);
 
 	float noise = CloudCombineDefault(noiseBase, noiseDetail, noiseCoverage, amount, density);
-	
+
 	return noise;
 }
 
@@ -98,7 +98,7 @@ float CloudSampleLowDetail(vec2 coord, vec2 wind, float sampleAltitude, float th
 	float noiseCoverage = CloudCoverageDefault(sampleAltitude, amount);
 
 	float noise = CloudCombineDefault(noiseBase, 0.0, noiseCoverage, amount, density);
-	
+
 	return noise;
 }
 
@@ -123,12 +123,18 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z, fl
 		vec3 nWorldPos = normalize(worldPos0);
         float lViewPos = length(viewPos);
 
-		#ifdef DISTANT_HORIZONS
+		#if defined DISTANT_HORIZONS
 		float dhZ = texture2D(dhDepthTex0, texCoord).r;
 		vec4 dhScreenPos = vec4(texCoord, dhZ, 1.0);
 		vec4 dhViewPos = dhProjectionInverse * (dhScreenPos * 2.0 - 1.0);
 			 dhViewPos /= dhViewPos.w;
 		float lDhViewPos = length(dhViewPos.xyz);
+		#elif defined VOXY
+		float vxZ = texture2D(vxDepthTexOpaque, texCoord).r;
+		vec4 vxScreenPos = vec4(texCoord, vxZ, 1.0);
+		vec4 vxViewPos = vxProjInv * (vxScreenPos * 2.0 - 1.0);
+		     vxViewPos /= vxViewPos.w;
+		float lVxViewPos = length(vxViewPos.xyz);
 		#endif
 
 		//Cloud parameters
@@ -191,7 +197,7 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z, fl
 
             vec3 rayIncrement = nWorldPos * rayLength;
             int sampleCount = int(min(planeDifference / rayLength, maxsampleCount) + 4);
-            
+
             vec3 startPos = cameraPosition + nearestPlane * nWorldPos;
             vec3 rayPos = startPos + rayIncrement * dither;
             float sampleTotalLength = nearestPlane + rayLength * dither;
@@ -228,8 +234,10 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z, fl
             for (int i = 0; i < sampleCount; i++, rayPos += rayIncrement, sampleTotalLength += rayLength) {
                 if (cloud > 0.99 || (lViewPos < sampleTotalLength && z < 1.0) || sampleTotalLength > distance * 32.0) break;
 
-				#ifdef DISTANT_HORIZONS
+				#if defined DISTANT_HORIZONS
 				if ((lDhViewPos < sampleTotalLength && dhZ < 1.0)) break;
+				#elif defined VOXY
+				if ((lVxViewPos < sampleTotalLength && vxZ < 1.0)) break;
 				#endif
 
                 vec3 worldPos = rayPos - cameraPosition;
@@ -281,7 +289,7 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z, fl
 
             //Final color calculations
 			vec3 nSkyColor = normalize(skyColor + 0.0001);
-            vec3 cloudAmbientColor = fmix(atmosphereColor * atmosphereColor * 0.5, 
+            vec3 cloudAmbientColor = fmix(atmosphereColor * atmosphereColor * 0.5,
 									 fmix(ambientCol, atmosphereColor * nSkyColor * 0.5, 0.2 + timeBrightness * 0.3 + isSpecificBiome * 0.4),
 									 sunVisibility * (1.0 - wetness)) * (1.0 - scattering * 0.75);
             vec3 cloudLightColor = fmix(lightCol, lightCol * nSkyColor * 2.0, timeBrightnessSqrt * (0.5 - wetness * 0.5));
@@ -344,7 +352,7 @@ void getEndCloudSample(vec2 rayPos, vec2 wind, float attenuation, inout float no
 
 	float noiseCoverage = abs(attenuation - 0.125) * (attenuation > 0.125 ? 1.14 : 5.0);
 		  noiseCoverage *= noiseCoverage * 5.0;
-	
+
 	noise = mix(noiseBase, noiseDetail, 0.025 * int(0 < noiseBase)) * 22.0 - noiseCoverage;
 	noise = max(noise - END_DISK_AMOUNT - 1.0 + getProtoplanetaryDisk(rayPos), 0.0);
 	noise /= sqrt(noise * noise + 0.25);
@@ -391,11 +399,18 @@ void computeEndVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z,
 		vec3 worldEndFlashPosition = ToWorld(normalize(endFlashPosition * 10000.0)) * 24.0;
 		#endif
 
-		#ifdef DISTANT_HORIZONS
+		#if defined DISTANT_HORIZONS
 		float dhZ = texture2D(dhDepthTex0, texCoord).r;
 		vec4 dhScreenPos = vec4(texCoord, dhZ, 1.0);
 		vec4 dhViewPos = dhProjectionInverse * (dhScreenPos * 2.0 - 1.0);
 			 dhViewPos /= dhViewPos.w;
+		float lDhViewPos = length(dhViewPos.xyz);
+		#elif defined VOXY
+		float vxZ = texture2D(vxDepthTexOpaque, texCoord).r;
+		vec4 vxScreenPos = vec4(texCoord, vxZ, 1.0);
+		vec4 vxViewPos = vxProjInv * (vxScreenPos * 2.0 - 1.0);
+		     vxViewPos /= vxViewPos.w;
+		float lVxViewPos = length(vxViewPos.xyz);
 		#endif
 
 		//Setting the ray marcher
@@ -423,7 +438,7 @@ void computeEndVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z,
 			float scattering = pow8(halfVoLSqrt);
 
 			vec3 rayPos = startPos + sampleStep * dither;
-			
+
 			float maxDepth = currentDepth;
 			float minimalNoise = 0.25 + dither * 0.25;
 			float sampleTotalLength = minDist + rayLength * dither;
@@ -434,8 +449,10 @@ void computeEndVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z,
 			for (int i = 0; i < sampleCount; i++, rayPos += sampleStep, sampleTotalLength += rayLength) {
 				if (0.99 < cloudAlpha || (length(viewPos) < sampleTotalLength && z < 1.0)) break;
 
-				#ifdef DISTANT_HORIZONS
-				if ((length(dhViewPos.xyz) < sampleTotalLength && dhZ < 1.0)) break;
+				#if defined DISTANT_HORIZONS
+				if ((lDhViewPos < sampleTotalLength && dhZ < 1.0)) break;
+				#elif defined VOXY
+				if ((lVxViewPos < sampleTotalLength && vxZ < 1.0)) break;
 				#endif
 
                 vec3 worldPos = rayPos - cameraPosition;
