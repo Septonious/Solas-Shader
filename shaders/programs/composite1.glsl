@@ -63,6 +63,11 @@ uniform sampler2D dhDepthTex0, dhDepthTex1;
 uniform mat4 dhProjectionInverse;
 #endif
 
+#ifdef VOXY
+uniform sampler2D vxDepthTexOpaque, vxDepthTexTrans;
+
+uniform mat4 vxProjInv;
+#endif
 uniform mat4 gbufferProjection;
 uniform mat4 gbufferProjectionInverse;
 uniform mat4 gbufferModelView;
