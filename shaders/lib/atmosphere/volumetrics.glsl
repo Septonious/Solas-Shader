@@ -68,7 +68,7 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
 	float linearZ0 = getLinearDepth(z0, gbufferProjectionInverse);
 	float linearZ1 = getLinearDepth(z1, gbufferProjectionInverse);
 
-    #ifdef DISTANT_HORIZONS
+    #if defined DISTANT_HORIZONS
 	float DHz0 = texture2D(dhDepthTex0, texCoord).r;
 	float DHz1 = texture2D(dhDepthTex1, texCoord).r;
 	float DHlinearZ0 = getLinearDepth(DHz0, dhProjectionInverse);
@@ -76,6 +76,14 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
 
     linearZ0 = min(linearZ0, DHlinearZ0);
     linearZ1 = min(linearZ1, DHlinearZ1);
+    #elif defined VOXY
+    float VXz0 = texture(vxDepthTexOpaque, texCoord).r;
+    float VXz1 = texture(vxDepthTexTrans, texCoord).r;
+    float VXlinearZ0 = getLinearDepth(VXz0, vxProjInv);
+    float VXlinearZ1 = getLinearDepth(VXz1, vxProjInv);
+
+    linearZ0 = min(linearZ0, VXlinearZ0);
+    linearZ1 = min(linearZ1, VXlinearZ1);
     #endif
 
 	//Positions & Common variables
