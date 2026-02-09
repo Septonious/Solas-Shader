@@ -124,7 +124,7 @@ void voxy_emitFragment(VoxyFragmentParameters parameters) {
 		//Water Light Absorption & Scattering
 		vec4 waterFog = vec4(0.0);
 
-		float oDepth = texture2D(vxDepthTexTrans, screenPos.xy).r;
+		float oDepth = texture(vxDepthTexTrans, screenPos.xy).r;
 		vec3 oScreenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), oDepth);
 		vec3 oViewPos = ToNDC(oScreenPos);
 
@@ -139,7 +139,7 @@ void voxy_emitFragment(VoxyFragmentParameters parameters) {
 		vec2 noisePos = worldPos.xy + cameraPosition.xy;
 			 noisePos += worldPos.zy + cameraPosition.zy;
 			 noisePos.y *= 0.5;
-		float portalNoise = texture2D(noisetex, noisePos * 0.1 + 0.01 * vec2(sin(frameTimeCounter * 0.6) + frameTimeCounter * 0.4, frameTimeCounter * 0.5 - cos(frameTimeCounter * 0.7))).r;
+		float portalNoise = texture(noisetex, noisePos * 0.1 + 0.01 * vec2(sin(frameTimeCounter * 0.6) + frameTimeCounter * 0.4, frameTimeCounter * 0.5 - cos(frameTimeCounter * 0.7))).r;
 			  portalNoise *= portalNoise * portalNoise;
 			  portalNoise = clamp(portalNoise, 0.0, 1.0);
 		albedo.rgb = pow(vec3(NP_R, NP_G, NP_B), max(vec3(1.0 - portalNoise * 3.0 - pow4(lAlbedo) * 0.25), vec3(0.1))) * 3.0 * portalNoise * (0.8 + pow4(lAlbedo) * 0.6);
@@ -151,9 +151,9 @@ void voxy_emitFragment(VoxyFragmentParameters parameters) {
 	#ifdef VOLUMETRIC_CLOUDS
 	#ifndef DISTANT_HORIZONS
     float farPlane = far + vxRenderDistance * 512.0;
-	float cloudDepth = texture2D(gaux2, screenPos.xy).r * (farPlane * 2.0);
+	float cloudDepth = texture(gaux2, screenPos.xy).r * (farPlane * 2.0);
 	#else
-	float cloudDepth = texture2D(gaux2, screenPos.xy).r * dhFarPlane;
+	float cloudDepth = texture(gaux2, screenPos.xy).r * dhFarPlane;
 	#endif
 	cloudBlendOpacity = step(length(viewPos), cloudDepth);
 
