@@ -24,6 +24,8 @@
     "frameTimeCounter", 
     "skyColor",
     "fogColor",
+    "endFlashIntensity",
+    "endFlashPosition",
     "cameraPosition",
     "cameraPositionInt",
     "cameraPositionFract",

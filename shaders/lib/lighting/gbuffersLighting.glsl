@@ -1,15 +1,6 @@
-#if MC_VERSION >= 12100
+#if defined END_FLASHES && (!defined VOXY_OPAQUE && !defined VOXY_TRANSLUCENT)
 uniform vec3 endFlashPosition;
 uniform float endFlashIntensity;
-
-float endFlashPosToPoint(vec3 flashPosition, vec3 worldPos) {
-    vec3 flashPos = mat3(gbufferModelViewInverse) * flashPosition;
-    vec2 flashCoord = flashPos.xz / (flashPos.y + length(flashPos));
-    vec2 planeCoord = worldPos.xz / (length(worldPos) + worldPos.y) - flashCoord;
-    float flashPoint = 1.0 - clamp(length(planeCoord), 0.0, 1.0);
-
-    return flashPoint;
-}
 #endif
 
 void gbuffersLighting(in vec4 color, inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in vec3 worldPos, in vec3 newNormal, inout vec3 shadow, in vec2 lightmap, 

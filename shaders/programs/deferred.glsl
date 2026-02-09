@@ -283,6 +283,7 @@ void main() {
         Fog(color, dhViewPos.xyz, atmosphereColor, z0);
 	}
 	#elif defined VOXY
+    #if !defined END
     if (z0 < 1.0) {
         Fog(color, viewPos.xyz, atmosphereColor, z0);
     } else if (vxZ < 1.0) {
@@ -292,6 +293,17 @@ void main() {
 
         Fog(color, vxViewPos.xyz, atmosphereColor, vxZ);
     }
+    #else
+    if (z0 <= 1.0) {
+        Fog(color, viewPos.xyz, atmosphereColor, z0);
+    } else if (vxZ <= 1.0) {
+        vec4 vxScreenPos = vec4(texCoord, vxZ, 1.0);
+        vec4 vxViewPos = vxProjInv * (vxScreenPos * 2.0 - 1.0);
+                vxViewPos /= vxViewPos.w;
+
+        Fog(color, vxViewPos.xyz, atmosphereColor, vxZ);
+    }
+    #endif
     #else
 	Fog(color, viewPos.xyz, atmosphereColor, z0);
     #endif
