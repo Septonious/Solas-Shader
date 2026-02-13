@@ -98,7 +98,7 @@ void drawPlanarClouds(inout vec4 pc, in vec3 atmosphereColor, in vec3 worldPos, 
 
 		pc = vec4(cloudLightColor * cloudLighting * noise * PLANAR_CLOUDS_BRIGHTNESS, cloudSample);
         pc.rgb = pow(pc.rgb, vec3(1.0 / 2.2));
-        pc.rgb = fmix(pc.rgb, atmosphereColor, 0.5 - cloudLighting * 0.25 - scattering * 0.25);
+        pc.rgb = fmix(pc.rgb, atmosphereColor, 0.6 - cloudLighting * 0.25 - scattering * 0.25);
         occlusion += cloudSample;
 	}
 }
