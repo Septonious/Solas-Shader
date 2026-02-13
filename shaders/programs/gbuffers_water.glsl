@@ -20,11 +20,7 @@ flat in int mat;
 uniform int dhRenderDistance, vxRenderDistance;
 uniform int isEyeInWater;
 uniform int frameCounter;
-
-#ifdef AURORA_LIGHTING_INFLUENCE
 uniform int moonPhase;
-#endif
-
 uniform int worldDay, worldTime;
 
 uniform float frameTimeCounter;
@@ -62,6 +58,18 @@ uniform sampler2D gaux1;
 
 #ifdef VOLUMETRIC_CLOUDS
 uniform sampler2D gaux2;
+#endif
+
+#ifdef VOXY
+uniform sampler2D vxDepthTexOpaque;
+
+uniform mat4 vxProjInv;
+#endif
+
+#ifdef DISTANT_HORIZONS
+uniform sampler2D dhDepthTex1
+
+uniform mat4 dhProjectionInverse;
 #endif
 
 uniform mat4 gbufferProjection;

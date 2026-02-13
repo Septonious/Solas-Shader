@@ -47,6 +47,18 @@ uniform sampler2D colortex0;
 uniform sampler2D noisetex, colortex3;
 uniform sampler2D depthtex0, depthtex1;
 
+#ifdef VOXY
+uniform sampler2D vxDepthTexOpaque;
+
+uniform mat4 vxProjInv;
+#endif
+
+#ifdef DISTANT_HORIZONS
+uniform sampler2D dhDepthTex1
+
+uniform mat4 dhProjectionInverse;
+#endif
+
 uniform mat4 gbufferProjection;
 uniform mat4 gbufferProjectionInverse;
 uniform mat4 gbufferModelView;

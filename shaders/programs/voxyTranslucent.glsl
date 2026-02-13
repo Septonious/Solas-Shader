@@ -56,7 +56,7 @@ vec3 binormal = vxModelView[2].xyz;
 #endif
 
 #ifdef WATER_REFLECTIONS
-#include "/lib/pbr/raytracerVoxy.glsl"
+#include "/lib/pbr/raytracer.glsl"
 #include "/lib/pbr/waterReflection.glsl"
 #endif
 

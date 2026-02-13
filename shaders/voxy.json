@@ -68,6 +68,11 @@
     "framemod8"
     ],
     "samplers": {
+		#ifdef DISTANT_HORIZONS
+		"dhDepthTex1": "sampler2D",
+		#endif
+		"depthtex0":"sampler2D",
+		"depthtex1":"sampler2D",
         "gaux1":"sampler2D",
         "gaux2":"sampler2D",
         "noisetex":"sampler2D", 
