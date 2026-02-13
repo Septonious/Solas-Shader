@@ -281,10 +281,9 @@ void gbuffersLighting(in vec4 color, inout vec4 albedo, in vec3 screenPos, in ve
 
     //Vanilla vanillaAo
     float aoMixer = (1.0 - vanillaAo) * (1.0 - blockLightMap) * (1.0 - emission);
-
-    //#if defined OVERWORLD || defined END
-    //aoMixer *= 1.0 - float(length(realShadow) > 0.0);
-    //#endif
+    #if defined OVERWORLD || defined END
+            aoMixer *= 1.0 - float(length(shadow) > 0.0) * 0.5;
+    #endif
 
     albedo.rgb = fmix(albedo.rgb, albedo.rgb * pow(vanillaAo, 1.0 + lightmap.y), aoMixer);
 
