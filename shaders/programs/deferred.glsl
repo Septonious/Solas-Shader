@@ -233,7 +233,7 @@ void main() {
 	#endif
 
     #ifdef AURORA
-    drawAurora(skyColor, worldPos.xyz, caveFactor);
+    drawAurora(skyColor, worldPos.xyz, caveFactor, occlusion);
     #endif
 
     #ifdef MILKY_WAY
@@ -241,7 +241,7 @@ void main() {
     #endif
 
     #ifdef STARS
-    drawStars(skyColor, worldPos.xyz, VoU, VoS, caveFactor, nebulaFactor, 0.7);
+    drawStars(skyColor, worldPos.xyz, VoU, VoS, caveFactor, nebulaFactor, occlusion, 0.7);
 
     #ifdef SHOOTING_STARS
     getShootingStars(skyColor, worldPos.xyz, VoU, VoS);
@@ -257,14 +257,11 @@ void main() {
     #endif
 
     #ifdef END_STARS
-    drawStars(skyColor, worldPos.xyz, VoU, VoS, 1.0, nebulaFactor, 0.85);
+    drawStars(skyColor, worldPos.xyz, VoU, VoS, 1.0, nebulaFactor, occlusion, 0.85);
     #endif
 
     //Planar Clouds
     #ifdef PLANAR_CLOUDS
-    pc.rgb = pow(pc.rgb, vec3(1.0 / 2.2));
-    pc.rgb = fmix(pc.rgb, atmosphereColor, 0.4);
-
     skyColor = fmix(skyColor, pc.rgb, pc.a * pc.a);
     #endif
 	#endif

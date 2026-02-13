@@ -52,7 +52,7 @@ float auroraDistortedNoise(vec2 coord, float kpIndex, float pulse, float longPul
     return max(aurora, 0.0);
 }
 
-void drawAurora(inout vec3 color, in vec3 worldPos, in float caveFactor) {
+void drawAurora(inout vec3 color, in vec3 worldPos, in float caveFactor, in float occlusion) {
     vec3 nWorldPos = normalize(worldPos);
 
     //Altitude factor. Makes the aurora closer to you when you're ascending
@@ -70,7 +70,7 @@ void drawAurora(inout vec3 color, in vec3 worldPos, in float caveFactor) {
           kpIndex = min(max(kpIndex, 0) + isSnowy * 4, 9);
 
 	//Total visibility of aurora based on multiple factors
-	float visibility = pow6(moonVisibility) * (1.0 - wetness) * caveFactor;
+	float visibility = pow6(moonVisibility) * (1.0 - wetness) * (1.0 - occlusion * occlusion * 0.75) * caveFactor;
 
 	//Aurora tends to get brighter and dimmer when plasma arrives or fades away
 	float pulse = 0.5 + 0.5 * sin(frameTimeCounter * 0.08 + sin(frameTimeCounter * 0.013) * 0.6);

@@ -177,9 +177,9 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z, fl
         float auroraDistanceFactor = clamp(1.0 - length(nWorldPos.xz) * max(0.05 - altitudeFactor50k * (1.0 - altitudeFactor) * 0.25 + altitudeFactor * 0.04, 0.0125), 0.0, 1.0) * mix(auroraNorthBias, 1.0, altitudeFactor) * mix(WEhorizon, poles, altitudeFactor50k);
 
 		//Total visibility of aurora based on multiple factors
-		float auroraVisibility = pow6(moonVisibility) * (1.0 - wetness) * caveFactor * kpIndex * auroraDistanceFactor;
+		float auroraVisibility = pow6(moonVisibility) * (1.0 - wetness) * caveFactor * kpIndex * auroraDistanceFactor * 2.0;
 
-		amount += auroraVisibility * 0.5;
+		amount += auroraVisibility * 0.25;
 		#endif
 
 		//Ray marcher peramters

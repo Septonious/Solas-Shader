@@ -85,7 +85,7 @@ void drawPlanarClouds(inout vec4 pc, in vec3 atmosphereColor, in vec3 worldPos, 
         float auroraDistanceFactor = clamp(1.0 - length(nWorldPos.xz) * max(0.05 - altitudeFactor50k * (1.0 - altitudeFactor) * 0.25 + altitudeFactor * 0.04, 0.0125), 0.0, 1.0) * mix(auroraNorthBias, 1.0, altitudeFactor) * mix(WEhorizon, poles, altitudeFactor50k);
 
 		//Total visibility of aurora based on multiple factors
-		float auroraVisibility = pow6(moonVisibility) * (1.0 - wetness) * caveFactor * kpIndex * auroraDistanceFactor;
+		float auroraVisibility = pow6(moonVisibility) * (1.0 - wetness) * caveFactor * kpIndex * auroraDistanceFactor * 3.0;
 		#endif
 
 		vec3 nSkyColor = normalize(skyColor + 0.0001);
@@ -97,6 +97,8 @@ void drawPlanarClouds(inout vec4 pc, in vec3 atmosphereColor, in vec3 worldPos, 
 			     cloudLightColor *= 0.25 + sunVisibility * 0.5 + moonVisibility * 0.5 + 2.0 * scattering;
 
 		pc = vec4(cloudLightColor * cloudLighting * noise * PLANAR_CLOUDS_BRIGHTNESS, cloudSample);
+        pc.rgb = pow(pc.rgb, vec3(1.0 / 2.2));
+        pc.rgb = fmix(pc.rgb, atmosphereColor, 0.5 - cloudLighting * 0.25 - scattering * 0.25);
         occlusion += cloudSample;
 	}
 }

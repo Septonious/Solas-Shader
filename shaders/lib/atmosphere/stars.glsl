@@ -2,10 +2,10 @@ float getNoise(vec2 pos) {
 	return fract(sin(dot(pos, vec2(12.9898, 4.1414))) * 43758.5453);
 }
 
-void drawStars(inout vec3 color, in vec3 worldPos, in float VoU, in float VoS, in float caveFactor, in float nebulaFactor, in float size) {
+void drawStars(inout vec3 color, in vec3 worldPos, in float VoU, in float VoS, in float caveFactor, in float nebulaFactor, in float occlusion, in float size) {
 	#ifdef OVERWORLD
     float altitudeFactor = min(max(cameraPosition.y, 0.0) / KARMAN_LINE, 1.0);
-	float visibility = moonVisibility * moonVisibility * (1.0 - wetness) * sqrt(max(VoU, 0.0)) * caveFactor * (1.0 - altitudeFactor) + altitudeFactor * sqrt(VoU * 0.5 + 0.5);
+	float visibility = moonVisibility * moonVisibility * (1.0 - wetness) * sqrt(max(VoU, 0.0)) * caveFactor * (1.0 - occlusion) * (1.0 - altitudeFactor) + altitudeFactor * sqrt(VoU * 0.5 + 0.5);
 	#else
 	float visibility = 1.0;
 	#endif
