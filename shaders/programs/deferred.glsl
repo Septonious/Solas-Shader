@@ -171,7 +171,6 @@ void main() {
 
     #if defined OVERWORLD
     vec3 atmosphereColor = getAtmosphere(viewPos.xyz, worldPos.xyz, atmosphereHardMixFactor);
-		    atmosphereColor *= 1.0 + Bayer8(gl_FragCoord.xy) / 64.0;
 	#elif defined NETHER
 	vec3 atmosphereColor = netherColSqrt.rgb * 0.25;
 	#elif defined END
@@ -211,14 +210,14 @@ void main() {
 	#endif
 
 	//Sky
-    vec3 skyColor = atmosphereColor;
+    vec3 skyColor = atmosphereColor * (1.0 + Bayer8(gl_FragCoord.xy) / 64.0);
 
 	#ifndef NETHER
     float occlusion = vc.a;
     float nebulaFactor = 0.0;
 
     #ifdef ROUND_SUN_MOON
-    drawSunMoon(skyColor, worldPos.xyz, nViewPos, VoU, VoS, VoM, caveFactor, occlusion);
+    drawSunMoon(skyColor, worldPos.xyz, nViewPos, VoU, VoS, VoM, caveFactor);
     #endif
 
 	#if MC_VERSION >= 12104 && defined OVERWORLD
@@ -226,19 +225,19 @@ void main() {
 	#endif
 
     #ifdef PLANAR_CLOUDS
-    drawPlanarClouds(skyColor, atmosphereColor, worldPos.xyz, viewPos.xyz, VoU, caveFactor, vc.a, occlusion);
+    drawPlanarClouds(skyColor, atmosphereColor, worldPos.xyz, viewPos.xyz, VoU, caveFactor);
     #endif
 
     #ifdef AURORA
-    drawAurora(skyColor, worldPos.xyz, caveFactor, vc.a, occlusion - vc.a);
+    drawAurora(skyColor, worldPos.xyz, caveFactor);
     #endif
 
     #ifdef MILKY_WAY
-    drawMilkyWay(skyColor, worldPos.xyz, VoU, caveFactor, nebulaFactor, occlusion + atmosphereHardMixFactor);
+    drawMilkyWay(skyColor, worldPos.xyz, VoU, caveFactor, nebulaFactor);
     #endif
 
     #ifdef STARS
-    drawStars(skyColor, worldPos.xyz, VoU, VoS, caveFactor, nebulaFactor, occlusion + atmosphereHardMixFactor, 0.7);
+    drawStars(skyColor, worldPos.xyz, VoU, VoS, caveFactor, nebulaFactor, 0.7);
 
     #ifdef SHOOTING_STARS
     getShootingStars(skyColor, worldPos.xyz, VoU, VoS);
@@ -254,7 +253,7 @@ void main() {
     #endif
 
     #ifdef END_STARS
-    drawStars(skyColor, worldPos.xyz, VoU, VoS, 1.0, nebulaFactor, 0.0, 0.85);
+    drawStars(skyColor, worldPos.xyz, VoU, VoS, 1.0, nebulaFactor, 0.85);
     #endif
 	#endif
 
@@ -311,6 +310,7 @@ void main() {
 	//Volumetric Clouds
 	#if defined VOLUMETRIC_CLOUDS || defined END_DISK
 	vc.rgb = pow(vc.rgb, vec3(1.0 / 2.2));
+    vc.rgb = mix(vc.rgb, atmosphereColor, 0.4);
 
 	#ifdef DISTANT_HORIZONS
 	cloudDepth /= (2.0 * dhFarPlane);

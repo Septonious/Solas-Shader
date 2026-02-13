@@ -16,7 +16,7 @@ float samplePlanarCloudNoise(vec2 coord) {
 }
 
 
-void drawPlanarClouds(inout vec3 color, in vec3 atmosphereColor, in vec3 worldPos, in vec3 viewPos, in float VoU, in float caveFactor, in float volumetricClouds, inout float occlusion) {
+void drawPlanarClouds(inout vec3 color, in vec3 atmosphereColor, in vec3 worldPos, in vec3 viewPos, in float VoU, in float caveFactor) {
     vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.0);
 
     float altitudeFactor = min(max(cameraPosition.y, 0.0) / KARMAN_LINE, 1.0);
@@ -48,7 +48,7 @@ void drawPlanarClouds(inout vec3 color, in vec3 atmosphereColor, in vec3 worldPo
                 fade *= pow3(fade);
                 fade *= distanceFactor;
 		float cloudSample = noise * (1.0 - wetness) * fade;
-		float pc = cloudSample * pow2(1.0 - volumetricClouds) * caveFactor;
+		float pc = cloudSample * caveFactor;
 
         float noiseDiff = clamp(noise - lightingNoise, 0.0, 1.0);
 		float cloudLighting = (0.25 + noiseDiff * shadowFade * 2.0) * (1.0 - noise * noise * (1.0 - altitudeFactor10k) * 0.75) * 2.0;
@@ -64,31 +64,8 @@ void drawPlanarClouds(inout vec3 color, in vec3 atmosphereColor, in vec3 worldPo
 
 		vec3 cloudColor = cloudLightColor * cloudLighting * noise;
 			 cloudColor = pow(cloudColor, vec3(1.0 / 2.2));
+             cloudColor = mix( cloudColor, atmosphereColor, 0.4);
 
-		#ifdef AURORA_LIGHTING_INFLUENCE
-		//The index of geomagnetic activity. Determines the brightness of Aurora, its widespreadness across the sky and tilt factor
-		float kpIndex = abs(worldDay % 9 - worldDay % 4);
-			  kpIndex = kpIndex - int(kpIndex == 1) + int(kpIndex > 7 && worldDay % 10 == 0);
-			  kpIndex = min(max(kpIndex, 0) + isSnowy * 4, 9);
-
-		//Total visibility of aurora based on multiple factors
-		float auroraVisibility = pow6(moonVisibility) * (1.0 - wetness) * caveFactor;
-
-		//Aurora tends to get brighter and dimmer when plasma arrives or fades away
-        float pulse = 0.5 + 0.5 * sin(frameTimeCounter * 0.08 + sin(frameTimeCounter * 0.013) * 0.6);
-                pulse = smoothstep(0.15, 0.85, pulse);
-
-        float longPulse = sin(frameTimeCounter * 0.025 + sin(frameTimeCounter * 0.004) * 0.8);
-                longPulse = longPulse * (1.0 - 0.15 * abs(longPulse));
-
-		kpIndex *= 1.0 + longPulse * 0.25;
-		kpIndex /= 9.0;
-		auroraVisibility *= kpIndex;
-        cloudColor.r *= 1.0 + 2.0 * pow3(kpIndex) * pulse * auroraVisibility;
-        cloudColor.g *= 1.0 + kpIndex * auroraVisibility;
-		#endif
-
-		color = fmix(color, cloudColor * PLANAR_CLOUDS_BRIGHTNESS, pc * PLANAR_CLOUDS_OPACITY);
-		occlusion += min(cloudSample * cloudSample * 3.0, 1.0);
+		color = fmix(color, cloudColor * PLANAR_CLOUDS_BRIGHTNESS, pc);
 	}
 }
