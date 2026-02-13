@@ -101,14 +101,11 @@ void drawAurora(inout vec3 color, in vec3 worldPos, in float caveFactor) {
 		float tiltFactor = 0.15 + kpIndex * 0.15;
 		worldPos.xz -= worldPos.y * vec2(tiltFactor, tiltFactor * 2.0);
 
-        float northSouthStretching = 2.0;
-		float eastWestStretching = 1.0;
-
 		for (int i = 0; i < samples; i++) {
 			vec3 planeCoord = worldPos * ((20.0 - kpIndex * 10.0 + altitudeFactor * 20.0 + pow(clamp(nWorldPos.y, 0.0, 1.0), 0.25) * 15.0 + currentStep * (10.0 + kpIndex * 5.0)) / worldPos.y) * 0.05;
 			vec2 coord = planeCoord.xz + cameraPosition.xz * 0.0005;
 
-			//We don'frameTimeCounter want the aurora to render infintely, we also want it to be closer to the north when Kp is low
+			//We don't want the aurora to render infintely, we also want it to be closer to the north when Kp is low
     		float WEhorizon = clamp(pow(1.0 - abs(planeCoord.x * 0.1), 4.0), 0.0, 1.0);
             float poles = clamp(pow(abs(planeCoord.z * 0.1), 5.0 - kpIndex * 3.0), 0.0, 1.0);
 			float auroraNorthBias = clamp((-planeCoord.x * 0.5 - planeCoord.z) * 0.25 + pow4(kpIndex) * 2.0, 0.0, 1.0);

@@ -15,8 +15,8 @@ float samplePlanarCloudNoise(vec2 coord) {
     return clamp(noise, 0.0, 1.0);
 }
 
-
-void drawPlanarClouds(inout vec3 color, in vec3 atmosphereColor, in vec3 worldPos, in vec3 viewPos, in float VoU, in float caveFactor) {
+void drawPlanarClouds(inout vec4 pc, in vec3 atmosphereColor, in vec3 worldPos, in vec3 viewPos, in float VoU, in float caveFactor, inout float occlusion) {
+    vec4 cloudColor = vec4(0.0);
     vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.0);
 
     float altitudeFactor = min(max(cameraPosition.y, 0.0) / KARMAN_LINE, 1.0);
@@ -43,12 +43,12 @@ void drawPlanarClouds(inout vec3 color, in vec3 atmosphereColor, in vec3 worldPo
 
 		//Lighting and coloring
         vec3 nWorldPos = normalize(worldPos);
-        float fade = pow(max(nWorldPos.y, 0.0), 0.125);
+        float fade = pow(max(nWorldPos.y, 0.0), 0.025);
                 fade = mix(fade, (1.0 - fade) * float(nWorldPos.y < 0.0), altitudeFactor10k);
                 fade *= pow3(fade);
                 fade *= distanceFactor;
-		float cloudSample = noise * (1.0 - wetness) * fade;
-		float pc = cloudSample * caveFactor;
+
+		float cloudSample = sqrt(noise) * (1.0 - wetness) * fade * caveFactor;
 
         float noiseDiff = clamp(noise - lightingNoise, 0.0, 1.0);
 		float cloudLighting = (0.25 + noiseDiff * shadowFade * 2.0) * (1.0 - noise * noise * (1.0 - altitudeFactor10k) * 0.75) * 2.0;
@@ -58,14 +58,45 @@ void drawPlanarClouds(inout vec3 color, in vec3 atmosphereColor, in vec3 worldPo
 		float halfVoL = fmix(abs(VoL) * 0.8, VoL, shadowFade) * 0.5 + 0.5;
 		float scattering = pow12(halfVoL);
 
+		#ifdef AURORA
+		//The index of geomagnetic activity. Determines the brightness of Aurora, its widespreadness across the sky and tilt factor
+		float kpIndex = abs(worldDay % 9 - worldDay % 4);
+			  kpIndex = kpIndex - int(kpIndex == 1) + int(kpIndex > 7 && worldDay % 10 == 0);
+			  kpIndex = min(max(kpIndex, 0) + isSnowy * 4, 9);
+
+		//Aurora tends to get brighter and dimmer when plasma arrives or fades away
+		float pulse = 0.5 + 0.5 * sin(frameTimeCounter * 0.08 + sin(frameTimeCounter * 0.013) * 0.6);
+			    pulse = smoothstep(0.15, 0.85, pulse);
+
+		float longPulse = sin(frameTimeCounter * 0.025 + sin(frameTimeCounter * 0.004) * 0.8);
+			    longPulse = longPulse * (1.0 - 0.15 * abs(longPulse));
+
+		kpIndex *= 1.0 + longPulse * 0.25;
+		kpIndex /= 9.0;
+
+        //Altitude factor. Makes the aurora closer to you when you're ascending
+        float altitudeFactor = min(max(cameraPosition.y, 0.0) / KARMAN_LINE, 1.0);
+        float altitudeFactor50k = min(max(cameraPosition.y, 0.0) / 50000.0, 1.0);
+
+        //We don't want the aurora to render infintely, we also want it to be closer to the north when Kp is low
+        float WEhorizon = clamp(pow(1.0 - abs(nWorldPos.x * 0.1), 4.0), 0.0, 1.0);
+        float poles = clamp(pow(abs(nWorldPos.z * 0.1), 5.0 - kpIndex * 3.0), 0.0, 1.0);
+        float auroraNorthBias = clamp((-nWorldPos.x * 0.5 - nWorldPos.z) * 0.25 + pow4(kpIndex) * 2.0, 0.0, 1.0);
+        float auroraDistanceFactor = clamp(1.0 - length(nWorldPos.xz) * max(0.05 - altitudeFactor50k * (1.0 - altitudeFactor) * 0.25 + altitudeFactor * 0.04, 0.0125), 0.0, 1.0) * mix(auroraNorthBias, 1.0, altitudeFactor) * mix(WEhorizon, poles, altitudeFactor50k);
+
+		//Total visibility of aurora based on multiple factors
+		float auroraVisibility = pow6(moonVisibility) * (1.0 - wetness) * caveFactor * kpIndex * auroraDistanceFactor * 2.0;
+		#endif
+
 		vec3 nSkyColor = normalize(skyColor + 0.0001);
 		vec3 cloudLightColor = fmix(lightCol, lightCol * nSkyColor * 2.0, timeBrightnessSqrt * (0.5 - wetness * 0.5));
-			 cloudLightColor *= 0.25 + sunVisibility * 0.5 + moonVisibility * 0.5 + 2.0 * scattering;
+                 #ifdef AURORA_LIGHTING_INFLUENCE
+				 cloudLightColor.r *= 1.0 + 2.0 * pow3(kpIndex) * pulse * auroraVisibility;
+				 cloudLightColor.g *= 1.0 + auroraVisibility;
+                 #endif
+			     cloudLightColor *= 0.25 + sunVisibility * 0.5 + moonVisibility * 0.5 + 2.0 * scattering;
 
-		vec3 cloudColor = cloudLightColor * cloudLighting * noise;
-			 cloudColor = pow(cloudColor, vec3(1.0 / 2.2));
-             cloudColor = mix( cloudColor, atmosphereColor, 0.4);
-
-		color = fmix(color, cloudColor * PLANAR_CLOUDS_BRIGHTNESS, pc);
+		pc = vec4(cloudLightColor * cloudLighting * noise * PLANAR_CLOUDS_BRIGHTNESS, cloudSample);
+        occlusion += cloudSample;
 	}
 }

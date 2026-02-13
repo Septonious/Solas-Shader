@@ -209,24 +209,28 @@ void main() {
 	computeEndVolumetricClouds(vc, atmosphereColor, z0, blueNoiseDither, cloudDepth);
 	#endif
 
+    float occlusion = vc.a;
+
+    //Planar Clouds
+    vec4 pc = vec4(0.0);
+
+    #ifdef PLANAR_CLOUDS
+    drawPlanarClouds(pc, atmosphereColor, worldPos.xyz, viewPos.xyz, VoU, caveFactor, occlusion);
+    #endif
+
 	//Sky
     vec3 skyColor = atmosphereColor * (1.0 + Bayer8(gl_FragCoord.xy) / 64.0);
 
 	#ifndef NETHER
-    float occlusion = vc.a;
     float nebulaFactor = 0.0;
 
     #ifdef ROUND_SUN_MOON
-    drawSunMoon(skyColor, worldPos.xyz, nViewPos, VoU, VoS, VoM, caveFactor);
+    drawSunMoon(skyColor, worldPos.xyz, nViewPos, VoU, VoS, VoM, caveFactor, occlusion);
     #endif
 
 	#if MC_VERSION >= 12104 && defined OVERWORLD
     VoU *= 1.0 - isPaleGarden;
 	#endif
-
-    #ifdef PLANAR_CLOUDS
-    drawPlanarClouds(skyColor, atmosphereColor, worldPos.xyz, viewPos.xyz, VoU, caveFactor);
-    #endif
 
     #ifdef AURORA
     drawAurora(skyColor, worldPos.xyz, caveFactor);
@@ -254,6 +258,14 @@ void main() {
 
     #ifdef END_STARS
     drawStars(skyColor, worldPos.xyz, VoU, VoS, 1.0, nebulaFactor, 0.85);
+    #endif
+
+    //Planar Clouds
+    #ifdef PLANAR_CLOUDS
+    pc.rgb = pow(pc.rgb, vec3(1.0 / 2.2));
+    pc.rgb = fmix(pc.rgb, atmosphereColor, 0.4);
+
+    skyColor = fmix(skyColor, pc.rgb, pc.a * pc.a);
     #endif
 	#endif
 

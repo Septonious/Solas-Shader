@@ -1,6 +1,6 @@
-void drawSunMoon(inout vec3 color, in vec3 worldPos, in vec3 nViewPos, in float VoU, in float VoS, in float VoM, in float caveFactor) {
+void drawSunMoon(inout vec3 color, in vec3 worldPos, in vec3 nViewPos, in float VoU, in float VoS, in float VoM, in float caveFactor, in float occlusion) {
     float altitudeFactor = min(max(cameraPosition.y, 0.0) / KARMAN_LINE, 1.0);
-    float visibility = (1.0 - wetness) * caveFactor;
+    float visibility = (1.0 - wetness) * caveFactor * (1.0 - occlusion);
           visibility *= fmix(sqrt(max(VoU, 0.0)), 1.0, altitudeFactor);
 
     if (visibility > 0.0) {

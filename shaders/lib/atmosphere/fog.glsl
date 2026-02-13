@@ -44,7 +44,7 @@ void getNormalFog(inout vec3 color, in vec3 atmosphereColor, in vec3 viewPos, in
 	//Overworld Fog
 	#ifdef OVERWORLD
 	vec3 fogPos = worldPos + cameraPosition;
-	float noise = texture2D(noisetex, (fogPos.xz + fogPos.y) * 0.0005 + frameCounter * 0.00001).r;
+	float noise = texture2D(noisetex, (vec2(fogPos.x, fogPos.y * 0.5) + vec2(fogPos.z, fogPos.y * 0.5)) * 0.0005 + frameCounter * 0.00001).r;
             noise *= noise;
     float distanceFactor = 50.0 * (0.5 + timeBrightness * 0.75) + FOG_DISTANCE * (0.75 + caveFactor * 0.25) - wetness * 25.0;
 	float distanceMult = max(256.0 / farPlane, 2.0) * (100.0 / distanceFactor);
