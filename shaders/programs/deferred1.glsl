@@ -68,6 +68,10 @@ uniform sampler2D dhDepthTex0;
 uniform sampler2D vxDepthTexOpaque;
 #endif
 
+#ifdef SS_SHADOWS
+uniform sampler2D colortex3;
+#endif
+
 uniform sampler2D noisetex;
 
 #ifdef SSAO
@@ -89,11 +93,11 @@ uniform mat4 gbufferModelViewInverse;
 uniform mat4 gbufferProjectionInverse;
 
 #ifdef DISTANT_HORIZONS
-uniform mat4 dhProjectionInverse;
+uniform mat4 dhProjection, dhProjectionInverse;
 #endif
 
 #ifdef VOXY
-uniform mat4 vxProjInv, vxModelViewInv;
+uniform mat4 vxProj, vxProjInv, vxModelViewInv;
 #endif
 
 // Pipeline Options //
@@ -122,6 +126,8 @@ float caveFactor = fmix(clamp((cameraPosition.y - 56.0) / 16.0, float(sign(isEye
 float sunVisibility = clamp((dot( sunVec, upVec) + 0.15) * 3.0, 0.0, 1.0);
 float moonVisibility = clamp((dot(-sunVec, upVec) + 0.15) * 3.0, 0.0, 1.0);
 vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.0);
+#else
+vec3 lightVec = sunVec;
 #endif
 
 #ifdef VOXY
@@ -138,6 +144,10 @@ vec3 ToWorldVoxy(vec3 viewPos) {
 
 #ifdef SSAO
 #include "/lib/lighting/ambientOcclusion.glsl"
+#endif
+
+#ifdef SS_SHADOWS
+#include "/lib/lighting/screenSpaceShadows.glsl"
 #endif
 
 #ifdef OVERWORLD
@@ -203,11 +213,9 @@ void main() {
 	float cloudDepth = 2.0 * far;
 	#endif
 
-	#if defined VOLUMETRIC_CLOUDS || defined END_DISK
 	float blueNoiseDither = texture2D(noisetex, gl_FragCoord.xy / 512.0).b;
 	#ifdef TAA
 	      blueNoiseDither = fract(blueNoiseDither + 1.61803398875 * mod(float(frameCounter), 3600.0));
-	#endif
 	#endif
 	
 	#ifdef VOLUMETRIC_CLOUDS
@@ -301,6 +309,10 @@ void main() {
 		vec4 dhViewPos = dhProjectionInverse * (dhScreenPos * 2.0 - 1.0);
 			 dhViewPos /= dhViewPos.w;
 
+        #ifdef SS_SHADOWS
+        color.rgb *= computeScreenSpaceShadows(viewPos.xyz, lightVec, dhDepthTex0, dhProjection, dhProjectionInverse, blueNoiseDither);
+        #endif
+
         #ifdef SSAO
         color.rgb *= getAmbientOcclusion(dhZ, dhDepthTex0, dhProjectionInverse);
         #endif
@@ -324,6 +336,10 @@ void main() {
                 vxViewPos /= vxViewPos.w;
 
         if (vxZ < 1.0) {
+            #ifdef SS_SHADOWS
+		    color.rgb *= computeScreenSpaceShadows(viewPos.xyz, lightVec, vxDepthTexOpaque, vxProj, vxProjInv, blueNoiseDither);
+            #endif
+
             #ifdef SSAO
             color.rgb *= getAmbientOcclusion(vxZ, vxDepthTexOpaque, vxProjInv);
             #endif

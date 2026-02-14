@@ -171,6 +171,9 @@ const float sunPathRotation = 180.0;
 #define SSAO
 #define AO_STRENGTH 1.00 //[0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00]
 
+// Screen Space Shadows //
+//#define SS_SHADOWS
+
 // PBR //
 #define TEXTURED_FIRE_LAVA
 #define GENERATED_EMISSION
@@ -811,6 +814,7 @@ vec3 pow8(vec3 x) {return x*x*x*x*x*x*x*x;}
 #ifdef NETHER
 #undef VL
 #undef LENS_FLARE
+#undef SS_SHADOWS
 #undef SELF_SHADOW
 #endif
 
