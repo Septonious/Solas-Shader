@@ -127,10 +127,10 @@ void getNormalFog(inout vec3 color, in vec3 atmosphereColor, in vec3 viewPos, in
 	#endif
 
 	float density = pow4(1.0 - abs(nWorldPos.y));
-		  density *= 1.0 - clamp((cameraPosition.y - 100.0) * 0.01, 0.0, 1.0);
+		    density *= 1.0 - clamp((cameraPosition.y - 100.0) * 0.01, 0.0, 1.0);
 
 	float fog = 1.0 - exp(-0.0001 * length(wpos));
-		  fog = clamp(fog * density, 0.0, 1.0);
+		    fog = clamp(fog * density * 0.1, 0.0, 1.0);
 
 	vec3 fogCol = vec3(1.0, 1.0, 0.75) * endLightColSqrt;
 	#endif

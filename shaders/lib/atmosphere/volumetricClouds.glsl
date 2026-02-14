@@ -483,11 +483,11 @@ void computeEndVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z,
 				#endif
 
 				float sampleLighting = 0.05 + clamp(noise - lightingNoise * (0.9 - scattering * 0.15), 0.0, 0.95) * (1.5 + scattering);
-					  sampleLighting *= 1.0 - noise * 0.75;
-					  sampleLighting = clamp(sampleLighting, 0.0, 1.0);
+					    sampleLighting *= 1.0 - noise * 0.75;
+					    sampleLighting = clamp(sampleLighting, 0.0, 1.0);
 
 				cloudLighting = fmix(cloudLighting, sampleLighting, noise * (1.0 - cloud * cloud));
-				if (rayDistance < shadowDistance * 0.1) noise *= shadow1;
+				if (rayDistance < shadowDistance * 0.25) cloudLighting *= 0.5 + shadow1 * 0.5;
 				cloud = fmix(cloud, 1.0, noise);
 				noise *= pow8(smoothstep(4000.0, 8.0, rayDistance)); //Fog
 				cloudAlpha = fmix(cloudAlpha, 1.0, noise);
@@ -504,7 +504,7 @@ void computeEndVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z,
             float endFlashPoint = endFlashPosToPoint(endFlashPosition, worldPos);
                  cloudColor = fmix(cloudColor, endFlashCol * (1.0 + endFlashPoint * endFlashPoint * 2.0), endFlashPoint * endFlashIntensity * 0.5);
             #endif
-			     cloudColor *= cloudLighting * 0.35;
+			     cloudColor *= cloudLighting * (0.6 + scattering * 0.4);
 
 			vc = vec4(cloudColor, cloudAlpha * END_DISK_OPACITY) * visibility;
 		}

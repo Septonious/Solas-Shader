@@ -166,6 +166,11 @@ const float sunPathRotation = 180.0;
 #endif
 #endif
 
+//  Ambient Occlusion //
+#define VANILLA_AO
+#define SSAO
+#define AO_STRENGTH 1.00 //[0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00]
+
 // PBR //
 #define TEXTURED_FIRE_LAVA
 #define GENERATED_EMISSION
@@ -248,7 +253,7 @@ const float sunPathRotation = 180.0;
 
 // Volumetric Light //
 #define VL
-#define VL_STRENGTH 2.00 //[1.00 1.50 2.00 2.50 3.00 3.50 4.00 4.50 5.00 5.50 6.00 6.50 7.00 7.50 8.00]
+#define VL_STRENGTH 1.50 //[1.00 1.50 2.00 2.50 3.00 3.50 4.00 4.50 5.00 5.50 6.00 6.50 7.00 7.50 8.00]
 #define VL_SAMPLES 8 //[5 6 7 8 9 10 11 12 13 14 15 16]
 #define VL_STRENGTH_RATIO 0.60 //[0.05 0.10 0.15 0.20 0.25 0.30 0.35 0.40 0.45 0.50 0.55 0.60 0.65 0.70 0.75 0.80 0.85 0.90 0.95 1.00]
 #define VL_NIGHT 1.50 //[0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00]
