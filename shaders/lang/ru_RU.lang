@@ -232,6 +232,8 @@ option.SHADOW_PIXEL=Пиксельные Тени
 option.SHADOW_PIXEL.comment=Делает тени пиксельными как в Vibrant Visuals. Чем больше значение, тем выше число пикселей.
 option.SHADOW_ENTITIES=Тени от Существ
 option.REALTIME_SHADOWS=Реалистичные Тени
+option.SS_SHADOWS=Тени на LOD'ах
+option.SS_SHADOWS.comment=Рендерятся после конца дистанции рендера реальных теней. Полезно с модами Voxy и Distant Horizons.
 
 #=======================================================# Generated PBR #=======================================================#
 

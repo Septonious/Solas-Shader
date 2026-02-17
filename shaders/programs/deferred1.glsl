@@ -90,6 +90,7 @@ uniform mat4 shadowModelView, shadowProjection;
 
 uniform mat4 gbufferModelView;
 uniform mat4 gbufferModelViewInverse;
+uniform mat4 gbufferProjection;
 uniform mat4 gbufferProjectionInverse;
 
 #ifdef DISTANT_HORIZONS
@@ -297,8 +298,26 @@ void main() {
     #endif
 
 	//Apply fog before the clouds in Overworld
+    #ifdef SS_SHADOWS
+    float shadowMask = texture2D(colortex3, texCoord).r;
+    float shadowVisibility = maxOf(abs(worldPos.xyz) / (vec3(min(shadowDistance, far))));
+            shadowVisibility = clamp(shadowVisibility, 0.0, 1.0);
+            shadowVisibility = 1.0 - pow6(shadowVisibility);
+
+            #ifdef OVERWORLD
+            shadowVisibility *= caveFactor;
+            #endif
+    #endif
+    
 	#if defined DISTANT_HORIZONS
 	if (z0 != 1.0) {
+        #ifdef SS_SHADOWS
+        if (shadowVisibility < 1.0) {
+            vec3 screenSpaceShadow = computeScreenSpaceShadows(viewPos.xyz, lightVec, depthtex0, gbufferProjection, gbufferProjectionInverse, blueNoiseDither, shadowMask);
+            color.rgb *= mix(screenSpaceShadow, vec3(1.0), shadowVisibility);
+        }
+        #endif
+
         #ifdef SSAO
         color.rgb *= getAmbientOcclusion(z0, depthtex0, gbufferProjectionInverse);
         #endif
@@ -310,7 +329,7 @@ void main() {
 			 dhViewPos /= dhViewPos.w;
 
         #ifdef SS_SHADOWS
-        color.rgb *= computeScreenSpaceShadows(dhViewPos.xyz, lightVec, dhDepthTex0, dhProjection, dhProjectionInverse, blueNoiseDither);
+        color.rgb *= computeScreenSpaceShadows(dhViewPos.xyz, lightVec, dhDepthTex0, dhProjection, dhProjectionInverse, blueNoiseDither, shadowMask);
         #endif
 
         #ifdef SSAO
@@ -321,6 +340,13 @@ void main() {
 	}
 	#elif defined VOXY
     if (z0 < 1.0) {
+        #ifdef SS_SHADOWS
+        if (shadowVisibility < 1.0) {
+            vec3 screenSpaceShadow = computeScreenSpaceShadows(viewPos.xyz, lightVec, depthtex0, gbufferProjection, gbufferProjectionInverse, blueNoiseDither, shadowMask);
+            color.rgb *= mix(screenSpaceShadow, vec3(1.0), shadowVisibility);
+        }
+        #endif
+
         #ifdef SSAO
         color.rgb *= getAmbientOcclusion(z0, depthtex0, gbufferProjectionInverse);
         #endif
@@ -337,7 +363,7 @@ void main() {
 
         if (vxZ < 1.0) {
             #ifdef SS_SHADOWS
-		    color.rgb *= computeScreenSpaceShadows(vxViewPos.xyz, lightVec, vxDepthTexOpaque, vxProj, vxProjInv, blueNoiseDither);
+		    color.rgb *= computeScreenSpaceShadows(vxViewPos.xyz, lightVec, vxDepthTexOpaque, vxProj, vxProjInv, blueNoiseDither, shadowMask);
             #endif
 
             #ifdef SSAO

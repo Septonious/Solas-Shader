@@ -70,12 +70,12 @@ void gbuffersLighting(in vec4 color, inout vec4 albedo, in vec3 screenPos, in ve
     //Shadow Calculations
     //Some code made by Emin and gri573
     float shadowVisibility = maxOf(abs(worldPos) / (vec3(min(shadowDistance, far))));
-          shadowVisibility = clamp(shadowVisibility, 0.0, 1.0);
-          shadowVisibility = 1.0 - pow3(shadowVisibility);
+            shadowVisibility = clamp(shadowVisibility, 0.0, 1.0);
+            shadowVisibility = 1.0 - pow6(shadowVisibility);
 
-          #ifdef OVERWORLD
-          shadowVisibility *= caveFactor;
-          #endif
+            #ifdef OVERWORLD
+            shadowVisibility *= caveFactor;
+            #endif
 
     //Subsurface scattering
     #if defined OVERWORLD
@@ -226,7 +226,7 @@ void gbuffersLighting(in vec4 color, inout vec4 albedo, in vec3 screenPos, in ve
     float rainFactor = 1.0 - wetness * 0.5;
 
     vec3 sceneLighting = fmix(ambientCol, lightCol, shadow * rainFactor * shadowFade) * (0.25 + lightmap.y * 0.75);
-         sceneLighting *= 1.0 + sss * shadow * 2.0;
+            sceneLighting *= 1.0 + sss * shadow * 2.0;
 
     #ifdef AURORA_LIGHTING_INFLUENCE
     //Total visibility of aurora based on multiple factors

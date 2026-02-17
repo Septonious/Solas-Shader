@@ -237,6 +237,8 @@ option.SHADOW_PIXEL=Pixelated Shadows
 option.SHADOW_PIXEL.comment=Enables pixelated shadows like in Vibrant Visuals. Greater values give shadows more pixels.
 option.SHADOW_ENTITIES=Entity Shadows
 option.REALTIME_SHADOWS=Realtime Shadows
+option.SS_SHADOWS=Screen Space Shadows
+option.SS_SHADOWS.comment=Start rendering after the realtime shadows reach their distance limit. Very useful with Voxy and Distant Horizons.
 
 #=======================================================# Generated PBR #=======================================================#
 

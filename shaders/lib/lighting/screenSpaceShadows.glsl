@@ -1,6 +1,5 @@
-vec3 computeScreenSpaceShadows(vec3 viewPos, vec3 lightVector, sampler2D depthtex, mat4 projection, mat4 projectionInverse,  float dither) {
+vec3 computeScreenSpaceShadows(vec3 viewPos, vec3 lightVector, sampler2D depthtex, mat4 projection, mat4 projectionInverse,  float dither, float shadowMask) {
 	float shadow = 1.0;
-	float shadowMask = texture2D(colortex3, texCoord).r;
 
 	float traceZ = 0.0;
 	float zDelta = 0.0;
@@ -32,10 +31,10 @@ vec3 computeScreenSpaceShadows(vec3 viewPos, vec3 lightVector, sampler2D depthte
 	}
 
     #ifdef OVERWORLD
-	vec3 shadowCol = ambientCol / mix(ambientCol, lightCol, shadowMask);
+	vec3 shadowCol = ambientCol;
     #else
-    vec3 shadowCol = endAmbientCol / mix(endAmbientCol, endLightCol, shadowMask);
+    vec3 shadowCol = endAmbientCol;
     #endif
 
-	return mix(ambientCol * 2.0, vec3(1.0), 0.5 + shadow * 0.5);
+	return mix(shadowCol, vec3(1.0), min(0.5 + shadow * 0.5, 1.0));
 }
