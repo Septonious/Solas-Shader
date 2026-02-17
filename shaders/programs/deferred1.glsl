@@ -310,7 +310,7 @@ void main() {
 			 dhViewPos /= dhViewPos.w;
 
         #ifdef SS_SHADOWS
-        color.rgb *= computeScreenSpaceShadows(viewPos.xyz, lightVec, dhDepthTex0, dhProjection, dhProjectionInverse, blueNoiseDither);
+        color.rgb *= computeScreenSpaceShadows(dhViewPos.xyz, lightVec, dhDepthTex0, dhProjection, dhProjectionInverse, blueNoiseDither);
         #endif
 
         #ifdef SSAO
@@ -337,7 +337,7 @@ void main() {
 
         if (vxZ < 1.0) {
             #ifdef SS_SHADOWS
-		    color.rgb *= computeScreenSpaceShadows(viewPos.xyz, lightVec, vxDepthTexOpaque, vxProj, vxProjInv, blueNoiseDither);
+		    color.rgb *= computeScreenSpaceShadows(vxViewPos.xyz, lightVec, vxDepthTexOpaque, vxProj, vxProjInv, blueNoiseDither);
             #endif
 
             #ifdef SSAO

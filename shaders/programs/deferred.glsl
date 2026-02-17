@@ -53,13 +53,11 @@ void main() {
     } else if (vxZ < 1.0) {
         const float vxNear = 16.0;
         const float vxFar = 48000.0;
-        ao = calculateAO(vxZ, vxDepthTexOpaque, vxProjInv, vxNear, vxFar, 1.5, true);
-        ao = pow(ao, 2.0);
+        ao = calculateAO(vxZ, vxDepthTexOpaque, vxProjInv, vxNear, vxFar, 0.25, true);
     #endif
     #ifdef DISTANT_HORIZONS
     } else if (dhZ < 1.0) {
-        ao = calculateAO(dhZ, dhDepthTex0, dhProjectionInverse, dhNearPlane, dhFarPlane, 1.5, true);
-        ao = pow(ao, 2.0);
+        ao = calculateAO(dhZ, dhDepthTex0, dhProjectionInverse, dhNearPlane, dhFarPlane, 0.25, true);
     #endif
     }
 

@@ -37,5 +37,5 @@ vec3 computeScreenSpaceShadows(vec3 viewPos, vec3 lightVector, sampler2D depthte
     vec3 shadowCol = endAmbientCol / mix(endAmbientCol, endLightCol, shadowMask);
     #endif
 
-	return mix(shadowCol, vec3(1.0), shadow);
+	return mix(ambientCol * 2.0, vec3(1.0), 0.5 + shadow * 0.5);
 }

@@ -27,6 +27,7 @@ vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.
 #endif
 
 // Includes //
+#include "/lib/util/encode.glsl"
 #include "/lib/util/transformMacros.glsl"
 #include "/lib/util/ToNDCVoxy.glsl"
 #include "/lib/util/ToWorldVoxy.glsl"
@@ -47,6 +48,7 @@ vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.
 #endif
 
 layout(location = 0) out vec4 out0;
+layout(location = 1) out vec4 out1;
 
 // Main //
 void voxy_emitFragment(VoxyFragmentParameters parameters) {
@@ -111,6 +113,31 @@ void voxy_emitFragment(VoxyFragmentParameters parameters) {
     vec3 shadow = vec3(0.0);
     gbuffersLighting(voxyColor, albedo, screenPos, viewPos, worldPos, newNormal, shadow, lightmap, NoU, NoL, NoE, subsurface, emission, smoothness, parallaxShadow);
 
+    //Subsurface scattering
+    #if defined OVERWORLD
+    float VoL = clamp(dot(normalize(viewPos), lightVec), 0.0, 1.0);
+    #elif defined END
+    float VoL = clamp(dot(normalize(viewPos), sunVec), 0.0, 1.0);
+    #endif
+
+    float sss = 0.0;
+
+    #if defined OVERWORLD || defined END
+    if (subsurface > 0.0) {
+        sss = pow6(VoL);
+
+        #ifdef OVERWORLD
+        sss *= shadowFade;
+        sss *= 1.0 - wetness * 0.5;
+        #endif
+    }
+    #endif
+
+    float rainFactor = 1.0 - wetness * 0.5;
+    float shadowMask = rainFactor * shadowFade * (0.25 + lightmap.y * 0.75);
+            shadowMask *= 1.0 + sss * 2.0;
+
     out0 = albedo;
+    out1 = vec4(encodeNormal(newNormal), shadowMask, clamp(fmix(smoothness, 1.0, metalness * metalness), 0.0, 0.95));
 }
 #undef VOXY_OPAQUE

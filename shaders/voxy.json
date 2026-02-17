@@ -1,7 +1,7 @@
 {
   "version": 1,
   "excludeLodsFromVanillaDepth": true,
-  "opaqueDrawBuffers": [0],
+  "opaqueDrawBuffers": [0, 3],
   "translucentDrawBuffers": [0, 1],
   "blending": {
     -1: "off",
