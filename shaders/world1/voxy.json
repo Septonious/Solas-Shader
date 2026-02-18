@@ -71,6 +71,7 @@
     ],
     "samplers": {
 		#ifdef DISTANT_HORIZONS
+		"dhDepthTex0": "sampler2D",
 		"dhDepthTex1": "sampler2D",
 		#endif
 		"depthtex0":"sampler2D",

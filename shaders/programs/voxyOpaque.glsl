@@ -133,6 +133,7 @@ void voxy_emitFragment(VoxyFragmentParameters parameters) {
     }
     #endif
 
+    //Screen Space Shadows mask
     float rainFactor = 1.0 - wetness * 0.5;
     float shadowMask = rainFactor * shadowFade * (0.25 + lightmap.y * 0.75);
             shadowMask *= 1.0 + sss * 2.0;

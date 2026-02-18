@@ -28,8 +28,8 @@ void getDynamicWeather(inout float speed, inout float amount, inout float freque
 
 float cloudSampleBasePerlinWorley(vec2 coord) {
 	float noiseBase = texture2D(noisetex, coord).g;
-	      noiseBase = pow(1.0 - noiseBase, 1.5) * 0.5 + 0.1;
-		  noiseBase += texture2D(noisetex, coord * 2.0).r * 0.4;
+	      noiseBase = (1.0 - noiseBase) * 0.5 + 0.075;
+		  noiseBase += texture2D(noisetex, coord * 2.0).r * 0.5;
 
 	return noiseBase;
 }

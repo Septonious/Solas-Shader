@@ -175,10 +175,10 @@ void main() {
 
     float z0 = texture2D(depthtex0, texCoord).r;
 	#ifdef DISTANT_HORIZONS
-	float dhZ = texture2D(dhDepthTex0, texCoord).r;
+	float dhZ0 = texture2D(dhDepthTex0, texCoord).r;
 	#endif
     #ifdef VOXY
-    float vxZ = texture2D(vxDepthTexOpaque, texCoord).r;
+    float vxZ0 = texture2D(vxDepthTexOpaque, texCoord).r;
     #endif
 
 	vec4 screenPos = vec4(texCoord, z0, 1.0);
@@ -290,16 +290,16 @@ void main() {
     #endif
 
     #if defined DISTANT_HORIZONS
-    if (dhZ == 1.0 && z0 == 1.0) color = skyColor;
+    if (dhZ0 == 1.0 && z0 == 1.0) color = skyColor;
     #elif defined VOXY
-    if (vxZ == 1.0 && z0 == 1.0) color = skyColor;
+    if (vxZ0 == 1.0 && z0 == 1.0) color = skyColor;
     #else
     if (z0 == 1.0) color = skyColor;
     #endif
 
 	//Apply fog before the clouds in Overworld
     #ifdef SS_SHADOWS
-    float shadowMask = texture2D(colortex3, texCoord).r;
+    float shadowMask = texture2D(colortex3, texCoord).b;
     float shadowVisibility = maxOf(abs(worldPos.xyz) / (vec3(min(shadowDistance, far))));
             shadowVisibility = clamp(shadowVisibility, 0.0, 1.0);
             shadowVisibility = 1.0 - pow6(shadowVisibility);
@@ -312,7 +312,7 @@ void main() {
 	#if defined DISTANT_HORIZONS
 	if (z0 != 1.0) {
         #ifdef SS_SHADOWS
-        if (shadowVisibility < 1.0) {
+        if (shadowVisibility < 1.0 && shadowMask > 0.0) {
             vec3 screenSpaceShadow = computeScreenSpaceShadows(viewPos.xyz, lightVec, depthtex0, gbufferProjection, gbufferProjectionInverse, blueNoiseDither, shadowMask);
             color.rgb *= mix(screenSpaceShadow, vec3(1.0), shadowVisibility);
         }
@@ -323,17 +323,19 @@ void main() {
         #endif
 
 		Fog(color, viewPos.xyz, atmosphereColor, z0);
-	} else if (dhZ != 1.0) {
-		vec4 dhScreenPos = vec4(texCoord, dhZ, 1.0);
+	} else if (dhZ0 != 1.0) {
+		vec4 dhScreenPos = vec4(texCoord, dhZ0, 1.0);
 		vec4 dhViewPos = dhProjectionInverse * (dhScreenPos * 2.0 - 1.0);
 			 dhViewPos /= dhViewPos.w;
 
         #ifdef SS_SHADOWS
-        color.rgb *= computeScreenSpaceShadows(dhViewPos.xyz, lightVec, dhDepthTex0, dhProjection, dhProjectionInverse, blueNoiseDither, shadowMask);
+        if (shadowMask > 0.0) {
+            color *= computeScreenSpaceShadows(dhViewPos.xyz, lightVec, dhDepthTex0, dhProjection, dhProjectionInverse, blueNoiseDither, shadowMask);
+        }
         #endif
 
         #ifdef SSAO
-        color.rgb *= getAmbientOcclusion(dhZ, dhDepthTex0, dhProjectionInverse);
+        color.rgb *= getAmbientOcclusion(dhZ0, dhDepthTex0, dhProjectionInverse);
         #endif
 
         Fog(color, dhViewPos.xyz, atmosphereColor, z0);
@@ -341,7 +343,7 @@ void main() {
 	#elif defined VOXY
     if (z0 < 1.0) {
         #ifdef SS_SHADOWS
-        if (shadowVisibility < 1.0) {
+        if (shadowVisibility < 1.0 && shadowMask > 0.0) {
             vec3 screenSpaceShadow = computeScreenSpaceShadows(viewPos.xyz, lightVec, depthtex0, gbufferProjection, gbufferProjectionInverse, blueNoiseDither, shadowMask);
             color.rgb *= mix(screenSpaceShadow, vec3(1.0), shadowVisibility);
         }
@@ -353,32 +355,36 @@ void main() {
 
         Fog(color, viewPos.xyz, atmosphereColor, z0);
     #if !defined END
-    } else if (vxZ < 1.0) {
+    } else if (vxZ0 < 1.0) {
     #else
-    } else if (vxZ <= 1.0) {
+    } else if (vxZ0 <= 1.0) {
     #endif
-        vec4 vxScreenPos = vec4(texCoord, vxZ, 1.0);
+        vec4 vxScreenPos = vec4(texCoord, vxZ0, 1.0);
         vec4 vxViewPos = vxProjInv * (vxScreenPos * 2.0 - 1.0);
                 vxViewPos /= vxViewPos.w;
 
-        if (vxZ < 1.0) {
+        if (vxZ0 < 1.0) {
             #ifdef SS_SHADOWS
-		    color.rgb *= computeScreenSpaceShadows(vxViewPos.xyz, lightVec, vxDepthTexOpaque, vxProj, vxProjInv, blueNoiseDither, shadowMask);
-            #endif
+            if (shadowMask > 0.0) {
+                color.rgb *= computeScreenSpaceShadows(vxViewPos.xyz, lightVec, vxDepthTexOpaque, vxProj, vxProjInv, blueNoiseDither, shadowMask);
+            }
+		    #endif
 
             #ifdef SSAO
-            color.rgb *= getAmbientOcclusion(vxZ, vxDepthTexOpaque, vxProjInv);
+            color.rgb *= getAmbientOcclusion(vxZ0, vxDepthTexOpaque, vxProjInv);
             #endif
         }
 
-        Fog(color, vxViewPos.xyz, atmosphereColor, vxZ);
+        Fog(color, vxViewPos.xyz, atmosphereColor, vxZ0);
     }
     #else
-    #ifdef SSAO
-    color.rgb *= getAmbientOcclusion(z0, depthtex0, gbufferProjectionInverse);
-    #endif
+    if (z0 < 1.0) {
+        #ifdef SSAO
+        color.rgb *= getAmbientOcclusion(z0, depthtex0, gbufferProjectionInverse);
+        #endif
 
-	Fog(color, viewPos.xyz, atmosphereColor, z0);
+        Fog(color, viewPos.xyz, atmosphereColor, z0);
+    }
     #endif
 
 	//Volumetric Clouds

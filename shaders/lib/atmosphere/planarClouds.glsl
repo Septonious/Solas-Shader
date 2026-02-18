@@ -1,19 +1,28 @@
-float samplePlanarCloudNoise(vec2 coord) {
-    float n1 = texture2D(noisetex, coord * 0.0625).r;
-    float n2 = texture2D(noisetex, coord).r;
+float samplePlanarCloudNoise(vec2 coord){
+    coord = vec2(
+        coord.x * 1.25 + coord.y * 0.5,
+        coord.y * 0.65
+    );
 
-    float noise = fmix(n1 * 15.0, n2 * 2.0, 0.33);
+    float base = texture2D(noisetex, coord * 0.035).r;
+    float breakup = texture2D(noisetex, coord * 0.07).g;
+    float detail = texture2D(noisetex, coord * 2.0).r;
+
+    base *= base;
+
+    float noise = base * (1.0 - breakup * 0.75);
+
+    noise += (detail - 0.5) * 0.05;
 
     noise = smoothstep(
         PLANAR_CLOUDS_AMOUNT,
-        PLANAR_CLOUDS_AMOUNT + 0.75,
+        PLANAR_CLOUDS_AMOUNT + 0.35,
         noise
     );
 
-    noise = noise * noise * (3.0 - 2.0 * noise);
-
-    return clamp(noise, 0.0, 1.0);
+    return clamp(pow(noise, 1.5), 0.0, 1.0);
 }
+
 
 void drawPlanarClouds(inout vec4 pc, in vec3 atmosphereColor, in vec3 worldPos, in vec3 viewPos, in float VoU, in float caveFactor, inout float occlusion) {
     vec4 cloudColor = vec4(0.0);

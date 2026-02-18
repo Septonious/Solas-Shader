@@ -293,9 +293,34 @@ void main() {
     vec3 shadow = vec3(0.0);
     gbuffersLighting(color, albedo, screenPos, viewPos, worldPos, newNormal, shadow, lightmap, NoU, NoL, NoE, subsurface, emission, smoothness, parallaxShadow);
 
+    //Subsurface scattering
+    #if defined OVERWORLD
+    float VoL = clamp(dot(normalize(viewPos), lightVec), 0.0, 1.0);
+    #elif defined END
+    float VoL = clamp(dot(normalize(viewPos), sunVec), 0.0, 1.0);
+    #endif
+
+    float sss = 0.0;
+
+    #if defined OVERWORLD || defined END
+    if (subsurface > 0.0) {
+        sss = pow6(VoL);
+
+        #ifdef OVERWORLD
+        sss *= shadowFade;
+        sss *= 1.0 - wetness * 0.5;
+        #endif
+    }
+    #endif
+
+    //Screen Space Shadows mask
+    float rainFactor = 1.0 - wetness * 0.5;
+    float shadowMask = rainFactor * shadowFade * (0.25 + lightmap.y * 0.75);
+            shadowMask *= 1.0 + sss * 2.0;
+
 	/* DRAWBUFFERS:03 */
 	gl_FragData[0] = albedo;
-	gl_FragData[1] = vec4(encodeNormal(newNormal), 0.0, clamp(fmix(smoothness, 1.0, metalness * metalness), 0.0, 0.95));
+	gl_FragData[1] = vec4(encodeNormal(newNormal), shadowMask, clamp(fmix(smoothness, 1.0, metalness * metalness), 0.0, 0.95));
 }
 
 #endif
