@@ -254,20 +254,23 @@ void main() {
     drawAurora(skyColor, worldPos.xyz, caveFactor, occlusion);
     #endif
 
-    #ifdef MILKY_WAY
-    drawMilkyWay(skyColor, worldPos.xyz, VoU, caveFactor, nebulaFactor);
-    #endif
+    if (atmosphereHardMixFactor < 1.0) {
+        #ifdef MILKY_WAY
+        drawMilkyWay(skyColor, worldPos.xyz, VoU, caveFactor, nebulaFactor);
+        #endif
 
-    #ifdef STARS
-    drawStars(skyColor, worldPos.xyz, VoU, VoS, caveFactor, nebulaFactor, occlusion, 0.7);
+        #ifdef STARS
+        drawStars(skyColor, worldPos.xyz, VoU, VoS, caveFactor, nebulaFactor, occlusion, 0.7);
 
-    #ifdef SHOOTING_STARS
-    getShootingStars(skyColor, worldPos.xyz, VoU, VoS);
-    #endif
-    #endif
+        #ifdef SHOOTING_STARS
+        getShootingStars(skyColor, worldPos.xyz, VoU, VoS);
+        #endif
 
-    #ifdef RAINBOW
-    getRainbow(skyColor, worldPos.xyz, VoU, 1.75, 0.05, caveFactor);
+        #ifdef RAINBOW
+        getRainbow(skyColor, worldPos.xyz, VoU, 1.75, 0.05, caveFactor);
+        #endif
+    }
+
     #endif
 
     #ifdef END_NEBULA
