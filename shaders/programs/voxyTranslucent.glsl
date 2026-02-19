@@ -62,6 +62,7 @@ vec3 binormal = vxModelView[2].xyz;
 
 layout(location = 0) out vec4 out0;
 layout(location = 1) out vec4 out1;
+layout(location = 2) out vec4 out2;
 
 // Main //
 void voxy_emitFragment(VoxyFragmentParameters parameters) {
@@ -211,7 +212,12 @@ void voxy_emitFragment(VoxyFragmentParameters parameters) {
 
 	albedo.a *= cloudBlendOpacity;
 
+    #if !defined SSAO && !defined SS_SHADOWS
     out0 = albedo;
+    #else
+    out0 = vec4(0.0);
+    #endif
     out1 = albedo;
+    out2 = albedo;
 }
 #undef VOXY_TRANSLUCENT

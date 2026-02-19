@@ -31,6 +31,7 @@ const int colortex0Format = R11F_G11F_B10F; //GB scene
 const int colortex1Format = RGB16F; //Final scene
 const int colortex3Format = RGBA16; //PBR data
 const int colortex4Format = RGB16F; //Reflections
+const int colortex7Format = RGBA16; //Voxy transparent color
 */
 
 // Includes //

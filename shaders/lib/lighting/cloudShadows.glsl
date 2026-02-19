@@ -19,7 +19,7 @@ void getDynamicWeather(inout float speed, inout float amount, inout float freque
     amount -= isPaleGarden;
 	#endif
 
-	amount += 1.0;
+    amount += 0.25;
 }
 
 float cloudSampleBasePerlinWorley(vec2 coord) {

@@ -59,13 +59,17 @@ uniform vec3 fogColor;
 uniform vec4 lightningBoltPosition;
 #endif
 
+#ifdef VOXY
+uniform sampler2D colortex7;
+#endif
+
 uniform sampler2D colortex0;
 uniform sampler2D depthtex0;
 #ifdef DISTANT_HORIZONS
 uniform sampler2D dhDepthTex0;
 #endif
 #ifdef VOXY
-uniform sampler2D vxDepthTexOpaque;
+uniform sampler2D vxDepthTexOpaque, vxDepthTexTrans;
 #endif
 
 #ifdef SS_SHADOWS
@@ -186,6 +190,19 @@ void main() {
 		    viewPos /= viewPos.w;
 	vec4 worldPos = gbufferModelViewInverse * vec4(viewPos.xyz, 1.0);
 		    worldPos.xyz /= worldPos.w;
+
+    //Voxy water
+    #if defined VOXY && (defined SSAO || defined SS_SHADOWS)
+	vec4 voxyTransparentColor = texture2D(colortex7, texCoord);
+
+	float vxZ1 = texture2D(vxDepthTexTrans, texCoord).r;
+
+	vec4 vxScreenPos1 = vec4(texCoord, vxZ1, 1.0);
+	vec4 vxViewPos1 = vxProjInv * (vxScreenPos1 * 2.0 - 1.0);
+	        vxViewPos1 /= vxViewPos1.w;
+	
+	voxyTransparentColor.a *= step(-vxViewPos1.z, -viewPos.z);
+    #endif
 
     float atmosphereHardMixFactor = 0.0;
 
@@ -377,6 +394,10 @@ void main() {
             color.rgb *= getAmbientOcclusion(vxZ0, vxDepthTexOpaque, vxProjInv);
             #endif
         }
+
+        #if defined VOXY && (defined SSAO || defined SS_SHADOWS)
+        color.rgb = mix(color.rgb, voxyTransparentColor.rgb, voxyTransparentColor.a);
+        #endif
 
         Fog(color, vxViewPos.xyz, atmosphereColor, vxZ0);
     }
