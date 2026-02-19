@@ -314,9 +314,13 @@ void main() {
     #endif
 
     //Screen Space Shadows mask
+    #ifdef OVERWORLD
     float rainFactor = 1.0 - wetness * 0.5;
     float shadowMask = rainFactor * shadowFade * (0.25 + lightmap.y * 0.75);
             shadowMask *= 1.0 + sss * 2.0;
+    #else
+    float shadowMask = 1.0;
+    #endif
 
 	/* DRAWBUFFERS:03 */
 	gl_FragData[0] = albedo;

@@ -282,13 +282,12 @@ void main() {
         #ifdef SHOOTING_STARS
         getShootingStars(skyColor, worldPos.xyz, VoU, VoS);
         #endif
+        #endif
 
         #ifdef RAINBOW
         getRainbow(skyColor, worldPos.xyz, VoU, 1.75, 0.05, caveFactor);
         #endif
     }
-
-    #endif
 
     #ifdef END_NEBULA
     drawEndNebula(skyColor, worldPos.xyz, VoU, VoS);
