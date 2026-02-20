@@ -239,7 +239,7 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z, fl
             float xzNormalizeFactor = 10.0 / max(abs(height - 72.0), 56.0);
 
 			vec3 worldLightVec = normalize(ToWorld(lightVec * 100000000.0));
-                 worldLightVec.xz *= 4.0 * shadowFade;
+                    worldLightVec *= 4.0 * shadowFade;
 
             for (int i = 0; i < sampleCount; i++, rayPos += rayIncrement, sampleTotalLength += rayLength) {
                 if (cloud > 0.99 || (lViewPos < sampleTotalLength && z < 1.0) || sampleTotalLength > distance * 32.0) break;
@@ -265,10 +265,10 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z, fl
                 float attenuation = step(cloudBottom, rayPos.y) * step(rayPos.y, cloudTop);
 
                 float noise = CloudSample(cloudCoord, wind, sampleAltitude, thickness, frequency, amount, density);
-                      noise *= attenuation;
+                        noise *= attenuation;
 
-                float lightingNoise = CloudSampleLowDetail(cloudCoord + worldLightVec.xz, wind, sampleAltitude, thickness, frequency, amount, density);
-                      lightingNoise *= attenuation;
+                float lightingNoise = CloudSampleLowDetail(cloudCoord + worldLightVec.xy, wind, sampleAltitude, thickness, frequency, amount, density);
+                        lightingNoise *= attenuation;
 
 				float powder = 1.0 - 0.925 * exp(-pow(noise, 1.0 + noise * 7.0));
 				float directionalScattering = 1.0 - exp(-2.5 * (noise - lightingNoise * (0.875 + scattering * 0.075)));
@@ -309,8 +309,8 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z, fl
                  #endif
 				 cloudLightColor *= 0.125 + cloudLighting * 0.875;
 				 cloudLightColor *= 1.0 + scattering * shadowFade;
-			vec3 cloudColor = fmix(cloudAmbientColor, cloudLightColor, ambientLighting) * fmix(vec3(1.0), biomeColor, isSpecificBiome * sunVisibility);
-			     cloudColor = fmix(cloudColor, atmosphereColor * length(cloudColor) * 0.5, wetness * 0.6);
+			vec3 cloudColor = fmix(cloudAmbientColor, cloudLightColor, ambientLighting * (0.5 + shadowFade * 0.5)) * fmix(vec3(1.0), biomeColor, isSpecificBiome * sunVisibility);
+			        cloudColor = fmix(cloudColor, atmosphereColor * length(cloudColor) * 0.5, wetness * 0.6);
 
             float opacity = clamp(fmix(VC_OPACITY, 1.0, (max(0.0, cameraPosition.y - thickness * 10.0) / height)), 0.0, 1.0);
 
