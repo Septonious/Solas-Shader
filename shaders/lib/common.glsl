@@ -242,7 +242,7 @@ const float sunPathRotation = 180.0;
 // Volumetric Clouds //
 #define VOLUMETRIC_CLOUDS
 #define VC_SHADOWS
-//#define VC_DYNAMIC_WEATHER
+#define VC_DYNAMIC_WEATHER
 #define VC_FREQUENCY 0.5 //[0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5]
 #define VC_DENSITY 16.0 //[8.0 10.0 12.0 14.0 16.0 18.0 20.0]
 #define VC_AMOUNT 13.75 //[15.00 14.75 14.50 14.25 14.00 13.75 13.50 13.25 13.00]
