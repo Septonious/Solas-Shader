@@ -1,6 +1,6 @@
 #define GBUFFERS_SPIDEREYES
 
-//Settings//
+// Settings //
 #include "/lib/common.glsl"
 
 #ifdef FSH

@@ -1,7 +1,7 @@
-//Settings//
-#include "/lib/common.glsl"
-
 #define GBUFFERS_ARMOR_GLINT
+
+// Settings //
+#include "/lib/common.glsl"
 
 #ifdef FSH
 

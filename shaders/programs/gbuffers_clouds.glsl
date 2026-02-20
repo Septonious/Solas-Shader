@@ -1,15 +1,16 @@
-#include "/lib/common.glsl"
-
 #define GBUFFERS_CLOUDS
+
+// Settings //
+#include "/lib/common.glsl"
 
 #ifdef FSH
 
-//Varyings//
+// VSH Data //
 in vec4 color;
 in vec3 normal;
 in vec2 texCoord;
 
-//Uniforms//
+// Uniforms //
 uniform int isEyeInWater;
 uniform int worldTime;
 
@@ -52,13 +53,13 @@ float moonVisibility = clamp((dot(-sunVec, upVec) + 0.15) * 3.0, 0.0, 1.0);
 vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.0);
 #endif
 
-//Includes//
+// Includes //
 #include "/lib/util/transformMacros.glsl"
 #include "/lib/util/ToNDC.glsl"
 #include "/lib/util/ToWorld.glsl"
 #include "/lib/color/lightColor.glsl"
 
-//Program//
+// Main //
 void main() {
 	#ifdef VANILLA_CLOUDS
 		vec4 albedo = texture2D(texture, texCoord);
