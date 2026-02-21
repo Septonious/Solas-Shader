@@ -47,6 +47,9 @@ void getNormalFog(inout vec3 color, in vec3 atmosphereColor, in vec3 viewPos, in
 	float noise = texture2D(noisetex, (vec2(fogPos.x * 0.5, fogPos.y * 0.5) + vec2(fogPos.z * 0.5, fogPos.y * 0.5) + vec2(fogPos.x * 0.5, fogPos.z * 0.5)) * 0.0005 + frameCounter * 0.00001).r;
             noise *= noise;
     float distanceFactor = 50.0 * (0.5 + timeBrightness * 0.75) + FOG_DISTANCE * (0.75 + caveFactor * 0.25) - wetness * 25.0;
+    #if defined VOXY || defined DISTANT_HORIZONS
+            distanceFactor += 40.0;
+    #endif
 	float distanceMult = max(256.0 / farPlane, 2.0) * (100.0 / distanceFactor);
 	float altitudeFactor = FOG_HEIGHT + noise * 10.0 + timeBrightness * 25.0 - isJungle * 15.0;
 	float altitude = 0.25 + exp2(-max(worldPos.y + cameraPosition.y - altitudeFactor, 0.0) / exp2(FOG_HEIGHT_FALLOFF + moonVisibility + timeBrightness + wetness - isJungle - isSwamp));

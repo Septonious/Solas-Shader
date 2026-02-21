@@ -28,8 +28,8 @@ void getDynamicWeather(inout float speed, inout float amount, inout float freque
 
 float cloudSampleBasePerlinWorley(vec2 coord) {
 	float noiseBase = texture2D(noisetex, coord).g;
-	      noiseBase = (1.0 - noiseBase) * 0.5 + 0.075;
-		  noiseBase += texture2D(noisetex, coord * 2.0).r * 0.5;
+            noiseBase = (1.0 - noiseBase) * 0.5 + 0.075;
+            noiseBase += texture2D(noisetex, coord * 2.0).r * 0.5;
 
 	return noiseBase;
 }
@@ -127,13 +127,13 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z, fl
 		float dhZ = texture2D(dhDepthTex0, texCoord).r;
 		vec4 dhScreenPos = vec4(texCoord, dhZ, 1.0);
 		vec4 dhViewPos = dhProjectionInverse * (dhScreenPos * 2.0 - 1.0);
-			 dhViewPos /= dhViewPos.w;
+			    dhViewPos /= dhViewPos.w;
 		float lDhViewPos = length(dhViewPos.xyz);
 		#elif defined VOXY
 		float vxZ = texture2D(vxDepthTexOpaque, texCoord).r;
 		vec4 vxScreenPos = vec4(texCoord, vxZ, 1.0);
 		vec4 vxViewPos = vxProjInv * (vxScreenPos * 2.0 - 1.0);
-		     vxViewPos /= vxViewPos.w;
+		        vxViewPos /= vxViewPos.w;
 		float lVxViewPos = length(vxViewPos.xyz);
 		#endif
 
@@ -150,37 +150,35 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z, fl
 
 		getDynamicWeather(speed, amount, frequency, thickness, density, detail, height, scale);
 
-		#ifdef AURORA
-		//The index of geomagnetic activity. Determines the brightness of Aurora, its widespreadness across the sky and tilt factor
-		float kpIndex = abs(worldDay % 9 - worldDay % 4);
-			  kpIndex = kpIndex - int(kpIndex == 1) + int(kpIndex > 7 && worldDay % 10 == 0);
-			  kpIndex = min(max(kpIndex, 0) + isSnowy * 4, 9);
+        //Aurora influence
+        #ifdef AURORA_LIGHTING_INFLUENCE
+        //The index of geomagnetic activity. Determines the brightness of Aurora, its widespreadness across the sky and tilt factor
+        float kpIndex = abs(worldDay % 9 - worldDay % 4);
+                kpIndex = kpIndex - int(kpIndex == 1) + int(kpIndex > 7 && worldDay % 10 == 0);
+                kpIndex = min(max(kpIndex, 0) + isSnowy * 4, 9);
 
-		//Aurora tends to get brighter and dimmer when plasma arrives or fades away
-		float pulse = 0.5 + 0.5 * sin(frameTimeCounter * 0.08 + sin(frameTimeCounter * 0.013) * 0.6);
-			    pulse = smoothstep(0.15, 0.85, pulse);
+        //Total visibility of aurora based on multiple factors
+        float auroraVisibility = pow6(moonVisibility) * (1.0 - wetness) * caveFactor;
 
-		float longPulse = sin(frameTimeCounter * 0.025 + sin(frameTimeCounter * 0.004) * 0.8);
-			    longPulse = longPulse * (1.0 - 0.15 * abs(longPulse));
+        //Aurora tends to get brighter and dimmer when plasma arrives or fades away
+        float pulse = 0.5 + 0.5 * sin(frameTimeCounter * 0.08 + sin(frameTimeCounter * 0.013) * 0.6);
+                pulse = smoothstep(0.15, 0.85, pulse);
 
-		kpIndex *= 1.0 + longPulse * 0.25;
-		kpIndex /= 9.0;
+        float longPulse = sin(frameTimeCounter * 0.025 + sin(frameTimeCounter * 0.004) * 0.8);
+                longPulse = longPulse * (1.0 - 0.15 * abs(longPulse));
 
-        //Altitude factor. Makes the aurora closer to you when you're ascending
-        float altitudeFactor = min(max(cameraPosition.y, 0.0) / KARMAN_LINE, 1.0);
-        float altitudeFactor50k = min(max(cameraPosition.y, 0.0) / 50000.0, 1.0);
+        kpIndex *= 1.0 + longPulse * 0.25;
+        kpIndex /= 9.0;
+        kpIndex = 1;
+        auroraVisibility *= kpIndex * (1.0 + max(longPulse * 0.5, 0.0));
+        auroraVisibility = min(auroraVisibility, 2.0) * AURORA_BRIGHTNESS;
 
-        //We don't want the aurora to render infintely, we also want it to be closer to the north when Kp is low
         float WEhorizon = clamp(pow(1.0 - abs(nWorldPos.x * 0.1), 4.0), 0.0, 1.0);
-        float poles = clamp(pow(abs(nWorldPos.z * 0.1), 5.0 - kpIndex * 3.0), 0.0, 1.0);
         float auroraNorthBias = clamp((-nWorldPos.x * 0.5 - nWorldPos.z) * 0.25 + pow4(kpIndex) * 2.0, 0.0, 1.0);
-        float auroraDistanceFactor = clamp(1.0 - length(nWorldPos.xz) * max(0.05 - altitudeFactor50k * (1.0 - altitudeFactor) * 0.25 + altitudeFactor * 0.04, 0.0125), 0.0, 1.0) * mix(auroraNorthBias, 1.0, altitudeFactor) * mix(WEhorizon, poles, altitudeFactor50k);
+        float auroraDistanceFactor = clamp(1.0 - length(nWorldPos.xz) * 0.05, 0.0, 1.0) * auroraNorthBias * WEhorizon;
 
-		//Total visibility of aurora based on multiple factors
-		float auroraVisibility = pow6(moonVisibility) * (1.0 - wetness) * caveFactor * kpIndex * auroraDistanceFactor * 2.0;
-
-		amount += auroraVisibility * 0.25;
-		#endif
+        auroraVisibility *= auroraDistanceFactor * auroraDistanceFactor;
+        #endif
 
 		//Ray marcher peramters
         int maxsampleCount = 16;
@@ -200,10 +198,10 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z, fl
             float planeDifference = farthestPlane - nearestPlane;
 
             float lengthScaling = abs(cameraPosition.y - (cloudTop + cloudBottom) * 0.5) / ((cloudTop - cloudBottom) * 0.5);
-                  lengthScaling = clamp((lengthScaling - 1.0) * thickness * 0.125, 0.0, 1.0);
+                    lengthScaling = clamp((lengthScaling - 1.0) * thickness * 0.125, 0.0, 1.0);
 
             float rayLength = thickness * scale / 2.0;
-                  rayLength /= (4.0 * nWorldPos.y * nWorldPos.y) * lengthScaling + 1.0;
+                    rayLength /= (4.0 * nWorldPos.y * nWorldPos.y) * lengthScaling + 1.0;
 
             vec3 rayIncrement = nWorldPos * rayLength;
             int sampleCount = int(min(planeDifference / rayLength, maxsampleCount) + 4);
@@ -303,12 +301,14 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z, fl
 									 fmix(ambientCol, atmosphereColor * nSkyColor * 0.5, 0.2 + timeBrightness * 0.3 + isSpecificBiome * 0.4),
 									 sunVisibility * (1.0 - wetness)) * (1.0 - scattering * 0.5);
             vec3 cloudLightColor = fmix(lightCol, lightCol * nSkyColor * 2.0, timeBrightnessSqrt * (0.5 - wetness * 0.5));
-                 #ifdef AURORA_LIGHTING_INFLUENCE
-				 cloudLightColor.r *= 1.0 + 2.0 * pow3(kpIndex) * pulse * auroraVisibility;
-				 cloudLightColor.g *= 1.0 + auroraVisibility;
-                 #endif
-				 cloudLightColor *= 0.125 + cloudLighting * 0.875;
-				 cloudLightColor *= 1.0 + scattering * shadowFade;
+                    cloudLightColor *= 0.125 + cloudLighting * 0.875;
+                    cloudLightColor *= 1.0 + scattering * shadowFade;
+                    //Aurora influence
+                    #ifdef AURORA_LIGHTING_INFLUENCE
+                    cloudLightColor.r *= 1.0 + pow3(kpIndex) * pulse * auroraVisibility * 4.0;
+                    cloudLightColor.g *= 1.0 + auroraVisibility;
+                    cloudLightColor /= 1.0 + auroraVisibility;
+                    #endif
 			vec3 cloudColor = fmix(cloudAmbientColor, cloudLightColor, ambientLighting * (0.5 + shadowFade * 0.5)) * fmix(vec3(1.0), biomeColor, isSpecificBiome * sunVisibility);
 			        cloudColor = fmix(cloudColor, atmosphereColor * length(cloudColor) * 0.5, wetness * 0.6);
 

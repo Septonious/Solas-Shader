@@ -244,7 +244,7 @@ void main() {
 	computeEndVolumetricClouds(vc, atmosphereColor, z0, blueNoiseDither, cloudDepth);
 	#endif
 
-    float occlusion = vc.a;
+    float occlusion = pow4(vc.a);
 
     //Planar Clouds
     vec4 pc = vec4(0.0);

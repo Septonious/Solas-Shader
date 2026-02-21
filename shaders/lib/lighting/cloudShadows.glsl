@@ -59,7 +59,7 @@ void getCloudShadow(vec2 coord, vec2 wind, float amount, float frequency, float 
     #ifndef COMPOSITE_0
 	noise = clamp(exp(-2.0 * noise), 0.0, 1.0);
     #else
-    	noise = clamp(exp(-3.5 * noise), 0.0, 1.0);
+    noise = clamp(exp(-3.5 * noise), 0.0, 1.0);
     #endif
     noise = fmix(1.0, noise, shadowFade);
 }

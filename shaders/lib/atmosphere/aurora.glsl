@@ -20,8 +20,8 @@ float auroraDistortedNoise(vec2 coord, float kpIndex, float pulse, float longPul
 
     //Perpendicular motion = curl approximation
     vec2 curlDir = normalize(vec2(
-        cos(f * 6.283 + t * 0.12),
-        sin(f * 6.283 + t * 0.12)
+        cos(f * 6.283 + t * 0.2),
+        sin(f * 6.283 + t * 0.1)
     ));
 
     const float curlStrength = 0.125;
@@ -66,11 +66,11 @@ void drawAurora(inout vec3 color, in vec3 worldPos, in float caveFactor, in floa
 
 	//The index of geomagnetic activity. Determines the brightness of Aurora, its widespreadness across the sky and tilt factor
     float kpIndex = abs(worldDay % 9 - worldDay % 4);
-          kpIndex = kpIndex - int(kpIndex == 1) + int(kpIndex > 7 && worldDay % 10 == 0);
-          kpIndex = min(max(kpIndex, 0) + isSnowy * 4, 9);
+            kpIndex = kpIndex - int(kpIndex == 1) + int(kpIndex > 7 && worldDay % 10 == 0);
+            kpIndex = min(max(kpIndex, 0) + isSnowy * 4, 9);
 
 	//Total visibility of aurora based on multiple factors
-	float visibility = pow6(moonVisibility) * (1.0 - wetness) * (1.0 - occlusion * occlusion * 0.75) * caveFactor;
+	float visibility = pow6(moonVisibility) * (1.0 - wetness) * (1.0 - occlusion) * caveFactor;
 
 	//Aurora tends to get brighter and dimmer when plasma arrives or fades away
 	float pulse = 0.5 + 0.5 * sin(frameTimeCounter * 0.08 + sin(frameTimeCounter * 0.013) * 0.6);
@@ -81,6 +81,7 @@ void drawAurora(inout vec3 color, in vec3 worldPos, in float caveFactor, in floa
 
 	kpIndex *= 1.0 + longPulse * 0.25;
 	kpIndex /= 9.0;
+    kpIndex = 1;
 	visibility *= kpIndex * (1.0 + max(longPulse * 0.5, 0.0));
     visibility = min(visibility, 2.0) * AURORA_BRIGHTNESS;
 
@@ -101,6 +102,9 @@ void drawAurora(inout vec3 color, in vec3 worldPos, in float caveFactor, in floa
 		float tiltFactor = 0.15 + kpIndex * 0.15;
 		worldPos.xz -= worldPos.y * vec2(tiltFactor, tiltFactor * 2.0);
 
+        //When aurora turns red
+        float redPhase = pow3(kpIndex) * pulse;
+
 		for (int i = 0; i < samples; i++) {
 			vec3 planeCoord = worldPos * ((20.0 - kpIndex * 10.0 + altitudeFactor * 20.0 + pow(clamp(nWorldPos.y, 0.0, 1.0), 0.25) * 15.0 + currentStep * (10.0 + kpIndex * 5.0)) / worldPos.y) * 0.05;
 			vec2 coord = planeCoord.xz + cameraPosition.xz * 0.0005;
@@ -117,8 +121,8 @@ void drawAurora(inout vec3 color, in vec3 worldPos, in float caveFactor, in floa
                 float colorMixer = pow(currentStep, 0.65 + altitudeFactor50k + pow3(kpIndex) * pulse * 0.1);
                 float attenuation = exp2(-4.0 * i * sampleStep);
 
-                vec3 lowA = vec3(0.45, 1.55, 0.0);
-                vec3 upA = vec3(0.95 + pow3(kpIndex) * pulse, 0.10, 1.05);
+                vec3 lowA = vec3(0.45, 1.55 - redPhase * 0.5, 0.0);
+                vec3 upA = vec3(0.95 + redPhase * 2.0, 0.10, 1.05);
                 vec3 auroraA = fmix(lowA, upA, mix(colorMixer, 1.0 - colorMixer, altitudeFactor50k)) * mix(attenuation, 1.0 - attenuation, altitudeFactor);
 
 				aurora += auroraA * auroraSample * sqrt(auroraDistanceFactor);

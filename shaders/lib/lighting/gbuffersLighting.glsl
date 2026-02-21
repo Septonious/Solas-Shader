@@ -235,18 +235,19 @@ void gbuffersLighting(in vec4 color, inout vec4 albedo, in vec3 screenPos, in ve
     if (auroraVisibility > 0.0) {
         //The index of geomagnetic activity. Determines the brightness of Aurora, its widespreadness across the sky and tilt factor
         float kpIndex = abs(worldDay % 9 - worldDay % 4);
-              kpIndex = kpIndex - int(kpIndex == 1) + int(kpIndex > 7 && worldDay % 10 == 0);
-              kpIndex = min(max(kpIndex, 0) + isSnowy * 4, 9);
+                kpIndex = kpIndex - int(kpIndex == 1) + int(kpIndex > 7 && worldDay % 10 == 0);
+                kpIndex = min(max(kpIndex, 0) + isSnowy * 4, 9);
 
         //Aurora tends to get brighter and dimmer when plasma arrives or fades away
         float pulse = 0.5 + 0.5 * sin(frameTimeCounter * 0.08 + sin(frameTimeCounter * 0.013) * 0.6);
-              pulse = smoothstep(0.15, 0.85, pulse);
+                pulse = smoothstep(0.15, 0.85, pulse);
 
         float longPulse = sin(frameTimeCounter * 0.025 + sin(frameTimeCounter * 0.004) * 0.8);
-              longPulse = longPulse * (1.0 - 0.15 * abs(longPulse));
+                longPulse = longPulse * (1.0 - 0.15 * abs(longPulse));
 
         kpIndex *= 1.0 + longPulse * 0.25;
         kpIndex /= 9.0;
+        kpIndex = 1;
         auroraVisibility *= kpIndex * 0.5;
         sceneLighting *= (1.0 - auroraVisibility) + auroraVisibility * vec3(0.05 + (1.0 + pulse) * pow3(kpIndex), 1.55, 0.40);
     }
