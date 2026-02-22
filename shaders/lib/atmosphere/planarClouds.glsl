@@ -86,7 +86,6 @@ void drawPlanarClouds(inout vec4 pc, in vec3 atmosphereColor, in vec3 worldPos, 
 
         kpIndex *= 1.0 + longPulse * 0.25;
         kpIndex /= 9.0;
-        kpIndex = 1;
         auroraVisibility *= kpIndex * (1.0 + max(longPulse * 0.5, 0.0));
         auroraVisibility = min(auroraVisibility, 2.0) * AURORA_BRIGHTNESS;
 

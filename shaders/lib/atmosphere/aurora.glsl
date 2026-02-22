@@ -81,7 +81,6 @@ void drawAurora(inout vec3 color, in vec3 worldPos, in float caveFactor, in floa
 
 	kpIndex *= 1.0 + longPulse * 0.25;
 	kpIndex /= 9.0;
-    kpIndex = 1;
 	visibility *= kpIndex * (1.0 + max(longPulse * 0.5, 0.0));
     visibility = min(visibility, 2.0) * AURORA_BRIGHTNESS;
 
