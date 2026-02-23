@@ -1,5 +1,5 @@
 //Based on BSL
-vec3 computeScreenSpaceShadows(vec3 viewPos, vec3 lightVector, sampler2D depthtex, mat4 projection, mat4 projectionInverse,  float dither, float shadowMask) {
+vec3 computeScreenSpaceShadows(vec3 viewPos, vec3 lightVector, sampler2D depthtex, mat4 projection, mat4 projectionInverse,  float dither) {
 	float shadow = 1.0;
 
 	float traceZ = 0.0;

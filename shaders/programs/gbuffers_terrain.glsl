@@ -300,31 +300,9 @@ void main() {
     float VoL = clamp(dot(normalize(viewPos), sunVec), 0.0, 1.0);
     #endif
 
-    float sss = 0.0;
-
-    #if defined OVERWORLD || defined END
-    if (subsurface > 0.0) {
-        sss = pow6(VoL);
-
-        #ifdef OVERWORLD
-        sss *= shadowFade;
-        sss *= 1.0 - wetness * 0.5;
-        #endif
-    }
-    #endif
-
-    //Screen Space Shadows mask
-    #ifdef OVERWORLD
-    float rainFactor = 1.0 - wetness * 0.5;
-    float shadowMask = rainFactor * shadowFade * (0.25 + lightmap.y * 0.75);
-            shadowMask *= 1.0 + sss * 2.0;
-    #else
-    float shadowMask = 1.0;
-    #endif
-
 	/* DRAWBUFFERS:03 */
 	gl_FragData[0] = albedo;
-	gl_FragData[1] = vec4(encodeNormal(newNormal), shadowMask, clamp(fmix(smoothness, 1.0, metalness * metalness), 0.0, 0.95));
+	gl_FragData[1] = vec4(encodeNormal(newNormal), lightmap.y * 0.5, clamp(fmix(smoothness, 1.0, metalness * metalness), 0.0, 0.95));
 }
 
 #endif
