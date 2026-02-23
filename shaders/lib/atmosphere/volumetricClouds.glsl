@@ -359,8 +359,8 @@ void getEndCloudSample(vec2 rayPos, vec2 wind, float attenuation, inout float no
 	float noiseDetailB = texture2D(noisetex, rayPos  - wind + detailZ + 0.05).b;
 	float noiseDetail = mix(noiseDetailA, noiseDetailB, fract(attenuation * END_DISK_THICKNESS));
 
-	float noiseCoverage = abs(attenuation - 0.125) * (attenuation > 0.125 ? 1.14 : 5.0);
-		  noiseCoverage *= noiseCoverage * 5.0;
+	float noiseCoverage = abs(attenuation - 0.125) * (attenuation > 0.125 ? 1.14 : 6.0);
+		  noiseCoverage *= noiseCoverage * 6.0;
 
 	noise = mix(noiseBase, noiseDetail, 0.025 * int(0 < noiseBase)) * 22.0 - noiseCoverage;
 	noise = max(noise - END_DISK_AMOUNT - 1.0 + getProtoplanetaryDisk(rayPos), 0.0);
@@ -486,7 +486,7 @@ void computeEndVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z,
 					    sampleLighting = clamp(sampleLighting, 0.0, 1.0);
 
 				cloudLighting = fmix(cloudLighting, sampleLighting, noise * (1.0 - cloud * cloud));
-				if (rayDistance < shadowDistance * 0.25) cloudLighting *= 0.5 + shadow1 * 0.5;
+				if (length(worldPos) < shadowDistance) cloudLighting *= 0.5 + shadow1 * 0.5;
 				cloud = fmix(cloud, 1.0, noise);
 				noise *= pow8(smoothstep(4000.0, 8.0, rayDistance)); //Fog
 				cloudAlpha = fmix(cloudAlpha, 1.0, noise);

@@ -46,7 +46,7 @@ void getNormalFog(inout vec3 color, in vec3 atmosphereColor, in vec3 viewPos, in
 	vec3 fogPos = worldPos + cameraPosition;
 	float noise = texture2D(noisetex, (vec2(fogPos.x * 0.5, fogPos.y * 0.5) + vec2(fogPos.z * 0.5, fogPos.y * 0.5) + vec2(fogPos.x * 0.5, fogPos.z * 0.5)) * 0.0005 + frameCounter * 0.00001).r;
             noise *= noise;
-    float distanceFactor = 50.0 * (0.5 + timeBrightness * 0.75) + FOG_DISTANCE * (0.75 + caveFactor * 0.25) - wetness * 25.0;
+    float distanceFactor = 25.0 * (0.5 + timeBrightness) + FOG_DISTANCE * (0.75 + caveFactor * 0.25) - wetness * 25.0;
     #if defined VOXY || defined DISTANT_HORIZONS
             distanceFactor += 40.0;
     #endif
@@ -54,8 +54,8 @@ void getNormalFog(inout vec3 color, in vec3 atmosphereColor, in vec3 viewPos, in
 	float altitudeFactor = FOG_HEIGHT + noise * 10.0 + timeBrightness * 25.0 - isJungle * 15.0;
 	float altitude = 0.25 + exp2(-max(worldPos.y + cameraPosition.y - altitudeFactor, 0.0) / exp2(FOG_HEIGHT_FALLOFF + moonVisibility + timeBrightness + wetness - isJungle - isSwamp));
 		  //altitude = fmix(1.0, altitude, clamp((cameraPosition.y - altitude) / altitude, 0.0, 1.0));
-	float density = FOG_DENSITY * (1.0 + (sunVisibility - timeBrightness) * 0.25 + moonVisibility * 0.5) * (0.5 + noise);
-		  density += isLushCaves * 0.25 + (isDesert * 0.15 + isSwamp * 0.20 + isJungle * 0.35);
+	float density = FOG_DENSITY * (1.0 + (sunVisibility - timeBrightness) * 0.5 + moonVisibility * 0.5) * (0.5 + noise);
+		    density += isLushCaves * 0.25 + (isDesert * 0.15 + isSwamp * 0.20 + isJungle * 0.35);
 
 	#if MC_VERSION >= 12104
     	  density += isPaleGarden * 0.5;

@@ -321,10 +321,6 @@ void main() {
     float shadowVisibility = maxOf(abs(worldPos.xyz) / (vec3(min(shadowDistance, far))));
             shadowVisibility = clamp(shadowVisibility, 0.0, 1.0);
             shadowVisibility = 1.0 - pow6(shadowVisibility);
-
-            #ifdef OVERWORLD
-            shadowVisibility *= caveFactor;
-            #endif
     #endif
     
 	#if defined DISTANT_HORIZONS
@@ -379,7 +375,7 @@ void main() {
         vec4 vxViewPos = vxProjInv * (vxScreenPos * 2.0 - 1.0);
                 vxViewPos /= vxViewPos.w;
 
-        if (vxZ0 < 1.0) {
+        if (vxZ0 < 1.0 && shadowVisibility < 1.0) {
             #ifdef SS_SHADOWS
             color.rgb *= computeScreenSpaceShadows(vxViewPos.xyz, lightVec, vxDepthTexOpaque, vxProj, vxProjInv, blueNoiseDither);
 		    #endif
