@@ -67,7 +67,7 @@ uniform mat4 vxProjInv;
 #endif
 
 #ifdef DISTANT_HORIZONS
-uniform sampler2D dhDepthTex1
+uniform sampler2D dhDepthTex1;
 
 uniform mat4 dhProjectionInverse;
 #endif
