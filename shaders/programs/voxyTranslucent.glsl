@@ -146,23 +146,6 @@ void voxy_emitFragment(VoxyFragmentParameters parameters) {
 		albedo.rgb = pow(vec3(NP_R, NP_G, NP_B), max(vec3(1.0 - portalNoise * 3.0 - pow4(lAlbedo) * 0.25), vec3(0.1))) * 3.0 * portalNoise * (0.8 + pow4(lAlbedo) * 0.6);
 	}
 
-	//Volumetric Clouds Blending
-	float cloudBlendOpacity = 1.0;
-
-	#ifdef VOLUMETRIC_CLOUDS
-	#ifndef DISTANT_HORIZONS
-    float farPlane = far + vxRenderDistance * 512.0;
-	float cloudDepth = texture(gaux2, screenPos.xy).r * (farPlane * 2.0);
-	#else
-	float cloudDepth = texture(gaux2, screenPos.xy).r * dhFarPlane;
-	#endif
-	cloudBlendOpacity = step(length(viewPos), cloudDepth);
-
-	if (cloudBlendOpacity == 0) {
-		discard;
-	}
-	#endif
-
 	//Water Normals
 	float fresnel = clamp(1.0 + dot(normalize(newNormal), nViewPos), 0.0, 1.0);
 
@@ -209,8 +192,6 @@ void voxy_emitFragment(VoxyFragmentParameters parameters) {
 		albedo.rgb += specularHighlight * 0.5;
 	}
 	#endif
-
-	albedo.a *= cloudBlendOpacity;
 
     #if !defined SSAO && !defined SS_SHADOWS
     out0 = albedo;
