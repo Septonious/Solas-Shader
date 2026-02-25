@@ -375,9 +375,12 @@ void main() {
         vec4 vxViewPos = vxProjInv * (vxScreenPos * 2.0 - 1.0);
                 vxViewPos /= vxViewPos.w;
 
-        if (vxZ0 < 1.0 && shadowVisibility < 1.0) {
+        if (vxZ0 < 1.0) {
             #ifdef SS_SHADOWS
-            color.rgb *= computeScreenSpaceShadows(vxViewPos.xyz, lightVec, vxDepthTexOpaque, vxProj, vxProjInv, blueNoiseDither);
+            if (shadowVisibility < 1.0) {
+            vec3 screenSpaceShadow = computeScreenSpaceShadows(vxViewPos.xyz, lightVec, vxDepthTexOpaque, vxProj, vxProjInv, blueNoiseDither);
+            color.rgb *= mix(screenSpaceShadow, vec3(1.0), shadowVisibility);
+            }
 		    #endif
 
             #ifdef SSAO

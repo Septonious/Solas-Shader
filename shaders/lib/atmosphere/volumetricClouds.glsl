@@ -401,8 +401,6 @@ void computeEndVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z,
             nWorldPos.y += nWorldPos.x * 0.5 * sin(frameTimeCounter * 8);
         }
         #endif
-		vec3 worldLightVec = ToWorld(normalize(sunVec * 10000.0));
-			 worldLightVec.xz *= 32.0;
 
 		#if MC_VERSION >= 12100 && defined END_FLASHES
 		vec3 worldEndFlashPosition = ToWorld(normalize(endFlashPosition * 10000.0)) * 24.0;
@@ -431,7 +429,7 @@ void computeEndVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z,
 
 		float planeDifference = maxDist - minDist;
 		float rayLength = (END_DISK_THICKNESS + blackHoleDistortion * 5.0) * 6.0;
-			  rayLength /= nWorldPos.y * nWorldPos.y * 6.0 + 1.0;
+			    rayLength /= nWorldPos.y * nWorldPos.y * 6.0 + 1.0;
 		vec3 startPos = cameraPosition + minDist * nWorldPos;
 		vec3 sampleStep = nWorldPos * rayLength;
 		int sampleCount = int(min(planeDifference / rayLength, 64) + dither);
@@ -445,6 +443,9 @@ void computeEndVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z,
 			float halfVoLSqrt = VoS * 0.5 + 0.5;
 			float halfVoL = halfVoLSqrt * halfVoLSqrt;
 			float scattering = pow8(halfVoLSqrt);
+
+            vec3 worldLightVec = normalize(ToWorld(sunVec * 100000000.0));
+                    worldLightVec.xz *= 32.0;
 
 			vec3 rayPos = startPos + sampleStep * dither;
 
@@ -473,19 +474,15 @@ void computeEndVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z,
 				float rayDistance = length(worldPos.xz) * 0.1;
 				float attenuation = smoothstep(END_DISK_HEIGHT, cloudTop, rayPos.y);
 
-				getEndCloudSample(rayPos.xz, wind, attenuation, noise);
+                getEndCloudSample(rayPos.xz, wind, attenuation, noise);
+                getEndCloudSample(rayPos.xz + worldLightVec.xz, wind, attenuation , lightingNoise);
 
-				#ifdef END_FLASHES
-				getEndCloudSample(rayPos.xz + worldLightVec.xz + worldEndFlashPosition.xz * endFlashIntensity, wind, attenuation + worldLightVec.y * 0.15, lightingNoise);
-				#else
-				getEndCloudSample(rayPos.xz + worldLightVec.xz, wind, attenuation + worldLightVec.y * 0.15, lightingNoise);
-				#endif
+				float powder = 1.0 - 0.925 * exp(-pow(noise, 1.0 + noise * 7.0));
+				float directionalScattering = 1.0 - exp(-2.0 * (noise - lightingNoise * 0.9));
+                float sampleLighting = clamp((0.125 + attenuation * 0.875) * powder * directionalScattering * 2.0, 0.0, 1.0);
 
-				float sampleLighting = 0.05 + clamp(noise - lightingNoise * (0.9 - scattering * 0.15), 0.0, 0.95) * (1.5 + scattering);
-					    sampleLighting *= 1.0 - noise * 0.75;
-					    sampleLighting = clamp(sampleLighting, 0.0, 1.0);
+                cloudLighting = fmix(cloudLighting, sampleLighting, noise * (1.0 - cloud * cloud));
 
-				cloudLighting = fmix(cloudLighting, sampleLighting, noise * (1.0 - cloud * cloud));
 				if (length(worldPos) < shadowDistance) cloudLighting *= 0.5 + shadow1 * 0.5;
 				cloud = fmix(cloud, 1.0, noise);
 				noise *= pow8(smoothstep(4000.0, 8.0, rayDistance)); //Fog
@@ -503,7 +500,7 @@ void computeEndVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z,
             float endFlashPoint = endFlashPosToPoint(endFlashPosition, worldPos);
                  cloudColor = fmix(cloudColor, endFlashCol * (1.0 + endFlashPoint * endFlashPoint * 2.0), endFlashPoint * endFlashIntensity * 0.5);
             #endif
-			     cloudColor *= cloudLighting * (0.6 + scattering * 0.4);
+			     cloudColor *= cloudLighting * (0.75 + scattering * 0.25);
 
 			vc = vec4(cloudColor, cloudAlpha * END_DISK_OPACITY) * visibility;
 		}
