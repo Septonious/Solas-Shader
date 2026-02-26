@@ -277,7 +277,7 @@ void gbuffersLighting(in vec4 color, inout vec4 albedo, in vec3 screenPos, in ve
     #endif
 
     //Night vision
-    sceneLighting += nightVision * vec3(0.2, 0.3, 0.2);
+    sceneLighting += nightVision * vec3(0.075, 0.15, 0.1);
 
     //Vanilla AO
     #ifdef VANILLA_AO
