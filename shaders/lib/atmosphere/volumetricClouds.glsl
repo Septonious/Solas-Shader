@@ -301,7 +301,7 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z, fl
 									 sunVisibility * (1.0 - wetness)) * (1.0 - scattering * 0.5);
             vec3 cloudLightColor = fmix(lightCol, lightCol * nSkyColor * 2.0, timeBrightnessSqrt * (0.5 - wetness * 0.5));
                     cloudLightColor *= 0.125 + cloudLighting * 0.875;
-                    cloudLightColor *= 1.0 + scattering * shadowFade;
+                    cloudLightColor *= 1.0 + scattering * shadowFade * sunVisibility;
                     //Aurora influence
                     #ifdef AURORA_LIGHTING_INFLUENCE
                     cloudLightColor.r *= 1.0 + pow3(kpIndex) * pulse * auroraVisibility * 4.0;
