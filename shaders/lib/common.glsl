@@ -420,7 +420,6 @@ const float sunPathRotation = 180.0;
 #define VOXEL_VOLUME_SIZE 192 //[128 192 256 384 512]
 #define FLOODFILL_BRIGHTNESS 1.00 //[0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00]
 #define FLOODFILL_RADIUS 1.6 //[0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7]
-//#define DOORS_BLOCK_LIGHT
 
 //Handheld Lighting
 #define DYNAMIC_HANDLIGHT
@@ -875,9 +874,6 @@ vec3 pow8(vec3 x) {return x*x*x*x*x*x*x*x;}
 #ifdef SPECULAR_HIGHLIGHTS
 #endif
 
-#ifdef DOORS_BLOCK_LIGHT
-#endif
-
 #ifdef CHROMATIC_ABERRATION
 #endif
 
@@ -896,4 +892,11 @@ vec3 pow8(vec3 x) {return x*x*x*x*x*x*x*x;}
 #undef DYNAMIC_HANDLIGHT
 #undef VX_SUPPORT
 #undef GENERATED_NORMALS
+#endif
+
+#if MC_VERSION <= 11605
+#undef DYNAMIC_HANDLIGHT
+#undef WAVING_LEAVES
+#undef WAVING_PLANTS
+#undef GENERATED_EMISSION
 #endif
