@@ -412,7 +412,7 @@ void main() {
 	#ifdef DISTANT_HORIZONS
 	cloudDepth /= (2.0 * dhFarPlane);
 	#else
-	float farPlane = far + vxRenderDistance * 16.0;
+	float farPlane = far + vxRenderDistance;
 	cloudDepth /= (2.0 * farPlane);
 	#endif
 
