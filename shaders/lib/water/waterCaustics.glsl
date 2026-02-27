@@ -16,7 +16,7 @@ float getWaterHeightMap(vec3 worldPos, vec2 offset) {
 	#elif WATER_NORMALS == 3
 	float noiseA = texture(noisetex, (vec2(worldPos.x, worldPos.z * 0.75 + worldPos.x * 0.25) - wind) / 256.0 + offset).r;
 	float noiseB = texture(noisetex, (worldPos.xz + wind) / 48.0 + offset).r;
-    noiseA *= noiseA;
+    noiseA *= noiseA * 1.5;
 	#endif
 	
 	#if WATER_NORMALS > 0
