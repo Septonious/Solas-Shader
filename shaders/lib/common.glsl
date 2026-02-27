@@ -818,7 +818,7 @@ vec3 pow8(vec3 x) {return x*x*x*x*x*x*x*x;}
 #undef SELF_SHADOW
 #endif
 
-#if (defined IS_IRIS && !defined MC_OS_MAC) || MC_VERSION < 11902
+#if !defined MC_OS_MAC && MC_VERSION >= 11902
 #define VX_SUPPORT
 #endif
 

@@ -51,7 +51,7 @@ uniform vec3 fogColor;
 uniform vec4 lightningBoltPosition;
 uniform vec4 entityColor;
 
-uniform sampler2D texture, noisetex;
+uniform sampler2D tex, noisetex;
 
 #ifdef VX_SUPPORT
 uniform sampler3D floodfillSampler, floodfillSamplerCopy;
@@ -125,7 +125,7 @@ vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.
 
 // Main //
 void main() {
-	vec4 albedo = texture2D(texture, texCoord);
+	vec4 albedo = texture2D(tex, texCoord);
 	if (albedo.a < 0.00001) discard;
 	albedo *= color;
 	albedo.rgb = fmix(albedo.rgb, entityColor.rgb * entityColor.rgb * 2.0, entityColor.a);

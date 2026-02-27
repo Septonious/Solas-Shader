@@ -1,6 +1,6 @@
 //Generated normals based on those from Emin#7309's Complementary Shaders. Tysm for allowing me to use them a YEAR prior to me actually implementing them in my shader
 float getAlbedoDifference(float lAlbedo, vec2 offsetCoord) {
-    float lNearbyAlbedo = length(texture2D(texture, offsetCoord).rgb);
+    float lNearbyAlbedo = length(texture2D(tex, offsetCoord).rgb);
     float albedoDifference = lAlbedo - lNearbyAlbedo;
 
     if (albedoDifference > 0.0) return clamp(max(albedoDifference - 0.05, 0.0), -NORMAL_THRESHOLD, NORMAL_THRESHOLD);

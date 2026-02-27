@@ -52,7 +52,7 @@ uniform ivec2 eyeBrightnessSmooth;
 uniform vec3 cameraPosition;
 uniform vec4 lightningBoltPosition;
 
-uniform sampler2D texture, noisetex;
+uniform sampler2D tex, noisetex;
 uniform sampler2D depthtex1;
 uniform sampler2D gaux1;
 
@@ -144,7 +144,7 @@ vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.
 
 // Main //
 void main() {
-	vec4 albedoTexture = texture2D(texture, texCoord);
+	vec4 albedoTexture = texture2D(tex, texCoord);
 	vec4 albedo = albedoTexture;
  
 	#ifndef GBUFFERS_TERRAIN_COLORWHEEL
