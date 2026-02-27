@@ -27,7 +27,7 @@ vec3 getAtmosphere(vec3 viewPos, vec3 worldPos, out float atmosphereHardMixFacto
          scatteringColor = mix(scatteringColor, lightColSqrt, timeBrightnessSqrt * 0.75);
     float scattering = pow2(1.0 - (heightClamped + 0.15)) * (0.75 + heightPositive * 0.75) * (1.0 - VoSClamped * VoSClamped * 0.25) * pow(length(scatteringColor), 0.33) * sunVisibility * mix(1.0, atmosphereHardMixFactor * 0.75, altitudeFactor);
 
-    atmosphere = fmix(atmosphere, scatteringColor, scattering * SUNRISE_SUNSET_INTENSITY);
+    atmosphere = fmix(atmosphere, scatteringColor * 0.75, scattering * SUNRISE_SUNSET_INTENSITY);
     atmosphere *= 1.0 - wetness * 0.25 * (1.0 - altitudeFactor10k);
 
     //Fade atmosphere to dark gray underground
