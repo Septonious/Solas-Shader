@@ -205,8 +205,8 @@ void gbuffersLighting(in vec4 color, inout vec4 albedo, in vec3 screenPos, in ve
         vec3 baseReflectance = vec3(2.0);
         #endif
 
-        float smoothnessF = 0.1 + lAlbedo * 0.25;
-              smoothnessF = fmix(smoothnessF, 1.0, smoothness);
+        float smoothnessF = 0.15 + lAlbedo * 0.25;
+                smoothnessF = fmix(smoothnessF, 1.0, smoothness);
 
         specularHighlight = GGX(newNormal, normalize(viewPos), smoothnessF, baseReflectance, 0.04);
         specularHighlight = max(specularHighlight, 0.0);
