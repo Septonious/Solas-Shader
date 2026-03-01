@@ -5,7 +5,7 @@ vec2 offsetDist(float x, int s) {
 }
 
 float texture2DShadow(sampler2D shadowtex, vec3 shadowPos) {
-    float shadow = texture2D(shadowtex, shadowPos.xy).x;
+    float shadow = texture(shadowtex, shadowPos.xy).x;
           shadow = clamp((shadow - shadowPos.z) * 16384.0 + 0.5, 0.0, 1.0);
     return shadow;
 }
@@ -22,7 +22,7 @@ vec3 SampleShadow(vec3 shadowPos) {
     if (shadow0 < 1.0 && doShadowColor > 0.9) {
         float shadow1 = texture2DShadow(shadowtex1, shadowPos).x;
         if (shadow1 > 0.9999) {
-            shadowColor = texture2D(shadowcolor0, shadowPos.st).rgb * shadow1;
+            shadowColor = texture(shadowcolor0, shadowPos.st).rgb * shadow1;
         }
     }
 
@@ -33,7 +33,7 @@ void computeShadow(inout vec3 shadow, vec3 shadowPos, float offset, float subsur
     float shadow0 = 0.0;
     vec3 shadowColor = vec3(0.0);    
 
-    float blueNoiseDither = texture2D(noisetex, gl_FragCoord.xy / 512.0).b ;
+    float blueNoiseDither = texture(noisetex, gl_FragCoord.xy / 512.0).b ;
     #ifdef TAA
          blueNoiseDither = fract(blueNoiseDither + 1.61803398875 * mod(float(frameCounter), 3600.0));
     #endif

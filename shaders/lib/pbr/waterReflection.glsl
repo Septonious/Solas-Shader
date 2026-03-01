@@ -19,7 +19,7 @@ void getReflection(inout vec4 albedo, in vec3 viewPos, in vec3 worldPos, in vec3
 	float zThreshold = 1.0 + 1e-5;
 	vec4 reflection = vec4(0);
 	if (reflectPos.z < zThreshold) {
-		reflection = texture2D(gaux1, reflectPos.xy);
+		reflection = texture(gaux1, reflectPos.xy);
 		reflection.rgb = pow8(reflection.rgb) * 256.0;
 		reflection.rgb *= float(reflection.a > 0.0);
 		reflection.a *= border;
