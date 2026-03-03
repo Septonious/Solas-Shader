@@ -113,9 +113,7 @@ void voxy_emitFragment(VoxyFragmentParameters parameters) {
 	float water = float(mat == 10001);
 	float glass = float(mat >= 10201 && mat <= 10216);
 	float emission = portal * lAlbedo * lAlbedo * 2.0;
-    float smoothness = 0.0;
-    float metalness = 0.0;
-    float subsurface = 0.0;
+    float smoothness = 0.0, metalness = 0.0, f0 = 0.0, subsurface = 0.0;
 
 	if (water > 0.5) {
 		#ifdef VANILLA_WATER
@@ -157,7 +155,7 @@ void voxy_emitFragment(VoxyFragmentParameters parameters) {
 
     float parallaxShadow = 1.0;
     vec3 shadow = vec3(0.0);
-    gbuffersLighting(voxyColor, albedo, screenPos, viewPos, worldPos, newNormal, shadow, lightmap, NoU, NoL, NoE, subsurface, emission, smoothness, parallaxShadow);
+    gbuffersLighting(voxyColor, albedo, screenPos, viewPos, worldPos, newNormal, shadow, lightmap, NoU, NoL, NoE, subsurface, emission, smoothness, metalness, f0, parallaxShadow);
 
 	//Reflections
 	#ifdef WATER_REFLECTIONS
@@ -179,14 +177,18 @@ void voxy_emitFragment(VoxyFragmentParameters parameters) {
 	#if !defined DISTANT_HORIZONS && !defined NETHER && defined SPECULAR_HIGHLIGHTS
 	if (emission < 0.1 && portal < 0.1) {
 		float vanillaDiffuse = (0.25 * NoU + 0.75) + (0.667 - abs(NoE)) * (1.0 - abs(NoU)) * 0.15;
-			  vanillaDiffuse *= vanillaDiffuse;
+			    vanillaDiffuse *= vanillaDiffuse;
 
 		float smoothnessF = 0.6 + length(albedo.rgb) * 0.2 * float(ice > 0.5 || water > 0.5);
+        // Water: dielectric, F0 ~ 0.02 (IOR 1.33), no metalness
+        float waterF0 = 0.5; // encoded: sqrt(0.02/0.08) ≈ 0.5
 
 		#ifdef OVERWORLD
-		vec3 specularHighlight = getSpecularHighlight(newNormal, viewPos, smoothnessF, vec3(0.80), lightColSqrt, shadow * vanillaDiffuse, voxyColor.a);
+		vec3 specularHighlight = getSpecularHighlight(newNormal, viewPos, smoothnessF, 0.0,
+            albedo.rgb, waterF0, lightColSqrt, shadow * vanillaDiffuse, voxyColor.a);
 		#else
-		vec3 specularHighlight = getSpecularHighlight(newNormal, viewPos, smoothnessF, vec3(0.40), endLightCol * 0.5, shadow * vanillaDiffuse, voxyColor.a);
+		vec3 specularHighlight = getSpecularHighlight(newNormal, viewPos, smoothnessF, 0.0,
+            albedo.rgb, waterF0, endLightCol * 0.5, shadow * vanillaDiffuse, voxyColor.a);
 		#endif
 
 		albedo.rgb += specularHighlight * 0.5;

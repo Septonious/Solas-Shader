@@ -249,7 +249,7 @@ void main() {
 	float NoE = clamp(dot(newNormal, eastVec), -1.0, 1.0);
 
     vec3 shadow = vec3(0.0);
-    gbuffersLighting(color, albedo, screenPos, viewPos, worldPos, newNormal, shadow, lightmap, NoU, NoL, NoE, 0.0, emission, 0.6, 0.0);
+    gbuffersLighting(color, albedo, screenPos, viewPos, worldPos, newNormal, shadow, lightmap, NoU, NoL, NoE, 0.0, emission, 0.6, 0.0, 0.0, 0.0);
 
     #if defined OVERWORLD
     float atmosphereHardMixFactor = 0.0;
@@ -284,11 +284,15 @@ void main() {
 			  vanillaDiffuse *= vanillaDiffuse;
 
 		float smoothnessF = 0.6 + length(albedo.rgb) * 0.2 * float(ice > 0.5 || water > 0.5);
+        // Water: dielectric, F0 ~ 0.02 (IOR 1.33), no metalness
+        float waterF0 = 0.5; // encoded: sqrt(0.02/0.08) ≈ 0.5
 
 		#ifdef OVERWORLD
-		vec3 specularHighlight = getSpecularHighlight(newNormal, viewPos, smoothnessF, vec3(0.80), lightColSqrt, shadow * vanillaDiffuse, color.a);
+		vec3 specularHighlight = getSpecularHighlight(newNormal, viewPos, smoothnessF, 0.0,
+            albedo.rgb, waterF0, lightColSqrt, shadow * vanillaDiffuse, color.a);
 		#else
-		vec3 specularHighlight = getSpecularHighlight(newNormal, viewPos, smoothnessF, vec3(0.40), endLightCol * 0.5, shadow * vanillaDiffuse, color.a);
+		vec3 specularHighlight = getSpecularHighlight(newNormal, viewPos, smoothnessF, 0.0,
+            albedo.rgb, waterF0, endLightCol * 0.5, shadow * vanillaDiffuse, color.a);
 		#endif
 
 		albedo.rgb += specularHighlight * 0.5;

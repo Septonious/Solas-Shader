@@ -84,9 +84,7 @@ void voxy_emitFragment(VoxyFragmentParameters parameters) {
 	float saplings = float(mat == 10317);
 	float foliage = float(mat >= 10304 && mat <= 10319 || mat >= 10035 && mat <= 10040) * (1.0 - leaves) * (1.0 - saplings);
 	float subsurface = leaves + foliage * 0.6 + saplings * 0.4;
-    float emission = 0.0;
-    float smoothness = 0.0;
-    float metalness = 0.0;
+    float emission = 0.0, smoothness = 0.0, metalness = 0.0, f0 = 0.0;
 
 	#ifdef OVERWORLD
 	if (foliage > 0.5) {
@@ -111,7 +109,7 @@ void voxy_emitFragment(VoxyFragmentParameters parameters) {
 
     float parallaxShadow = 1.0;
     vec3 shadow = vec3(0.0);
-    gbuffersLighting(voxyColor, albedo, screenPos, viewPos, worldPos, newNormal, shadow, lightmap, NoU, NoL, NoE, subsurface, emission, smoothness, parallaxShadow);
+    gbuffersLighting(voxyColor, albedo, screenPos, viewPos, worldPos, newNormal, shadow, lightmap, NoU, NoL, NoE, subsurface, emission, smoothness, metalness, f0, parallaxShadow);
 
     //Subsurface scattering
     #if defined OVERWORLD

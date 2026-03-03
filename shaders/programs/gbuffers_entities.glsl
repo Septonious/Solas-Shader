@@ -132,7 +132,7 @@ void main() {
 
 	float lightningBolt = float(mat == 1);
 	float subsurface = 0.0;
-	float emission = 0.0, smoothness = 0.0, metalness = 0.0, porosity = 0.5, parallaxShadow = 0.0;
+	float emission = 0.0, smoothness = 0.0, metalness = 0.0, f0 = 0.0, ao = 0.0, porosity = 0.5, parallaxShadow = 0.0;
 
 	vec2 lightmap = clamp(lmCoord, vec2(0.0), vec2(1.0));
 	vec3 newNormal = normal;
@@ -156,7 +156,7 @@ void main() {
 		#endif
 
 		vec3 shadow = vec3(0.0);
-		gbuffersLighting(color, albedo, screenPos, viewPos, worldPos, newNormal, shadow, lightmap, NoU, NoL, NoE, subsurface, emission, smoothness, parallaxShadow);
+		gbuffersLighting(color, albedo, screenPos, viewPos, worldPos, newNormal, shadow, lightmap, NoU, NoL, NoE, subsurface, emission, smoothness, metalness, f0, parallaxShadow);
 	}
 
 	/* DRAWBUFFERS:03 */

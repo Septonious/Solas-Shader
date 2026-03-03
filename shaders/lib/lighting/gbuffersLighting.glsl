@@ -5,7 +5,7 @@ uniform float endFlashIntensity;
 
 void gbuffersLighting(in vec4 color, inout vec4 albedo, in vec3 screenPos, in vec3 viewPos, in vec3 worldPos, in vec3 newNormal, inout vec3 shadow, in vec2 lightmap, 
                       in float NoU, in float NoL, in float NoE,
-                      in float subsurface, in float emission, in float smoothness, in float parallaxShadow) {
+                      in float subsurface, in float emission, in float smoothness, in float metalness, in float f0, in float parallaxShadow) {
     //Variables
     float originalNoL = NoL;
     float lViewPos = length(viewPos.xz);
@@ -15,12 +15,12 @@ void gbuffersLighting(in vec4 color, inout vec4 albedo, in vec3 screenPos, in ve
 
     //Vanilla Directional Lighting
     float vanillaDiffuse = (0.25 * NoU + 0.75) + (0.667 - abs(NoE)) * (1.0 - abs(NoU)) * 0.15;
-          vanillaDiffuse *= vanillaDiffuse;
-          vanillaDiffuse = fmix(1.0, vanillaDiffuse, lightmap.y);
+            vanillaDiffuse *= vanillaDiffuse;
+            vanillaDiffuse = fmix(1.0, vanillaDiffuse, lightmap.y);
 
     //Block Lighting
     float blockLightMap = pow6(lightmap.x * lightmap.x) * 2.0 + max(lightmap.x - 0.05, 0.0);
-          blockLightMap *= blockLightMap * 0.5;
+            blockLightMap *= blockLightMap * 0.5;
 
     vec3 blockLighting = blockLightCol * blockLightMap * (1.0 - emission);
 
@@ -84,18 +84,25 @@ void gbuffersLighting(in vec4 color, inout vec4 albedo, in vec3 screenPos, in ve
     float VoL = clamp(dot(normalize(viewPos), sunVec), 0.0, 1.0);
     #endif
 
-    float sss = 0.0;
+    float VoUPositive = dot(normalize(viewPos), upVec) * 0.5 + 0.5;
 
+    float sss = 0.0;
     #if defined OVERWORLD || defined END
     if (subsurface > 0.0) {
-        sss = pow6(VoL);
+        float wrap = subsurface * 0.8;
+        float wrapNoL = clamp((NoL + wrap) / (1.0 + wrap), 0.0, 1.0);
+        float wrapTerm = wrapNoL * wrapNoL;
+
+        float scatter = pow6(clamp(VoL * 0.5 + 0.5, 0.0, 1.0));
+                scatter *= subsurface * subsurface;
+
+        sss = fmix(wrapTerm, 1.0, scatter);
 
         #ifdef OVERWORLD
-        sss *= shadowFade;
-        sss *= 1.0 - wetness * 0.5;
+        sss *= shadowFade * (1.0 - wetness * 0.4);
         #endif
 
-        NoL = fmix(NoL, 1.0, subsurface * shadowVisibility * (0.5 + sss * 0.75) * 0.75);
+        NoL = fmix(NoL, sss * (0.25 + VoUPositive * 0.75), subsurface * shadowVisibility * 0.65);
     }
     #endif
 
@@ -198,30 +205,36 @@ void gbuffersLighting(in vec4 color, inout vec4 albedo, in vec3 screenPos, in ve
 
     #if (defined GBUFFERS_TERRAIN || defined GBUFFERS_ENTITIES || defined GBUFFERS_BLOCK || defined VOXY_OPAQUE) && !defined NETHER && defined SPECULAR_HIGHLIGHTS
     if (emission < 0.01) {
-        #if defined GBUFFERS_TERRAIN && defined OVERWORLD
-        float isMaterialSmooth = float(mat >= 20298 && mat <= 20322);
-        vec3 baseReflectance = vec3(max(5.0 - isMaterialSmooth * 4.0 - timeBrightness * 3.0, 1.0));
-        #else
-        vec3 baseReflectance = vec3(2.0);
-        #endif
-
         float smoothnessF = 0.15 + lAlbedo * 0.3;
+        #ifdef END
+                smoothness -= 0.15;
+        #endif
                 smoothnessF = fmix(smoothnessF, 1.0, smoothness);
 
-        specularHighlight = GGX(newNormal, normalize(viewPos), smoothnessF, baseReflectance, 0.04);
-        specularHighlight = max(specularHighlight, 0.0);
+        // LabPBR: use f0 and metalness that were passed in
+        // (falls back to synthetic f0 = 0.5/metalness when using generated PBR)
+        float effectiveF0 = (f0 > 0.0) ? f0 : (metalness > 0.5 ? 1.0 : 0.5);
 
-        #if defined DH_TERRAIN
-        specularHighlight *= 1.5;
+        #ifdef OVERWORLD
+        specularHighlight = getSpecularHighlight(
+            newNormal, viewPos, smoothnessF, metalness, albedo.rgb,
+            effectiveF0, lightColSqrt, shadow / max(NoL + 0.001, 0.001), color.a
+        );
+        #else
+        specularHighlight = getSpecularHighlight(
+            newNormal, viewPos, smoothnessF, metalness, albedo.rgb,
+            effectiveF0, endLightColSqrt * 0.125, shadow / max(NoL + 0.001, 0.001), color.a
+        );
         #endif
+
+        specularHighlight = max(specularHighlight, vec3(0.0));
     }
     #endif
 
     //Main color mixing
     #ifdef OVERWORLD
     ambientCol *= 0.05 + lightmap.y * lightmap.y * 0.95;
-    ambientCol *= 1.0 - pow(VoL, 1.5) * (0.5 - wetness * 0.5) * sunVisibility;
-    lightCol *= 1.0 + specularHighlight * shadowFade * (0.5 + sunVisibility * 0.5);
+    ambientCol *= 1.0 - VoL * VoL * (0.5 - wetness * 0.5) * sunVisibility;
 
     float rainFactor = 1.0 - wetness * 0.5;
 
@@ -252,7 +265,7 @@ void gbuffersLighting(in vec4 color, inout vec4 albedo, in vec3 screenPos, in ve
     }
     #endif
     #elif defined END
-    vec3 sceneLighting = fmix(endAmbientCol, endLightCol * (1.0 + specularHighlight), shadow) * 0.25;
+    vec3 sceneLighting = fmix(endAmbientCol, endLightCol, shadow) * 0.25;
     #ifdef END_FLASHES
     vec3 worldEndFlashPosition = mat3(gbufferModelViewInverse) * endFlashPosition;
     float endFlashDirection = clamp(dot(normalize(ToWorld(endFlashPosition * 100000000.0)), worldNormal), 0.0, 1.0);
@@ -290,7 +303,12 @@ void gbuffersLighting(in vec4 color, inout vec4 albedo, in vec3 screenPos, in ve
     #endif
 
     albedo.rgb = pow(albedo.rgb, vec3(2.2));
-    albedo.rgb *= sceneLighting + blockLighting + emission * EMISSION_STRENGTH + lightningFlash;
-    albedo.rgb *= vanillaDiffuse;
-    albedo.rgb = pow(albedo.rgb, vec3(1.0 / 2.2));
+
+    vec3 diffuseAlbedo = albedo.rgb * (1.0 - metalness);
+            diffuseAlbedo *= sceneLighting + blockLighting + emission * EMISSION_STRENGTH + lightningFlash;
+            diffuseAlbedo *= vanillaDiffuse;
+
+    vec3 finalColor = diffuseAlbedo + specularHighlight * vanillaDiffuse;
+
+    albedo.rgb = pow(max(finalColor, vec3(0.0)), vec3(1.0 / 2.2));
 }

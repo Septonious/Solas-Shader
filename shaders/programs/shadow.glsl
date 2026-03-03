@@ -55,8 +55,6 @@ void main() {
 
 	float tintedGlass = float(mat >= 10201 && mat <= 10216);
 
-	if (albedo.a < 0.01) discard;
-
     #ifdef SHADOW_COLOR
 	albedo.rgb = fmix(vec3(1.0), albedo.rgb, albedo.a);
 	albedo.rgb *= albedo.rgb;

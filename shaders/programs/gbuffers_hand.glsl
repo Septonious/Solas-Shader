@@ -128,8 +128,7 @@ void main() {
     vec3 worldPos = ToWorld(viewPos);
 
     float subsurface = 0.0;
-    float emission = 0.0;
-    float smoothness = 0.0, metalness = 0.0, parallaxShadow = 0.0;
+    float emission = 0.0, smoothness = 0.0, metalness = 0.0, f0 = 0.0, ao = 0.0, porosity = 0.5, parallaxShadow = 0.0;
 
 	float NoU = clamp(dot(newNormal, upVec), -1.0, 1.0);
     #if defined OVERWORLD
@@ -146,7 +145,7 @@ void main() {
     #endif
 
     vec3 shadow = vec3(0.0);
-    gbuffersLighting(color, albedo, screenPos, viewPos, worldPos, newNormal, shadow, lightmap, NoU, NoL, NoE, subsurface, emission, smoothness, parallaxShadow);
+    gbuffersLighting(color, albedo, screenPos, viewPos, worldPos, newNormal, shadow, lightmap, NoU, NoL, NoE, subsurface, emission, smoothness, metalness, f0, parallaxShadow);
 
     /* DRAWBUFFERS:0 */
     gl_FragData[0] = albedo;

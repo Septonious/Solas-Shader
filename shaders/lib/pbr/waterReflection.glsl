@@ -1,4 +1,4 @@
-void getReflection(inout vec4 albedo, in vec3 viewPos, in vec3 worldPos, in vec3 nViewPos, in vec3 normal, in float fresnel, in float skyLightMap) {
+void getReflection(inout vec4 albedo, in vec3 viewPos, in vec3 worldPos, in vec3 nViewPos, in vec3 newNormal, in float fresnel, in float skyLightMap) {
 	float dither = Bayer8(gl_FragCoord.xy);
 
 	#ifdef TAA
@@ -11,9 +11,9 @@ void getReflection(inout vec4 albedo, in vec3 viewPos, in vec3 worldPos, in vec3
     vec2 cdist = vec2(0.0);
 
     #if WATER_NORMALS > 0
-    vec3 reflectPos = Raytrace(depthtex1, viewPos, normal, dither, fresnel, 6, 1.0, 0.1, 1.6, 10, border, lRfragPos, dist, cdist);
+    vec3 reflectPos = Raytrace(depthtex1, viewPos, newNormal, dither, fresnel, 6, 1.0, 0.1, 1.6, 10, border, lRfragPos, dist, cdist);
     #else
-    vec3 reflectPos = Raytrace(depthtex1, viewPos, normal, dither, fresnel, 6, 1.0, 0.4, 1.4, 30, border, lRfragPos, dist, cdist);
+    vec3 reflectPos = Raytrace(depthtex1, viewPos, newNormal, dither, fresnel, 6, 1.0, 0.4, 1.4, 30, border, lRfragPos, dist, cdist);
     #endif
 
 	float zThreshold = 1.0 + 1e-5;
@@ -36,8 +36,8 @@ void getReflection(inout vec4 albedo, in vec3 viewPos, in vec3 worldPos, in vec3
 	if (reflection.a < 1.0 && isEyeInWater == 0) {
 		if (skyLightMap > 0.95) {
 			#ifdef OVERWORLD
-			vec3 viewPosRef = reflect(normalize(viewPos), normal);
-			vec3 worldPosRef = reflect(normalize(worldPos), normal);
+			vec3 viewPosRef = reflect(normalize(viewPos), newNormal);
+			vec3 worldPosRef = ToWorld(viewPosRef);
             float atmosphereHardMixFactor = 0.0;
 			vec3 reflectedAtmosphere = getAtmosphere(viewPosRef.xyz, worldPosRef.xyz, atmosphereHardMixFactor);
 			falloff = mix(falloff, reflectedAtmosphere, skyLightMap);

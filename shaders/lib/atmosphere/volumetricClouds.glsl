@@ -344,7 +344,7 @@ float getProtoplanetaryDisk(vec2 coord){
     float center = pow4(1.0 - coord.y) * 1.0;
     float spiral = sin((coord.x + sqrt(coord.y) * whirl) * arms) + center - coord.y;
 
-    return min(spiral * 1.75, 1.5);
+    return spiral;
 }
 
 void getEndCloudSample(vec2 rayPos, vec2 wind, float attenuation, inout float noise) {
@@ -360,10 +360,10 @@ void getEndCloudSample(vec2 rayPos, vec2 wind, float attenuation, inout float no
 	float noiseDetail = mix(noiseDetailA, noiseDetailB, fract(attenuation * END_DISK_THICKNESS));
 
 	float noiseCoverage = abs(attenuation - 0.125) * (attenuation > 0.125 ? 1.14 : 6.0);
-		  noiseCoverage *= noiseCoverage * 6.0;
+		     noiseCoverage *= noiseCoverage * 6.0;
 
 	noise = mix(noiseBase, noiseDetail, 0.025 * int(0 < noiseBase)) * 22.0 - noiseCoverage;
-	noise = max(noise - END_DISK_AMOUNT - 1.0 + getProtoplanetaryDisk(rayPos), 0.0);
+	noise = max(noise - END_DISK_AMOUNT - 1.0 + getProtoplanetaryDisk(rayPos) * 2.0, 0.0);
 	noise /= sqrt(noise * noise + 0.25);
 }
 
@@ -500,7 +500,7 @@ void computeEndVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z,
             float endFlashPoint = endFlashPosToPoint(endFlashPosition, worldPos);
                  cloudColor = fmix(cloudColor, endFlashCol * (1.0 + endFlashPoint * endFlashPoint * 2.0), endFlashPoint * endFlashIntensity * 0.5);
             #endif
-			     cloudColor *= cloudLighting * (0.75 + scattering * 0.25);
+			     cloudColor *= cloudLighting * (1.0 + scattering);
 
 			vc = vec4(cloudColor, cloudAlpha * END_DISK_OPACITY) * visibility;
 		}

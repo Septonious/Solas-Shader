@@ -157,7 +157,7 @@ void main() {
 
 	float leaves = float(mat == 10314);
 	float subsurface = leaves;
-    float emission = 0.0, smoothness = 0.0, metalness = 0.0, parallaxShadow = 0.0;
+    float emission = 0.0, smoothness = 0.0, metalness = 0.0, f0 = 0.0, parallaxShadow = 0.0;
 
 	float NoU = clamp(dot(newNormal, upVec), -1.0, 1.0);
     #if defined OVERWORLD
@@ -170,7 +170,7 @@ void main() {
 	float NoE = clamp(dot(newNormal, eastVec), -1.0, 1.0);
 
     vec3 shadow = vec3(0.0);
-    gbuffersLighting(color, albedo, screenPos, viewPos, worldPos, newNormal, shadow, lightmap, NoU, NoL, NoE, subsurface, emission, smoothness, parallaxShadow);
+    gbuffersLighting(color, albedo, screenPos, viewPos, worldPos, newNormal, shadow, lightmap, NoU, NoL, NoE, subsurface, emission, smoothness, metalness, f0, parallaxShadow);
 
 	/* DRAWBUFFERS:03 */
 	gl_FragData[0] = albedo;

@@ -186,7 +186,7 @@ void main() {
 	float saplings = float(mat == 10317);
 	float foliage = float(mat >= 10304 && mat <= 10319 || mat >= 10035 && mat <= 10040) * (1.0 - leaves) * (1.0 - saplings);
 	float subsurface = leaves + foliage * 0.6 + saplings * 0.4;
-    float emission = 0.0, smoothness = 0.0, metalness = 0.0, porosity = 0.5, parallaxShadow = 0.0;
+    float emission = 0.0, smoothness = 0.0, metalness = 0.0, f0 = 0.0, ao = 0.0, porosity = 0.5, parallaxShadow = 0.0;
 
 	#if defined GENERATED_NORMALS || defined PARALLAX || defined PBR || defined RAIN_PUDDLES
 	vec2 newCoord = vTexCoord.st * vTexCoordAM.pq + vTexCoordAM.st;
@@ -203,8 +203,6 @@ void main() {
 	#endif
 
 	#ifdef PBR
-	float f0 = 0.0, ao = 1.0;
-
 	mat3 tbnMatrix = mat3(tangent.x, binormal.x, normal.x,
 						tangent.y, binormal.y, normal.y,
 						tangent.z, binormal.z, normal.z);
@@ -291,7 +289,7 @@ void main() {
 	#endif
 
     vec3 shadow = vec3(0.0);
-    gbuffersLighting(color, albedo, screenPos, viewPos, worldPos, newNormal, shadow, lightmap, NoU, NoL, NoE, subsurface, emission, smoothness, parallaxShadow);
+    gbuffersLighting(color, albedo, screenPos, viewPos, worldPos, newNormal, shadow, lightmap, NoU, NoL, NoE, subsurface, emission, smoothness, metalness, f0, parallaxShadow);
 
     //Subsurface scattering
     #if defined OVERWORLD
