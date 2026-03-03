@@ -205,7 +205,7 @@ void gbuffersLighting(in vec4 color, inout vec4 albedo, in vec3 screenPos, in ve
 
     #if (defined GBUFFERS_TERRAIN || defined GBUFFERS_ENTITIES || defined GBUFFERS_BLOCK || defined VOXY_OPAQUE) && !defined NETHER && defined SPECULAR_HIGHLIGHTS
     if (emission < 0.01) {
-        float smoothnessF = 0.15 + lAlbedo * 0.3;
+        float smoothnessF = 0.15 + lAlbedo * 0.25;
         #ifdef END
                 smoothness -= 0.15;
         #endif
