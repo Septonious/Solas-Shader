@@ -48,7 +48,7 @@ void getNormalFog(inout vec3 color, in vec3 atmosphereColor, in vec3 viewPos, in
             noise *= noise;
     float distanceFactor = 25.0 * (0.5 + timeBrightness) + FOG_DISTANCE * (0.75 + caveFactor * 0.25) - wetness * 25.0;
     #if defined VOXY || defined DISTANT_HORIZONS
-            distanceFactor += 40.0;
+            distanceFactor += 25.0;
     #endif
 	float distanceMult = max(256.0 / farPlane, 2.0) * (100.0 / distanceFactor);
 	float altitudeFactor = FOG_HEIGHT + noise * 10.0 + timeBrightness * 25.0 - isJungle * 15.0;
