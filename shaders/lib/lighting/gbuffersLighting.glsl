@@ -205,9 +205,9 @@ void gbuffersLighting(in vec4 color, inout vec4 albedo, in vec3 screenPos, in ve
 
     #if (defined GBUFFERS_TERRAIN || defined GBUFFERS_ENTITIES || defined GBUFFERS_BLOCK || defined VOXY_OPAQUE) && !defined NETHER && defined SPECULAR_HIGHLIGHTS
     if (emission < 0.01) {
-        float smoothnessF = 0.15 + lAlbedo * 0.25;
+        float smoothnessF = 0.10 + lAlbedo * 0.15;
         #ifdef END
-                smoothness -= 0.15;
+                smoothness -= 0.10;
         #endif
                 smoothnessF = fmix(smoothnessF, 1.0, smoothness);
 
@@ -227,7 +227,7 @@ void gbuffersLighting(in vec4 color, inout vec4 albedo, in vec3 screenPos, in ve
         );
         #endif
 
-        specularHighlight = max(specularHighlight, vec3(0.0));
+        specularHighlight = max(specularHighlight * 0.5, vec3(0.0));
     }
     #endif
 

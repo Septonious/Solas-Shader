@@ -14,7 +14,7 @@ vec4 getWaterFog(inout vec3 colorMult, vec3 viewPos) {
 		 waterFogColor = mix(waterFogColor, weatherCol.rgb * 0.25, wetness * 0.25);
 
 	if (isEyeInWater == 1) {
-		waterFogColor *= 0.15 + sunVisibility * 0.25;
+		waterFogColor *= 0.05 + sunVisibility * 0.35;
 
 		if (caveFactor > 0.0) {
 			vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.0);
