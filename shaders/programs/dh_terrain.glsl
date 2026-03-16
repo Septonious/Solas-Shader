@@ -157,7 +157,8 @@ void main() {
 
 	float leaves = float(mat == 10314);
 	float subsurface = leaves;
-    float emission = 0.0, smoothness = 0.0, metalness = 0.0, f0 = 0.0, parallaxShadow = 0.0;
+	float emission = (mat == 10400) ? lmCoord.x : 0.0;
+    	float smoothness = 0.0, metalness = 0.0, f0 = 0.0, parallaxShadow = 0.0;
 
 	float NoU = clamp(dot(newNormal, upVec), -1.0, 1.0);
     #if defined OVERWORLD
@@ -221,6 +222,9 @@ void main() {
 	if (dhMaterialId == DH_BLOCK_LEAVES){
 		mat = 10314;
 	}
+	if (dhMaterialId == DH_BLOCK_ILLUMINATED){
+        	mat = 10400;
+    	}
 
 	//Position
 	vec4 position = gbufferModelViewInverse * gl_ModelViewMatrix * gl_Vertex;
