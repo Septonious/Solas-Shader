@@ -2,7 +2,7 @@ float getNoise(vec2 pos) {
 	return fract(sin(dot(pos, vec2(12.9898, 4.1414))) * 43758.5453);
 }
 
-void drawStars(inout vec3 color, in vec3 worldPos, in float VoU, in float VoS, in float caveFactor, in float nebulaFactor, in float occlusion, in float size) {
+void drawStars(inout vec3 color, in vec3 worldPos, in float VoU, in float VoL, in float caveFactor, in float nebulaFactor, in float occlusion, in float size) {
 	#ifdef OVERWORLD
     float altitudeFactor = min(max(cameraPosition.y, 0.0) / KARMAN_LINE, 1.0);
 	float visibility = moonVisibility * moonVisibility * (1.0 - wetness) * sqrt(max(VoU, 0.0)) * caveFactor * (1.0 - occlusion) * (1.0 - altitudeFactor) + altitudeFactor * sqrt(VoU * 0.5 + 0.5);
@@ -12,16 +12,22 @@ void drawStars(inout vec3 color, in vec3 worldPos, in float VoU, in float VoS, i
 
 	if (visibility > 0.1) {
 		vec2 planeCoord = worldPos.xz / (length(worldPos.y) + length(worldPos.xyz));
-			 planeCoord *= size;
+        #ifdef OVERWORLD
+        float nebulaNoise = max(texture2D(noisetex, planeCoord * 0.5).r * pow(VoU, 0.125) * (1.0 - pow8(VoU)) - 0.3, 0.0) * VoL;
+        nebulaFactor += nebulaNoise * nebulaNoise * 16.0;
+        color.rgb += vec3(lightNight.r + pow3(nebulaNoise), lightNight.g + pow4(nebulaNoise) * 3.5, lightNight.b * 1.25) * (nebulaNoise + pow3(nebulaNoise) * 9.0);
+		#endif
+             planeCoord *= size;
 			 #ifdef END_BLACK_HOLE
-			 float baseRing = pow10(pow32(VoS));
+			 float baseRing = pow10(pow32(VoL));
 
 			 planeCoord *= clamp(1.0 - baseRing * 4.0, 0.0, 1.0);
 			 planeCoord += baseRing;
 			 #endif
 			 planeCoord += cameraPosition.xz * 0.00001;
 			 planeCoord += frameTimeCounter * 0.001;
-		const float amount = STAR_AMOUNT;
+		float amount = STAR_AMOUNT;
+
 		vec2 planeCoord0 = floor(planeCoord * 500.0 * amount) / (500.0 * amount);
 		vec2 planeCoord1 = floor(planeCoord * 1000.0 * amount) / (1000.0 * amount);
 
@@ -37,7 +43,7 @@ void drawStars(inout vec3 color, in vec3 worldPos, in float VoU, in float VoS, i
 
 		#else
 		#ifdef END_BLACK_HOLE
-		float hole = pow(pow32(VoS), END_BLACK_HOLE_SIZE);
+		float hole = pow(pow32(VoL), END_BLACK_HOLE_SIZE);
 
 		stars *= 1.0 - hole * hole;
 		#endif
@@ -125,7 +131,7 @@ float drawShootingStar(vec2 uv, vec2 startPos, vec2 direction) {
     return line * trail * headBrightness;
 }
 
-void getShootingStars(inout vec3 color, in vec3 worldPos, float VoU, float VoS) {
+void getShootingStars(inout vec3 color, in vec3 worldPos, float VoU, float VoL) {
     float burnTime = max(cos(sin(frameTimeCounter * 0.35) * 4.0 + frameTimeCounter * 0.25), 0.0) * 10.0;
 	float visibility = moonVisibility * moonVisibility * (1.0 - wetness) * VoU * caveFactor * burnTime;
 

@@ -277,7 +277,7 @@ void main() {
         #endif
 
         #ifdef STARS
-        drawStars(skyColor, worldPos.xyz, VoU, VoS, caveFactor, nebulaFactor, occlusion, 0.7);
+        drawStars(skyColor, worldPos.xyz, VoU, VoM, caveFactor, nebulaFactor, occlusion, 0.8);
 
         #ifdef SHOOTING_STARS
         getShootingStars(skyColor, worldPos.xyz, VoU, VoS);

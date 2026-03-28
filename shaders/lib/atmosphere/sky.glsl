@@ -32,7 +32,7 @@ vec3 getAtmosphere(vec3 viewPos, vec3 worldPos, out float atmosphereHardMixFacto
     vec3 atmosphere = fmix(daySkyColor, lightNight * 0.5, moonVisibility);
 
     float heightPositive = max(nWorldPos.y * (1.0 - altitudeFactor * 0.5) + altitudeFactor * 0.5, 0.0);
-    float density = clamp((1.0 - heightPositive * (0.65 + altitudeFactor * altitudeFactor * 3.0)) * (1.0 + pow4(altitudeFactor) * 9.0), 0.0, 1.0);
+    float density = clamp((1.0 - heightPositive * (0.65 + moonVisibility * 0.25 + altitudeFactor * altitudeFactor * 3.0)) * (1.0 + pow4(altitudeFactor) * 9.0), 0.0, 1.0);
 
     atmosphereHardMixFactor = altitudeFactor * density;
     atmosphere *= density;

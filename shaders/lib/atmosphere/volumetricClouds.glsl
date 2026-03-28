@@ -267,7 +267,7 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z, fl
                         lightingNoise *= attenuation;
 
 				float powder = 1.0 - 0.95 * exp(-pow(noise, 1.0 + noise * 7.0));
-				float directionalScattering = 1.0 - exp(-1.5 * (noise - lightingNoise * (0.875 + scattering * 0.075)));
+				float directionalScattering = 1.0 - exp(-1.5 * (noise - lightingNoise * (0.875 + scattering * (0.075 + moonVisibility * 0.125))));
 				float sampleLighting1 = clamp(powder * directionalScattering * (2.0 + scattering), 0.0, 1.0);
                 float sampleLighting2 = pow(sampleAltitude, 0.75 - scattering * 0.5) * (1.0 + directionalScattering * 0.5);
 
@@ -299,7 +299,7 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z, fl
 									 fmix(ambientCol, atmosphereColor * nSkyColor * 0.5, 0.2 + timeBrightness * 0.3 + isSpecificBiome * 0.4),
 									 sunVisibility * (1.0 - wetness));;
             vec3 cloudLightColor = fmix(lightCol, lightCol * nSkyColor * 2.0, timeBrightnessSqrt * (0.5 - wetness * 0.5));
-                    cloudLightColor *= 0.125 + cloudLighting * 0.875;
+                    cloudLightColor *= 0.125 + cloudLighting * (0.875 + pow3(scattering) * 0.5);
                     //Aurora influence
                     #ifdef AURORA_LIGHTING_INFLUENCE
                     cloudLightColor.r *= 1.0 + pow3(kpIndex) * pulse * auroraVisibility * 4.0;
