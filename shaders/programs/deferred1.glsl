@@ -200,6 +200,8 @@ void main() {
 	vec4 vxScreenPos1 = vec4(texCoord, vxZ1, 1.0);
 	vec4 vxViewPos1 = vxProjInv * (vxScreenPos1 * 2.0 - 1.0);
 	        vxViewPos1 /= vxViewPos1.w;
+
+    voxyTransparentColor.a *= float(z0 > 0.56);
     #endif
 
     float atmosphereHardMixFactor = 0.0;
