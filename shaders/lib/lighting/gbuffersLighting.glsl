@@ -158,7 +158,7 @@ void gbuffersLighting(in vec4 color, inout vec4 albedo, in vec3 screenPos, in ve
 
     NoL = clamp(NoL * 1.01 - 0.01, 0.0, 1.0);
 
-    #if defined PBR && defined PARALLAX
+    #if defined PBR && defined PARALLAX && defined GBUFFERS_TERRAIN
     shadow *= parallaxShadow;
     #endif
 
