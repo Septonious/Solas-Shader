@@ -5,7 +5,7 @@ float texture2DShadow(sampler2D shadowtex, vec3 shadowPos) {
 }
 
 #ifdef VOLUMETRIC_CLOUDS
-void getDynamicWeather(inout float speed, inout float amount, inout float frequency, inout float thickness, inout float density, inout float detail, inout float height, inout float scale) {
+void getDynamicWeather(inout float speed, inout float amount, inout float thickness, inout float density, inout float detail, inout float height, inout float scale) {
 	#ifdef VC_DYNAMIC_WEATHER
 	float day = (worldDay * 24000 + worldTime) / 24000;
     float sinDay05 = sin(day * 0.5);
@@ -74,8 +74,8 @@ float CloudCombineDefault(float noiseBase, float noiseDetail, float noiseCoverag
 	return noise;
 }
 
-float CloudSample(vec2 coord, vec2 wind, float sampleAltitude, float thickness, float frequency, float amount, float density) {
-	coord *= 0.004 * frequency;
+float CloudSample(vec2 coord, vec2 wind, float sampleAltitude, float thickness, float amount, float density) {
+	coord *= 0.0025;
 
 	vec2 baseCoord = coord * 0.5 + wind * 2.0;
 	vec2 detailCoord = coord.xy * 10.0 - wind * 2.0;
@@ -89,8 +89,8 @@ float CloudSample(vec2 coord, vec2 wind, float sampleAltitude, float thickness, 
 	return noise;
 }
 
-float CloudSampleLowDetail(vec2 coord, vec2 wind, float sampleAltitude, float thickness, float frequency, float amount, float density) {
-	coord *= 0.004 * frequency;
+float CloudSampleLowDetail(vec2 coord, vec2 wind, float sampleAltitude, float thickness, float amount, float density) {
+	coord *= 0.0025;
 
 	vec2 baseCoord = coord * 0.5 + wind * 2.0;
 
@@ -140,7 +140,6 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z, fl
 		//Cloud parameters
 		float speed = VC_SPEED;
 		float amount = VC_AMOUNT;
-		float frequency = VC_FREQUENCY;
 		float thickness = VC_THICKNESS;
 		float density = VC_DENSITY;
 		float detail = VC_DETAIL;
@@ -148,7 +147,7 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z, fl
         float scale = VC_SCALE;
         float distance = VC_DISTANCE;
 
-		getDynamicWeather(speed, amount, frequency, thickness, density, detail, height, scale);
+		getDynamicWeather(speed, amount, thickness, density, detail, height, scale);
 
         //Aurora influence
         #ifdef AURORA_LIGHTING_INFLUENCE
@@ -236,7 +235,7 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z, fl
             float xzNormalizeFactor = 10.0 / max(abs(height - 72.0), 56.0);
 
 			vec3 worldLightVec = normalize(ToWorld(lightVec * 100000000.0));
-                    worldLightVec *= 4.0 * shadowFade;
+                    worldLightVec *= 2.5 * shadowFade;
 
             for (int i = 0; i < sampleCount; i++, rayPos += rayIncrement, sampleTotalLength += rayLength) {
                 if (cloud > 0.99 || (lViewPos < sampleTotalLength && z < 1.0) || sampleTotalLength > distance * 32.0) break;
@@ -261,15 +260,15 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z, fl
 
                 float attenuation = step(cloudBottom, rayPos.y) * step(rayPos.y, cloudTop);
 
-                float noise = CloudSample(cloudCoord, wind, sampleAltitude, thickness, frequency, amount, density);
+                float noise = CloudSample(cloudCoord, wind, sampleAltitude, thickness, amount, density);
                         noise *= attenuation;
 
-                float lightingNoise = CloudSampleLowDetail(cloudCoord + worldLightVec.xy, wind, sampleAltitude, thickness, frequency, amount, density);
+                float lightingNoise = CloudSampleLowDetail(cloudCoord + worldLightVec.xy, wind, sampleAltitude, thickness, amount, density);
                         lightingNoise *= attenuation;
 
-				float powder = 1.0 - 0.925 * exp(-pow(noise, 1.0 + noise * 7.0));
-				float directionalScattering = 1.0 - exp(-2.5 * (noise - lightingNoise * (0.875 + scattering * 0.075)));
-				float sampleLighting1 = clamp(powder * directionalScattering * 2.0, 0.0, 1.0);
+				float powder = 1.0 - 0.95 * exp(-pow(noise, 1.0 + noise * 7.0));
+				float directionalScattering = 1.0 - exp(-1.5 * (noise - lightingNoise * (0.875 + scattering * 0.075)));
+				float sampleLighting1 = clamp(powder * directionalScattering * (2.0 + scattering), 0.0, 1.0);
                 float sampleLighting2 = pow(sampleAltitude, 0.75 - scattering * 0.5) * (1.0 + directionalScattering * 0.5);
 
                 noise *= step(xzNormalizedDistance, fadeEnd);
@@ -298,10 +297,9 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z, fl
 			vec3 nSkyColor = normalize(skyColor + 0.0001);
             vec3 cloudAmbientColor = fmix(atmosphereColor * atmosphereColor * 0.5,
 									 fmix(ambientCol, atmosphereColor * nSkyColor * 0.5, 0.2 + timeBrightness * 0.3 + isSpecificBiome * 0.4),
-									 sunVisibility * (1.0 - wetness)) * (1.0 - scattering * 0.5);
+									 sunVisibility * (1.0 - wetness));;
             vec3 cloudLightColor = fmix(lightCol, lightCol * nSkyColor * 2.0, timeBrightnessSqrt * (0.5 - wetness * 0.5));
                     cloudLightColor *= 0.125 + cloudLighting * 0.875;
-                    cloudLightColor *= 1.0 + scattering * shadowFade * sunVisibility;
                     //Aurora influence
                     #ifdef AURORA_LIGHTING_INFLUENCE
                     cloudLightColor.r *= 1.0 + pow3(kpIndex) * pulse * auroraVisibility * 4.0;

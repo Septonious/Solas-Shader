@@ -176,13 +176,12 @@ void gbuffersLighting(in vec4 color, inout vec4 albedo, in vec3 screenPos, in ve
     #ifdef VC_SHADOWS
     float speed = VC_SPEED;
     float amount = VC_AMOUNT;
-    float frequency = VC_FREQUENCY;
     float thickness = VC_THICKNESS;
     float density = VC_DENSITY;
     float height = VC_HEIGHT;
     float scale = VC_SCALE;
 
-    getDynamicWeather(speed, amount, frequency, thickness, density, height, scale);
+    getDynamicWeather(speed, amount, thickness, density, height, scale);
 
     float cloudTop = height + thickness * scale;
 
@@ -193,7 +192,7 @@ void gbuffersLighting(in vec4 color, inout vec4 albedo, in vec3 screenPos, in ve
         vec3 cloudShadowPos = worldPos + cameraPosition + (worldLightVec / max(abs(worldLightVec.y), 0.0)) * max(cloudTop - worldPos.y - cameraPosition.y, 0.0);
 
         float noise = 0.0;
-        getCloudShadow(cloudShadowPos.xz / scale, wind, amount, frequency, density, noise);
+        getCloudShadow(cloudShadowPos.xz / scale, wind, amount, density, noise);
 
         cloudShadow = noise;
     }

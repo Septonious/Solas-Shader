@@ -181,6 +181,9 @@ vec3 getBlocklightColor(int id) {
 	//Copper Torches, Lanterns, Etc
 	else if(id == 83 || id == 84) color = vec3(CTL_R, CTL_G, CTL_B) * CTL_I;
 
+    //Light Block
+    else if(id == 85) color = vec3(LIGHT_R, LIGHT_G, LIGHT_B) * LIGHT_I;
+
 	//Generic emitters with different colors
 	//Blocks in this range will emit their respective color
 	//A good way to quickly make modded blocks emit light

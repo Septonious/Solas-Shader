@@ -144,13 +144,12 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
         #if defined VC_SHADOWS && defined VL
         float speed = VC_SPEED;
         float amount = VC_AMOUNT;
-        float frequency = VC_FREQUENCY;
         float thickness = VC_THICKNESS;
         float density = VC_DENSITY;
         float height = VC_HEIGHT;
         float scale = VC_SCALE;
 
-        getDynamicWeather(speed, amount, frequency, thickness, density, height, scale);
+        getDynamicWeather(speed, amount, thickness, density, height, scale);
 
         float cloudTop = height + thickness * scale;
 
@@ -233,7 +232,7 @@ void computeVolumetricLight(inout vec3 vl, in vec3 translucent, in float dither)
                      vec3 cloudShadowPos = rayPos + (worldLightVec / max(abs(worldLightVec.y), 0.0)) * max(cloudTop - rayPos.y, 0.0);
 
                     float noise = 0.0;
-                    getCloudShadow(cloudShadowPos.xz / scale, wind, amount, frequency, density, noise);
+                    getCloudShadow(cloudShadowPos.xz / scale, wind, amount, density, noise);
                     vlSample *= noise;
                 }
                 vlSample *= 1.0 - min((rayPos.y - thickness) * (1.0 / cloudTop), 1.0);

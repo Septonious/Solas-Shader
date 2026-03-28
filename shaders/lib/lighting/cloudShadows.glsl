@@ -1,5 +1,5 @@
 
-void getDynamicWeather(inout float speed, inout float amount, inout float frequency, inout float thickness, inout float density, inout float height, inout float scale) {
+void getDynamicWeather(inout float speed, inout float amount, inout float thickness, inout float density, inout float height, inout float scale) {
 	#ifdef VC_DYNAMIC_WEATHER
 	float day = (worldDay * 24000 + worldTime) / 24000;
     float sinDay05 = sin(day * 0.5);
@@ -49,8 +49,8 @@ float CloudCombineDefault(float noiseBase, float noiseDetail, float amount, floa
 	return noise;
 }
 
-void getCloudShadow(vec2 coord, vec2 wind, float amount, float frequency, float density, inout float noise) {
-	coord *= 0.004 * frequency;
+void getCloudShadow(vec2 coord, vec2 wind, float amount, float density, inout float noise) {
+	coord *= 0.0025;
 
 	vec2 baseCoord = coord * 0.5 + wind * 2.0;
 	float noiseBase = cloudSampleBasePerlinWorley(baseCoord);

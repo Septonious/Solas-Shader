@@ -141,7 +141,7 @@ screen.STARS_CONFIG=Stars Config
 option.STAR_BRIGHTNESS=Stars Brightness
 option.STAR_AMOUNT=Stars Amount
 option.SHOOTING_STARS_SIZE=Meteors Size
-option.SHOOTING_STARS_SPEED=Meteros Speed
+option.SHOOTING_STARS_SPEED=Meteors Speed
 option.SHOOTING_STARS_CHANCE=Meteors Chance
 option.SHOOTING_STARS_COUNT=Meteors Count
 option.SHOOTING_STARS_LINE_THICKNESS=Meteor Trail Thickness
@@ -508,6 +508,7 @@ screen.EP=End Portal (With Eye)
 screen.OF=Ochre Froglight
 screen.VF=Verdant Froglight
 screen.PF=Pearlescent Froglight
+screen.LIGHT=Creative Light Block
 
 option.GLSP_R=Red
 option.GLSP_G=Green
@@ -618,6 +619,11 @@ option.PF_R=Red
 option.PF_G=Green
 option.PF_B=Blue
 option.PF_I=Intensity
+
+option.LIGHT_R=Red
+option.LIGHT_G=Green
+option.LIGHT_B=Blue
+option.LIGHT_I=Intensity
 
 #=======================================================# POST #=======================================================#
 
