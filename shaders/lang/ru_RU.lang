@@ -494,6 +494,7 @@ screen.EP=Рамка Портала в Энд
 screen.OF=Охристая Квампа
 screen.VF=Малахитовая Квампа
 screen.PF=Перламутровая Квампа
+screen.LIGHT=Блок Света
 
 option.GLSP_R=Красный
 option.GLSP_G=Зелёный
@@ -604,6 +605,11 @@ option.PF_R=Красный
 option.PF_G=Зелёный
 option.PF_B=Синий
 option.PF_I=Яркость
+
+option.LIGHT_R=Красный
+option.LIGHT_G=Зелёный
+option.LIGHT_B=Синий
+option.LIGHT_I=Яркость
 
 #=======================================================# POST #=======================================================#
 
