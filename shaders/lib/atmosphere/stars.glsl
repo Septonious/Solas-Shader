@@ -10,12 +10,12 @@ void drawStars(inout vec3 color, in vec3 worldPos, in float VoU, in float VoL, i
 	float visibility = 1.0;
 	#endif
 
-	if (visibility > 0.1) {
+	if (visibility > 0.05) {
 		vec2 planeCoord = worldPos.xz / (length(worldPos.y) + length(worldPos.xyz));
         #ifdef OVERWORLD
         float nebulaNoise = max(texture2D(noisetex, planeCoord * 0.5).r * pow(VoU, 0.125) * (1.0 - pow8(VoU)) - 0.3, 0.0) * VoL;
         nebulaFactor += nebulaNoise * nebulaNoise * 16.0;
-        color.rgb += vec3(lightNight.r + pow3(nebulaNoise), lightNight.g + pow4(nebulaNoise) * 3.5, lightNight.b * 1.25) * (nebulaNoise + pow3(nebulaNoise) * 9.0);
+        color.rgb += vec3(lightNight.r + pow3(nebulaNoise), lightNight.g + pow4(nebulaNoise) * 3.5, lightNight.b * 1.25) * (nebulaNoise + pow3(nebulaNoise) * 9.0) * visibility;
 		#endif
              planeCoord *= size;
 			 #ifdef END_BLACK_HOLE
