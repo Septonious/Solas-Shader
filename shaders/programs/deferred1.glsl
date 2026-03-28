@@ -200,8 +200,6 @@ void main() {
 	vec4 vxScreenPos1 = vec4(texCoord, vxZ1, 1.0);
 	vec4 vxViewPos1 = vxProjInv * (vxScreenPos1 * 2.0 - 1.0);
 	        vxViewPos1 /= vxViewPos1.w;
-	
-	voxyTransparentColor.a *= step(-vxViewPos1.z, -viewPos.z);
     #endif
 
     float atmosphereHardMixFactor = 0.0;
@@ -388,10 +386,6 @@ void main() {
             #endif
         }
 
-        #if defined VOXY && (defined SSAO || defined SS_SHADOWS)
-        color.rgb = mix(color.rgb, voxyTransparentColor.rgb, voxyTransparentColor.a);
-        #endif
-
         Fog(color, vxViewPos.xyz, atmosphereColor, vxZ0);
     }
     #else
@@ -402,6 +396,10 @@ void main() {
 
         Fog(color, viewPos.xyz, atmosphereColor, z0);
     }
+    #endif
+
+    #if defined VOXY && (defined SSAO || defined SS_SHADOWS)
+    color.rgb = mix(color.rgb, voxyTransparentColor.rgb, voxyTransparentColor.a);
     #endif
 
 	//Volumetric Clouds
