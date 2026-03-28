@@ -1,6 +1,6 @@
 vec3 getAtmosphere(vec3 viewPos, vec3 worldPos, out float atmosphereHardMixFactor) {
     vec3 skyTint = vec3(1.0, 0.7 + timeBrightness * 0.3, 0.7 + timeBrightness * 0.3);
-    vec3 daySkyColor = normalize(skyColor + 0.000001) * fmix(vec3(1.0), biomeColor, isSpecificBiome) * fmix(skyTint, vec3(1.0), timeBrightness);
+    vec3 daySkyColor = normalize(skyColor + 0.000001) * fmix(vec3(1.0), biomeColor, isSpecificBiome) * fmix(skyTint, vec3(1.0), timeBrightness) * fmix(vec3(1.0), weatherCol, wetness);
 
     float altitudeFactor = min(max(cameraPosition.y, 0.0) / KARMAN_LINE, 1.0);
     float altitudeFactor10k = min(max(cameraPosition.y, 0.0) * 0.0001, 1.0);
@@ -26,7 +26,7 @@ vec3 getAtmosphere(vec3 viewPos, vec3 worldPos, out float atmosphereHardMixFacto
         0.0 + timeBrightnessSqrt * 0.1
     ) * (1.0 + VoS2 * sunVisibility);
 
-    float scattering = pow(clamp(1.0 - nWorldPos.y, 0.0, 1.0), mix(3.0 - VoS * 1.5, 1.0, altitudeFactor)) * (0.5 - timeBrightnessSqrt * 0.2);
+    float scattering = pow(clamp(1.0 - nWorldPos.y, 0.0, 1.0), mix(3.0 - VoS * 1.5, 1.0, altitudeFactor)) * (0.5 - timeBrightnessSqrt * 0.2) * (1.0 - wetness * 0.5);
 
     daySkyColor = fmix(daySkyColor, scatteringColor, scattering * SUNRISE_SUNSET_INTENSITY);
     vec3 atmosphere = fmix(daySkyColor, lightNight * 0.5, moonVisibility);
@@ -36,7 +36,6 @@ vec3 getAtmosphere(vec3 viewPos, vec3 worldPos, out float atmosphereHardMixFacto
 
     atmosphereHardMixFactor = altitudeFactor * density;
     atmosphere *= density;
-    atmosphere *= 1.0 - wetness * 0.25 * (1.0 - altitudeFactor10k);
 
     //Fade atmosphere to dark gray underground
     atmosphere = fmix(caveMinLightCol * (1.0 - isCaveBiome) + caveBiomeColor, atmosphere, caveFactor);
