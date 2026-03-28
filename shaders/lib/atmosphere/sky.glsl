@@ -26,7 +26,8 @@ vec3 getAtmosphere(vec3 viewPos, vec3 worldPos, out float atmosphereHardMixFacto
         0.0 + timeBrightnessSqrt * 0.1
     ) * (1.0 + VoS2 * sunVisibility);
 
-    float scattering = pow(clamp(1.0 - nWorldPos.y, 0.0, 1.0), mix(3.0 - VoS * 1.5, 1.0, altitudeFactor)) * (0.5 - timeBrightnessSqrt * 0.2) * (1.0 - wetness * 0.5);
+    float scattering = pow(clamp(1.0 - nWorldPos.y, 0.0, 1.0), fmix(3.0 - VoS * 1.5, 1.0, altitudeFactor)) * (0.5 - timeBrightnessSqrt * 0.2) * (1.0 - wetness * 0.5);
+            scattering *= sqrt(clamp(1.0 + nWorldPos.y, 0.0, 1.0));
 
     daySkyColor = fmix(daySkyColor, scatteringColor, scattering * SUNRISE_SUNSET_INTENSITY);
     vec3 atmosphere = fmix(daySkyColor, lightNight * 0.5, moonVisibility);

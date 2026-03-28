@@ -179,7 +179,7 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z, fl
         #endif
 
 		//Ray marcher peramters
-        int maxsampleCount = 16;
+        int maxsampleCount = 24;
 
         float cloudBottom = height;
         float cloudTop = cloudBottom + thickness * scale;
@@ -307,7 +307,7 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z, fl
                     cloudLightColor /= 1.0 + auroraVisibility;
                     #endif
 			vec3 cloudColor = fmix(cloudAmbientColor, cloudLightColor, ambientLighting * (0.5 + shadowFade * 0.5)) * fmix(vec3(1.0), biomeColor, isSpecificBiome * sunVisibility);
-			        cloudColor = fmix(cloudColor, atmosphereColor * length(cloudColor), 0.25);
+			        cloudColor = fmix(cloudColor, atmosphereColor * length(cloudColor), wetness * 0.25);
 
             float opacity = clamp(fmix(VC_OPACITY, 1.0, (max(0.0, cameraPosition.y - thickness * 10.0) / height)), 0.0, 1.0);
 
