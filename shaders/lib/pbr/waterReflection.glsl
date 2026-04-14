@@ -10,11 +10,7 @@ void getReflection(inout vec4 albedo, in vec3 viewPos, in vec3 worldPos, in vec3
     float dist = 0.0;
     vec2 cdist = vec2(0.0);
 
-    #if WATER_NORMALS > 0
     vec3 reflectPos = Raytrace(depthtex1, viewPos, newNormal, dither, fresnel, 6, 1.0, 0.1, 1.6, 10, border, lRfragPos, dist, cdist);
-    #else
-    vec3 reflectPos = Raytrace(depthtex1, viewPos, newNormal, dither, fresnel, 6, 1.0, 0.4, 1.4, 30, border, lRfragPos, dist, cdist);
-    #endif
 
 	float zThreshold = 1.0 + 1e-5;
 	vec4 reflection = vec4(0);
