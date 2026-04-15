@@ -39,7 +39,8 @@ vec3 getAtmosphere(vec3 viewPos, vec3 worldPos, out float atmosphereHardMixFacto
     atmosphere *= density;
 
     //Fade atmosphere to dark gray underground
-    atmosphere = fmix(caveMinLightCol * (1.0 - isCaveBiome) + caveBiomeColor, atmosphere, caveFactor);
+    float caveSkyFactor = max(caveFactor, smoothstep(0.05, 0.55, nWorldPos.y));
+    atmosphere = fmix(caveMinLightCol * (1.0 - isCaveBiome) + caveBiomeColor, atmosphere, caveSkyFactor);
 
     return atmosphere;
 }
