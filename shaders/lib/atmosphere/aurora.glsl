@@ -1,4 +1,4 @@
-float auroraDistortedNoise(vec2 coord, float kpIndex, float pulse, float longPulse, float altitudeFactor50k) {
+float auroraDistortedNoise(vec2 coord, float kpIndex, float pulse, float longPulse, float altitudeFactorHalf) {
     float t = frameTimeCounter * 0.125;
 
     vec2 distortedCoord = coord;
@@ -34,7 +34,7 @@ float auroraDistortedNoise(vec2 coord, float kpIndex, float pulse, float longPul
 
     //Arc centered near zenith, very wide and persistent with a slight north bias
     float zenithDist = abs(coord.y + 1.0);
-    float arc = mix(exp(-3.0 * zenithDist * zenithDist), 0.125, altitudeFactor50k);
+    float arc = mix(exp(-3.0 * zenithDist * zenithDist), 0.125, altitudeFactorHalf);
 
     //Slight waviness so it’s not perfectly straight
     arc *= 0.65 + 0.35 * f;
@@ -57,11 +57,11 @@ void drawAurora(inout vec3 color, in vec3 worldPos, in float caveFactor, in floa
 
     //Altitude factor. Makes the aurora closer to you when you're ascending
     float altitudeFactor = min(max(cameraPosition.y, 0.0) / KARMAN_LINE, 1.0);
-    float altitudeFactor50k = min(max(cameraPosition.y, 0.0) / 50000.0, 1.0);
+    float altitudeFactorHalf = min(max(cameraPosition.y, 0.0) / (KARMAN_LINE * 0.5), 1.0);
     worldPos.y *= 1.0 - altitudeFactor * 0.66;
 
     float fade = pow(max(nWorldPos.y, 0.0), 0.125);
-            fade = mix(fade, (1.0 - fade) * float(nWorldPos.y < 0.0), altitudeFactor50k * altitudeFactor50k);
+            fade = mix(fade, (1.0 - fade) * float(nWorldPos.y < 0.0), altitudeFactorHalf * altitudeFactorHalf);
             fade *= pow3(fade);
 
 	//The index of geomagnetic activity. Determines the brightness of Aurora, its widespreadness across the sky and tilt factor
@@ -112,17 +112,17 @@ void drawAurora(inout vec3 color, in vec3 worldPos, in float caveFactor, in floa
     		float WEhorizon = clamp(pow(1.0 - abs(planeCoord.x * 0.1), 4.0), 0.0, 1.0);
             float poles = clamp(pow(abs(planeCoord.z * 0.1), 5.0 - kpIndex * 3.0), 0.0, 1.0);
 			float auroraNorthBias = clamp((-planeCoord.x * 0.5 - planeCoord.z) * 0.25 + pow4(kpIndex) * 2.0, 0.0, 1.0);
-			float auroraDistanceFactor = clamp(1.0 - length(planeCoord.xz) * max(0.05 - altitudeFactor50k * (1.0 - altitudeFactor) * 0.25 + altitudeFactor * 0.04, 0.0125), 0.0, 1.0) * mix(auroraNorthBias, 1.0, altitudeFactor)  * mix(WEhorizon, poles, altitudeFactor50k);
+			float auroraDistanceFactor = clamp(1.0 - length(planeCoord.xz) * max(0.05 - altitudeFactorHalf * (1.0 - altitudeFactor) * 0.25 + altitudeFactor * 0.04, 0.0125), 0.0, 1.0) * mix(auroraNorthBias, 1.0, altitudeFactor)  * mix(WEhorizon, poles, altitudeFactorHalf);
 
 			if (auroraDistanceFactor > 0.0) {
-                float auroraSample = auroraDistortedNoise(coord * 0.025, kpIndex, pulse, longPulse, altitudeFactor50k);
+                float auroraSample = auroraDistortedNoise(coord * 0.025, kpIndex, pulse, longPulse, altitudeFactorHalf);
 
-                float colorMixer = pow(currentStep, 0.65 + altitudeFactor50k + pow3(kpIndex) * pulse * 0.1);
+                float colorMixer = pow(currentStep, 0.65 + altitudeFactorHalf + pow3(kpIndex) * pulse * 0.1);
                 float attenuation = exp2(-4.0 * i * sampleStep);
 
                 vec3 lowA = vec3(0.45, 1.55 - redPhase * 0.5, 0.0);
                 vec3 upA = vec3(0.95 + redPhase * 2.0, 0.10, 1.05);
-                vec3 auroraA = fmix(lowA, upA, mix(colorMixer, 1.0 - colorMixer, altitudeFactor50k)) * mix(attenuation, 1.0 - attenuation, altitudeFactor);
+                vec3 auroraA = fmix(lowA, upA, mix(colorMixer, 1.0 - colorMixer, altitudeFactorHalf)) * mix(attenuation, 1.0 - attenuation, altitudeFactor);
 
 				aurora += auroraA * auroraSample * sqrt(auroraDistanceFactor);
 			}

@@ -3,7 +3,6 @@ vec3 getAtmosphere(vec3 viewPos, vec3 worldPos, out float atmosphereHardMixFacto
     vec3 daySkyColor = normalize(skyColor + 0.000001) * fmix(vec3(1.0), biomeColor, isSpecificBiome) * fmix(skyTint, vec3(1.0), timeBrightness) * fmix(vec3(1.0), weatherCol, wetness);
 
     float altitudeFactor = min(max(cameraPosition.y, 0.0) / KARMAN_LINE, 1.0);
-    float altitudeFactor10k = min(max(cameraPosition.y, 0.0) * 0.0001, 1.0);
 
     vec3 nWorldPos = normalize(worldPos);
     vec3 nViewPos = normalize(viewPos);
