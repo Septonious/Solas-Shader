@@ -12,35 +12,30 @@ void drawStars(inout vec3 color, in vec3 worldPos, in float VoU, in float VoL, i
 
 	if (visibility > 0.05) {
 		vec2 planeCoord = worldPos.xz / (length(worldPos.y) + length(worldPos.xyz));
-        #ifdef OVERWORLD
-        float nebulaNoise = max(texture2D(noisetex, planeCoord * 0.5).r * pow(VoU, 0.125) * (1.0 - pow8(VoU)) - 0.3, 0.0) * VoL;
-        nebulaFactor += nebulaNoise * nebulaNoise * 16.0;
-        color.rgb += vec3(lightNight.r + pow3(nebulaNoise), lightNight.g + pow4(nebulaNoise) * 3.5, lightNight.b * 1.25) * (nebulaNoise + pow3(nebulaNoise) * 9.0) * visibility;
-		#endif
-             planeCoord *= size;
-			 #ifdef END_BLACK_HOLE
-			 float baseRing = pow10(pow32(VoL));
+                planeCoord *= size;
+                #ifdef END_BLACK_HOLE
+                float baseRing = pow10(pow32(VoL));
 
-			 planeCoord *= clamp(1.0 - baseRing * 4.0, 0.0, 1.0);
-			 planeCoord += baseRing;
-			 #endif
-			 planeCoord += cameraPosition.xz * 0.00001;
-			 planeCoord += frameTimeCounter * 0.001;
+                planeCoord *= clamp(1.0 - baseRing * 4.0, 0.0, 1.0);
+                planeCoord += baseRing;
+                #endif
+                planeCoord += cameraPosition.xz * 0.00001;
+                planeCoord += frameTimeCounter * 0.001;
+
 		float amount = STAR_AMOUNT;
 
 		vec2 planeCoord0 = floor(planeCoord * 500.0 * amount) / (500.0 * amount);
 		vec2 planeCoord1 = floor(planeCoord * 1000.0 * amount) / (1000.0 * amount);
 
 		float starNoise = getNoise(planeCoord0 + 8.0);
-			  starNoise*= getNoise(planeCoord1 + 14.0);
+                starNoise*= getNoise(planeCoord1 + 14.0);
 
         float stars = clamp(starNoise - (0.825 - nebulaFactor * 0.125), 0.0, 1.0);
-			  stars *= stars * stars * 512.0;
-			  stars = clamp(stars, 0.0, 16.0);
+                stars *= stars * stars * 512.0;
+                stars = clamp(stars, 0.0, 16.0);
 
 		#ifdef OVERWORLD
-		color += (stars + pow2(max(starNoise - 0.95, 0.0)) * 2048.0) * mix(lightNight, vec3(0.2), 0.4 * altitudeFactor) * visibility * STAR_BRIGHTNESS;
-
+		color += (stars + pow2(max(starNoise - 0.95, 0.0)) * 2048.0) * mix(lightNight, vec3(0.25), 0.35 + 0.25 * altitudeFactor) * visibility * STAR_BRIGHTNESS;
 		#else
 		#ifdef END_BLACK_HOLE
 		float hole = pow(pow32(VoL), END_BLACK_HOLE_SIZE);

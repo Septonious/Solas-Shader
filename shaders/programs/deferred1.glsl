@@ -267,13 +267,15 @@ void main() {
     VoU *= 1.0 - isPaleGarden;
 	#endif
 
+    float auroraOcclusion = 0.0;
+
     #ifdef AURORA
-    drawAurora(skyColor, worldPos.xyz, caveFactor, occlusion);
+    drawAurora(skyColor, worldPos.xyz, caveFactor, occlusion, auroraOcclusion);
     #endif
 
     if (atmosphereHardMixFactor < 1.0) {
         #ifdef MILKY_WAY
-        drawMilkyWay(skyColor, worldPos.xyz, VoU, caveFactor, nebulaFactor);
+        drawMilkyWay(skyColor, worldPos.xyz, VoU, VoM, caveFactor, nebulaFactor, auroraOcclusion);
         #endif
 
         #ifdef STARS

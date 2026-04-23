@@ -6,7 +6,7 @@ float auroraDistortedNoise(vec2 coord, float kpIndex, float pulse, float longPul
     // Soft global rotation (breaks axis lock)
     float baseAngle = (t * 0.0004) * 0.3;
     mat2 baseRot = mat2(cos(baseAngle), -sin(baseAngle),
-                        sin(baseAngle),  cos(baseAngle));
+                                        sin(baseAngle),  cos(baseAngle));
     distortedCoord = baseRot * distortedCoord;
 
     //Low freq distort
@@ -52,7 +52,7 @@ float auroraDistortedNoise(vec2 coord, float kpIndex, float pulse, float longPul
     return max(aurora, 0.0);
 }
 
-void drawAurora(inout vec3 color, in vec3 worldPos, in float caveFactor, in float occlusion) {
+void drawAurora(inout vec3 color, in vec3 worldPos, in float caveFactor, in float occlusion, inout float auroraOcclusion) {
     vec3 nWorldPos = normalize(worldPos);
 
     //Altitude factor. Makes the aurora closer to you when you're ascending
@@ -128,7 +128,8 @@ void drawAurora(inout vec3 color, in vec3 worldPos, in float caveFactor, in floa
 			}
 			currentStep += sampleStep;
 		}
-
-		color += aurora * visibility * sampleStep * fade;
+        aurora *= visibility * sampleStep * fade;
+		color += aurora;
+        auroraOcclusion += clamp(length(aurora) * 2.0, 0.0, 1.0);
 	}
 }

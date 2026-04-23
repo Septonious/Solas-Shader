@@ -8,9 +8,12 @@ vec3 getAtmosphere(vec3 viewPos, vec3 worldPos, out float atmosphereHardMixFacto
     vec3 nWorldPos = normalize(worldPos);
     vec3 nViewPos = normalize(viewPos);
     float VoS = dot(nViewPos, sunVec);
+    float VoM = dot(nViewPos, -sunVec);
     float VoSPositive = VoS * 0.5 + 0.5;
     float VoSClamped = clamp(VoS, 0.0, 1.0);
+    float VoMClamped = clamp(VoM, 0.0, 1.0);
     float VoS2 = VoSClamped * VoSClamped;
+    float VoM2 = VoMClamped * VoMClamped;
     float sunVis2 = sunVisibility * sunVisibility;
     float sunInv2 = 1.0 - sunVis2;
     float VoS_sv = VoS * sunVisibility;
@@ -33,7 +36,7 @@ vec3 getAtmosphere(vec3 viewPos, vec3 worldPos, out float atmosphereHardMixFacto
     vec3 atmosphere = fmix(daySkyColor, lightNight * 0.5, moonVisibility);
 
     float heightPositive = max(nWorldPos.y * (1.0 - altitudeFactor * 0.5) + altitudeFactor * 0.5, 0.0);
-    float density = clamp((1.0 - heightPositive * (0.65 + moonVisibility * 0.25 + altitudeFactor * altitudeFactor * 3.0)) * (1.0 + pow4(altitudeFactor) * 9.0), 0.0, 1.0);
+    float density = clamp((1.0 - heightPositive * (0.65 + moonVisibility * 1.5 + altitudeFactor * altitudeFactor * 3.0)) * (1.0 + pow4(altitudeFactor) * 9.0), 0.0, 1.0) + moonVisibility * 0.2;
 
     atmosphereHardMixFactor = altitudeFactor * density;
     atmosphere *= density;

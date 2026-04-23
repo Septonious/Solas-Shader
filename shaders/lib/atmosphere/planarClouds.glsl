@@ -13,10 +13,10 @@ float samplePlanarCloudNoise(vec2 coord){
     float noise = base * (1.0 - breakup * 0.75);
 
     noise += (detail - 0.5) * 0.05;
-
+    float amount = PLANAR_CLOUDS_AMOUNT + moonVisibility * 0.05;
     noise = smoothstep(
-        PLANAR_CLOUDS_AMOUNT,
-        PLANAR_CLOUDS_AMOUNT + 0.35,
+        amount,
+        amount + 0.35,
         noise
     );
 
