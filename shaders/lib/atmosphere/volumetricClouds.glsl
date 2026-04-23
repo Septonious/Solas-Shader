@@ -14,9 +14,9 @@ void getDynamicWeather(inout float speed, inout float amount, inout float thickn
     float sinDay2 = sin(day * 2.0);
     float waveFunction = sinDay05 * cosDay075 + sinDay2 * 0.25 - cosDay15 * 0.75;
 
-    amount += waveFunction * (0.5 + cosDay075 * 0.5) * 0.5 + moonVisibility * 0.5;
+    amount += waveFunction * (0.5 + cosDay075 * 0.5) * 0.5 + moonVisibility * 0.25;
     height += waveFunction * sinDay2 * 75.0;
-    scale += waveFunction * cosDay075;
+    scale += waveFunction * cosDay075 - moonVisibility * 0.25;
     thickness += waveFunction * waveFunction * cosDay15;
     density += waveFunction * sinDay05;
 	#endif
