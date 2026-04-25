@@ -93,8 +93,8 @@ vec3 eastVec = normalize(gbufferModelView[0].xyz);
 #ifdef OVERWORLD
 float eBS = eyeBrightnessSmooth.y / 240.0;
 float caveFactor = fmix(clamp((cameraPosition.y - 56.0) / 16.0, float(sign(isEyeInWater)), 1.0), 1.0, sqrt(eBS));
-float sunVisibility = clamp((dot( sunVec, upVec) + 0.15) * 3.0, 0.0, 1.0);
-float moonVisibility = clamp((dot(-sunVec, upVec) + 0.15) * 3.0, 0.0, 1.0);
+float sunVisibility = clamp(dot(sunVec, upVec) + 0.0625, 0.0, 0.125) / 0.125;
+float moonVisibility = clamp(dot(-sunVec, upVec) + 0.0625, 0.0, 0.125) / 0.125;
 vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.0);
 #endif
 
@@ -230,7 +230,7 @@ void main() {
 	#elif defined NETHER
 	vec3 atmosphereColor = netherColSqrt.rgb * 0.25;
 	#elif defined END
-	vec3 atmosphereColor = endAmbientColSqrt * 0.25;
+	vec3 atmosphereColor = endAmbientColSqrt * 0.175;
 	#endif
 
 	//Reflections
@@ -300,9 +300,17 @@ void main() {
     color = gl_Color;
 
 	//Normal, Binormal and Tangent
-	normal = normalize(gl_NormalMatrix * gl_Normal);
-	binormal = normalize(gbufferModelView[2].xyz);
-	tangent = normalize(gbufferModelView[0].xyz);
+	// No at_tangent in DH — basis from normal only (same idea as vanilla water)
+	vec3 vn = normalize(gl_NormalMatrix * gl_Normal);
+	vec3 vt = gl_NormalMatrix * vec3(1.0, 0.0, 0.0);
+	vt -= vn * dot(vn, vt);
+	if (dot(vt, vt) < 1e-8) {
+		vt = gl_NormalMatrix * vec3(0.0, 0.0, 1.0);
+		vt -= vn * dot(vn, vt);
+	}
+	normal = vn;
+	tangent = normalize(vt);
+	binormal = normalize(cross(tangent, vn));
 
 	#if WATER_NORMALS > 0
 	mat3 tbnMatrix = mat3(tangent.x, binormal.x, normal.x,
