@@ -59,7 +59,7 @@ void getNormalFog(inout vec3 color, in vec3 atmosphereColor, in vec3 viewPos, in
             density *= 0.25 + noise * 0.5;
 
     #if defined VOXY || defined DISTANT_HORIZONS
-            density *= 3.0;
+            density *= 2.0;
     #endif
 
 	#if MC_VERSION >= 12104

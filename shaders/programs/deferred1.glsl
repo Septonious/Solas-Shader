@@ -305,6 +305,22 @@ void main() {
     if (z0 == 1.0) color = skyColor;
     #endif
 
+    //Voxy water
+    #ifdef VOXY
+	vec4 voxyTransparentColor = texture2D(colortex7, texCoord);
+	voxyTransparentColor.rgb /= max(voxyTransparentColor.a, 0.00001);
+
+	float vxZ1 = texture2D(vxDepthTexTrans, texCoord).r;
+
+	vec4 vxScreenPos1 = vec4(texCoord, vxZ1, 1.0);
+	vec4 vxViewPos1 = vxProjInv * (vxScreenPos1 * 2.0 - 1.0);
+	        vxViewPos1 /= vxViewPos1.w;
+	
+	voxyTransparentColor.a *= step(-vxViewPos1.z, -viewPos.z);
+
+	color.rgb = mix(color.rgb, voxyTransparentColor.rgb, voxyTransparentColor.a);
+    #endif
+
 	//Apply fog before the clouds in Overworld
     #ifdef SS_SHADOWS
     float shadowVisibility = maxOf(abs(worldPos.xyz) / (vec3(min(shadowDistance, far))));
@@ -387,22 +403,6 @@ void main() {
 
         Fog(color, viewPos.xyz, atmosphereColor, z0);
     }
-    #endif
-
-    //Voxy water
-    #ifdef VOXY
-	vec4 voxyTransparentColor = texture2D(colortex7, texCoord);
-	voxyTransparentColor.rgb /= max(voxyTransparentColor.a, 0.00001);
-
-	float vxZ1 = texture2D(vxDepthTexTrans, texCoord).r;
-
-	vec4 vxScreenPos1 = vec4(texCoord, vxZ1, 1.0);
-	vec4 vxViewPos1 = vxProjInv * (vxScreenPos1 * 2.0 - 1.0);
-	        vxViewPos1 /= vxViewPos1.w;
-	
-	voxyTransparentColor.a *= step(-vxViewPos1.z, -viewPos.z);
-
-	color.rgb = mix(color.rgb, voxyTransparentColor.rgb, voxyTransparentColor.a);
     #endif
 
 	//Volumetric Clouds
