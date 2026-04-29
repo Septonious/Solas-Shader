@@ -1,14 +1,23 @@
 #ifdef NETHER_SMOKE
 float getNetherFogSample(vec3 fogPos) {
-    fogPos.x *= 0.5 + cos(fogPos.y * 0.5 + frameTimeCounter * 0.3 + fract(fogPos.z * 0.01) * 0.5) * 0.00004;
-    fogPos.z *= 0.5 + sin(fogPos.y * 0.7 + frameTimeCounter * 0.15 + fract(fogPos.x * 0.01) * 0.3) * 0.00006;
+    float t = frameTimeCounter;
 
-    float n3da = texture2D(noisetex, fogPos.xz * 0.005 + floor(fogPos.y * 0.1) * 0.1).r;
-    float n3db = texture2D(noisetex, fogPos.xz * 0.005 + floor(fogPos.y * 0.1 + 1.0) * 0.1).r;
+    // Smoke rises over time
+    fogPos.y -= t * 2.0;
 
-    float cloudyNoise = fmix(n3da, n3db, fract(fogPos.y * 0.1));
-          cloudyNoise = max(cloudyNoise - 0.5, 0.0);
-    return cloudyNoise;
+    // Effective domain warp — actual displacement, not near-zero scaling
+    // X and Z cross-feed each other for chaotic swirling columns
+    fogPos.x += cos(fogPos.y * 0.09 + fogPos.z * 0.007 + t * 0.13) * 6.0;
+    fogPos.z += sin(fogPos.y * 0.11 + fogPos.x * 0.007 + t * 0.09) * 6.0;
+
+    // Base column shape — Y-interpolated trilinear (2 samples)
+    // Irrational Y step (0.137) avoids repeating slice patterns
+    float yIdx = fogPos.y * 0.075;
+    float n0 = texture2D(noisetex, fogPos.xz * 0.0045 + floor(yIdx) * 0.137).r;
+    float n1 = texture2D(noisetex, fogPos.xz * 0.0045 + (floor(yIdx) + 1.0) * 0.137).r;
+    float smoke = fmix(n0, n1, smoothstep(0.0, 1.0, fract(yIdx)));
+            smoke = max(smoke - 0.475, 0.0);
+    return smoke * smoke * 10.0;
 }
 #endif
 

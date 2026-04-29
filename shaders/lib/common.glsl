@@ -289,6 +289,7 @@ const float sunPathRotation = 180.0;
 #define AURORA
 #define AURORA_BRIGHTNESS 1.25 //[0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00]
 #define AURORA_LIGHTING_INFLUENCE
+//#define AURORA_ALWAYS_VISIBLE
 
 // Milky Way //
 #define MILKY_WAY
@@ -296,7 +297,7 @@ const float sunPathRotation = 180.0;
 
 // Generated Night Nebula //
 #define GENERATED_NIGHT_NEBULA
-#define GENERATED_NIGHT_NEBULA_BRIGHTNESS 1.00 //[0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00]
+#define GENERATED_NIGHT_NEBULA_BRIGHTNESS 1.50 //[0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00]
 
 // Rainbow //
 #define RAINBOW

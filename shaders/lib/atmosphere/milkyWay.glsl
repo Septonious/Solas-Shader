@@ -12,13 +12,13 @@ void drawMilkyWay(inout vec3 color, in vec3 worldPos, in float VoU, in float VoM
                 nebulaPlaneCoord += cameraPosition.xz * 0.00001;
         float nebulaHeightFactor = max(1.0 - sqrt(nWorldPos.y), 0.0);
         float baseOctave = texture2D(noisetex, nebulaPlaneCoord * 0.125).g;
-                baseOctave = max(baseOctave - 0.15, 0.0);
+                baseOctave = max(baseOctave - 0.2, 0.0);
         float midOctave = texture2D(noisetex, nebulaPlaneCoord * 0.25).r;
                 midOctave = max(midOctave - 0.175, nebulaHeightFactor * 0.25);
         float detailOctave = texture2D(noisetex, nebulaPlaneCoord).r;
                 detailOctave = max(detailOctave - 0.075, nebulaHeightFactor * 0.25);
-        float nebulaNoise = (0.5 + 0.5 * baseOctave) * midOctave * (0.25 + 0.75 * detailOctave) * 6.0;
-        vec3 nebulaColor = vec3(0.3, 0.5 + midOctave * midOctave * midOctave * 2.0, 1.0);
+        float nebulaNoise = (0.25 + 0.75 * baseOctave) * midOctave * (0.25 + 0.75 * detailOctave) * 6.0;
+        vec3 nebulaColor = vec3(0.3, 0.5 + midOctave * midOctave * midOctave * 3.0, 1.0);
                 nebulaNoise = max(nebulaNoise * nWorldPos.y * pow(1.0 - nWorldPos.y, 1.5 - VoMClamped * 0.5), 0.0);
         vec3 nebula = (0.5 + VoMClamped * 0.5) * (1.0 - nebulaHeightFactor) * nebulaColor * (nebulaNoise + pow3(nebulaNoise) * 9.0) * moonVisibility * (1.0 - wetness);
         color.rgb += GENERATED_NIGHT_NEBULA_BRIGHTNESS * nebula * (1.0 - auroraOcclusion);

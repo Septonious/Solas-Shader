@@ -156,6 +156,10 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z, fl
                 kpIndex = kpIndex - int(kpIndex == 1) + int(kpIndex > 7 && worldDay % 10 == 0);
                 kpIndex = min(max(kpIndex, 0) + isSnowy * 4, 9);
 
+        #ifdef AURORA_ALWAYS_VISIBLE
+                kpIndex = 9;
+        #endif
+
         //Total visibility of aurora based on multiple factors
         float auroraVisibility = pow6(moonVisibility) * (1.0 - wetness) * caveFactor;
 
@@ -296,7 +300,7 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z, fl
             //Final color calculations
 			vec3 nSkyColor = normalize(skyColor + 0.0001);
             vec3 atmColor22 = pow(atmosphereColor, vec3(2.2));
-            vec3 cloudAmbientColor = fmix(atmColor22, atmColor22 * mix(vec3(1.0), nSkyColor * 0.5, isSpecificBiome), timeBrightnessSqrt);
+            vec3 cloudAmbientColor = fmix(atmColor22, atmColor22 * mix(vec3(1.0), nSkyColor * 0.5, isSpecificBiome), timeBrightnessSqrt) * (0.5 + sunVisibility * 0.5);
 
             vec3 cloudLightColor = fmix(lightCol, lightCol * nSkyColor * 2.0, timeBrightnessSqrt);
                     cloudLightColor *= 0.125 + cloudLighting * (0.875 + pow3(scattering) * 0.5 * moonVisibility);

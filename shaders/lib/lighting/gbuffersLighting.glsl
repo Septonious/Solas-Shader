@@ -250,6 +250,10 @@ void gbuffersLighting(in vec4 color, inout vec4 albedo, in vec3 screenPos, in ve
                 kpIndex = kpIndex - int(kpIndex == 1) + int(kpIndex > 7 && worldDay % 10 == 0);
                 kpIndex = min(max(kpIndex, 0) + isSnowy * 4, 9);
 
+        #ifdef AURORA_ALWAYS_VISIBLE
+                kpIndex = 9;
+        #endif
+
         //Aurora tends to get brighter and dimmer when plasma arrives or fades away
         float pulse = 0.5 + 0.5 * sin(frameTimeCounter * 0.08 + sin(frameTimeCounter * 0.013) * 0.6);
                 pulse = smoothstep(0.15, 0.85, pulse);

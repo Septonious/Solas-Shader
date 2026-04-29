@@ -69,6 +69,10 @@ void drawAurora(inout vec3 color, in vec3 worldPos, in float caveFactor, in floa
             kpIndex = kpIndex - int(kpIndex == 1) + int(kpIndex > 7 && worldDay % 10 == 0);
             kpIndex = min(max(kpIndex, 0) + isSnowy * 4, 9);
 
+    #ifdef AURORA_ALWAYS_VISIBLE
+            kpIndex = 9;
+    #endif
+
 	//Total visibility of aurora based on multiple factors
 	float visibility = pow6(moonVisibility) * (1.0 - wetness) * (1.0 - occlusion) * caveFactor;
 
