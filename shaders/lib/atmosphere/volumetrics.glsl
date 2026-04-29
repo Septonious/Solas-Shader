@@ -2,16 +2,10 @@
 float getNetherFogSample(vec3 fogPos) {
     float t = frameTimeCounter;
 
-    // Smoke rises over time
     fogPos.y -= t * 2.0;
-
-    // Effective domain warp — actual displacement, not near-zero scaling
-    // X and Z cross-feed each other for chaotic swirling columns
     fogPos.x += cos(fogPos.y * 0.09 + fogPos.z * 0.007 + t * 0.13) * 6.0;
     fogPos.z += sin(fogPos.y * 0.11 + fogPos.x * 0.007 + t * 0.09) * 6.0;
 
-    // Base column shape — Y-interpolated trilinear (2 samples)
-    // Irrational Y step (0.137) avoids repeating slice patterns
     float yIdx = fogPos.y * 0.075;
     float n0 = texture2D(noisetex, fogPos.xz * 0.0045 + floor(yIdx) * 0.137).r;
     float n1 = texture2D(noisetex, fogPos.xz * 0.0045 + (floor(yIdx) + 1.0) * 0.137).r;
