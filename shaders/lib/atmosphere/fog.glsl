@@ -58,8 +58,12 @@ void getNormalFog(inout vec3 color, in vec3 atmosphereColor, in vec3 viewPos, in
 		    density += isLushCaves * 0.3 + (isDesert * 0.10 + isSwamp * 0.15 + isJungle * 0.25);
             density *= 0.25 + noise * 0.5;
 
+    #if defined VOXY || defined DISTANT_HORIZONS
+            density *= 3.0;
+    #endif
+
 	#if MC_VERSION >= 12104
-    	  density += isPaleGarden * 0.5;
+    	    density += isPaleGarden * 0.5;
 	#endif
 
     float fog = 1.0 - exp(-0.005 * lViewPos * distanceMult);

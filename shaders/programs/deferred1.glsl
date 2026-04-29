@@ -191,19 +191,6 @@ void main() {
 	vec4 worldPos = gbufferModelViewInverse * vec4(viewPos.xyz, 1.0);
 		    worldPos.xyz /= worldPos.w;
 
-    //Voxy water
-    #if defined VOXY && (defined SSAO || defined SS_SHADOWS)
-	vec4 voxyTransparentColor = texture2D(colortex7, texCoord);
-
-	float vxZ1 = texture2D(vxDepthTexTrans, texCoord).r;
-
-	vec4 vxScreenPos1 = vec4(texCoord, vxZ1, 1.0);
-	vec4 vxViewPos1 = vxProjInv * (vxScreenPos1 * 2.0 - 1.0);
-	        vxViewPos1 /= vxViewPos1.w;
-
-    voxyTransparentColor.a *= float(z0 > 0.56);
-    #endif
-
     float atmosphereHardMixFactor = 0.0;
 
     #if defined OVERWORLD
@@ -402,8 +389,20 @@ void main() {
     }
     #endif
 
-    #if defined VOXY && (defined SSAO || defined SS_SHADOWS)
-    color.rgb = mix(color.rgb, voxyTransparentColor.rgb, voxyTransparentColor.a);
+    //Voxy water
+    #ifdef VOXY
+	vec4 voxyTransparentColor = texture2D(colortex7, texCoord);
+	voxyTransparentColor.rgb /= max(voxyTransparentColor.a, 0.00001);
+
+	float vxZ1 = texture2D(vxDepthTexTrans, texCoord).r;
+
+	vec4 vxScreenPos1 = vec4(texCoord, vxZ1, 1.0);
+	vec4 vxViewPos1 = vxProjInv * (vxScreenPos1 * 2.0 - 1.0);
+	        vxViewPos1 /= vxViewPos1.w;
+	
+	voxyTransparentColor.a *= step(-vxViewPos1.z, -viewPos.z);
+
+	color.rgb = mix(color.rgb, voxyTransparentColor.rgb, voxyTransparentColor.a);
     #endif
 
 	//Volumetric Clouds
