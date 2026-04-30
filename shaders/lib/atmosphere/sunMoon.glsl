@@ -2,7 +2,7 @@ void drawSunMoon(inout vec3 color, in vec3 worldPos, in vec3 nViewPos, in float 
     int moonPhase = 5;
     float altitudeFactor = min(max(cameraPosition.y, 0.0) / KARMAN_LINE, 1.0);
     float visibility = (1.0 - wetness) * caveFactor * (1.0 - occlusion);
-          visibility *= fmix(sqrt(max(VoU, 0.0)), 1.0, altitudeFactor);
+            visibility *= fmix(sqrt(max(VoU, 0.0)), 1.0, altitudeFactor);
 
     if (visibility > 0.0) {
         float sun = max(pow32(pow32(VoS)) - 0.4, 0.0) * 16.0 * sunVisibility;

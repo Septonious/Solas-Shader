@@ -20,7 +20,7 @@ void drawMilkyWay(inout vec3 color, in vec3 worldPos, in float VoU, in float VoM
         float nebulaNoise = (0.25 + 0.75 * baseOctave) * midOctave * (0.25 + 0.75 * detailOctave) * 6.0;
         vec3 nebulaColor = vec3(0.3, 0.5 + midOctave * midOctave * midOctave * 3.0, 1.0);
                 nebulaNoise = max(nebulaNoise * nWorldPos.y * pow(1.0 - nWorldPos.y, 1.5 - VoMClamped * 0.5), 0.0);
-        vec3 nebula = (0.5 + VoMClamped * 0.5) * (1.0 - nebulaHeightFactor) * nebulaColor * (nebulaNoise + pow3(nebulaNoise) * 9.0) * moonVisibility * (1.0 - wetness);
+        vec3 nebula = (0.5 + VoMClamped * 0.5) * (1.0 - nebulaHeightFactor) * nebulaColor * (nebulaNoise + pow3(nebulaNoise) * 9.0) * moonVisibility * (1.0 - wetness) * (1.0 - pow(altitudeFactor, 0.25));
         color.rgb += GENERATED_NIGHT_NEBULA_BRIGHTNESS * nebula * (1.0 - auroraOcclusion);
         nebulaFactor += length(nebula);
         #endif
@@ -37,7 +37,7 @@ void drawMilkyWay(inout vec3 color, in vec3 worldPos, in float VoU, in float VoM
 		#else
 		vec4 milkyWay = texture2D(gaux4, planeCoord * 0.5 + 0.6);
 		#endif
-             milkyWay.rgb = (lightNight * 1.75 + vec3(0.25)) * milkyWay.rgb * pow(milkyWay.a, 6.0 - altitudeFactor * 3.0) * length(milkyWay.rgb) * visibility;
+             milkyWay.rgb = fmix(lightNight * 1.75, vec3(0.25), 0.5 + altitudeFactor * 0.25) * milkyWay.rgb * pow(milkyWay.a, 6.0 - altitudeFactor * 3.0) * length(milkyWay.rgb) * visibility;
 		nebulaFactor = length(milkyWay.rgb) * (5.0 - altitudeFactor * 3.0);
         #ifdef GBUFFERS_WATER
              milkyWay.rgb *= 3.0; //brightness compensation for water reflections
