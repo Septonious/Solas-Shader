@@ -258,8 +258,8 @@ void main() {
 
 	#ifdef PBR
 	vec3 rawAlbedo = albedo.rgb * 0.999 + 0.001;
-	albedo.rgb *= ao * ao;
-	albedo.rgb *= 1.0 - metalness * smoothness * 0.5;
+	//albedo.rgb *= ao * ao;
+	//albedo.rgb *= 1.0 - metalness * smoothness * 0.5;
 
 	float doParallax = 0.0;
 
