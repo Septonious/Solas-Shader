@@ -12,7 +12,7 @@ void drawStars(inout vec3 color, in vec3 worldPos, in float VoU, in float VoL, i
 
 	if (visibility > 0.05) {
 		vec2 planeCoord = worldPos.xz / (length(worldPos.y) + length(worldPos.xyz));
-                planeCoord *= size;
+                planeCoord *= 0.8 / size;
                 #ifdef END_BLACK_HOLE
                 float baseRing = pow10(pow32(VoL));
 
