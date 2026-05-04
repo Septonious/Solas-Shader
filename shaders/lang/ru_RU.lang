@@ -137,6 +137,7 @@ screen.STARS_CONFIG=Настройки Звёзд
 
 option.STAR_BRIGHTNESS=Яркость Звёзд
 option.STAR_AMOUNT=Число Звёзд
+option.STAR_SIZE=Размер Звёзд
 option.SHOOTING_STARS_SIZE=Размер Метеоров
 option.SHOOTING_STARS_SPEED=Скорость Метеоров
 option.SHOOTING_STARS_CHANCE=Шанс Метеоров
