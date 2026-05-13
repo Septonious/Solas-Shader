@@ -266,7 +266,7 @@ void main() {
         #endif
 
         #ifdef STARS
-        drawStars(skyColor, worldPos.xyz, VoU, VoM, caveFactor, nebulaFactor, occlusion, 0.8);
+        drawStars(skyColor, worldPos.xyz, VoU, VoM, caveFactor, nebulaFactor, occlusion, STAR_SIZE);
 
         #ifdef SHOOTING_STARS
         getShootingStars(skyColor, worldPos.xyz, VoU, VoS);
@@ -283,7 +283,7 @@ void main() {
     #endif
 
     #ifdef END_STARS
-    drawStars(skyColor, worldPos.xyz, VoU, VoS, 1.0, nebulaFactor, occlusion, 0.85);
+    drawStars(skyColor, worldPos.xyz, VoU, VoS, 1.0, nebulaFactor, occlusion, STAR_SIZE);
     #endif
 
     //Planar Clouds

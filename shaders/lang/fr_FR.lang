@@ -95,6 +95,7 @@ screen.SKY_CONFIG=Configuration du Ciel
 option.STARS=Étoiles
 option.STAR_BRIGHTNESS=Luminosité des Étoiles
 option.STAR_AMOUNT=Quantité d'Étoiles
+option.STAR_SIZE=Taille des Étoiles
 option.END_STARS=Étoiles de l'End
 option.MILKY_WAY=Voie Lactée
 option.MILKY_WAY_BRIGHTNESS=Luminosité de la Voie Lactée

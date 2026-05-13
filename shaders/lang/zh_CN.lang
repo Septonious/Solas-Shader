@@ -94,6 +94,7 @@ screen.SKY_CONFIG=天空配置
 option.STARS=星空
 option.STAR_BRIGHTNESS=星星亮度
 option.STAR_AMOUNT=星星数量
+option.STAR_SIZE=星星大小
 option.END_STARS=末地星空
 option.MILKY_WAY=银河
 option.MILKY_WAY_BRIGHTNESS=银河亮度

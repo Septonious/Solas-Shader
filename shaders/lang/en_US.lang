@@ -142,6 +142,7 @@ screen.STARS_CONFIG=Stars Config
 
 option.STAR_BRIGHTNESS=Stars Brightness
 option.STAR_AMOUNT=Stars Amount
+option.STAR_SIZE=Stars Size
 option.SHOOTING_STARS_SIZE=Meteors Size
 option.SHOOTING_STARS_SPEED=Meteors Speed
 option.SHOOTING_STARS_CHANCE=Meteors Chance
