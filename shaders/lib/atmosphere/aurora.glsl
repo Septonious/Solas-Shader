@@ -1,15 +1,15 @@
-float auroraDistortedNoise(vec2 coord, float kpIndex, float pulse, float longPulse, float altitudeFactorHalf) {
+float getAuroraSample(vec2 coord, float kpIndex, float pulse, float longPulse, float altitudeFactorHalf) {
     float t = frameTimeCounter * 0.125;
 
     vec2 distortedCoord = coord;
 
-    // Soft global rotation (breaks axis lock)
+    //Soft global rotation (breaks axis lock)
     float baseAngle = (t * 0.0004) * 0.3;
     mat2 baseRot = mat2(cos(baseAngle), -sin(baseAngle),
                                         sin(baseAngle),  cos(baseAngle));
     distortedCoord = baseRot * distortedCoord;
 
-    //Low freq distort
+    //Low frequency distortion. Makes aurora more chaotic and randomized
     vec2 flowUV = distortedCoord * 0.35;
     flowUV += vec2(
         sin(t * 0.0012),
@@ -28,7 +28,7 @@ float auroraDistortedNoise(vec2 coord, float kpIndex, float pulse, float longPul
 	vec2 warping = curlDir * f;
     distortedCoord += warping * curlStrength;
 
-    //Now apply vertical stretch AFTER distortion
+    //Now apply north-south stretch after initial distortion
     distortedCoord.y *= 0.75;
 	distortedCoord.x *= 1.5;
 
@@ -39,11 +39,11 @@ float auroraDistortedNoise(vec2 coord, float kpIndex, float pulse, float longPul
     //Slight waviness so it’s not perfectly straight
     arc *= 0.65 + 0.35 * f;
 
-    //Blurry background noise (aka folds)
+    //Blurry background noise "folds"
     float sheet = texture2D(noisetex, vec2(distortedCoord.x * 1.25, distortedCoord.y * 0.5 + frameTimeCounter * 0.0025)).r;
-            sheet *= sheet * sheet * 2.0;
+            sheet *= sheet * sheet;
 
-    //High frequency noise (aka rays)
+    //High frequency noise "rays"
     float rays = texture2D(noisetex, vec2(distortedCoord.x * 5.0, distortedCoord.y * 2.0) + vec2(-frameTimeCounter * 0.0015, frameTimeCounter * 0.0025)).r;
     float flashTime = sin(frameTimeCounter + distortedCoord.x * 64.0 + warping.x * 32.0);
             flashTime = smoothstep(0.4, 1.0, flashTime);
@@ -113,22 +113,23 @@ void drawAurora(inout vec3 color, in vec3 worldPos, in float caveFactor, in floa
 			vec2 coord = planeCoord.xz + cameraPosition.xz * 0.0005;
 
 			//We don't want the aurora to render infintely, we also want it to be closer to the north when Kp is low
-    		float WEhorizon = clamp(pow(1.0 - abs(planeCoord.x * 0.1), 4.0), 0.0, 1.0);
-            float poles = clamp(pow(abs(planeCoord.z * 0.1), 5.0 - kpIndex * 3.0), 0.0, 1.0);
-			float auroraNorthBias = clamp((-planeCoord.x * 0.5 - planeCoord.z) * 0.25 + pow4(kpIndex) * 2.0, 0.0, 1.0);
-			float auroraDistanceFactor = clamp(1.0 - length(planeCoord.xz) * max(0.05 - altitudeFactorHalf * (1.0 - altitudeFactor) * 0.25 + altitudeFactor * 0.04, 0.0125), 0.0, 1.0) * mix(auroraNorthBias, 1.0, altitudeFactor)  * mix(WEhorizon, poles, altitudeFactorHalf);
+    		float westEast = clamp(pow(1.0 - abs(planeCoord.x * 0.1), 5.0 - kpIndex * 3.0), 0.0, 1.0); //Fade out aurora closer to the western/eastern horizons
+            float northSouth = clamp(pow(abs(planeCoord.z * 0.1), 5.0 - kpIndex * 3.0), 0.0, 1.0); //Make aurora appear stronger near poles when looking from space
+			float north = clamp((-planeCoord.x * 0.5 - planeCoord.z) * 0.25 + pow4(kpIndex) * 2.0, 0.0, 1.0); //Make aurora appear stronger in north when looking from the ground
+			float distanceFactor = clamp(1.0 - length(planeCoord.xz) * max(0.05 - altitudeFactorHalf * (1.0 - altitudeFactor) * 0.25 + altitudeFactor * 0.04, 0.0125), 0.0, 1.0); //Limit the max render distance
+            float auroraDistribution = distanceFactor * mix(westEast * north, northSouth, altitudeFactorHalf);
 
-			if (auroraDistanceFactor > 0.0) {
-                float auroraSample = auroraDistortedNoise(coord * 0.025, kpIndex, pulse, longPulse, altitudeFactorHalf);
+			if (auroraDistribution > 0.0) {
+                float auroraSample = getAuroraSample(coord * 0.025, kpIndex, pulse, longPulse, altitudeFactorHalf);
 
                 float colorMixer = pow(currentStep, 0.65 + altitudeFactorHalf + pow3(kpIndex) * pulse * 0.1);
-                float attenuation = exp2(-4.0 * i * sampleStep);
+                float attenuation = exp2(-4.0 * i * sampleStep); //Smooth vertical fade
 
-                vec3 lowA = vec3(0.45, 1.55 - redPhase * 0.5, 0.0);
-                vec3 upA = vec3(0.95 + redPhase * 2.0, 0.10, 1.05);
-                vec3 auroraA = fmix(lowA, upA, mix(colorMixer, 1.0 - colorMixer, altitudeFactorHalf)) * mix(attenuation, 1.0 - attenuation, altitudeFactor);
+                vec3 lowColor = vec3(0.45, 1.55 - redPhase * 0.5, 0.0);
+                vec3 upColor = vec3(0.95 + redPhase * 2.0, 0.10, 1.05);
+                vec3 auroraColor = fmix(lowColor, upColor, mix(colorMixer, 1.0 - colorMixer, altitudeFactorHalf)) * mix(attenuation, 1.0 - attenuation, altitudeFactor);
 
-				aurora += auroraA * auroraSample * sqrt(auroraDistanceFactor);
+				aurora += auroraColor * auroraSample * sqrt(auroraDistribution);
 			}
 			currentStep += sampleStep;
 		}
