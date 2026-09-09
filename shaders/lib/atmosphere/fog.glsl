@@ -45,18 +45,19 @@ void getNormalFog(inout vec3 color, in vec3 atmosphereColor, in vec3 viewPos, in
 	#ifdef OVERWORLD
 	vec3 fogPos = worldPos + cameraPosition;
 	float noise = texture2D(noisetex, (vec2(fogPos.x * 0.5, fogPos.y * 0.5) + vec2(fogPos.z * 0.5, fogPos.y * 0.5) + vec2(fogPos.x * 0.5, fogPos.z * 0.5)) * 0.0005 + frameCounter * 0.00001).r;
-            noise *= noise;
+          noise *= noise;
+
+	float altitude = FOG_HEIGHT + noise * 10.0 + timeBrightness * 25.0 - isJungle * 15.0;
+		  altitude = exp2(-max(worldPos.y + cameraPosition.y - altitude, 0.0) / exp2(FOG_HEIGHT_FALLOFF + moonVisibility + timeBrightness + wetness - isJungle - isSwamp));
+		  //altitude = fmix(1.0, altitude, clamp((cameraPosition.y - altitude) / altitude, 0.0, 1.0));
+	float density = FOG_DENSITY * (0.5 + (sunVisibility - timeBrightness) * 0.5 + moonVisibility * 0.5);
+		  density += isLushCaves * 0.3 + (isDesert * 0.10 + isSwamp * 0.15 + isJungle * 0.25) + wetness * 0.25;
+          density *= fmix(0.25 + noise * 0.5, 0.15 + altitude * 0.25, altitude);
     float distanceFactor = 25.0 * (0.5 + timeBrightness) + FOG_DISTANCE * (0.75 + caveFactor * 0.25) - wetness * 25.0;
     #if defined VOXY || defined DISTANT_HORIZONS
-            distanceFactor += 25.0;
+          distanceFactor += 25.0;
     #endif
-	float distanceMult = max(256.0 / farPlane, 2.0) * (100.0 / distanceFactor);
-	float altitudeFactor = FOG_HEIGHT + noise * 10.0 + timeBrightness * 25.0 - isJungle * 15.0;
-	float altitude = 0.25 + exp2(-max(worldPos.y + cameraPosition.y - altitudeFactor, 0.0) / exp2(FOG_HEIGHT_FALLOFF + moonVisibility + timeBrightness + wetness - isJungle - isSwamp)) * 0.75;
-		  //altitude = fmix(1.0, altitude, clamp((cameraPosition.y - altitude) / altitude, 0.0, 1.0));
-	float density = FOG_DENSITY * (1.0 + (sunVisibility - timeBrightness) * 0.25 + moonVisibility * 0.5);
-		    density += isLushCaves * 0.3 + (isDesert * 0.10 + isSwamp * 0.15 + isJungle * 0.25) + wetness * 0.25;
-            density *= 0.25 + noise * 0.5;
+	float distanceMult = max(256.0 / farPlane, 2.0) * (100.0 / (distanceFactor * (1.0 - altitude * 0.75)));
 
     #if defined VOXY || defined DISTANT_HORIZONS
             density *= 2.0;
@@ -67,14 +68,17 @@ void getNormalFog(inout vec3 color, in vec3 atmosphereColor, in vec3 viewPos, in
 	#endif
 
     float fog = 1.0 - exp(-0.005 * lViewPos * distanceMult);
-		    fog = clamp(fog * density * altitude, 0.0, 1.0);
+		  fog = clamp(fog * density, 0.0, 1.0);
 
     float VoL = clamp(dot(normalize(viewPos), lightVec), 0.0, 1.0);
     float fogAtmosphereMixFactor = fmix(1.0, 0.5 + VoL * 0.25, min(sunVisibility, 1.0));
     vec3 nSkyColor = normalize(skyColor + 0.000001) * fmix(vec3(1.0), biomeColor, sunVisibility * isSpecificBiome);
+	//vec3 fogCol = fmix(caveMinLightCol * (1.0 - isCaveBiome) + caveBiomeColor,
+                            //fmix(nSkyColor, pow(atmosphereColor, vec3(1.0 - sunVisibility * 0.5)), fogAtmosphereMixFactor),
+                            //caveFactor);
 	vec3 fogCol = fmix(caveMinLightCol * (1.0 - isCaveBiome) + caveBiomeColor,
-                            fmix(nSkyColor, pow(atmosphereColor, vec3(1.0 - sunVisibility * 0.5)), fogAtmosphereMixFactor),
-                            caveFactor);
+                  fmix(nSkyColor, pow(atmosphereColor, vec3(1.0 - sunVisibility * 0.5)), fogAtmosphereMixFactor * (1.0 - altitude * altitude * 0.5 * sunVisibility)),
+                  caveFactor);
 
 	//Distant Fade
 	#ifdef DISTANT_FADE

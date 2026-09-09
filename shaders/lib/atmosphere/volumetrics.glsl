@@ -46,7 +46,7 @@ void calculateVLParameters(inout float intensity, inout float distanceFactor, in
 	}
     float closedSpaceFactor = 1.0 - min(1.0, pow8(eBS) * 0.5 + averageDepth * (0.7 - eBS * eBS * 0.35));
 
-    intensity = fmix((VoLClamped * VoLClamped * VL_STRENGTH_RATIO + (1.0 - VL_STRENGTH_RATIO)) * (1.0 - timeBrightness), 3.0 + sunVisibility, wetness);
+    intensity = fmix((VoLClamped * VoLClamped * VL_STRENGTH_RATIO + (1.0 - VL_STRENGTH_RATIO)) * (1.0 - timeBrightness), 1.0 + sunVisibility, wetness);
     intensity += pow(VoLClamped, 1.5) * timeBrightness;
     intensity *= 1.0 + pow8(VoLClamped) * (2.0 + pow16(VoLClamped) * 3.0);
     intensity *= timeIntensityFactor * (1.0 + closedSpaceFactor);

@@ -41,11 +41,11 @@ float getAuroraSample(vec2 coord, float kpIndex, float pulse, float longPulse, f
           arc = fmix(arc, 1.0, auroraCameraY * auroraAltitudeMult);
 
 	//Blurry background noise "folds"
-	float sheet = texture2D(noisetex, vec2(distortedCoord.x * 1.25, distortedCoord.y * 0.5 + frameTimeCounter * 0.0025)).r;
+	float sheet = texture2D(noisetex, vec2(distortedCoord.x, distortedCoord.y * 0.4 + frameTimeCounter * 0.0025)).r;
 	      sheet *= sheet * sheet;
 
 	//High frequency noise "rays"
-	float rays = texture2D(noisetex, vec2(distortedCoord.x * 5.0, distortedCoord.y * 2.0) + vec2(-frameTimeCounter * 0.0015, frameTimeCounter * 0.0025)).r;
+	float rays = texture2D(noisetex, vec2(distortedCoord.x * 3.0, distortedCoord.y * 1.3) + vec2(-frameTimeCounter * 0.0015, frameTimeCounter * 0.0025)).r;
 
 	float flashTime = sin(frameTimeCounter + distortedCoord.x * 64.0 + warping.x * 32.0);
 	      flashTime = smoothstep(0.4, 1.0, flashTime);
