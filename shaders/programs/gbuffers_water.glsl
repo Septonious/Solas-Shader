@@ -213,7 +213,7 @@ void main() {
 		float farPlane = far + vxRenderDistance;
 		float cloudDepth = texture2D(gaux2, screenPos.xy).r * (farPlane * 2.0);
 		#else
-		float cloudDepth = texture2D(gaux2, screenPos.xy).r * dhFarPlane;
+		float cloudDepth = texture2D(gaux2, screenPos.xy).r * (2.0 * dhFarPlane);
 		#endif
 		cloudBlendOpacity = step(length(viewPos), cloudDepth);
 
