@@ -164,6 +164,30 @@ void getNormalFog(inout vec3 color, in vec3 atmosphereColor, in vec3 viewPos, in
 	color = fmix(color, fogCol, fog);
 }
 
+#if defined MODDED_FOG && defined OVERWORLD
+uniform bool heavyFog;
+
+// How far vanilla's own fog has closed in, 0 to 1. Zero while vanilla's fog ends at or past the render distance,
+// as it does in normal play and in rain, so nothing changes until a mod or a dimension pulls it in. Full once the
+// end is inside half of it, so a fog closing in fades on rather than snapping on.
+float getModdedFogStrength() {
+	if (isEyeInWater != 0 || heavyFog || blindFactor > 0.0) return 0.0;
+	#if MC_VERSION >= 11900
+	if (darknessFactor > 0.0) return 0.0;
+	#endif
+	float clearEnd = min(far, 512.0);
+	return clamp((clearEnd - gl_Fog.end) / (0.5 * clearEnd), 0.0, 1.0);
+}
+
+// Vanilla's linear fog toward vanilla's fog color, faded in by getModdedFogStrength.
+void getModdedFog(inout vec3 color, float lViewPos) {
+	float strength = getModdedFogStrength();
+	if (strength < 0.00001) return;
+	float fog = clamp((lViewPos - gl_Fog.start) / max(gl_Fog.end - gl_Fog.start, 0.01), 0.0, 1.0);
+	color = fmix(color, fogColor, fog * strength);
+}
+#endif
+
 void Fog(inout vec3 color, in vec3 viewPos, in vec3 atmosphereColor, in float z0) {
 	vec4 worldPos = gbufferModelViewInverse * vec4(viewPos, 1.0);
 	        worldPos.xyz /= worldPos.w;
@@ -180,5 +204,9 @@ void Fog(inout vec3 color, in vec3 viewPos, in vec3 atmosphereColor, in float z0
 
 	#if MC_VERSION >= 11900
 	if (darknessFactor > 0.0) getDarknessFog(color, lViewPos);
+	#endif
+
+	#if defined MODDED_FOG && defined OVERWORLD
+	getModdedFog(color, length(viewPos));
 	#endif
 }

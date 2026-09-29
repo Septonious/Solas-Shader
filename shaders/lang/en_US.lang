@@ -110,6 +110,8 @@ value.DISTANT_FADE_STYLE.0=Spherical
 value.DISTANT_FADE_STYLE.1=Cylindrical
 option.FOG_DENSITY=Fog Density
 option.FOG_HEIGHT=Ground Fog Height
+option.MODDED_FOG=Modded Fog
+option.MODDED_FOG.comment=Shows fog that a mod or a dimension pulls in closer than your render distance, in the color it sets. Has no effect in normal play.
 
 #----------------------------------------------------------------------------------#
 
