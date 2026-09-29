@@ -47,6 +47,9 @@ uniform ivec2 atlasSize;
 uniform ivec2 eyeBrightnessSmooth;
 uniform vec3 cameraPosition;
 
+#if defined MODDED_FOG && defined OVERWORLD
+uniform vec3 fogColor;
+#endif
 #ifdef NETHER
 uniform vec3 fogColor;
 #endif

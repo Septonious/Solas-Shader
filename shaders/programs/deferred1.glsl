@@ -50,6 +50,9 @@ uniform vec3 endFlashPosition;
 
 uniform vec3 cameraPosition;
 
+#if defined MODDED_FOG && defined OVERWORLD
+uniform vec3 fogColor;
+#endif
 #ifdef NETHER
 uniform vec3 fogColor;
 #endif
@@ -466,7 +469,20 @@ void main() {
 			cloudDepth /= (2.0 * farPlane);
 		#endif
 
+		#if defined MODDED_FOG && defined OVERWORLD // Fog the clouds like the sky
+		vc.rgb = fmix(vc.rgb, fogColor, getModdedFogStrength());
+		#endif
 		color = fmix(color, vc.rgb, vc.a);
+	#endif
+
+	#if defined MODDED_FOG && defined OVERWORLD // The sky, with its aurora and clouds, lies past any fog end
+	#if defined DISTANT_HORIZONS
+		if (dhZ0 == 1.0 && z0 == 1.0) color = fmix(color, fogColor, getModdedFogStrength());
+	#elif defined VOXY
+		if (vxZ0 == 1.0 && z0 == 1.0) color = fmix(color, fogColor, getModdedFogStrength());
+	#else
+		if (z0 == 1.0) color = fmix(color, fogColor, getModdedFogStrength());
+	#endif
 	#endif
 
 	/* DRAWBUFFERS:045 */
