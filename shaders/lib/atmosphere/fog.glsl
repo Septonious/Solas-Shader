@@ -164,7 +164,8 @@ void getNormalFog(inout vec3 color, in vec3 atmosphereColor, in vec3 viewPos, in
 	color = fmix(color, fogCol, fog);
 }
 
-#if defined MODDED_FOG && defined OVERWORLD
+#ifdef MODDED_FOG
+#ifdef OVERWORLD
 uniform bool heavyFog;
 
 // How far vanilla's own fog has closed in, 0 to 1. Zero while vanilla's fog ends at or past the render distance,
@@ -186,6 +187,7 @@ void getModdedFog(inout vec3 color, float lViewPos) {
 	float fog = clamp((lViewPos - gl_Fog.start) / max(gl_Fog.end - gl_Fog.start, 0.01), 0.0, 1.0);
 	color = fmix(color, fogColor, fog * strength);
 }
+#endif
 #endif
 
 void Fog(inout vec3 color, in vec3 viewPos, in vec3 atmosphereColor, in float z0) {
