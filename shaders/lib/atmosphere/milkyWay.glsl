@@ -1,3 +1,5 @@
+uniform sampler2D milkyWayTex;
+
 void drawMilkyWay(inout vec3 color, in vec3 worldPos, in float VoU, in float VoM, in float caveFactor, inout float nebulaFactor, in float auroraOcclusion) {
     float spaceFactor = min(max(cameraPosition.y, 0.0) / KARMAN_LINE, 1.0);
     float VoUFactor = mix(sqrt(max(VoU, 0.0)), VoU * 0.5 + 0.5, spaceFactor);
@@ -32,7 +34,7 @@ void drawMilkyWay(inout vec3 color, in vec3 worldPos, in float VoU, in float VoM
                 planeCoord.y -= 0.7;
         
         #ifdef DEFERRED
-        vec4 milkyWay = texture2D(depthtex2, planeCoord * 0.5 + 0.6);
+        vec4 milkyWay = texture2D(milkyWayTex, planeCoord * 0.5 + 0.6);
         #else
         vec4 milkyWay = texture2D(gaux4, planeCoord * 0.5 + 0.6);
         #endif
