@@ -187,7 +187,7 @@ void main() {
 	float cloudBlendOpacity = 1.0;
 
 	#ifdef VOLUMETRIC_CLOUDS
-	float cloudDepth = texture2D(gaux2, screenPos.xy).r * dhFarPlane;
+	float cloudDepth = texture2D(gaux2, screenPos.xy).r * (2.0 * dhFarPlane);
 	cloudBlendOpacity = step(length(viewPos), cloudDepth);
 
 	if (cloudBlendOpacity == 0) {
