@@ -184,6 +184,18 @@ vec3 getBlocklightColor(int id) {
     //Light Block
     else if(id == 85) color = vec3(LIGHT_R, LIGHT_G, LIGHT_B) * LIGHT_I;
 
+	else if(id == 86) color = normalize(vec3(1.0, 0.1, 0.1)); //GeOre
+	else if(id == 87) color = normalize(vec3(1.0, 0.5, 0.1)); //GeOre
+	else if(id == 88) color = normalize(vec3(1.0, 1.0, 0.1)); //GeOre
+	else if(id == 89) color = normalize(vec3(0.1, 1.0, 0.1)); //GeOre
+	else if(id == 90) color = normalize(vec3(0.1, 0.1, 1.0)); //GeOre
+	else if(id == 91) color = normalize(vec3(0.5, 0.5, 1.0)); //GeOre
+	else if(id == 92) color = normalize(vec3(0.1, 1.0, 1.0)); //GeOre
+	else if(id == 93) color = normalize(vec3(0.7, 0.1, 1.0)); //GeOre
+	else if(id == 94) color = normalize(vec3(1.0, 0.1, 1.0)); //GeOre
+	else if(id == 95) color = normalize(vec3(0.9, 0.9, 0.9)); //GeOre
+	else if(id == 96) color = normalize(vec3(0.75, 0.45, 0.25)) * 0.5; //GeOre
+
 	//Generic emitters with different colors
 	//Blocks in this range will emit their respective color
 	//A good way to quickly make modded blocks emit light
