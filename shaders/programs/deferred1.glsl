@@ -240,7 +240,7 @@ void main() {
 	#ifdef DISTANT_HORIZONS
 		float cloudDepth = 2.0 * dhFarPlane;
 	#else
-		float cloudDepth = 2.0 * far;
+		float cloudDepth = 2.0 * max(far, vxRenderDistance * 16.0);
 	#endif
 
 	float blueNoiseDither = texture2D(noisetex, gl_FragCoord.xy / 512.0).b;
@@ -465,7 +465,7 @@ void main() {
 		#ifdef DISTANT_HORIZONS
 			cloudDepth /= (2.0 * dhFarPlane);
 		#else
-			float farPlane = far + vxRenderDistance;
+			float farPlane = max(far, vxRenderDistance * 16.0);
 			cloudDepth /= (2.0 * farPlane);
 		#endif
 
