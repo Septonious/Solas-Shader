@@ -11,7 +11,7 @@ vec3 getBlocklightColor(int id) {
 		color = pow(vec3(TLCF_R, TLCF_G, TLCF_B), fireAnimation) * TLCF_I;
 	}
 	//Soul Torch, Soul Lantern, Soul Campfire, Soul Fire
-	else if(id == 6 || id == 16) {
+	else if(id == 6 || id == 16 || id == 98) {
 		vec3 fireAnimation = vec3(1.0 - cos(sin(frameTimeCounter * 2.0) * 4.0 + frameTimeCounter * 1.25) * 0.15);
 		color = pow(vec3(SOUL_R, SOUL_G, SOUL_B), fireAnimation) * SOUL_I;
 	}
@@ -70,7 +70,7 @@ vec3 getBlocklightColor(int id) {
     //Powered Rails & Shot Target
     else if(id == 30) color = vec3(1.00, 0.05, 0.00) * 0.5;
     //Nether Portal
-    else if(id == 31) color = vec3(NP_R, NP_G, NP_B) * NP_I;
+    else if(id == 31 || id == 100) color = vec3(NP_R, NP_G, NP_B) * NP_I;
     //Orchre Froglight
     else if(id == 32) color = vec3(OF_R, OF_G, OF_B) * OF_I;
     //Verdant Froglight
@@ -179,7 +179,7 @@ vec3 getBlocklightColor(int id) {
 	else if(id == 82) color = vec3(0.3, 0.6, 0.9) * 0.25;
 
 	//Copper Torches, Lanterns, Etc
-	else if(id == 83 || id == 84) color = vec3(CTL_R, CTL_G, CTL_B) * CTL_I;
+	else if(id == 83 || id == 84 || id == 99) color = vec3(CTL_R, CTL_G, CTL_B) * CTL_I;
 
     //Light Block
     else if(id == 85) color = vec3(LIGHT_R, LIGHT_G, LIGHT_B) * LIGHT_I;
