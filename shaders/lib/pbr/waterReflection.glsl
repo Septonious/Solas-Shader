@@ -23,8 +23,7 @@ void getReflection(inout vec4 albedo, in vec3 viewPos, in vec3 newNormal, in flo
 		reflectPos.y > 0.0 && reflectPos.y < 1.0) {
 		reflection = texture(gaux1, reflectPos.xy);
 		reflection.rgb = min(pow8(reflection.rgb) * 256.0, vec3(4.0));
-		reflection.rgb *= float(reflection.a > 0.0);
-		reflection.a *= borderFade;
+		reflection.a = borderFade;
 	}
 
 	#ifdef OVERWORLD
