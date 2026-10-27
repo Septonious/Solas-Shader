@@ -1,5 +1,5 @@
 void getMaterials(out float smoothness, out float metalness, out float f0, inout float emission,
-                  inout float subsurface, out float porosity, out float ao, out vec3 newNormal,
+                  inout float subsurface, out float porosity, out float ao, inout vec3 newNormal,
                   vec2 newCoord, vec2 dcdx, vec2 dcdy, mat3 tbnMatrix) {
     vec3 normalMap = vec3(0.0, 0.0, 1.0);
 
