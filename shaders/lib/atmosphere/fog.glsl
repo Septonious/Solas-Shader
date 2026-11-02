@@ -52,7 +52,7 @@ void getNormalFog(inout vec3 color, in vec3 atmosphereColor, in vec3 viewPos, in
 		  //altitude = fmix(1.0, altitude, clamp((cameraPosition.y - altitude) / altitude, 0.0, 1.0));
 	float density = FOG_DENSITY * (0.5 + (sunVisibility - timeBrightness) * 0.5 + moonVisibility * 0.5);
 		  density += isLushCaves * 0.3 + (isDesert * 0.10 + isSwamp * 0.15 + isJungle * 0.25) + wetness * 0.25;
-          density *= fmix(0.25 + noise * 0.5, 0.15 + altitude * 0.25, altitude);
+          density *= fmix(0.25 + noise * 0.5, 0.15 + altitude * 0.25, altitude) * 0.75;
     float distanceFactor = 25.0 * (0.5 + timeBrightness) + FOG_DISTANCE * (0.75 + caveFactor * 0.25) - wetness * 25.0;
     #if defined VOXY || defined DISTANT_HORIZONS
           distanceFactor += 25.0;
