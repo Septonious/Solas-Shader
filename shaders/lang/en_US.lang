@@ -273,6 +273,8 @@ screen.IEMISSION=Emissives Config
 
 option.GENERATED_EMISSION=Generated Emission
 option.GENERATED_EMISSION.comment=Automatically determines emissive blocks
+option.GENERATED_EMISSION_PARTICLES=Particle Emission
+option.GENERATED_EMISSION_PARTICLES.comment=Whether the automatic emission detection also covers particles. Turning it off keeps blocks and entities glowing while particles stay unlit. §c[-]§r Can affect performance when many particles are on screen.
 option.EMISSIVE_FLOWERS=Emissive Flowers
 option.EMISSIVE_ORES=Emissive Ores
 option.EMISSIVE_EMERALD_ORE=Emissive Emerald Ore

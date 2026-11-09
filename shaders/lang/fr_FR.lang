@@ -198,6 +198,8 @@ option.WATER_REFLECTIONS=Réflection de l'Eau
 
 option.GENERATED_EMISSION=Émissions Générées
 option.GENERATED_EMISSION.comment=Détermine automatique les émissions lumineuses des blocks.
+option.GENERATED_EMISSION_PARTICLES=Émission des particules
+option.GENERATED_EMISSION_PARTICLES.comment=Si la détection automatique d'émission couvre aussi les particules. Désactivée, les blocs et les entités continuent de briller et seules les particules restent éteintes. §c[-]§r Peut affecter les performances quand beaucoup de particules sont à l'écran.
 
 #----------------------------------------------------------------------------------#
 
