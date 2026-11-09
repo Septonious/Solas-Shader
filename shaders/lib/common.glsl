@@ -177,6 +177,7 @@ const float sunPathRotation = 180.0;
 // PBR //
 #define TEXTURED_FIRE_LAVA
 #define GENERATED_EMISSION
+#define GENERATED_EMISSION_PARTICLES
 #define EMISSION_STRENGTH 5.0 //[1.0 2.0 3.0 4.0 5.0 6.0 7.0 8.0 9.0 10.0]
 #define EMISSIVE_ORES
 #define EMISSIVE_EMERALD_ORE
@@ -928,6 +929,9 @@ vec3 pow8(vec3 x) {return x*x*x*x*x*x*x*x;}
 #endif
 
 #ifdef GENERATED_EMISSION
+#endif
+
+#ifdef GENERATED_EMISSION_PARTICLES
 #endif
 
 #ifdef EMISSION_STRENGTH

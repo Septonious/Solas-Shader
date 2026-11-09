@@ -40,7 +40,7 @@ uniform float isPaleGarden;
 uniform vec3 skyColor;
 #endif
 
-#ifdef GENERATED_EMISSION
+#if defined GENERATED_EMISSION && defined GENERATED_EMISSION_PARTICLES
 uniform ivec2 atlasSize;
 #endif
 
@@ -145,7 +145,7 @@ void main() {
 	float NoE = clamp(dot(newNormal, eastVec), -1.0, 1.0);
 
 	//iPBR Generated Emission
-	#ifdef GENERATED_EMISSION
+	#if defined GENERATED_EMISSION && defined GENERATED_EMISSION_PARTICLES
 	if (atlasSize.x < 900.0) { // We don't want to detect particles from the block atlas
 		float lAlbedo = length(albedo.rgb);
 		vec3 gamePos = worldPos + cameraPosition;

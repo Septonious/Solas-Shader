@@ -259,6 +259,8 @@ screen.IEMISSION=Настройки Свечения
 
 option.GENERATED_EMISSION=Встроенное Свечение
 option.GENERATED_EMISSION.comment=Автоматически определяет светящиеся элементы блоков и существ. §c[-]§r Не рекомендуется использовать со сторонними ресурспаками.
+option.GENERATED_EMISSION_PARTICLES=Свечение частиц
+option.GENERATED_EMISSION_PARTICLES.comment=Распространяется ли автопоиск свечения на частицы. Если выключить, блоки и сущности по-прежнему светятся, а частицы остаются тусклыми. §c[-]§r Может влиять на производительность при большом количестве частиц на экране.
 option.EMISSIVE_FLOWERS=Светящиеся Цветы
 option.EMISSIVE_ORES=Светящиеся Руды
 option.EMISSIVE_EMERALD_ORE=Светящаяся Изумрудная Руда
